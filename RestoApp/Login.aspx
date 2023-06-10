@@ -1,0 +1,24 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Main.Master" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="RestoApp.Login" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+</asp:Content>
+<%--BODY--%>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="col-sm-4 bg-body-secondary p-3 border rounded-3">
+                <h2 class="fw-bold fs-4 text-center my-3">LOGIN</h2>
+                <div class="mb-3 row">
+                    <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
+                    <div class="col-sm-10">
+                        <asp:TextBox runat="server" ID="txb_Usuario" type="text" class="form-control" value="email@example.com" />
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+                    <div class="col-sm-10">
+                        <asp:TextBox runat="server" ID="txb_Password" type="password" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+</asp:Content>
