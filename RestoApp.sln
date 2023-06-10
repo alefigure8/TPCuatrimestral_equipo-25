@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestoApp", "RestoApp\RestoApp.csproj", "{7B069D4D-BB0C-48C8-BCB5-B9B00FCAA206}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dominio", "Dominio\Dominio.csproj", "{217FD4D6-D805-4EF2-BD05-912C75C8B3CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Negocio", "Negocio\Negocio.csproj", "{84336CB4-1607-458F-B74D-7CC825F617CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B069D4D-BB0C-48C8-BCB5-B9B00FCAA206}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B069D4D-BB0C-48C8-BCB5-B9B00FCAA206}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B069D4D-BB0C-48C8-BCB5-B9B00FCAA206}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B069D4D-BB0C-48C8-BCB5-B9B00FCAA206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{217FD4D6-D805-4EF2-BD05-912C75C8B3CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{217FD4D6-D805-4EF2-BD05-912C75C8B3CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{217FD4D6-D805-4EF2-BD05-912C75C8B3CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{217FD4D6-D805-4EF2-BD05-912C75C8B3CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84336CB4-1607-458F-B74D-7CC825F617CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84336CB4-1607-458F-B74D-7CC825F617CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84336CB4-1607-458F-B74D-7CC825F617CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84336CB4-1607-458F-B74D-7CC825F617CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4D01813F-3257-4A47-AB6D-7E49278D8E0C}
+	EndGlobalSection
+EndGlobal
