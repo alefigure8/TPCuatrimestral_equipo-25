@@ -70,6 +70,7 @@
     <Content Include="Content\main.js" />
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="Layouts\Navside.ascx" />
     <Content Include="Main.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -84,6 +85,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Layouts\Navside.ascx.cs">
+      <DependentUpon>Navside.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Layouts\Navside.ascx.designer.cs">
+      <DependentUpon>Navside.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Main.aspx.cs">
       <DependentUpon>Main.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -91,17 +99,25 @@
     <Compile Include="Main.aspx.designer.cs">
       <DependentUpon>Main.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Main.Master.cs">
+    <Compile Include="Masters\Default.Master.cs">
+      <DependentUpon>Default.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Masters\Default.Master.designer.cs">
+      <DependentUpon>Default.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Masters\Main.Master.cs">
       <DependentUpon>Main.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Main.Master.designer.cs">
+    <Compile Include="Masters\Main.Master.designer.cs">
       <DependentUpon>Main.Master</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Main.Master" />
+    <Content Include="Masters\Main.Master" />
+    <Content Include="Masters\Default.Master" />
     <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -119,9 +135,17 @@
       <Project>{217fd4d6-d805-4ef2-bd05-912c75c8b3ce}</Project>
       <Name>Dominio</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Helper\Helper.csproj">
+      <Project>{91c8d0aa-d364-4b18-a1b1-dfe63691c665}</Project>
+      <Name>Helper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Negocio\Negocio.csproj">
       <Project>{84336cb4-1607-458f-b74d-7cc825f617cc}</Project>
       <Name>Negocio</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Opciones\Opciones.csproj">
+      <Project>{be63e89b-2a66-4ffe-85ff-bfca6566876b}</Project>
+      <Name>Opciones</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
