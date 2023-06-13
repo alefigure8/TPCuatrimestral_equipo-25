@@ -70,6 +70,8 @@
     <Content Include="Default.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Login.aspx" />
+    <Content Include="MenuAdministrador.aspx" />
+    <Content Include="MenuMesero.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -97,11 +99,24 @@
     <Compile Include="Main.Master.designer.cs">
       <DependentUpon>Main.Master</DependentUpon>
     </Compile>
+    <Compile Include="MenuAdministrador.aspx.cs">
+      <DependentUpon>MenuAdministrador.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MenuAdministrador.aspx.designer.cs">
+      <DependentUpon>MenuAdministrador.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MenuMesero.aspx.cs">
+      <DependentUpon>MenuMesero.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MenuMesero.aspx.designer.cs">
+      <DependentUpon>MenuMesero.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Main.Master" />
-    <None Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
