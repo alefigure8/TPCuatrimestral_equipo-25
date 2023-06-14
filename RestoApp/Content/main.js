@@ -98,7 +98,7 @@ function CargarMesasSeleccion(){
             document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
                 document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
                 document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
-                numeroMesasGuardasArray[j] = j + 1;
+                numeroMesasGuardasArray[j] = 1;
                 CargarMesasSeleccion()
 
             });

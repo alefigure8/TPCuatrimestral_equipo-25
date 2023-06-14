@@ -15,7 +15,7 @@ namespace RestoApp
 {
 	public partial class Main1 : System.Web.UI.Page
 	{
-		private List<Mesa> mesas;
+		public static List<Mesa> mesas;
 		
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -60,20 +60,22 @@ namespace RestoApp
 
 		}
 
-
+		//Obtenemos los datos desde Main.js
 		[WebMethod]
 		public static void GuardarMesas(int[] array)
 		{
 			
 			MesaNegocio mesaNegocio = new MesaNegocio();
-			//Verificar cambios
 			for(int i = 0; i < array.Length; i++)
 			{
-				int activo = array[i] == 0 ? 0 : 1;
-				mesaNegocio.ActivarMesasPorNumero(i + 1, activo);
+				//Verificar cambios
+				if (Main1.mesas[i].Activo != (array[i] == 1))
+				mesaNegocio.ActivarMesasPorNumero(i + 1, array[i]);
 			}
 			
 		}
+
+
 
 	}
 }

@@ -8,7 +8,7 @@
     <main class="col ">
         <div class="d-flex flex-column container">
             <div class="p-3">
-                <asp:Label runat="server" ID="lblTest">Estos es una prueba</asp:Label>
+
                 <!-- Dropdown-->
                 <div class="dropdown">
                     <button
