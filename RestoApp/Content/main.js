@@ -10,7 +10,7 @@ for (i = 0; i < MESAS; i++) {
 
 //CARGAMOS MESAS GUARDADAS
 const mesas = document.getElementById("mesas");
-var numeroMesasGuardasArray = JSON.parse(numeroMesasGuardasJSON)
+let numeroMesasGuardasArray = JSON.parse(numeroMesasGuardasJSON)
 
 function CargarMesasGuardas() {
 
@@ -45,16 +45,14 @@ function CargarMesasGuardas() {
 //CARGAMOS MESAS SELECCIONADAS DESDE DROPDOWN
 const btnGuardarMesas = document.getElementById("btnGuardarMesas");
 
-for (let i = 0; i < MESAS; i++) {
-    document.getElementById(`ddMesa_${i + 1}`).addEventListener("click", () => {
-
-        btnGuardarMesas.classList.remove("invisible")
-        mesas.innerHTML = "";
+function CargarMesasSeleccion(){
+    btnGuardarMesas.classList.remove("invisible")
+    mesas.innerHTML = "";
 
 
-        for (let j = 0; j < i + 1; j++) {
-            if (numeroMesasGuardasArray[j] != '0') {
-                mesas.innerHTML += `
+    for (let j = 0; j < i + 1; j++) {
+        if (numeroMesasGuardasArray[j] != '0') {
+            mesas.innerHTML += `
             <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
                 <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
                     <div class="bg-warning w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${j + i}">
@@ -68,8 +66,8 @@ for (let i = 0; i < MESAS; i++) {
                 </div>
             </div>
             `;
-            } else {
-                mesas.innerHTML += `
+        } else {
+            mesas.innerHTML += `
             <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
                 <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
                     <div class="bg-dark-subtle w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${j + i}">
@@ -84,25 +82,35 @@ for (let i = 0; i < MESAS; i++) {
             </div>
             `;
 
-            }
         }
+    }
 
-        for (let j = 0; j < i + 1; j++) {
+    for (let j = 0; j < i + 1; j++) {
 
-            if (numeroMesasGuardasArray[j + i] != '0') {
-                document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
-                    document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
-                    document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
-                    numeroMesasGuardasArray[j] = j + 1;
-                });
-            } else {
-                document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
-                    document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
-                    document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
-                    numeroMesasGuardasArray[j] = 0;
-                });
-            }
+        if (numeroMesasGuardasArray[j] != 0) {
+            document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
+                document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
+                document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
+                numeroMesasGuardasArray[j] = 0;
+                CargarMesasSeleccion()
+            });
+        } else {
+            document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
+                document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
+                document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
+                numeroMesasGuardasArray[j] = j + 1;
+                CargarMesasSeleccion()
+
+            });
         }
+    }
+
+}
+
+for (let i = 0; i < MESAS; i++) {
+    document.getElementById(`ddMesa_${i + 1}`).addEventListener("click", () => {
+
+        CargarMesasSeleccion()
     });
 }
 

@@ -49,14 +49,14 @@ namespace Negocio
 			return mesas;
 			
 		}
-
-		public void ActivarMesasPorNumero(int numero)
+		
+		public void ActivarMesasPorNumero(int numero, int activo)
 		{
 			AccesoDB datos = new AccesoDB();
 
 			try
 			{
-				datos.setQuery($"UPDATE {ColumnasDB.Mesa.DB} SET {ColumnasDB.Mesa.Activo} = 1 WHERE {ColumnasDB.Mesa.Numero} = {numero}");
+				datos.setQuery($"UPDATE {ColumnasDB.Mesa.DB} SET {ColumnasDB.Mesa.Activo} = {activo} WHERE {ColumnasDB.Mesa.Numero} = {numero}");
 				datos.executeNonQuery();
 			}
 			catch(Exception Ex)

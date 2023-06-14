@@ -64,9 +64,15 @@ namespace RestoApp
 		[WebMethod]
 		public static void GuardarMesas(int[] array)
 		{
-			// Aquí puedes procesar y guardar el array en tu base de datos
-			// 'array' contiene los datos enviados desde JavaScript
-			Console.WriteLine(array.Length);
+			
+			MesaNegocio mesaNegocio = new MesaNegocio();
+			//Verificar cambios
+			for(int i = 0; i < array.Length; i++)
+			{
+				int activo = array[i] == 0 ? 0 : 1;
+				mesaNegocio.ActivarMesasPorNumero(i + 1, activo);
+			}
+			
 		}
 
 	}
