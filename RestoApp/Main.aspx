@@ -4,12 +4,14 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <!-- Panel -->
+    <!-- PANEL -->
     <main class="col ">
         <div class="d-flex flex-column container">
             <div class="p-3">
-
-                <!-- Dropdown-->
+                <asp:Label ID="lblTipoUsuario" runat="server" />
+                <!-- DROPDOWN-->
+                <% if (usuario?.Tipo.Descripcion == Opciones.ColumnasDB.TipoUsuario.Gerente)
+                    { %>
                 <div class="dropdown">
                     <button
                         class="btn btn-secondary dropdown-toggle"
@@ -26,18 +28,23 @@
                         id="dropdown-mesa">
                     </ul>
                 </div>
-                <!--Fin Dropdown-->
+                <h1>Mesas</h1>
+                <p id="titulo_gerente_Mesas">Asignar Mesas a Meseros</p>
+                <%} %>
+                <!--FIN DROPDOWN-->
             </div>
             <div class="col">
-                <!--Mesas-->
+                <!--MESAS-->
                 <div class="row" id="mesas">
                 </div>
-                <!--Fin Mesas-->
+                <!--FIN MESAS-->
             </div>
+            <!-- GERENTE: BTN GUARDAR MESA-->
             <div class="d-flex justify-content-end my-2">
                 <input type="button" class="btn btn-dark invisible" value="Guardar Mesas" id="btnGuardarMesas">
             </div>
+            <!--FIN GERENTE: BTN GUARDAR MESA-->
         </div>
     </main>
-    <!-- Fin Panel -->
+    <!-- FIN PANEL-->
 </asp:Content>

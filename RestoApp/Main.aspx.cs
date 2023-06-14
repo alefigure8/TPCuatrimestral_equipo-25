@@ -1,30 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
+﻿using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.UI;
+using System.Collections;
+using System.Web.Script.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
+using System.Web.Services;
 using Negocio;
 using Dominio;
-using System.Collections;
-using System.Web.Services;
-using System.Web.Script.Services;
+using Opciones;
 
 namespace RestoApp
 {
 	public partial class Main1 : System.Web.UI.Page
 	{
 		public static List<Mesa> mesas;
-		
+		public Usuario usuario { get; set; }
+
 		protected void Page_Load(object sender, EventArgs e)
 		{
+			if(Session[Configuracion.Session.Usuario] != null)
+				usuario = (Usuario)Session[Configuracion.Session.Usuario];
 			
-			if (!IsPostBack)
+			// CONTENIDO GERENTE
+			if (!IsPostBack && usuario?.Tipo.Descripcion == ColumnasDB.TipoUsuario.Gerente)
 			{
 				CargarMesas();
 				CargarNumeroDeMesasAlDesplegable();
 				CargarMesasGuardadas();
+				lblTipoUsuario.Text = ColumnasDB.TipoUsuario.Admin;
+			}
+
+			//CONTENIDO MESERO
+			if (!IsPostBack && usuario?.Tipo.Descripcion == ColumnasDB.TipoUsuario.Mesero)
+			{
+				lblTipoUsuario.Text = ColumnasDB.TipoUsuario.Mesero;
 			}
 		}
 		
@@ -74,8 +86,5 @@ namespace RestoApp
 			}
 			
 		}
-
-
-
 	}
 }

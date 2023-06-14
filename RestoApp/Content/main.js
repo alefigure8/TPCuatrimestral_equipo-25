@@ -50,7 +50,7 @@ function CargarMesasSeleccion(){
     mesas.innerHTML = "";
 
 
-    for (let j = 0; j < i + 1; j++) {
+    for (let j = 0; j < MESAS; j++) {
         if (numeroMesasGuardasArray[j] != '0') {
             mesas.innerHTML += `
             <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
@@ -107,9 +107,11 @@ function CargarMesasSeleccion(){
 
 }
 
+const tituloGerenteMesas = document.getElementById("titulo_gerente_Mesas");
+
 for (let i = 0; i < MESAS; i++) {
     document.getElementById(`ddMesa_${i + 1}`).addEventListener("click", () => {
-
+        tituloGerenteMesas.textContent = "Elija las mesas que quiere activar";
         CargarMesasSeleccion()
     });
 }
@@ -117,6 +119,8 @@ for (let i = 0; i < MESAS; i++) {
 btnGuardarMesas.addEventListener('click', () => {
     CargarMesasGuardas()
     btnGuardarMesas.classList.add("invisible")
+    tituloGerenteMesas.textContent = "Asignar Mesas a Meseros";
+    
 
     fetch('Main.aspx/GuardarMesas', {
         method: 'POST',
