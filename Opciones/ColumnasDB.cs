@@ -29,5 +29,14 @@ namespace Opciones
 			public const string TipoUsuario = "TipoUsuario";
 			public const string DB = "USUARIO";
 		}
+
+		public struct Mesa
+		{
+			public const string Numero = "IdMesa";
+			public const string Capacidad = "Capacidad";
+			public const string Activo = "Activo";
+			public const string DB = "Mesa";
+
+		}
 	}
 }
