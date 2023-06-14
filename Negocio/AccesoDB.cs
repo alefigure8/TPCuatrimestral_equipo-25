@@ -12,15 +12,16 @@ namespace Negocio
 
 		// Datos de la Base
 		//DB Alejandro
-		string serverName = "localhost\\SQLEXPRESS";
-		//DB Diego
-		//
-		//DB Fede
-		//
+		//string serverName = "localhost\\SQLEXPRESS";
+        //DB Diego
+        string serverName = "localhost\\SQLLAB";
+        //
+        //DB Fede
+        //
 
-		
-		//DB Nombre
-		string dataBase = "RestoDB";
+
+        //DB Nombre
+        string dataBase = "RestoDB";
 
 		//Datos de la Base - SOMEE
 		//string connectionString = WebConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
