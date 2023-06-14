@@ -5,19 +5,20 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     <!-- Panel -->
-
     <main class="col ">
         <div class="d-flex flex-column container">
             <div class="p-3">
+                <asp:Label runat="server" ID="lblTest">Estos es una prueba</asp:Label>
                 <!-- Dropdown-->
                 <div class="dropdown">
                     <button
                         class="btn btn-secondary dropdown-toggle"
                         type="button"
-                        id="dropdownMenuButton1"
+                        id="btnDDMesa"
                         data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Cantidad de Mesas
+                        aria-expanded="false"
+                        >
+                        Agregar Mesas
                     </button>
                     <ul
                         class="dropdown-menu"
@@ -34,8 +35,7 @@
                 <!--Fin Mesas-->
             </div>
             <div class="d-flex justify-content-end my-2">
-                <input type="number" class="me-2 rounded-3 cursor-pointer" id="txb_guardar_mesa" disabled>
-                <input type="button" class="btn btn-dark" value="Guardar Mesas">
+                <input type="button" class="btn btn-dark invisible" value="Guardar Mesas" id="btnGuardarMesas">
             </div>
         </div>
     </main>
