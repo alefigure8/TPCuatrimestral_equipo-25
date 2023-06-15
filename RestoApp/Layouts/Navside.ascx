@@ -14,18 +14,18 @@
         <hr />
         <ul class="list-unstyled ps-0">
             <li class="align-items-center rounded collapsed text-light btn">
-                <a href="#" class="nav-link active" aria-current="page">Inicio
+                <a href="Main.aspx" class="nav-link active" aria-current="page">Inicio
                 </a>
             </li>
             <li class="mb-1">
-                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#otro-collapse" aria-bs-expanded="true">Otro
+                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#otro-collapse" aria-bs-expanded="true">Mesas
                 </a>
                 <div class="collapse " id="otro-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                        <li><a href="#" class="nav-link ps-3">Opcion 1</a></li>
+                        <li><a href="Mesas.aspx" class="nav-link ps-3">Asignar Mesas</a></li>
                         <li><a href="#" class="nav-link ps-3">Opcion 2</a></li>
                         <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
-                        <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
+                        <li><a href="#" class="nav-link ps-3">Configuración</a></li>
                     </ul>
                 </div>
             </li>

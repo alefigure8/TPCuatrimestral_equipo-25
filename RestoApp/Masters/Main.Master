@@ -21,8 +21,10 @@
             <uc:navside runat="server" id="Navside" />
 
             <%--Main--%>
+            <main class="col">
                 <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
                 </asp:ContentPlaceHolder>
+            </main>
         </div>
     </form>
 
