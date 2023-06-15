@@ -16,8 +16,10 @@ namespace Negocio
 
             try
             {
-                datos.setQuery($"SELECT {ColumnasDB.Usuario.Id}, {ColumnasDB.Usuario.Nombres}, {ColumnasDB.Usuario.Apellidos}, {ColumnasDB.Usuario.Mail}, {ColumnasDB.Usuario.Pass}, {ColumnasDB.Usuario.TipoUsuario} FROM {ColumnasDB.Usuario.DB}");
-                datos.executeReader();
+				datos.setQuery($"SELECT {ColumnasDB.Usuario.Id}, {ColumnasDB.Usuario.Nombres}, {ColumnasDB.Usuario.Apellidos}, {ColumnasDB.Usuario.Mail}, {ColumnasDB.Usuario.Pass}, {ColumnasDB.TipoUsuario.Descripcion} " +
+					$"FROM {ColumnasDB.Usuario.DB} " +
+					$"INNER JOIN {ColumnasDB.TipoUsuario.DB} ON {ColumnasDB.Usuario.TipoUsuario} = {ColumnasDB.TipoUsuario.Id}"); 
+				datos.executeReader();
                     
 
                 while (datos.Reader.Read())
@@ -63,6 +65,7 @@ namespace Negocio
             return listausuarios;
         }
 
+		//Buscamos meseros por pass y mail
         public Usuario BuscarUsuario(string mail, string pass)
 		{
 
