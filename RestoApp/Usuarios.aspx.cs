@@ -31,6 +31,8 @@ namespace RestoApp
             dataTable.Columns.Add("Apellidos", typeof(string));
             dataTable.Columns.Add("Mail", typeof(string));
             dataTable.Columns.Add("Password", typeof(string));
+            dataTable.Columns.Add("Fecha de alta", typeof(DateTime));
+            dataTable.Columns.Add("Fecha de baja", typeof(DateTime));
 
             foreach (var usuario in Listausuarios)
             {
