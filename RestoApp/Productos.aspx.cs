@@ -27,11 +27,11 @@ namespace RestoApp
             List<CategoriaProducto> ListaCategoriasProducto = new List<CategoriaProducto>();
             ListaCategoriasProducto = CategoriaProductoNegocio.Listar();
 
-            DDPCategorias.Items.Add("Categorias");
+            DDLCategorias.Items.Add("Categorias");
 
             foreach (CategoriaProducto CPaux in ListaCategoriasProducto)
             {
-                DDPCategorias.Items.Add(CPaux.Descripcion);
+                DDLCategorias.Items.Add(CPaux.Descripcion);
             }
         }
 

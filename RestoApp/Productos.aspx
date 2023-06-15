@@ -8,9 +8,7 @@
 
         <div class="container">
 
-            <div class="row">
-                <asp:CheckBox ID="CheckBox1" runat="server" Text="Vista detallada" />
-            </div>
+           
                 
             
             <div class="row justify-content-start"">
@@ -18,8 +16,14 @@
                     <asp:Label ID="lblFiltrarPorCategoria" runat="server" Text="Filtrar por"></asp:Label>
                 </div>
                 <div class="col">
-                    <asp:DropDownList ID="DDPCategorias" runat="server" CssClass="form-control">
+                    <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="form-control">
                     </asp:DropDownList>
+                </div>
+            </div>
+
+            <div class="row">
+                                <div class="col">
+                    <asp:CheckBox ID="CheckBox2" runat="server" Text="Activo" CssClass="form-check-input"/>
                 </div>
             </div>
 
@@ -68,16 +72,22 @@
                 </div>
 
             <div class="row">
-                <div class="col me-2 card btn align-items-center justify-content-center">
+                <div class="col-2 me-2 card btn align-items-center justify-content-center">
                     <i class="fa fa-cutlery" style="font-size:5rem;" aria-hidden="true"></i>
                      <asp:LinkButton ID="LinkButton3" runat="server"
                      CssClass="h5">Nuevo Plato
                     </asp:LinkButton>
                 </div>
-                <div class="col me-2 card btn align-items-center justify-content-center">
+                <div class="col-2 me-2 card btn align-items-center justify-content-center">
                     <i class="fa fa-wine-glass" style="font-size:5rem;" aria-hidden="true"></i>
                      <asp:LinkButton ID="LinkButton1" runat="server"
                      CssClass="h5">Nueva Bebida
+                    </asp:LinkButton>
+                </div>
+                            <div class="col-2 me-2 card btn align-items-center justify-content-center">
+                    <i class="fa fa-file" aria-hidden="true" style="font-size:5rem;"></i>
+                     <asp:LinkButton ID="LinkButton2" runat="server"
+                     CssClass="h5">Categorias
                     </asp:LinkButton>
                 </div>
            </div>
