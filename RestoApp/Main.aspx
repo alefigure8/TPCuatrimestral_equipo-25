@@ -4,6 +4,6 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <h4>Bienvenido <%= usuario?.Mail %> (<%= usuario?.Tipo.Descripcion %>)</h4>
+    <h4>Bienvenido <%= usuario?.Mail %> (<%= usuario?.Tipo %>)</h4>
 
 </asp:Content>
