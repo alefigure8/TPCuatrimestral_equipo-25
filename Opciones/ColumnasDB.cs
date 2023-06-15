@@ -38,5 +38,12 @@ namespace Opciones
 			public const string DB = "Mesa";
 
 		}
-	}
+
+        public struct CategoriaProducto
+        {
+            public const string Id = "IdCategoriaProducto";
+            public const string Descripcion = "Descripcion";
+			public const string DB = "CategoriaProducto";
+        }
+    }
 }

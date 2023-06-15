@@ -11,7 +11,7 @@ namespace RestoApp
 {
 
 
-	public partial class Main1
+	public partial class Mesas
 	{
 	}
 }
