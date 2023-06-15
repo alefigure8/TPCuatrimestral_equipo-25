@@ -15,6 +15,7 @@ namespace RestoApp
 	public partial class Mesas : System.Web.UI.Page
 	{
 		public static List<Mesa> mesas;
+		public List<Usuario> meseros = new List<Usuario>();
 		public Usuario usuario { get; set; }
 
 		protected void Page_Load(object sender, EventArgs e)
@@ -23,15 +24,16 @@ namespace RestoApp
 				usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
 			// CONTENIDO GERENTE
-			if (!IsPostBack && usuario?.Tipo.Descripcion == ColumnasDB.TipoUsuario.Gerente)
+			if (!IsPostBack && usuario?.Tipo == ColumnasDB.TipoUsuario.Gerente)
 			{
 				CargarMesas();
 				CargarNumeroDeMesasAlDesplegable();
 				CargarMesasGuardadas();
+				CargarMeseros();
 			}
 
 			//CONTENIDO MESERO
-			if (!IsPostBack && usuario?.Tipo.Descripcion == ColumnasDB.TipoUsuario.Mesero)
+			if (!IsPostBack && usuario?.Tipo == ColumnasDB.TipoUsuario.Mesero)
 			{
 			}
 		}
@@ -67,7 +69,21 @@ namespace RestoApp
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasGuardas", $"var numeroMesasGuardasJSON = '{numeroMesasGuardasJSON}';", true);
 
 		}
-		
+
+		private void CargarMeseros()
+		{
+			UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+			meseros = usuarioNegocio.ListarMeseros();
+
+			foreach(Usuario mesero in meseros)
+			{
+				mesero.Password = null;
+			}
+
+			repeaterMeseros.DataSource = meseros;
+			repeaterMeseros.DataBind();
+		}
+
 		//Obtenemos los datos desde Main.js
 		[WebMethod]
 		public static void GuardarMesas(int[] array)
