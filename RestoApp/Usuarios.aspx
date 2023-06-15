@@ -37,10 +37,41 @@
 
           </div>
           </div>
-
-      <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="margin-left:20px; margin-bottom:10px; height:40px; width:77%;" data-bs-toggle="dropdown" data-bs-theme="dark"></asp:LinkButton>
-
-
+      <div class="row" style="justify-content:center;">
+    <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="margin-left:20px; margin-bottom:10px; height:40px; width:77%;" data-bs-toggle="dropdown" data-bs-theme="dark"></asp:LinkButton>
+    <asp:Panel ID="DropdownPanel" runat="server" CssClass="dropdown-menu" style="width:64%; background-color:#343a40" ForeColor="#CCCCCC">
+        <div class="col">
+            <div class="row">
+        <asp:Label ID="LblId" runat="server" Text="Id:"></asp:Label>
+        <asp:TextBox ID="TxtId" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>
+                </div>
+            <div class="row">
+             <asp:Label ID="LblMail" runat="server" Text="Mail:"></asp:Label>
+        <asp:TextBox ID="TxtMail" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>   
+          </div>
+           <div class="row">
+         <asp:Label ID="LblNombres" runat="server" Text="Nombres:"></asp:Label>
+        <asp:TextBox ID="TxtNombres" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>
+</div>
+                <div class="row">
+         <asp:Label ID="LblPassword" runat="server" Text="Password:"></asp:Label>
+        <asp:TextBox ID="TxtPassword" runat="server" CssClass="form-control" TextMode="Password" style="width:80%; margin-left:14px;"></asp:TextBox> 
+  </div>
+            <div class="row">
+        <asp:Label ID="LblApellidos" runat="server" Text="Apellidos:"></asp:Label>
+        <asp:TextBox ID="TxtApellidos" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>  
+                </div>
+            <div class="row">
+          <asp:Label ID="LblFdA" runat="server" Text="Fecha de alta:"></asp:Label>
+        <asp:TextBox ID="TxtFdA" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>   
+     </div>
+  <div class="row">
+                    <asp:Label ID="LblFdB" runat="server" Text="Fecha de baja:"></asp:Label>
+        <asp:TextBox ID="TxtFdB" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>  
+      </div>
+            </div>
+    </asp:Panel>
+      </div>
 
 
       </div>
