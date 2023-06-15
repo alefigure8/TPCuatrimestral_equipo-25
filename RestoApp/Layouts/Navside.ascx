@@ -34,8 +34,7 @@
                 </a>
                 <div class="collapse" id="productos-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                        <li><a href="#" class="nav-link ps-3">Opcion 1</a></li>
-                        <li><a href="#" class="nav-link ps-3">Opcion 2</a></li>
+                        <li><a href="Productos.aspx" class="nav-link ps-3">Administrar Productos</a></li>
                         <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
                         <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
                     </ul>
