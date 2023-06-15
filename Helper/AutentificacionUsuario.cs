@@ -16,7 +16,7 @@ namespace Helper
 
 		static public bool esAdmin(Usuario user)
 		{
-			if (user.Tipo == ColumnasDB.TipoUsuario.Admin)
+			if (user.Tipo.Descripcion == ColumnasDB.TipoUsuario.Admin)
 				return true;
 
 			return false;
