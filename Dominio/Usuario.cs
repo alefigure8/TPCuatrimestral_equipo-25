@@ -15,7 +15,7 @@ namespace Dominio
 		public string Password { get; set; }
 		
 		public bool Activo { get; set; }
-		public TipoUsuarios Tipo { get; set; }
+		public string Tipo { get; set; }
         public DateTime Fechaalta { get; set; }
         public DateTime Fechabaja { get; set; }
 

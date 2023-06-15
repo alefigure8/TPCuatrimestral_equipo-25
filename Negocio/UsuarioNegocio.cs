@@ -3,6 +3,7 @@ using System;
 using Opciones;
 using System.Collections.Generic;
 
+
 namespace Negocio
 {
 	public class UsuarioNegocio
@@ -42,14 +43,11 @@ namespace Negocio
                         usuarioaux.Password = (string)datos.Reader[ColumnasDB.Usuario.Pass];
 
 
-                    if (datos.Reader[ColumnasDB.Usuario.TipoUsuario] != null)
-                    {
-                        TipoUsuarios auxTipoUsuario = new TipoUsuarios();
-                        TipoUsuariosNegocio tipoUsuariosNegocio = new TipoUsuariosNegocio();
-                        auxTipoUsuario = tipoUsuariosNegocio.ListarPorId((Int32)datos.Reader[ColumnasDB.Usuario.Id]);
-                        usuarioaux.Tipo = auxTipoUsuario;
-                    }
-                    listausuarios.Add(usuarioaux);
+					//TIPO USUARIO
+					if (datos.Reader[ColumnasDB.TipoUsuario.Descripcion] != null)
+						usuarioaux.Tipo = (string)datos.Reader[ColumnasDB.TipoUsuario.Descripcion];
+					
+					listausuarios.Add(usuarioaux);
                 }
 
             }
