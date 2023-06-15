@@ -15,9 +15,7 @@
       <asp:GridView ID="GDVEmpleados" runat="server">
             <HeaderStyle HorizontalAlign="Center" BackColor="#a5d5e0" cssClass="celda" />
              <RowStyle HorizontalAlign="Center" VerticalAlign="Middle" cssClass="celda"/>
-               <Columns>
-                   <asp:BoundField HeaderText="Precio/Un." DataFormatString="{0:C}" DataField="Articulo.Precio" />
-                   </Columns>
+            
       </asp:GridView>
 
 

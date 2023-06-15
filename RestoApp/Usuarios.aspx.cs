@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Dominio;
+using Negocio;
+using Opciones;
+
 
 namespace RestoApp
 {
@@ -16,16 +21,25 @@ namespace RestoApp
 
         protected void CargarDgv()
         {
-            if (Session["carrito"] != null)
+
+            UsuarioNegocio listausuarios = new UsuarioNegocio();
+            List<Usuario> Listausuarios = listausuarios.Listar();
+
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Id", typeof(int));
+            dataTable.Columns.Add("Nombres", typeof(string));
+            dataTable.Columns.Add("Apellidos", typeof(string));
+            dataTable.Columns.Add("Mail", typeof(string));
+            dataTable.Columns.Add("Password", typeof(string));
+
+            foreach (var usuario in Listausuarios)
             {
-
-
-                ListaCarrito = (List<Carrito>)Session["carrito"];
-                dgvCarrito.DataSource = ListaCarrito;
-                dgvCarrito.DataBind();
-
-                CargarTotales();
+                dataTable.Rows.Add(usuario.Id, usuario.Nombres, usuario.Apellidos, usuario.Mail, usuario.Password);
             }
+            GDVEmpleados.DataSource = dataTable;
+            GDVEmpleados.DataBind();
+
         }
+          
     }
 }
