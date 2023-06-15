@@ -22,7 +22,7 @@
             <!--FIN GERENTE: BTN GUARDAR MESA-->
             <div class="p-3">
                 <!-- DROPDOWN-->
-                <% if (usuario?.Tipo.Descripcion == Opciones.ColumnasDB.TipoUsuario.Gerente)
+                <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente)
                     { %>
                 <div class="dropdown">
                     <button

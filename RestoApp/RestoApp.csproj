@@ -73,12 +73,9 @@
     <Content Include="Layouts\Navside.ascx" />
     <Content Include="Main.aspx" />
     <Content Include="Menu.aspx" />
-<<<<<<< HEAD
     <Content Include="Usuarios.aspx" />
-=======
     <Content Include="Mesas.aspx" />
     <Content Include="Productos.aspx" />
->>>>>>> 0b2a6a82305d135b358b3584d72869d95be826cb
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

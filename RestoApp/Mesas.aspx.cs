@@ -23,7 +23,7 @@ namespace RestoApp
 				usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
 			// CONTENIDO GERENTE
-			if (!IsPostBack && usuario?.Tipo.Descripcion == ColumnasDB.TipoUsuario.Gerente)
+			if (!IsPostBack && usuario?.Tipo == ColumnasDB.TipoUsuario.Gerente)
 			{
 				CargarMesas();
 				CargarNumeroDeMesasAlDesplegable();
@@ -31,7 +31,7 @@ namespace RestoApp
 			}
 
 			//CONTENIDO MESERO
-			if (!IsPostBack && usuario?.Tipo.Descripcion == ColumnasDB.TipoUsuario.Mesero)
+			if (!IsPostBack && usuario?.Tipo == ColumnasDB.TipoUsuario.Mesero)
 			{
 			}
 		}
