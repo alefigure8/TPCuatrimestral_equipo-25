@@ -11,7 +11,21 @@ namespace RestoApp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            CargarDgv();
+        }
 
+        protected void CargarDgv()
+        {
+            if (Session["carrito"] != null)
+            {
+
+
+                ListaCarrito = (List<Carrito>)Session["carrito"];
+                dgvCarrito.DataSource = ListaCarrito;
+                dgvCarrito.DataBind();
+
+                CargarTotales();
+            }
         }
     }
 }
