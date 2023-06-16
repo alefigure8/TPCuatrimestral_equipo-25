@@ -67,27 +67,27 @@ namespace RestoApp
 			dataTable.Columns.Add("Cierre", typeof(DateTime));
 
 			// Agregar filas al DataTable de forma individual
-			AgregarFila(dataTable, 1, "Juan", DateTime.Now, DateTime.Now);
-			AgregarFila(dataTable, 2, "Maria", DateTime.Now, DateTime.Now);
-			AgregarFila(dataTable, 3, "Pedro", DateTime.Now, DateTime.Now);
-			AgregarFila(dataTable, 4, "Laura", DateTime.Now, DateTime.Now);
-			AgregarFila(dataTable, 5, "Carlos", DateTime.Now, DateTime.Now);
-			AgregarFila(dataTable, 6, "Ana", DateTime.Now, DateTime.Now);
+			dataTable.Rows.Add(1, "Juan", DateTime.Now, System.DBNull.Value);
+			dataTable.Rows.Add(2, "Maria", DateTime.Now, DateTime.Now);
+			dataTable.Rows.Add(3, "Pedro", DateTime.Now, System.DBNull.Value);
+			dataTable.Rows.Add(4, "Laura", DateTime.Now, DateTime.Now);
+			dataTable.Rows.Add(5, "Carlos", DateTime.Now, System.DBNull.Value);
+			dataTable.Rows.Add(6, "Ana", DateTime.Now, System.DBNull.Value);
+			
+			foreach (DataRow row in dataTable.Rows)
+			{
+				int numero = (int)row["Numero"];
+				string mesero = (string)row["Mesero"];
+				DateTime apertura = (DateTime)row["Apertura"];
+				DateTime? cierre = row["Cierre"] == System.DBNull.Value ? null : (DateTime?)row["Cierre"];
+			}
 
 			// Enlazar el DataTable al DataGrid
 			datagrid.DataSource = dataTable;
 			datagrid.DataBind();
 		}
 
-		private void AgregarFila(DataTable dataTable, int numero, string mesero, DateTime apertura, DateTime cierre)
-		{
-			var fila = dataTable.NewRow();
-			fila["Numero"] = numero;
-			fila["Mesero"] = mesero;
-			fila["Apertura"] = apertura;
-			fila["Cierre"] = cierre;
-			dataTable.Rows.Add(fila);
-		}
+
 
 		private void CargarPedido()
 		{
@@ -100,27 +100,24 @@ namespace RestoApp
 			dataTable.Columns.Add("Cierre", typeof(DateTime));
 
 			// Agregar filas al DataTable de forma individual
-			AgregarFilaPedidos(dataTable, 1, "Hamburguesa", DateTime.Now, DateTime.Now);
-			AgregarFilaPedidos(dataTable, 2, "Pizza", DateTime.Now, DateTime.Now);
-			AgregarFilaPedidos(dataTable, 1, "Sushi", DateTime.Now, DateTime.Now);
-			AgregarFilaPedidos(dataTable, 3, "Ensalada", DateTime.Now, DateTime.Now);
-			AgregarFilaPedidos(dataTable, 2, "Pasta", DateTime.Now, DateTime.Now);
-			AgregarFilaPedidos(dataTable, 1, "Tacos", DateTime.Now, DateTime.Now);
+			dataTable.Rows.Add(1, "Hamburguesa", DateTime.Now, DateTime.Now);
+			dataTable.Rows.Add(1, "Pizza", DateTime.Now, DateTime.Now);
+			dataTable.Rows.Add(2, "Sushi", DateTime.Now, System.DBNull.Value);
+			dataTable.Rows.Add(3, "Ensalada", DateTime.Now, DateTime.Now);
+			dataTable.Rows.Add(5, "Pasta", DateTime.Now, DateTime.Now);
+			dataTable.Rows.Add(6, "Tacos", DateTime.Now, System.DBNull.Value);
 
+			foreach (DataRow row in dataTable.Rows)
+			{
+				int numero = (int)row["Mesa"];
+				string mesero = (string)row["PedidoComida"];
+				DateTime apertura = (DateTime)row["Apertura"];
+				DateTime? cierre = row["Cierre"] == System.DBNull.Value ? null : (DateTime?)row["Cierre"];
+			}
 
-			// Enlazar los datos al DataGrid
+			// Enlazar el DataTable al DataGrid
 			datagridPedidos.DataSource = dataTable;
 			datagridPedidos.DataBind();
-		}
-
-		private void AgregarFilaPedidos(DataTable dataTable, int mesa, string pedido, DateTime apertura, DateTime cierre)
-		{
-			var fila = dataTable.NewRow();
-			fila["Mesa"] = mesa;
-			fila["PedidoComida"] = pedido;
-			fila["Apertura"] = apertura;
-			fila["Cierre"] = cierre;
-			dataTable.Rows.Add(fila);
 		}
 	}
 }
