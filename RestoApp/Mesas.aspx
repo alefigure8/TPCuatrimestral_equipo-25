@@ -36,7 +36,7 @@
                                 <!-- Collide -->
                                 <div class="collapse" id="<%#Eval("Id") %>">
                                     <div class="p-2">
-                                        <btn class="btn btn-secondary">Asignar Mesas</btn>
+                                        <btn class="btn btn-dark" id="asignarMesa">Asignar Mesas</btn>
                                         <btn class="btn btn-primary">Guardar</btn>
                                     </div>
                                 </div>
@@ -48,37 +48,6 @@
                 <!-- FIN MESEROS-->
             </div>
             <!--FIN MESAS-->
-
-            <!-- GERENTE: BTN GUARDAR MESA-->
-            <div class="d-flex justify-content-end my-2">
-                <input type="button" class="btn btn-dark invisible" value="Guardar Mesas" id="btnGuardarMesas">
-            </div>
-            <!--FIN GERENTE: BTN GUARDAR MESA-->
-
-            <!-- DROPDOWN-->
-            <div class="p-3">
-                <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente)
-                    { %>
-                <div class="dropdown">
-                    <button
-                        class="btn btn-secondary dropdown-toggle"
-                        type="button"
-                        id="btnDDMesa"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Agregar Mesas
-                    </button>
-                    <ul
-                        class="dropdown-menu"
-                        aria-labelledby="dropdownMenuButton1"
-                        id="dropdown-mesa">
-                    </ul>
-                </div>
-
-                <%} %>
-            </div>
-            <!--FIN DROPDOWN-->
-
         </div>
     </div>
     <!-- FIN PANEL-->

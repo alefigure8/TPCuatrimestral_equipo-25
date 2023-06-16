@@ -26,6 +26,8 @@ namespace RestoApp
 				usuario = (Usuario)Session[Configuracion.Session.Usuario];
 			}
 
+			//Separar lógica de Gerente y Mesero
+
 		}
 		
 	}

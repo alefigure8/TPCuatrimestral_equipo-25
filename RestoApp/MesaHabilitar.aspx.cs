@@ -1,27 +1,24 @@
-﻿using Negocio;
+﻿using Helper;
 using Opciones;
+using Dominio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Dominio;
 using Negocio;
-using Helper;
+using System.Web.Services;
 
 namespace RestoApp
 {
-	public partial class Mesas : System.Web.UI.Page
+	public partial class MesaHabilitar : System.Web.UI.Page
 	{
 		public static List<Mesa> mesas;
-		public List<Usuario> meseros = new List<Usuario>();
 		public Usuario usuario { get; set; }
-
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			if ( AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
+			if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
 				usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
 			// CONTENIDO GERENTE
@@ -30,12 +27,6 @@ namespace RestoApp
 				CargarMesas();
 				CargarNumeroDeMesasAlDesplegable();
 				CargarMesasGuardadas();
-				CargarMeseros();
-			}
-
-			//CONTENIDO MESERO
-			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
-			{
 			}
 		}
 
@@ -69,20 +60,6 @@ namespace RestoApp
 			//Mandamos el dato a main.js
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasGuardas", $"var numeroMesasGuardasJSON = '{numeroMesasGuardasJSON}';", true);
 
-		}
-
-		private void CargarMeseros()
-		{
-			UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
-			meseros = usuarioNegocio.ListarMeseros();
-
-			foreach (Usuario mesero in meseros)
-			{
-				mesero.Password = null;
-			}
-
-			repeaterMeseros.DataSource = meseros;
-			repeaterMeseros.DataBind();
 		}
 
 		//Obtenemos los datos desde Main.js
