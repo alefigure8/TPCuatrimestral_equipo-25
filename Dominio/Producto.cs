@@ -9,7 +9,7 @@ namespace Dominio
     public class Producto
     {
         public int Id { get; set; }
-        public CategoriaProducto Categoria { get; set; }
+        public int Categoria { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public Decimal Valor { get; set; }
@@ -18,6 +18,6 @@ namespace Dominio
         public bool Alcohol { get; set; }
         public int Stock { get; set; }
         public bool Activo { get; set; }
-        public DateTime TiempoCoccion { get; set; }
+        public TimeSpan TiempoCoccion { get; set; }
     }
 }

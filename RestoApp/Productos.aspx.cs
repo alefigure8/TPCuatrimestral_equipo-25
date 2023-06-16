@@ -12,6 +12,8 @@ namespace RestoApp
 {
     public partial class Productos : System.Web.UI.Page
     {
+
+        public List<CategoriaProducto> ListaCategoriasProducto;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -24,11 +26,8 @@ namespace RestoApp
         public void CargarDropDownLists()
         {
             CategoriaProductoNegocio CategoriaProductoNegocio = new CategoriaProductoNegocio();
-            List<CategoriaProducto> ListaCategoriasProducto = new List<CategoriaProducto>();
             ListaCategoriasProducto = CategoriaProductoNegocio.Listar();
-
             DDLCategorias.Items.Add("Categorias");
-
             foreach (CategoriaProducto CPaux in ListaCategoriasProducto)
             {
                 DDLCategorias.Items.Add(CPaux.Descripcion);
@@ -37,7 +36,7 @@ namespace RestoApp
 
         public void ListarProductos() {
         ProductoNegocio productoNegocio = new ProductoNegocio();
-        Session.Add("ProductosDisponibles", productoNegocio.ListarProductosDisponibles());
+        Session.Add("ProductosDisponibles", productoNegocio.ListarProductos());
             ProductoRepetidor.DataSource = Session["ProductosDisponibles"];
             ProductoRepetidor.DataBind();
         }

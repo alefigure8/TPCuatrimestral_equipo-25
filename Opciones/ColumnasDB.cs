@@ -45,5 +45,21 @@ namespace Opciones
             public const string Descripcion = "Descripcion";
 			public const string DB = "CategoriaProducto";
         }
+
+		public struct Producto
+		{
+			public const string Id = "IdProducto";
+            public const string Categoria = "CategoriaProducto";
+            public const string Nombre = "Nombre";
+			public const string Descripcion = "Descripcion";
+			public const string Valor = "Valor";
+			public const string AptoVegano = "AptoVegano";
+			public const string AptoCeliaco = "AptoCeliaco";
+			public const string Alcohol = "Alcohol";
+			public const string Stock = "Stock";
+			public const string Activo = "Activo";
+			public const string TiempoCoccion = "TiempoCoccion";
+			public const string DB = "Productos";
+        }
     }
 }

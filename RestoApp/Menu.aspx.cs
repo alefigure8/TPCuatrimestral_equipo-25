@@ -14,7 +14,7 @@ namespace RestoApp
         protected void Page_Load(object sender, EventArgs e)
         {
             ProductoNegocio productoNegocio = new ProductoNegocio();
-            Session.Add("ProductosDisponibles", productoNegocio.ListarProductosDisponibles());
+            Session.Add("ProductosDisponibles", productoNegocio.ListarProductos());
             ProductoRepetidor.DataSource = Session["ProductosDisponibles"];
             ProductoRepetidor.DataBind();
 
