@@ -72,7 +72,32 @@
 
             </div>
         </div>
-        <% }%>
+        <% }
+            
+            if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+
+            {%>
+
+            <div class="col">
+                <div class="row bg-white">
+                <div class="row h2"> Mis mesas </div>
+                <div class="row h2">[Display mesas disponibles/ocupadas]</div>
+                </div>
+                <br>
+                <div class="row bg-white">
+                <div class="row h2"> Mis pedidos en curso </div>
+                <div class="row h2"> </div>
+                </div>
+
+            </div>
+
+
+
+
+
+
+        <% } %>
+
     </div>
 
 
