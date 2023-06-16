@@ -52,6 +52,17 @@
                     </ul>
                 </div>
             </li>
+             <li class="mb-1">
+                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#usuarios-collapse" aria-bs-expanded="true">Usuarios
+                </a>
+                <div class="collapse" id="usuarios-collapse">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                        <li><a href="usuarios.aspx" class="nav-link ps-3">Administrar usuarios</a></li>
+                        <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
+                        <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
+                    </ul>
+                </div>
+            </li>
         </ul>
         <hr />
         <div class="dropdown">
