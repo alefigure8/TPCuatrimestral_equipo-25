@@ -80,14 +80,34 @@
 
         <div class="col">
 
-            <div class="row bg-white">
+            <div class="row bg-white rounded">
                 <div class="row h2">Mis mesas </div>
-                <div class="row h2">[Display mesas disponibles/ocupadas]</div>
+
+
+                <div class="row justify-content-around">
+
+                    
+                 <div class="col-2 status-free rounded">
+                    Mesa #02
+                    </div>
+                      <div class="col-2 status-busy rounded">
+                    Mesa #05
+                    </div>
+
+                 <div class="col-2 status-busy rounded">
+                    Mesa #07
+                    </div>
+
+                 <div class="col-2 status-free rounded">
+                    Mesa #12
+                    </div>
+                </div>
+              
             </div>
 
             <br>
 
-            <div class="row bg-white">
+            <div class="row bg-white rounded">
 
                 <div class="row h2">Mis pedidos en curso </div>
 
@@ -135,7 +155,7 @@
 
             <br />
 
-            <div class="row bg-white">
+            <div class="row bg-white rounded">
                 <h2 class="h2">Menú Disponible:</h2>
                 <asp:Repeater runat="server" ID="MenuDelDia">
                     <ItemTemplate>

@@ -54,6 +54,10 @@
                     </ul>
                 </div>
             </li>
+              <li class="mb-1">
+                <a class="btn btn-toggle align-items-center rounded collapsed text-light" aria-bs-expanded="true" href="Menu.aspx">Menú Cliente
+                </a>
+                  </li>
         </ul>
         <hr />
         <div class="dropdown">

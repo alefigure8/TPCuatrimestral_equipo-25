@@ -5,6 +5,10 @@
     --gray-400: #ced4da;
     --gray-500: #adb5bd;
     --gray-600: #6c757d;
+
+    /* Mesas */
+    --free: #a5e972;
+    --busy: #AEB6BF;
 }
 
 body {
@@ -37,6 +41,16 @@ body {
 .bg-gray-600 {
     background-color: var(--gray-600);
 }
+
+/* Colores de estado */
+.status-free{
+    background-color: var(--free);
+}
+.status-busy {
+    background-color: var(--busy);
+}
+
+
 
 /* Colores de texto */
 .text-gray-100 {
