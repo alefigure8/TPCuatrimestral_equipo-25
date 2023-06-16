@@ -1,9 +1,9 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Navside.ascx.cs" Inherits="RestoApp.Layouts.Navside" %>
 
-<nav class="col-2 flex-shrink-0 ">
+<nav class="col-sm col-lg-2">
     <div
-        class="d-flex flex-column p-3 text-white bg-dark min-vh-100"
-        style="width: 280px">
+        class="d-flex flex-column p-3 text-white bg-dark h-100"
+        ">
         <a
             href="/"
             class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">

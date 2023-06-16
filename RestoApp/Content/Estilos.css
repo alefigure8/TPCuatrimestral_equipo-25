@@ -1,4 +1,43 @@
-﻿
+﻿:root {
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-400: #ced4da;
+    --gray-500: #adb5bd;
+    --gray-600: #6c757d;
+}
+
+body {
+    height: 100%;
+}
+
+
+/* Backgrounds */
+.bg-gray-100 {
+    background-color: var(--gray-100);
+}
+
+.bg-gray-200 {
+    background-color: var(--gray-200);
+}
+
+.bg-gray-300 {
+    background-color: var(--gray-300);
+}
+
+.bg-gray-400 {
+    background-color: var(--gray-400);
+}
+
+.bg-gray-500 {
+    background-color: var(--gray-500);
+}
+
+.bg-gray-600 {
+    background-color: var(--gray-600);
+}
+
+/* Columnas */
 .columna-grilla{
     max-width: 120px;
     text-align: start;
