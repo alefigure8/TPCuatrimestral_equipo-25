@@ -17,6 +17,9 @@
                 <a href="Main.aspx" class="nav-link active" aria-current="page">Inicio
                 </a>
             </li>
+            <!-- Si el usuario es Gerente o Admin pueden ver las mesas-->
+            <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                { %>
             <li class="mb-1">
                 <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#otro-collapse" aria-bs-expanded="true">Mesas
                 </a>
@@ -28,6 +31,7 @@
                     </ul>
                 </div>
             </li>
+            <%}%>
             <li class="mb-1">
                 <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#productos-collapse" aria-bs-expanded="true">Productos
                 </a>
