@@ -16,7 +16,7 @@
 <link href="../Content/Estilos.css" rel="stylesheet" />
 
 </head>
-<body>
+<body class="bg-gray-600">
     <form id="form1" runat="server">
         <div class="row">
 
@@ -24,7 +24,7 @@
             <uc:navside runat="server" id="Navside" />
 
             <%--Main--%>
-            <main class="col">
+            <main class="col-2 col-sm-10 p-3">
                 <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
                 </asp:ContentPlaceHolder>
             </main>
