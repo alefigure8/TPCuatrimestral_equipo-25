@@ -42,7 +42,7 @@
                         <asp:BoundColumn DataField="Cierre" HeaderText="Cierre" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
                         <asp:TemplateColumn HeaderText="Estado">
                             <ItemTemplate>
-                               <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
+                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
                             </ItemTemplate>
                             <ItemStyle CssClass="bg-light p-2 rounded" />
                             <HeaderStyle CssClass="bg-light p-2 rounded" />
@@ -73,23 +73,89 @@
             </div>
         </div>
         <% }
-            
+
             if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
 
             {%>
 
-            <div class="col">
-                <div class="row bg-white">
-                <div class="row h2"> Mis mesas </div>
+        <div class="col">
+
+            <div class="row bg-white">
+                <div class="row h2">Mis mesas </div>
                 <div class="row h2">[Display mesas disponibles/ocupadas]</div>
-                </div>
-                <br>
-                <div class="row bg-white">
-                <div class="row h2"> Mis pedidos en curso </div>
-                <div class="row h2"> </div>
+            </div>
+
+            <br>
+
+            <div class="row bg-white">
+
+                <div class="row h2">Mis pedidos en curso </div>
+
+                <div class="col d-inline-flex p-2  justify-content-around">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">
+                                Mesa ## | Pedido ## | Estado 
+                                <br />
+                                <button class="btn btn-dark">Detalle</button>
+                                <button class="btn btn-dark">Cerrar</button>
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
+                                <div class="col d-inline-flex p-2  justify-content-around">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">
+                                Mesa ## | Pedido ## | Estado 
+                                <br />
+                                <button class="btn btn-dark">Detalle</button>
+                                <button class="btn btn-dark">Cerrar</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                                <div class="col d-inline-flex p-2  justify-content-around">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text">
+                                Mesa ## | Pedido ## | Estado 
+                                <br />
+                                <button class="btn btn-dark">Detalle</button>
+                                <button class="btn btn-dark">Cerrar</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
+
+            <br />
+
+            <div class="row bg-white">
+                <h2 class="h2">Menú Disponible:</h2>
+                <asp:Repeater runat="server" ID="MenuDelDia">
+                    <ItemTemplate>
+                        <div class="row">
+                            <h5 class="card-title"><%#Eval("Nombre")%> </h5>
+                            <br />
+                            <p class="small">
+                                Tiempo Cocción: <%#Eval("TiempoCoccion")%>  |   |   
+                                Valor: $<%#Eval("Valor")%>
+                            </p>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+            </div>
+
+
+            </div>
+               
+
+        </div>
 
 
 
@@ -97,7 +163,6 @@
 
 
         <% } %>
-
     </div>
 
 

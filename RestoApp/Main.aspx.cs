@@ -40,7 +40,7 @@ namespace RestoApp
 			//CONTENIDO MESERO
 			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
 			{
-
+				CargarMenuDisponible();
 			}
 		}
 
@@ -119,5 +119,14 @@ namespace RestoApp
 			datagridPedidos.DataSource = dataTable;
 			datagridPedidos.DataBind();
 		}
+
+		// VISTA MESERO
+		private void CargarMenuDisponible()
+		{
+            ProductoNegocio productoNegocio = new ProductoNegocio();
+            Session.Add("ProductosDisponibles", productoNegocio.ListarProductos());
+            MenuDelDia.DataSource = Session["ProductosDisponibles"];
+            MenuDelDia.DataBind();
+        }
 	}
 }
