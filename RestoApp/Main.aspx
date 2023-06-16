@@ -78,38 +78,57 @@
 
             {%>
 
-        <div class="col">
+        <div class="row p-3 justify-content-between ">
 
-            <div class="row bg-white rounded">
-                <div class="row h2">Mis mesas </div>
+            <div class="row bg-white rounded p-2 justify-content-around">
+
+                <div class="row h3">Mis mesas </div>
 
 
-                <div class="row justify-content-around">
+                <div class="row justify-content-around justify-items-start p-3">
 
                     
-                 <div class="col-2 status-free rounded">
+                    <div class="col-2">
+                 <div class=" status-free rounded p-3">
                     Mesa #02
+                     <p>(Disponible)</p>
                     </div>
-                      <div class="col-2 status-busy rounded">
+                    <button class="btn btn-dark">Abrir </button>
+                        </div>
+                    
+                     <div class="col-2">
+                 <div class=" status-busy rounded p-3">
                     Mesa #05
+                     <p>(Ocupada)</p>
                     </div>
+                    <button class="btn btn-dark">Cerrar </button>
+                        </div>
 
-                 <div class="col-2 status-busy rounded">
+                 <div class="col-2">
+                 <div class=" status-busy rounded p-3">
                     Mesa #07
+                     <p>(Ocupada)</p>
                     </div>
+                     <a class="btn btn-dark">Cerrar</a>
+                 </div>
 
-                 <div class="col-2 status-free rounded">
+
+                 <div class="col-2">
+                 <div class=" status-free rounded p-3">
                     Mesa #12
+                     <p>(Disponible)</p>
                     </div>
+                    <button class="btn btn-dark">Abrir </button>
+                        </div>
                 </div>
               
             </div>
+            
+            <div><br /></div>
 
-            <br>
+            <div class="row bg-white rounded p-3 justify-content-around">
 
-            <div class="row bg-white rounded">
-
-                <div class="row h2">Mis pedidos en curso </div>
+                <div class="row h3">Mis pedidos en curso </div>
 
                 <div class="col d-inline-flex p-2  justify-content-around">
                     <div class="card">
@@ -155,15 +174,16 @@
 
             <br />
 
-            <div class="row bg-white rounded">
-                <h2 class="h2">Menú Disponible:</h2>
+            <div><br /></div>
+            <div class="row bg-white rounded p-3">
+                <h2 class="h3">Menú Disponible:</h2>
                 <asp:Repeater runat="server" ID="MenuDelDia">
                     <ItemTemplate>
                         <div class="row">
                             <h5 class="card-title"><%#Eval("Nombre")%> </h5>
                             <br />
-                            <p class="small">
-                                Tiempo Cocción: <%#Eval("TiempoCoccion")%>  |   |   
+                            <p class="small text-gray-600">
+                                Tiempo Cocción: <%#Eval("TiempoCoccion")%>  -    
                                 Valor: $<%#Eval("Valor")%>
                             </p>
                         </div>
