@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Mail;
 using Dominio;
+using Helper;
 using Negocio;
 using Opciones;
 
@@ -15,6 +16,7 @@ namespace RestoApp
 		{
 			if (Session[Configuracion.Session.Error] != null)
 			{
+				//Mostramos el error
 				lbl_error.Text = (string)Session[Configuracion.Session.Error];
 			}
 		}
@@ -32,11 +34,7 @@ namespace RestoApp
 				UsuarioNegocio usuariosNegocio = new UsuarioNegocio();
 				usuario = usuariosNegocio.BuscarUsuario(mail, pass);
 
-				if (usuario == null)
-				{
-					lbl_error.Text = Mensajes.Login.DatosIncorrectos;
-				}
-				else
+				if (AutentificacionUsuario.esUser(usuario))
 				{
 					//Borramos password
 					usuario.Password = null;
@@ -44,6 +42,10 @@ namespace RestoApp
 					Session[Configuracion.Session.Usuario] = usuario;
 					//Redirigimos a Panel
 					Response.Redirect(Configuracion.Pagina.Main, false);
+				}
+				else
+				{
+					lbl_error.Text = Mensajes.Login.DatosIncorrectos;
 				}
 			}
 			else
@@ -54,6 +56,7 @@ namespace RestoApp
 
 		}
 
+		//Validamos Mails y Password
 		private bool ValidarDatos(string mail, string pass)
 		{
 			if (!String.IsNullOrEmpty(mail) && !String.IsNullOrEmpty(pass))

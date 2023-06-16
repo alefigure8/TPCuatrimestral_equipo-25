@@ -1,6 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Navside.ascx.cs" Inherits="RestoApp.Layouts.Navside" %>
 
-<nav class="col-sm col-lg-2">
+<nav class="col-sm col-lg-2 min-vh-100">
     <div
         class="d-flex flex-column p-3 text-white bg-dark h-100"
         ">
@@ -23,8 +23,7 @@
                 <div class="collapse " id="otro-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                         <li><a href="Mesas.aspx" class="nav-link ps-3">Asignar Mesas</a></li>
-                        <li><a href="#" class="nav-link ps-3">Opcion 2</a></li>
-                        <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
+                        <li><a href="MesaHabilitar.aspx" class="nav-link ps-3">Habilitar Mesas</a></li>
                         <li><a href="#" class="nav-link ps-3">Configuración</a></li>
                     </ul>
                 </div>
@@ -35,18 +34,6 @@
                 <div class="collapse" id="productos-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                         <li><a href="Productos.aspx" class="nav-link ps-3">Administrar Productos</a></li>
-                        <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
-                        <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li class="mb-1">
-                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#mesa-collapse" aria-bs-expanded="true">Mesa
-                </a>
-                <div class="collapse" id="mesa-collapse">
-                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                        <li><a href="#" class="nav-link ps-3">Opcion 1</a></li>
-                        <li><a href="#" class="nav-link ps-3">Opcion 2</a></li>
                         <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
                         <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
                     </ul>

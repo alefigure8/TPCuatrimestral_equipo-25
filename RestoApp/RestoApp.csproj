@@ -74,6 +74,7 @@
     <Content Include="Layouts\Navside.ascx" />
     <Content Include="Main.aspx" />
     <Content Include="Menu.aspx" />
+    <Content Include="MesaHabilitar.aspx" />
     <Content Include="Usuarios.aspx" />
     <Content Include="Mesas.aspx" />
     <Content Include="Productos.aspx" />
@@ -124,6 +125,13 @@
     </Compile>
     <Compile Include="Menu.aspx.designer.cs">
       <DependentUpon>Menu.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MesaHabilitar.aspx.cs">
+      <DependentUpon>MesaHabilitar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MesaHabilitar.aspx.designer.cs">
+      <DependentUpon>MesaHabilitar.aspx</DependentUpon>
     </Compile>
     <Compile Include="Mesas.aspx.cs">
       <DependentUpon>Mesas.aspx</DependentUpon>
