@@ -20,22 +20,27 @@
         <div class="row">
             
         <div class="col-2 ">
-            <div class="row p-1">
-            <asp:DropDownList ID="DDLEstado" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
+
+            <div class="row">
+            <asp:DropDownList ID="DDLEstado" runat="server" CssClass="row-2 btn btn-dark btn-sm"></asp:DropDownList>
             </div>
 
-        <div class="row p-1">
-            <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
+        <div class="row mt-2">
+            <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="row-2 btn btn-dark btn-sm"></asp:DropDownList>
         </div>
+
         </div>
 
 
 
            <div class="col-2">
                <div class="row-2 ">
-                   PRECIO
-                   <asp:TextBox runat="server" CssClass=" col-md-2"></asp:TextBox>
-                   - <asp:TextBox runat="server" CssClass=" col-md-2"></asp:TextBox>
+                   <asp:Panel ID="PanelValor" runat="server">
+                       <label>VALOR</label>
+                   <asp:TextBox ID="tbPrecioMenor" runat="server" CssClass="col-md-2"></asp:TextBox>
+                         <label> - </label>
+                   <asp:TextBox ID="tbPrecioMayor" runat="server" CssClass="col-md-2"></asp:TextBox>
+                       </asp:Panel>
                </div>
                   <div class="row-2 mt-2">
                      <asp:DropDownList ID="DDLPrecios" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
@@ -43,9 +48,12 @@
             </div>
           <div class="col-2">
                <div class="row-2 ">
-                   STOCK
-                   <asp:TextBox runat="server" CssClass=" col-md-2"></asp:TextBox>
-                   - <asp:TextBox runat="server" CssClass=" col-md-2"></asp:TextBox>
+                   <asp:Panel ID="PanelStock" runat="server">
+                       <label>STOCK</label>
+                    <asp:TextBox ID="tbStockMenor" runat="server" CssClass="col-md-3"></asp:TextBox>
+                      <label> - </label>
+                   <asp:TextBox ID="tbStockMayor" runat="server" CssClass="col-md-3"></asp:TextBox>
+                   </asp:Panel>
                </div>
                   <div class="row-2 mt-2">
                      <asp:DropDownList ID="DDLStock" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
@@ -73,7 +81,8 @@
         </div>
 
              <div class="row bg-white rounded m-2 p-4">
-                 <asp:GridView ID="GVProductos" CssClass="table" runat="server">
+                 <asp:GridView ID="GVProductos" CssClass="table" runat="server" AutoGenerateColumns="false">
+
                      
 
                  </asp:GridView>

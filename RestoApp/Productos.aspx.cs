@@ -23,14 +23,26 @@ namespace RestoApp
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
-            if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
+            if (!IsPostBack)
             {
                 IniciarDDL();
                 ListarProductos();
             }
-        }
 
-        protected void IniciarDDL()
+            if (AutentificacionUsuario.esGerente(usuario))
+            {
+               
+            }
+            if (AutentificacionUsuario.esMesero(usuario))
+            {
+                NoEsGerente();
+            }
+
+
+
+            }
+
+            protected void IniciarDDL()
         {
             CargarDDLEstado();
             CargarDDLCategorias();
@@ -87,6 +99,13 @@ namespace RestoApp
             GVProductos.DataBind();
         }
 
+        public void NoEsGerente()
+        {
+            DDLEstado.Visible = false;
+            PanelValor.Visible = false;
+            PanelStock.Visible = false;
+
+        }
 
 
     }

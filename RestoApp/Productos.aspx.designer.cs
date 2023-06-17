@@ -42,6 +42,33 @@ namespace RestoApp
         protected global::System.Web.UI.WebControls.DropDownList DDLCategorias;
 
         /// <summary>
+        /// PanelValor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelValor;
+
+        /// <summary>
+        /// tbPrecioMenor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbPrecioMenor;
+
+        /// <summary>
+        /// tbPrecioMayor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbPrecioMayor;
+
+        /// <summary>
         /// DDLPrecios control.
         /// </summary>
         /// <remarks>
@@ -49,6 +76,33 @@ namespace RestoApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList DDLPrecios;
+
+        /// <summary>
+        /// PanelStock control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelStock;
+
+        /// <summary>
+        /// tbStockMenor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbStockMenor;
+
+        /// <summary>
+        /// tbStockMayor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbStockMayor;
 
         /// <summary>
         /// DDLStock control.
