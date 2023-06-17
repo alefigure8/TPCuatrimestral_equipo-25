@@ -61,5 +61,24 @@ namespace Opciones
 			public const string TiempoCoccion = "TiempoCoccion";
 			public const string DB = "Productos";
         }
-    }
+
+		public struct MesasPorDia
+		{
+			public const string Id = "IdMesaPorDia";
+			public const string IdMesa = "IdMesa";
+			public const string Fecha = "Fecha";
+			public const string IdMesero = "IdMesero";
+			public const string DB = "MesasPorDia";
+		}
+
+		public struct MeseroPorDia
+		{
+			public const string Id = "IdMeseroPorDia";
+			public const string IdMesero = "IdMesero";
+			public const string Fecha = "Fecha";
+			public const string Ingreso = "Ingreso";
+			public const string Salida = "Salida";
+			public const string DB = "MeseroPorDia";
+		}
+	}
 }

@@ -69,15 +69,93 @@ namespace Negocio
 			}
 		}
 
-		public void ListarMeseroPorDia()
+		public List<MeseroPorDia> ListaMeseroPorDia()
 		{
-			//Listar los meseros activos.
-			//Activos son los que tengan fecha de ingreso pero no de salida
+			List<MeseroPorDia> mesas = new List<MeseroPorDia>();
+			AccesoDB datos = new AccesoDB();
+			
+			try
+			{
+				
+				datos.setQuery($"SELECT {ColumnasDB.MeseroPorDia.Id}, {ColumnasDB.MeseroPorDia.IdMesero}, {ColumnasDB.MeseroPorDia.Fecha}, {ColumnasDB.MeseroPorDia.Ingreso}, {ColumnasDB.MeseroPorDia.Salida} FROM {ColumnasDB.MeseroPorDia.DB}");
+				datos.executeReader();
+
+				while (datos.Reader.Read())
+				{
+					MeseroPorDia auxMesa = new MeseroPorDia();
+					//ID
+					auxMesa.Id = (Int32)datos.Reader[ColumnasDB.MeseroPorDia.Id];
+					
+					//MESERO
+					if (datos.Reader[ColumnasDB.MeseroPorDia.IdMesero] != null)
+						auxMesa.IdMesero = (Int32)datos.Reader[ColumnasDB.MeseroPorDia.IdMesero];
+
+					//FECHA
+					if (datos.Reader[ColumnasDB.MeseroPorDia.Fecha] != null)
+						auxMesa.Fecha = (DateTime)datos.Reader[ColumnasDB.MeseroPorDia.Fecha];
+
+					//INGRESO
+					if (datos.Reader[ColumnasDB.MeseroPorDia.Ingreso] != null)
+						auxMesa.Ingreso = (DateTime)datos.Reader[ColumnasDB.MeseroPorDia.Ingreso];
+
+					//SALIDA
+					if (datos.Reader[ColumnasDB.MeseroPorDia.Salida] != null)
+						auxMesa.Salida = (DateTime)datos.Reader[ColumnasDB.MeseroPorDia.Salida];
+
+					mesas.Add(auxMesa);
+				}
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+			
+			return mesas;
 		}
 
-		public void ModificarMeseroPorDia(int id, DateTime ingreso, DateTime? salida = null)
+		public int CrearMeseroPorDia(MeseroPorDia meseroPorDia)
 		{
-			//Logica para dar de alta o baja un empleadp
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				datos.setQuery($"INSERT INTO {ColumnasDB.MeseroPorDia.DB} ({ColumnasDB.MeseroPorDia.IdMesero}, {ColumnasDB.MeseroPorDia.Fecha}, {ColumnasDB.MeseroPorDia.Ingreso}, {ColumnasDB.MeseroPorDia.Salida}) " +
+					$"VALUES ({meseroPorDia.IdMesero}, {meseroPorDia.Fecha}, {meseroPorDia.Ingreso}, {meseroPorDia.Salida})");
+				int id = datos.executeScalar();
+
+				return id;
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+
+			}
 		}
-	}
+
+		public void ModificarMeseroPorDia(int id, DateTime? salida = null)
+		{
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				datos.setQuery($"UPDATE {ColumnasDB.MeseroPorDia.DB} SET {ColumnasDB.MeseroPorDia.Salida} = {salida} WHERE {ColumnasDB.MeseroPorDia.Id} = {id}");
+				datos.executeNonQuery();
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+
+			}
+		}
 }
+	
