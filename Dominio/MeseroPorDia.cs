@@ -10,8 +10,10 @@ namespace Dominio
 	{
         public int Id { get; set; }
         public int IdMesero { get; set; }
+		public string Nombres { get; set; }
+		public string Apellidos { get; set; }
 		public DateTime Fecha { get; set; }
-		public DateTime Ingreso { get; set; }
-		public DateTime Salida { get; set; }
+		public TimeSpan Ingreso { get; set; }
+		public TimeSpan Salida { get; set; }
 	}
 }

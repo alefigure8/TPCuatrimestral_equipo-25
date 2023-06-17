@@ -76,33 +76,35 @@ namespace Negocio
 
 			try
 			{
-
-				datos.setQuery($"SELECT {ColumnasDB.MeseroPorDia.Id}, {ColumnasDB.MeseroPorDia.IdMesero}, {ColumnasDB.MeseroPorDia.Fecha}, {ColumnasDB.MeseroPorDia.Ingreso}, {ColumnasDB.MeseroPorDia.Salida} FROM {ColumnasDB.MeseroPorDia.DB}");
+				datos.setQuery($"SELECT {ColumnasDB.MeseroPorDia.Id}, {ColumnasDB.MeseroPorDia.IdMesero}, {ColumnasDB.MeseroPorDia.Fecha}, {ColumnasDB.MeseroPorDia.Ingreso}, {ColumnasDB.MeseroPorDia.Salida}, {ColumnasDB.Usuario.Nombres},{ColumnasDB.Usuario.Apellidos} " +
+					$"FROM {ColumnasDB.MeseroPorDia.DB} " +
+					$"INNER JOIN {ColumnasDB.Usuario.DB} " +
+					$"ON {ColumnasDB.MeseroPorDia.IdMesero} = {ColumnasDB.Usuario.Id}");
 				datos.executeReader();
 
 				while (datos.Reader.Read())
 				{
-					MeseroPorDia auxMesa = new MeseroPorDia();
+					MeseroPorDia auxMesero = new MeseroPorDia();
 					//ID
-					auxMesa.Id = (Int32)datos.Reader[ColumnasDB.MeseroPorDia.Id];
+					auxMesero.Id = (Int32)datos.Reader[ColumnasDB.MeseroPorDia.Id];
 
 					//MESERO
 					if (datos.Reader[ColumnasDB.MeseroPorDia.IdMesero] != null)
-						auxMesa.IdMesero = (Int32)datos.Reader[ColumnasDB.MeseroPorDia.IdMesero];
+						auxMesero.IdMesero = (Int32)datos.Reader[ColumnasDB.MeseroPorDia.IdMesero];
 
 					//FECHA
 					if (datos.Reader[ColumnasDB.MeseroPorDia.Fecha] != null)
-						auxMesa.Fecha = (DateTime)datos.Reader[ColumnasDB.MeseroPorDia.Fecha];
+						auxMesero.Fecha = (DateTime)datos.Reader[ColumnasDB.MeseroPorDia.Fecha];
 
 					//INGRESO
 					if (datos.Reader[ColumnasDB.MeseroPorDia.Ingreso] != null)
-						auxMesa.Ingreso = (DateTime)datos.Reader[ColumnasDB.MeseroPorDia.Ingreso];
+						auxMesero.Ingreso  = (TimeSpan)datos.Reader[ColumnasDB.MeseroPorDia.Ingreso];
 
 					//SALIDA
 					if (datos.Reader[ColumnasDB.MeseroPorDia.Salida] != null)
-						auxMesa.Salida = (DateTime)datos.Reader[ColumnasDB.MeseroPorDia.Salida];
+						auxMesero.Salida = (TimeSpan)datos.Reader[ColumnasDB.MeseroPorDia.Salida];
 
-					mesas.Add(auxMesa);
+					mesas.Add(auxMesero);
 				}
 			}
 			catch (Exception Ex)
@@ -120,42 +122,50 @@ namespace Negocio
 		public int CrearMeseroPorDia(MeseroPorDia meseroPorDia)
 		{
 			AccesoDB datos = new AccesoDB();
+			int id = 0;
+			
+			if (meseroPorDia.Id == 0)
+			{
+				try
+				{
+					datos.setQuery($"INSERT INTO {ColumnasDB.MeseroPorDia.DB} ({ColumnasDB.MeseroPorDia.IdMesero}, {ColumnasDB.MeseroPorDia.Fecha}, {ColumnasDB.MeseroPorDia.Ingreso}, {ColumnasDB.MeseroPorDia.Salida}) " +
+						$"VALUES ({meseroPorDia.IdMesero}, '{meseroPorDia.Fecha.ToString("yyyy-MM-dd")}', '{meseroPorDia.Ingreso}', '{meseroPorDia.Salida}')"
+					+ "SELECT CAST(scope_identity() AS int)");
+					id = datos.executeScalar();
+
+				}
+				catch (Exception Ex)
+				{
+					throw Ex;
+				}
+				finally
+				{
+					datos.closeConnection();
+				}
+			}
+
+			return id;
+		}
+
+		public bool ModificarMeseroPorDia(int id, TimeSpan? salida = null)
+		{
+			AccesoDB datos = new AccesoDB();
 
 			try
 			{
-				datos.setQuery($"INSERT INTO {ColumnasDB.MeseroPorDia.DB} ({ColumnasDB.MeseroPorDia.IdMesero}, {ColumnasDB.MeseroPorDia.Fecha}, {ColumnasDB.MeseroPorDia.Ingreso}, {ColumnasDB.MeseroPorDia.Salida}) " +
-					$"VALUES ({meseroPorDia.IdMesero}, {meseroPorDia.Fecha}, {meseroPorDia.Ingreso}, {meseroPorDia.Salida})");
-				int id = datos.executeScalar();
-
-				return id;
+				datos.setQuery($"UPDATE {ColumnasDB.MeseroPorDia.DB} SET {ColumnasDB.MeseroPorDia.Salida} = '{salida}' WHERE {ColumnasDB.MeseroPorDia.Id} = {id}");
+				return datos.executeNonQuery();
 			}
 			catch (Exception Ex)
 			{
+				return false;
 				throw Ex;
 			}
 			finally
 			{
 				datos.closeConnection();
 			}
-		}
 
-		public void ModificarMeseroPorDia(int id, DateTime? salida = null)
-		{
-			AccesoDB datos = new AccesoDB();
-
-			try
-			{
-				datos.setQuery($"UPDATE {ColumnasDB.MeseroPorDia.DB} SET {ColumnasDB.MeseroPorDia.Salida} = {salida} WHERE {ColumnasDB.MeseroPorDia.Id} = {id}");
-				datos.executeNonQuery();
-			}
-			catch (Exception Ex)
-			{
-				throw Ex;
-			}
-			finally
-			{
-
-			}
 		}
 	}
 }

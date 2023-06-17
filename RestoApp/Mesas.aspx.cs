@@ -17,6 +17,7 @@ namespace RestoApp
 	{
 		public static List<Mesa> mesas;
 		public List<Usuario> meseros = new List<Usuario>();
+		public List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
 		public Usuario usuario { get; set; }
 
 		protected void Page_Load(object sender, EventArgs e)
@@ -76,12 +77,15 @@ namespace RestoApp
 			UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
 			meseros = usuarioNegocio.ListarMeseros();
 
+			MesaNegocio mesaNegocio = new MesaNegocio();
+			meserosPorDia = mesaNegocio.ListaMeseroPorDia();
+
 			foreach (Usuario mesero in meseros)
 			{
 				mesero.Password = null;
 			}
 
-			repeaterMeseros.DataSource = meseros;
+			repeaterMeseros.DataSource = meserosPorDia;
 			repeaterMeseros.DataBind();
 		}
 

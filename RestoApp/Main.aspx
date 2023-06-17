@@ -14,7 +14,7 @@
                 <!-- Boton Mesero -->
                 <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
                     { %>
-                <asp:Button CssClass="btn btn-warning btn-sm" Text="Darse de Alta" runat="server" ID="btnMeseroAlta" />
+                <asp:Button CssClass="btn btn-sm" Text="Darse de Alta" runat="server" ID="btnMeseroAlta" OnClick="btnMeseroAlta_Click" />
                 <%} %>
                 <!-- Fin Boton Mesero -->
             </div>

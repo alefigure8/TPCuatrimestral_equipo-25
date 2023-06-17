@@ -17,6 +17,7 @@ namespace Opciones
 		public struct Session
 		{
 			public const string Usuario = "usuario";
+			public const string MeseroPorDia = "MeseroPorDia";
 			public const string Error = "error";
 		}
 	}

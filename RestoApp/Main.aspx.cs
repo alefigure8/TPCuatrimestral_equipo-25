@@ -19,15 +19,20 @@ namespace RestoApp
 	public partial class Main1 : System.Web.UI.Page
 	{
 		public Usuario usuario { get; set; }
-        public int MesasActivas { get; set; }
+		public MeseroPorDia meseroPorDia { get; set; }
+
+		public int MesasActivas { get; set; }
         public int MesasAsignadas { get; set; }
 		private List<Mesa> mesas;
-		
-        protected void Page_Load(object sender, EventArgs e)
+		private List<MeseroPorDia> meserosPorDia;
+
+		protected void Page_Load(object sender, EventArgs e)
 		{
 			//Verificar que sea usuario
 			if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
 				usuario = (Usuario)Session[Configuracion.Session.Usuario];
+
+
 
 			// CONTENIDO GERENTE
 			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
@@ -40,7 +45,12 @@ namespace RestoApp
 			//CONTENIDO MESERO
 			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
 			{
+				//Verificamos que si ya está en memoria el meseropordia
+				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
+					meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
+
 				CargarMenuDisponible();
+				CargarMeseroPorDia();
 			}
 		}
 
@@ -128,5 +138,88 @@ namespace RestoApp
             MenuDelDia.DataSource = Session["ProductosDisponibles"];
             MenuDelDia.DataBind();
         }
-	}
+
+		private void CargarMeseroPorDia()
+		{
+			List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
+			MesaNegocio mesaNegocio = new MesaNegocio();
+
+			meserosPorDia = mesaNegocio.ListaMeseroPorDia();
+
+			//Verificamos si hay un mesero con el mismo id, el mismo día y con fecha de salida en 0 que ya esté dado de alta
+			meseroPorDia = meserosPorDia.Find(mesero => mesero.IdMesero == usuario.Id && DateTime.Now.ToString("yyyy-MM-dd") == mesero.Fecha.ToString("yyyy-MM-dd") && mesero.Salida == new TimeSpan(0,0,0));
+
+			if(meseroPorDia != null)
+			{
+				Session[Configuracion.Session.MeseroPorDia] = meseroPorDia;
+
+				if (meseroPorDia.Id > 0)
+				{
+					btnMeseroAlta.Text = "Darse de Baja";
+					btnMeseroAlta.CssClass = "btn btn-sm btn-light";
+				}
+			}
+			else
+			{
+				btnMeseroAlta.Text = "Darse de Alta";
+				btnMeseroAlta.CssClass = "btn btn-sm btn-warning";
+			}
+		}
+
+		protected void btnMeseroAlta_Click(object sender, EventArgs e)
+        {
+			usuario = (Usuario)Session[Configuracion.Session.Usuario];
+			meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
+
+			if (meseroPorDia == null)
+			{
+				//Darse de Alta
+				try
+				{
+					meseroPorDia = new MeseroPorDia();
+					meseroPorDia.IdMesero = usuario.Id;
+					meseroPorDia.Nombres = usuario.Nombres;
+					meseroPorDia.Apellidos = usuario.Apellidos;
+					meseroPorDia.Fecha = DateTime.Now;
+					meseroPorDia.Ingreso = DateTime.Now.TimeOfDay;
+
+					MesaNegocio mesaNegocio = new MesaNegocio();
+					meseroPorDia.Id = mesaNegocio.CrearMeseroPorDia(meseroPorDia);
+
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex);
+				}
+
+				if (meseroPorDia.Id > 0)
+				{
+					btnMeseroAlta.Text = "Darse de Baja";
+					btnMeseroAlta.CssClass = "btn btn-sm btn-light";
+					Session[Configuracion.Session.MeseroPorDia] = meseroPorDia;
+				}
+			}
+			else
+			{
+				//Darse de baja
+				try
+				{
+					MesaNegocio mesaNegocio = new MesaNegocio();
+					bool esBaja = mesaNegocio.ModificarMeseroPorDia(meseroPorDia.Id, DateTime.Now.TimeOfDay);
+
+					if(esBaja)
+					{
+						btnMeseroAlta.Text = "Darse de Alta";
+						btnMeseroAlta.CssClass = "btn btn-sm btn-warning";
+						meseroPorDia = null;
+						Session[Configuracion.Session.MeseroPorDia] = null;
+					}
+				}
+				catch(Exception ex)
+				{
+					Console.WriteLine(ex);
+				}
+			}
+		}
+    }
 }
