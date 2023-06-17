@@ -2,12 +2,11 @@
 
 <nav class="col-sm col-lg-2 min-vh-100">
     <div
-        class="d-flex flex-column p-3 text-white bg-dark h-100"
-        ">
+        class="d-flex flex-column p-3 text-white bg-dark h-100">
         <a
             href="/"
             class="d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none w-100">
-                <img src="/Content/Image/logo.jpg" style="width: 150px; height: 150px;" class="rounded-circle mb-3"/>
+            <img src="/Content/Image/logo.jpg" style="width: 150px; height: 150px;" class="rounded-circle mb-3" />
         </a>
         <hr />
         <ul class="list-unstyled ps-0">
@@ -41,7 +40,7 @@
                     </ul>
                 </div>
             </li>
-             <li class="mb-1">
+            <li class="mb-1">
                 <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#usuarios-collapse" aria-bs-expanded="true">Usuarios
                 </a>
                 <div class="collapse" id="usuarios-collapse">
@@ -52,10 +51,10 @@
                     </ul>
                 </div>
             </li>
-              <li class="mb-1">
+            <li class="mb-1">
                 <a class="btn btn-toggle align-items-center rounded collapsed text-light" aria-bs-expanded="true" href="Menu.aspx">Menú Cliente
                 </a>
-                  </li>
+            </li>
         </ul>
         <hr />
         <div class="dropdown">
@@ -71,7 +70,14 @@
                     class="rounded-circle me-2"
                     width="32"
                     height="32" />
-                <strong><%= usuario?.Mail %></strong>
+                <strong><%= usuario?.Mail %>
+                    <!-- Estado del mesero -->
+                    <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+                    { %>
+                    <i class="fa-sharp fa-solid fa-circle text-warning"></i>
+                    <%} %>
+                    <!-- Fin Estado del mesero -->
+                </strong>
             </a>
             <ul
                 class="dropdown-menu dropdown-menu-dark text-small shadow"
