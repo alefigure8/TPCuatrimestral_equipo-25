@@ -68,5 +68,16 @@ namespace Negocio
 				datos.closeConnection();
 			}
 		}
+
+		public void ListarMeseroPorDia()
+		{
+			//Listar los meseros activos.
+			//Activos son los que tengan fecha de ingreso pero no de salida
+		}
+
+		public void ModificarMeseroPorDia(int id, DateTime ingreso, DateTime? salida = null)
+		{
+			//Logica para dar de alta o baja un empleadp
+		}
 	}
 }

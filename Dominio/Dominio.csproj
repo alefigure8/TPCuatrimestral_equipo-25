@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="CategoriaProducto.cs" />
     <Compile Include="Mesa.cs" />
+    <Compile Include="MeseroPorDia.cs" />
     <Compile Include="Producto.cs" />
     <Compile Include="ProductoDelDia.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
