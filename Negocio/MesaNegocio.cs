@@ -29,7 +29,7 @@ namespace Negocio
 					//NOMBRES
 					if (datos.Reader[ColumnasDB.Mesa.Capacidad] != null)
 						auxMesa.Capacidad = (Int32)datos.Reader[ColumnasDB.Mesa.Capacidad];
-					
+
 					//APELLIDOS
 					if (datos.Reader[ColumnasDB.Mesa.Activo] != null)
 						auxMesa.Activo = (bool)datos.Reader[ColumnasDB.Mesa.Activo];
@@ -38,7 +38,7 @@ namespace Negocio
 				}
 			}
 			catch (Exception Ex)
-			{ 
+			{
 				throw Ex;
 			}
 			finally
@@ -47,9 +47,9 @@ namespace Negocio
 			}
 
 			return mesas;
-			
+
 		}
-		
+
 		public void ActivarMesasPorNumero(int numero, int activo)
 		{
 			AccesoDB datos = new AccesoDB();
@@ -59,7 +59,7 @@ namespace Negocio
 				datos.setQuery($"UPDATE {ColumnasDB.Mesa.DB} SET {ColumnasDB.Mesa.Activo} = {activo} WHERE {ColumnasDB.Mesa.Numero} = {numero}");
 				datos.executeNonQuery();
 			}
-			catch(Exception Ex)
+			catch (Exception Ex)
 			{
 				throw Ex;
 			}
@@ -73,10 +73,10 @@ namespace Negocio
 		{
 			List<MeseroPorDia> mesas = new List<MeseroPorDia>();
 			AccesoDB datos = new AccesoDB();
-			
+
 			try
 			{
-				
+
 				datos.setQuery($"SELECT {ColumnasDB.MeseroPorDia.Id}, {ColumnasDB.MeseroPorDia.IdMesero}, {ColumnasDB.MeseroPorDia.Fecha}, {ColumnasDB.MeseroPorDia.Ingreso}, {ColumnasDB.MeseroPorDia.Salida} FROM {ColumnasDB.MeseroPorDia.DB}");
 				datos.executeReader();
 
@@ -85,7 +85,7 @@ namespace Negocio
 					MeseroPorDia auxMesa = new MeseroPorDia();
 					//ID
 					auxMesa.Id = (Int32)datos.Reader[ColumnasDB.MeseroPorDia.Id];
-					
+
 					//MESERO
 					if (datos.Reader[ColumnasDB.MeseroPorDia.IdMesero] != null)
 						auxMesa.IdMesero = (Int32)datos.Reader[ColumnasDB.MeseroPorDia.IdMesero];
@@ -113,7 +113,7 @@ namespace Negocio
 			{
 				datos.closeConnection();
 			}
-			
+
 			return mesas;
 		}
 
@@ -135,7 +135,7 @@ namespace Negocio
 			}
 			finally
 			{
-
+				datos.closeConnection();
 			}
 		}
 
@@ -157,5 +157,6 @@ namespace Negocio
 
 			}
 		}
+	}
 }
 	
