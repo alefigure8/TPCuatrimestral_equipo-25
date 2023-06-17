@@ -4,184 +4,81 @@
 </asp:Content>
 <asp:Content ID="ContentProductos" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <main class="col bg-white ">
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    FILTRAR POR CATEGORIA
-                    <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="btn bg-dark text-light">
-                    </asp:DropDownList>
-                </div>
 
+    <h4 class="text-gray-100">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
 
-                <div class="col">
-                    RANGO PRECIOS
-                    <asp:TextBox ID="TextBox1" runat="server" CssClass=" col-md-2"></asp:TextBox>
-                    a
-                     <asp:TextBox ID="TextBox2" runat="server" CssClass=" col-md-2"></asp:TextBox>
-                </div>
+    <div class="row bg-white rounded m-2 p-4">
 
+        <div class="row p-2">
+            <div class="col-2"> <p class="h2">Filtrar lista</p> </div>
+            <asp:TextBox CssClass="col m-1 form-control" placeholder="Buscar" id="TxtBuscar" runat="server"></asp:TextBox>
+              <asp:LinkButton runat="server" CssClass="col-2 btn btn-dark m-1"> <i class="fa-solid fa-magnifying-glass"></i></asp:LinkButton>
+        </div>
+      
+        <br /><br />
 
-                <div class="col">
-                    <asp:Button runat="server" Text="Limpiar filtros" class="btn btn-dark" />
-                </div>
+        <div class="row">
+            
+        <div class="col-2 ">
+            <div class="row p-1">
+            <asp:DropDownList ID="DDLEstado" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
             </div>
 
-            <div class="row">
-                <div class="col-4">
-                    VER SOLO
-                       <asp:CheckBox ID="CheckBox3" runat="server" Text="Activos" CssClass="form-check-input" />
-                    <asp:CheckBox ID="CheckBox2" runat="server" Text="Vegano" CssClass="form-check-input" />
-                    <asp:CheckBox ID="CheckBox1" runat="server" Text="Celiaco" CssClass="form-check-input" />
-                </div>
-                <div class="col-4">
-                    ORDENAR
-                    <asp:CheckBox ID="CheckBox5" runat="server" Text="↑valor" CssClass="form-check-input" />
-                    <asp:CheckBox ID="CheckBox7" runat="server" Text="↓valor" CssClass="form-check-input" />
-                    <asp:CheckBox ID="CheckBox4" runat="server" Text="↑stock" CssClass="form-check-input" />
-                    <asp:CheckBox ID="CheckBox6" runat="server" Text="stock↓" CssClass="form-check-input" />
-                </div>
-                <div class="col">
-                    <asp:TextBox ID="TextBox3" runat="server" CssClass=" col" Text="buscar"></asp:TextBox>
-                    <asp:LinkButton class="btn btn-dark" type="button" runat="server"><i class="fa-solid fa-magnifying-glass"></i></asp:LinkButton>
-
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col columna-grilla bg-dark text-white">
-                    <p class="h6">Nombre</p>
-                </div>
-                <div class="col columna-grilla bg-dark text-white">
-                    <p class="h6">Categoria</p>
-                </div>
-                <div class="col columna-grilla bg-dark text-white">
-                    <p class="h6">Valor</p>
-                </div>
-                <div class="col columna-grilla-sm bg-dark text-white">
-                    <p class="h6">Activo</p>
-                </div>
-                <div class="col columna-grilla-sm bg-dark text-white">
-                    <p class="h6">AP. Vegano</p>
-                </div>
-                <div class="col columna-grilla-sm bg-dark text-white">
-                    <p class="h6">Apto Celiaco</p>
-                </div>
-                <div class="col columna-grilla-sm bg-dark text-white">
-                    <p class="h6">Cont. Alcohol</p>
-                </div>
-                <div class="col columna-grilla-sm bg-dark text-white">
-                    <p class="h6">Stock </p>
-                </div>
-                <div class="col columna-grilla-sm bg-dark text-white">
-                    <p class="h6"></p>
-                </div>
-                <div class="col columna-grilla-sm bg-dark text-white">
-                    <p class="h6"></p>
-                </div>
-            </div>
-
-            <div class="row">
-                <asp:ScriptManager runat="server"></asp:ScriptManager>
-                <asp:UpdatePanel runat="server">
-                    <contenttemplate>
-                        <div class="row justify-items-start">
-                            <asp:Repeater runat="server" ID="ProductoRepetidor">
-                                <itemtemplate>
-                                    <div class="row justify-content-start d-flex align-items-start">
-
-                                        <div class="col small columna-grilla">
-                                            <p class="small"><%#Eval("Nombre")%></p>
-                                        </div>
-
-
-                                        <div class="col border-top small columna-grilla">
-                                            <p class="small">
-                                                <%#Eval("Categoria")%>
-                                            </p>
-                                        </div>
-
-
-
-                                        <div class="col border-top small columna-grilla">
-                                            <p class="small">
-                                                <%# String.Format(new System.Globalization.CultureInfo("es-AR"), "{0:C}", Eval("Valor")) %>
-                                            </p>
-                                        </div>
-                                        <div class="col border-top small columna-grilla-sm">
-                                            <p class="small">
-                                                <%# ((bool)Eval("Activo") == true ? "SI" : "NO")%>
-                                            </p>
-                                        </div>
-
-
-                                        <div class="col border-top small columna-grilla-sm">
-                                            <p class="small">
-                                                <%# ((bool)Eval("AptoVegano") == true ? "SI" : "NO")%>
-                                            </p>
-                                        </div>
-
-                                        <div class="col border-top small columna-grilla-sm">
-                                            <p class="small">
-                                                <%# ((bool)Eval("AptoCeliaco") == true ? "SI" : "NO")%>
-                                            </p>
-                                        </div>
-
-                                        <div class="col border-top small columna-grilla-sm">
-                                            <p class="small">
-                                                <%# ((bool)Eval("Alcohol") == true ? "SI" : "NO")%>
-                                            </p>
-                                        </div>
-
-
-                                        <div class="col border-top small columna-grilla-sm">
-                                            <p class="small"><%#Eval("Stock")%></p>
-                                        </div>
-
-                                        <div class="col border-top small columna-grilla">
-                                            <asp:Button Text="Ver Ficha" runat="server" Cssclass=""
-                                                CommandArgument='<%#Eval("Id")%>' CommandName="Id" />
-                                        </div>
-                                    </div>
-                                </itemtemplate>
-                            </asp:Repeater>
-                        </div>
-                    </contenttemplate>
-                </asp:UpdatePanel>
-            </div>
-
-            <div class="row align-items-center justify-content-center fixed-bottom">
-                <div class="col-2 me-2 card btn align-items-center justify-content-center">
-                    <i class="fa fa-cutlery" style="font-size: 5rem;" aria-hidden="true"></i>
-                    <asp:LinkButton ID="LinkButton3" runat="server"
-                        CssClass="h5">
-                        Nuevo Plato
-                    </asp:LinkButton>
-                </div>
-                <div class="col-2 me-2 card btn align-items-center justify-content-center">
-                    <i class="fa fa-wine-glass" style="font-size: 5rem;" aria-hidden="true"></i>
-                    <asp:LinkButton ID="LinkButton1" runat="server"
-                        CssClass="h5">
-                        Nueva Bebida
-                    </asp:LinkButton>
-                </div>
-                <div class="col-2 me-2 card btn align-items-center justify-content-center">
-                    <i class="fa fa-file" aria-hidden="true" style="font-size: 5rem;"></i>
-                    <asp:LinkButton ID="LinkButton2" runat="server"
-                        CssClass="h5">
-                        Categorias
-                    </asp:LinkButton>
-                </div>
-            </div>
-
+        <div class="row p-1">
+            <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
+        </div>
         </div>
 
 
 
+           <div class="col-2">
+               <div class="row-2 ">
+                   PRECIO
+                   <asp:TextBox runat="server" CssClass=" col-md-2"></asp:TextBox>
+                   - <asp:TextBox runat="server" CssClass=" col-md-2"></asp:TextBox>
+               </div>
+                  <div class="row-2 mt-2">
+                     <asp:DropDownList ID="DDLPrecios" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
+                    </div>
+            </div>
+          <div class="col-2">
+               <div class="row-2 ">
+                   STOCK
+                   <asp:TextBox runat="server" CssClass=" col-md-2"></asp:TextBox>
+                   - <asp:TextBox runat="server" CssClass=" col-md-2"></asp:TextBox>
+               </div>
+                  <div class="row-2 mt-2">
+                     <asp:DropDownList ID="DDLStock" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
+                    </div>
+            </div>
 
+                <div class="col-2">
 
-    </main>
+                    <asp:CheckBoxList ID="CheckBoxAtributos" runat="server"></asp:CheckBoxList>
+
+         </div>
+
+        <div class="col-2 p">
+            <div class="row">
+                <asp:Button runat="server" CssClass="btn btn-dark" Text="Aplicar filtros"/>
+            </div>
+               <div class="row pt-1">
+                <asp:Button runat="server" CssClass="btn btn-dark" Text="Limpiar filtros"/>
+            </div>
+        </div>
+        
+
+            </div>
+
+        </div>
+
+             <div class="row bg-white rounded m-2 p-4">
+                 <asp:GridView ID="GVProductos" CssClass="table" runat="server">
+                     
+
+                 </asp:GridView>
+                 </div>
+
 
 
 
