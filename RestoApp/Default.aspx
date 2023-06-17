@@ -23,7 +23,7 @@
                 <div class="d-flex justify-content-center">
                     <asp:Button Text="Acceder" runat="server" OnClick="EnviarDatos_Click" CssClass="btn btn-dark btn-block" />
                 </div>
-                <p class="text-center mt-3 text-gray-600">¿Olvidate la contraseña?</p>
+                <p class="text-center mt-3 text-gray-600">¿Olvidaste tu contraseña?</p>
                 <asp:Label CssClass="text-danger text-center" runat="server" ID="lbl_error" />
             </div>
         </div>
