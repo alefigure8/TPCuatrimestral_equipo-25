@@ -14,6 +14,7 @@ namespace RestoApp.Layouts
 	public partial class Navside : System.Web.UI.UserControl
 	{
 		public Usuario usuario { get; set; }
+		public MeseroPorDia meseroPorDia {get; set;}
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			if (!AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
@@ -23,6 +24,10 @@ namespace RestoApp.Layouts
 			}
 			else
 			{
+				//Verificamos que si ya está en memoria el meseropordia
+				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
+					meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
+
 				if (!IsPostBack)
 				{
 					usuario = (Usuario)Session[Configuracion.Session.Usuario];

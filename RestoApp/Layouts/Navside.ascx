@@ -70,13 +70,20 @@
                     class="rounded-circle me-2"
                     width="32"
                     height="32" />
-                <strong><%= usuario?.Mail %>
-                    <!-- Estado del mesero -->
-                    <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
-                    { %>
-                    <i class="fa-sharp fa-solid fa-circle text-warning"></i>
-                    <%} %>
-                    <!-- Fin Estado del mesero -->
+                <strong class="d-flex align-items-center gap-2"><%= usuario?.Mail %>
+                    <asp:UpdatePanel ID="UpdatePanel1"
+                        runat="server">
+                        <ContentTemplate>
+                            <!-- Estado del mesero -->
+                            <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero && meseroPorDia == null)
+                                { %>
+                             <i class="fa-sharp fa-solid fa-circle text-warning"></i>
+                            <%} else if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero) { %>
+                            <i class="fa-sharp fa-solid fa-circle text-success"></i>
+                            <%} %>
+                            <!-- Fin Estado del mesero -->
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
                 </strong>
             </a>
             <ul
