@@ -4,7 +4,23 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <h4 class="text-gray-100">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
+     <!-- Updatea Panel Botón Mesero -->
+    <asp:ScriptManager ID="ScriptManager1" runat="server" />
+    <asp:UpdatePanel ID="UpdatePanel1"
+        runat="server">
+        <ContentTemplate>
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <h4 class="text-gray-100">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
+                <!-- Boton Mesero -->
+                <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+                    { %>
+                <asp:Button CssClass="btn btn-warning btn-sm" Text="Darse de Alta" runat="server" ID="btnMeseroAlta" />
+                <%} %>
+                <!-- Fin Boton Mesero -->
+            </div>
+        </ContentTemplate>
+    </asp:UpdatePanel>
+     <!-- Fin Updatea Panel Botón Mesero -->
 
     <!-- Agregar Mesas habilitadas, mozos habilitados, productos, -->
     <div class="row">
@@ -87,44 +103,46 @@
 
                 <div class="row justify-content-around justify-items-start p-3">
 
-                    
+
                     <div class="col-2">
-                 <div class=" status-free rounded p-3">
-                    Mesa #02
+                        <div class=" status-free rounded p-3">
+                            Mesa #02
                      <p>(Disponible)</p>
-                    </div>
-                    <button class="btn btn-dark">Abrir </button>
                         </div>
-                    
-                     <div class="col-2">
-                 <div class=" status-busy rounded p-3">
-                    Mesa #05
-                     <p>(Ocupada)</p>
+                        <button class="btn btn-dark">Abrir </button>
                     </div>
-                    <button class="btn btn-dark">Cerrar </button>
+
+                    <div class="col-2">
+                        <div class=" status-busy rounded p-3">
+                            Mesa #05
+                     <p>(Ocupada)</p>
                         </div>
-
-                 <div class="col-2">
-                 <div class=" status-busy rounded p-3">
-                    Mesa #07
-                     <p>(Ocupada)</p>
+                        <button class="btn btn-dark">Cerrar </button>
                     </div>
-                     <a class="btn btn-dark">Cerrar</a>
-                 </div>
+
+                    <div class="col-2">
+                        <div class=" status-busy rounded p-3">
+                            Mesa #07
+                     <p>(Ocupada)</p>
+                        </div>
+                        <a class="btn btn-dark">Cerrar</a>
+                    </div>
 
 
-                 <div class="col-2">
-                 <div class=" status-free rounded p-3">
-                    Mesa #12
+                    <div class="col-2">
+                        <div class=" status-free rounded p-3">
+                            Mesa #12
                      <p>(Disponible)</p>
-                    </div>
-                    <button class="btn btn-dark">Abrir </button>
                         </div>
+                        <button class="btn btn-dark">Abrir </button>
+                    </div>
                 </div>
-              
+
             </div>
-            
-            <div><br /></div>
+
+            <div>
+                <br />
+            </div>
 
             <div class="row bg-white rounded p-3 justify-content-around">
 
@@ -143,7 +161,7 @@
                     </div>
                 </div>
 
-                                <div class="col d-inline-flex p-2  justify-content-around">
+                <div class="col d-inline-flex p-2  justify-content-around">
                     <div class="card">
                         <div class="card-body">
                             <p class="card-text">
@@ -156,7 +174,7 @@
                     </div>
                 </div>
 
-                                <div class="col d-inline-flex p-2  justify-content-around">
+                <div class="col d-inline-flex p-2  justify-content-around">
                     <div class="card">
                         <div class="card-body">
                             <p class="card-text">
@@ -174,7 +192,9 @@
 
             <br />
 
-            <div><br /></div>
+            <div>
+                <br />
+            </div>
             <div class="row bg-white rounded p-3">
                 <h2 class="h3">Menú Disponible:</h2>
                 <asp:Repeater runat="server" ID="MenuDelDia">
@@ -192,17 +212,17 @@
             </div>
 
 
-            </div>
-               
-
         </div>
 
 
+    </div>
 
 
 
 
-        <% } %>
+
+
+    <% } %>
     </div>
 
 
