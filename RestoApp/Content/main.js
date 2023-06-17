@@ -4,23 +4,13 @@
 //******* /Mesas.aspx *******/
 if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
-    //DROPDOWN
-    //const ddMesa = document.getElementById("dropdown-mesa");
-    //let MESAS = cantidadMesas;
-
-
-    //for (i = 0; i < MESAS; i++) {
-    //    ddMesa.innerHTML += `<li><a class="dropdown-item" id="ddMesa_${i + 1}">${i + 1
-    //        }</a></li>`;
-    //}
-
 
     //CARGAMOS MESAS GUARDADAS
     const mesas = document.getElementById("mesas");
     let numeroMesasGuardasArray = JSON.parse(numeroMesasGuardasJSON).filter(x => x != 0);
     const cantidadMesasGuardas = numeroMesasGuardasArray.length;
 
-    //Test
+    //TODO: TRAER VECTOR DE DB
     let mesasAsignadas = new Array(cantidadMesasGuardas)
     mesasAsignadas.fill(0)
 
@@ -121,44 +111,6 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
     asignarMesas.addEventListener('click', () => {
         CargarMesasSeleccion(cantidadMesasGuardas)
     })
-
-    //// RENDERIZAMOS MESAS
-    //const tituloGerenteMesas = document.getElementById("titulo_gerente_Mesas");
-
-    //for (let i = 0; i < MESAS; i++) {
-    //    document.getElementById(`ddMesa_${i + 1}`).addEventListener("click", () => {
-    //        tituloGerenteMesas.textContent = "Elija las mesas que quiere activar";
-    //        CargarMesasSeleccion(i);
-    //    });
-    //}
-
-
-    // GUARDAMOS MESAS
-    //btnGuardarMesas.addEventListener('click', () => {
-    //    CargarMesasGuardas()
-    //    btnGuardarMesas.classList.add("invisible")
-    //    tituloGerenteMesas.textContent = "Asignar Mesas a Meseros";
-
-
-    //    //Enviamos datos a Mesas.aspx
-    //    fetch('Mesas.aspx/GuardarMesas', {
-    //        method: 'POST',
-    //        headers: {
-    //            'Content-Type': 'application/json'
-    //        },
-    //        body: JSON.stringify({ array: numeroMesasGuardasArray })
-    //    })
-    //        .then(function (response) {
-    //            if (response.ok) {
-    //                console.log('Datos enviados al código detrás');
-    //            } else {
-    //                console.error('Error al enviar los datos al código detrás');
-    //            }
-    //        })
-    //        .catch(function (error) {
-    //            console.error('Error al enviar los datos al código detrás:', error);
-    //        });
-    //});
 
 };
 

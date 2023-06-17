@@ -6,10 +6,8 @@
         ">
         <a
             href="/"
-            class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-            <svg class="bi me-2" width="40" height="32">
-            </svg>
-            <span class="fs-4">RestoApp</span>
+            class="d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none w-100">
+                <img src="/Content/Image/logo.jpg" style="width: 150px; height: 150px;" class="rounded-circle mb-3"/>
         </a>
         <hr />
         <ul class="list-unstyled ps-0">
