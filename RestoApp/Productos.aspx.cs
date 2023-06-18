@@ -91,6 +91,9 @@ namespace RestoApp
             CheckBoxAtributos.Items.Add(ColumnasDB.Producto.Alcohol);
         }
 
+
+
+
         public void ListarProductos()
         {
             ProductoNegocio productoNegocio = new ProductoNegocio();
@@ -107,6 +110,46 @@ namespace RestoApp
 
         }
 
+        protected void GVProductos_DataBound(object sender, EventArgs e)
+        {
+           
+        }
 
+        protected void GVProductos_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                switch ((int.Parse(e.Row.Cells[1].Text)))
+                {
+                    case 1:
+                        {
+                            e.Row.Cells[1].Text = ListaCategoriasProducto[0].Descripcion;
+                            break;
+                        }
+                    case 2:
+                        {
+                            e.Row.Cells[1].Text = ListaCategoriasProducto[1].Descripcion;
+                            break;
+                        }
+                }
+                foreach()
+                switch ((int.Parse(e.Row.Cells[3].Text)))
+                {
+                    case 1:
+                        {
+                            e.Row.Cells[1].Text = ListaCategoriasProducto[0].Descripcion;
+                            break;
+                        }
+                    case 2:
+                        {
+                            e.Row.Cells[1].Text = ListaCategoriasProducto[1].Descripcion;
+                            break;
+                        }
+                }
+            }
+
+           
+
+        }
     }
 }
