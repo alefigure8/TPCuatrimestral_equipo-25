@@ -132,24 +132,28 @@ namespace RestoApp
                             break;
                         }
                 }
-                foreach()
-                switch ((int.Parse(e.Row.Cells[3].Text)))
-                {
-                    case 1:
-                        {
-                            e.Row.Cells[1].Text = ListaCategoriasProducto[0].Descripcion;
-                            break;
-                        }
-                    case 2:
-                        {
-                            e.Row.Cells[1].Text = ListaCategoriasProducto[1].Descripcion;
-                            break;
-                        }
-                }
+
+                string resultado = (bool.Parse(e.Row.Cells[3].Text)) == true ? "✔" : "✖";
+                e.Row.Cells[3].Text = resultado;
+                e.Row.Cells[3].CssClass = "columna-grilla-sm";
+
+                resultado = (bool.Parse(e.Row.Cells[4].Text)) == true ? "✔" : "✖";
+                e.Row.Cells[4].Text = resultado;
+
+                resultado = (bool.Parse(e.Row.Cells[5].Text)) == true ? "✔" : "✖";
+                e.Row.Cells[5].Text = resultado;
+
+                resultado = (bool.Parse(e.Row.Cells[7].Text)) == true ? "Activo" : "Inactivo";
+                e.Row.Cells[7].Text = resultado;
+
             }
+
+            e.Row.Cells[0].CssClass = "columna-grilla";
 
            
 
         }
+
+       
     }
 }

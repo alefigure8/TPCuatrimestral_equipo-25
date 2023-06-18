@@ -78,12 +78,14 @@ body {
 }
 
 /* Columnas */
-.columna-grilla{
+.columna-grilla {
     max-width: 120px;
     text-align: start;
+    background-color: red !important;
 }
 
 .columna-grilla-sm {
     max-width: 80px;
     text-align: justify;
+   
 }

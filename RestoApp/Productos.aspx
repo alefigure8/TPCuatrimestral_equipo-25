@@ -84,17 +84,19 @@
     </div>
 
     <div class="row bg-white rounded m-2 p-4">
-        <asp:GridView ID="GVProductos" CssClass="table" runat="server" AutoGenerateColumns="false"
+        <asp:GridView ID="GVProductos" runat="server" AutoGenerateColumns="false"
              OnDataBound="GVProductos_DataBound"
              OnRowDataBound="GVProductos_RowDataBound"
+            cssClass="table small"
             >
-             <RowStyle HorizontalAlign="Center" VerticalAlign="Middle" cssClass="columna-grilla-sm"/>
+            <HeaderStyle HorizontalAlign="Left" VerticalAlign="Middle" />
+             <RowStyle HorizontalAlign="Left" VerticalAlign="Middle"  />
             <Columns>                               
                 <asp:BoundField HeaderText="Nombre" DataField="Nombre" />
                 <asp:BoundField HeaderText="Categoria" DataField="Categoria" />
                 <asp:BoundField HeaderText="Valor" DataFormatString="{0:C}" DataField="Valor" />
-                <asp:BoundField HeaderText="Ap. Vegano" DataField="AptoVegano" />
-                <asp:BoundField HeaderText="Ap. Celiaco" DataField="AptoCeliaco" />
+                <asp:BoundField HeaderText="Vegano" DataField="AptoVegano" />
+                <asp:BoundField HeaderText="Celiaco" DataField="AptoCeliaco" />
                 <asp:BoundField HeaderText="Alcohol" DataField="Alcohol" />
                 <asp:BoundField HeaderText="Stock" DataField="Stock" />
                 <asp:BoundField HeaderText="Estado" DataField="Activo" />
