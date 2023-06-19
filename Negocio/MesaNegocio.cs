@@ -54,6 +54,8 @@ namespace Negocio
 		{
 			AccesoDB datos = new AccesoDB();
 
+			//En caso de false, verificar que la mesa no esté asignada
+
 			try
 			{
 				datos.setQuery($"UPDATE {ColumnasDB.Mesa.DB} SET {ColumnasDB.Mesa.Activo} = {activo} WHERE {ColumnasDB.Mesa.Numero} = {numero}");
@@ -79,7 +81,8 @@ namespace Negocio
 				datos.setQuery($"SELECT {ColumnasDB.MeseroPorDia.Id}, {ColumnasDB.MeseroPorDia.IdMesero}, {ColumnasDB.MeseroPorDia.Fecha}, {ColumnasDB.MeseroPorDia.Ingreso}, {ColumnasDB.MeseroPorDia.Salida}, {ColumnasDB.Usuario.Nombres},{ColumnasDB.Usuario.Apellidos} " +
 					$"FROM {ColumnasDB.MeseroPorDia.DB} " +
 					$"INNER JOIN {ColumnasDB.Usuario.DB} " +
-					$"ON {ColumnasDB.MeseroPorDia.IdMesero} = {ColumnasDB.Usuario.Id}");
+					$"ON {ColumnasDB.MeseroPorDia.IdMesero} = {ColumnasDB.Usuario.Id} " +
+					$"WHERE {ColumnasDB.MeseroPorDia.Salida} = '00:00:00'");
 				datos.executeReader();
 
 				while (datos.Reader.Read())
@@ -91,6 +94,14 @@ namespace Negocio
 					//MESERO
 					if (datos.Reader[ColumnasDB.MeseroPorDia.IdMesero] != null)
 						auxMesero.IdMesero = (Int32)datos.Reader[ColumnasDB.MeseroPorDia.IdMesero];
+
+					//NOMBRE
+					if (datos.Reader[ColumnasDB.MeseroPorDia.Nombres] != null)
+						auxMesero.Nombres = (string)datos.Reader[ColumnasDB.MeseroPorDia.Nombres];
+
+					//APELLIDOS
+					if (datos.Reader[ColumnasDB.MeseroPorDia.Apellidos] != null)
+						auxMesero.Apellidos = (string)datos.Reader[ColumnasDB.MeseroPorDia.Apellidos];
 
 					//FECHA
 					if (datos.Reader[ColumnasDB.MeseroPorDia.Fecha] != null)
@@ -166,6 +177,92 @@ namespace Negocio
 				datos.closeConnection();
 			}
 
+		}
+
+		//Listamos las mesas por dia
+		public List<MesaPorDia> ListarMesaPorDia()
+		{
+			List<MesaPorDia> mesas = new List<MesaPorDia>();
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				datos.setQuery($"SELECT {ColumnasDB.MesasPorDia.Id}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.Fecha} " +
+					$"FROM {ColumnasDB.MesasPorDia.DB} " +
+					$"WHERE {ColumnasDB.MesasPorDia.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}'");
+
+				datos.executeReader();
+
+				while (datos.Reader.Read())
+				{
+					MesaPorDia auxMesero = new MesaPorDia();
+					//ID
+					auxMesero.Id = (Int32)datos.Reader[ColumnasDB.MesasPorDia.Id];
+
+					//MESERO
+					if (datos.Reader[ColumnasDB.MesasPorDia.IdMesero] != null)
+						auxMesero.Mesero = (Int32)datos.Reader[ColumnasDB.MesasPorDia.IdMesero];
+
+					//MESERO
+					if (datos.Reader[ColumnasDB.MesasPorDia.IdMesa] != null)
+						auxMesero.Mesa = (Int32)datos.Reader[ColumnasDB.MesasPorDia.IdMesa];
+
+					//FECHA
+					if (datos.Reader[ColumnasDB.MesasPorDia.Fecha] != null)
+						auxMesero.Fecha = (DateTime)datos.Reader[ColumnasDB.MesasPorDia.Fecha];
+
+					mesas.Add(auxMesero);
+				}
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+			return mesas;
+		}
+
+		public int CrearMesaPorDia(int mesero, int mesa)
+		{
+			AccesoDB datos = new AccesoDB();
+			
+			int id = 0;
+
+			//Validar que el mesero no tenga la misma mesa ya asignada
+
+			//Validar que la mesa este Activa
+
+			try
+			{
+				datos.setQuery($"INSERT INTO {ColumnasDB.MesasPorDia.DB} ({ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.Fecha}) " +
+				$"VALUES ('{mesa}, '{mesero}', '{DateTime.Now.ToString("yyyy - MM - dd")}')"
+				+ "SELECT CAST(scope_identity() AS int)");
+				id = datos.executeScalar();
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+			
+			return id;
+		}
+
+		//Modificar MesaPorDia
+		public bool ModificarMesaPorDia(int mesa, int mesero)
+		{
+			//Si la mesa ya está asignada en el mesero, se modifica y se lo saca
+
+			//
+
+			return true;
 		}
 	}
 }

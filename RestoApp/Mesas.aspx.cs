@@ -74,17 +74,9 @@ namespace RestoApp
 
 		private void CargarMeseros()
 		{
-			UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
-			meseros = usuarioNegocio.ListarMeseros();
-
 			MesaNegocio mesaNegocio = new MesaNegocio();
 			meserosPorDia = mesaNegocio.ListaMeseroPorDia();
-
-			foreach (Usuario mesero in meseros)
-			{
-				mesero.Password = null;
-			}
-
+			
 			repeaterMeseros.DataSource = meserosPorDia;
 			repeaterMeseros.DataBind();
 		}
