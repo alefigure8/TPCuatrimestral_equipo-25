@@ -17,7 +17,7 @@
       <div class="row" style="margin-top:20px; justify-content:center;">
           <div class="col-6">
       <asp:GridView ID="GDVEmpleados" runat="server" style="border-radius:5px;">
-            <HeaderStyle HorizontalAlign="Center" BackColor="#333333" BorderColor="#666666" cssClass="celda" ForeColor="#CCCCCC" />
+            <HeaderStyle HorizontalAlign="Center" BackColor="#212529" BorderColor="#666666" cssClass="celda" ForeColor="#CCCCCC" />
              <RowStyle HorizontalAlign="Center" VerticalAlign="Middle" cssClass="celda"/>
             
       </asp:GridView>
