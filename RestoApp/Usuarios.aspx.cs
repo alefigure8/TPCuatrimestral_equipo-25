@@ -16,7 +16,13 @@ namespace RestoApp
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            CargarDgv();
+
+           if(!IsPostBack)
+            {
+                CargarDgv();
+            }
+
+           
         }
 
         protected void CargarDgv()
