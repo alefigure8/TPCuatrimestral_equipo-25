@@ -9,7 +9,7 @@ namespace Dominio
 	public class MesaPorDia
 	{
         public int Id { get; set; }
-        public int Mesero { get; set; }
+        public int? Mesero { get; set; }
         public int Mesa { get; set; }
 		public DateTime Fecha { get; set; }
 	}
