@@ -18,6 +18,7 @@ namespace RestoApp
 		public static List<Mesa> mesas;
 		public List<Usuario> meseros = new List<Usuario>();
 		public List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
+		public List<MesaPorDia> mesasPorDia;
 		public Usuario usuario { get; set; }
 
 		protected void Page_Load(object sender, EventArgs e)
@@ -32,11 +33,6 @@ namespace RestoApp
 				CargarNumeroDeMesasAlDesplegable();
 				CargarMesasGuardadas();
 				CargarMeseros();
-			}
-
-			//CONTENIDO MESERO
-			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
-			{
 			}
 		}
 
@@ -74,32 +70,47 @@ namespace RestoApp
 
 		private void CargarMeseros()
 		{
-			UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
-			meseros = usuarioNegocio.ListarMeseros();
-
 			MesaNegocio mesaNegocio = new MesaNegocio();
 			meserosPorDia = mesaNegocio.ListaMeseroPorDia();
-
-			foreach (Usuario mesero in meseros)
-			{
-				mesero.Password = null;
-			}
-
+			
 			repeaterMeseros.DataSource = meserosPorDia;
 			repeaterMeseros.DataBind();
 		}
 
 		//Obtenemos los datos desde Main.js
 		[WebMethod]
-		public static void GuardarMesas(int[] array)
+		public static void GuardarMesas(int[] array, int idMesero)
 		{
-
 			MesaNegocio mesaNegocio = new MesaNegocio();
+			List<MesaPorDia> mesasPorDia = new List<MesaPorDia>();
+			mesasPorDia = mesaNegocio.ListarMesaPorDia();
+
 			for (int i = 0; i < array.Length; i++)
 			{
+				Console.WriteLine("Mesero: " + idMesero.ToString());
+				Console.WriteLine("Mesas: " + array[i].ToString());
+				
 				//Verificar cambios
-				if (Mesas.mesas[i].Activo != (array[i] == 1))
-					mesaNegocio.ActivarMesasPorNumero(i + 1, array[i]);
+				if (mesasPorDia.Exists(me => me.Mesa == i + 1) && array[i] == 0)
+				{
+					//Es un cambio de mesero a nada
+					if (mesasPorDia.Find(me => me.Mesa == i + 1).Mesero == idMesero)
+						mesaNegocio.ModificarMesaPorDia(mesasPorDia.Find(me => me.Mesa == i + 1).Id, i + 1, 0);
+				}
+				else if (mesasPorDia.Exists(me => me.Mesa == i + 1) && array[i] == 1)
+				{
+					//Es un cambio de nada a mesero
+					mesaNegocio.ModificarMesaPorDia(mesasPorDia.Find(me => me.Mesa == i + 1).Id, i + 1, idMesero);
+				}
+				else
+				{
+					//Es una nueva mesa
+					if (array[i] == 1)
+					{
+						mesaNegocio.CrearMesaPorDia(idMesero, i + 1);
+					}
+				}
+					
 			}
 
 		}

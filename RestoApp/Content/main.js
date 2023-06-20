@@ -4,6 +4,8 @@
 //******* /Mesas.aspx *******/
 if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
+    const asignarMesas = document.querySelectorAll("#asignarMesa");
+    let idMesero;
 
     //CARGAMOS MESAS GUARDADAS
     const mesas = document.getElementById("mesas");
@@ -14,7 +16,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
     let mesasAsignadas = new Array(cantidadMesasGuardas)
     mesasAsignadas.fill(0)
 
-   // let mesasAsignadas = JSON.parsemesasAsignadasJSON)
+   //let mesasAsignadas = JSON.parsemesasAsignadasJSON)
      
     function CargarMesasGuardas() {
 
@@ -106,14 +108,56 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
     }
 
-    const asignarMesas = document.getElementById("asignarMesa");
+    //Botón guardar asignacion
+    const guardarMesa = document.querySelectorAll("#guardarMesa");
 
-    asignarMesas.addEventListener('click', () => {
-        CargarMesasSeleccion(cantidadMesasGuardas)
+    //Evento del botón Asignar mesas
+    asignarMesas.forEach(btn => {
+        btn.addEventListener('click', () => {
+            //Cargamos los eventos de la mesa
+            CargarMesasSeleccion(cantidadMesasGuardas)
+
+            //Id del mesero
+            idMesero = btn.getAttribute("id-mesero");
+
+            //Habilitamos botón guardar
+            guardarMesa.forEach(btn2 => {
+                if (btn2.getAttribute("id-mesero") == idMesero)
+                    btn2.disabled = false;
+            });
+        })
     })
 
-};
 
+    guardarMesa.forEach(btn => {
+
+        btn.addEventListener('click', () => {
+            btn.disabled = true;
+
+            //Sacamos eventos a las masas
+            CargarMesasSeleccion(cantidadMesasGuardas)
+
+            //Enviamos datos a Mesas.aspx
+            fetch('Mesas.aspx/GuardarMesas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ array: mesasAsignadas, idMesero })
+            })
+                .then(function (response) {
+                    if (response.ok) {
+                        console.log('Datos enviados al código detrás');
+                    } else {
+                        console.error('Error al enviar los datos al código detrás');
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error al enviar los datos al código detrás:', error);
+                });
+        });
+    })
+};
 //******* FIN /Mesas.aspx *******/
 
 
@@ -206,7 +250,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesahabilitar.aspx') !== -1) {
         CargarMesasSeleccion(cantidadMesas - 1, false)
 
         //Enviamos datos a Mesas.aspx
-        fetch('Mesas.aspx/GuardarMesas', {
+        fetch('MesaHabilitar.aspx/GuardarMesas', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -66,8 +66,8 @@ namespace Opciones
 		{
 			public const string Id = "IdMesaPorDia";
 			public const string IdMesa = "IdMesa";
-			public const string Fecha = "Fecha";
 			public const string IdMesero = "IdMesero";
+			public const string Fecha = "Fecha";
 			public const string DB = "MesasPorDia";
 		}
 
@@ -75,6 +75,8 @@ namespace Opciones
 		{
 			public const string Id = "IdMeseroPorDia";
 			public const string IdMesero = "IdMesero";
+			public const string Nombres = "Nombres";
+			public const string Apellidos = "Apellidos";
 			public const string Fecha = "Fecha";
 			public const string Ingreso = "Ingreso";
 			public const string Salida = "Salida";
