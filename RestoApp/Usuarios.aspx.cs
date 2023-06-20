@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Dominio;
+using Helper;
 using Negocio;
 using Opciones;
 
@@ -14,10 +15,14 @@ namespace RestoApp
 {
     public partial class Usuarios : System.Web.UI.Page
     {
+        public Usuario usuario { get; set; }
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
+                usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
-           if(!IsPostBack)
+            if (!IsPostBack)
             {
                 CargarDgv();
             }
