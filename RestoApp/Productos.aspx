@@ -9,6 +9,81 @@
 
     <div class="row bg-white rounded m-2 p-4 small">
 
+
+        <!-- Modal -->
+        <div class="modal fade" id="modalProductos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="p-4 d-flex justify-content-between">
+                        <h5 class="modal-title" id="exampleModalLabel">Agregar nuevo producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="p-2">
+                        <div class="d-flex justify-content-center ">
+                            <div class="col form-control">
+
+                                <div class="row p-1">
+                                    <div class="col-2"><label class="form-label">Nombre: </label></div>
+                                    <div class="col"> 
+                                        <asp:TextBox CssClass="form-control" runat="server" Text=""></asp:TextBox>
+                                    </div>
+                                </div>
+
+                                <div class="row p-1">
+                                    <div class="col-3"><label class="form-label">Descripcion: </label> </div>
+                                    <div class="col">
+                                        <asp:TextBox  runat="server" CssClass="form-control" ></asp:TextBox>
+                                    </div>
+                                </div>
+
+
+                                <div class="row p-1">
+                                     <div class="col-2"><label class="form-label">Valor: </label> </div>
+                                    <div class="col">
+                                        <asp:TextBox  runat="server" CssClass="form-control" ></asp:TextBox>
+                                    </div>
+                                </div>
+
+                                <div class="row p-1">
+                                        <asp:DropDownList ID="modalDDLCategorias" runat="server" CssClass="col btn btn-dark btn-sm m-1"   DataMember="DDLEstado"></asp:DropDownList>
+                                        <asp:DropDownList ID="modalDDLEstado" runat="server" CssClass="col btn btn-dark btn-sm m-1" ></asp:DropDownList>
+                                </div>
+
+
+
+                                <asp:CheckBoxList ID="modalCheckBoxAtributos" runat="server"></asp:CheckBoxList>
+
+                                <div class="row p-1">
+                                     <div class="col-3"><label class="form-label">Tiempo Cocción: </label> </div>
+                                    <div class="col">
+                                        <asp:TextBox  runat="server" CssClass="form-control" ></asp:TextBox>
+                                    </div>
+                                </div>
+
+                                <div class="row p-1">
+                                     <div class="col-2"><label class="form-label">Stock: </label> </div>
+                                    <div class="col">
+                                        <asp:TextBox  runat="server" CssClass="form-control" ></asp:TextBox>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <asp:Button Text="Cancelar" runat="server" CssClass="btn btn-dark btn-lg m-1" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+                        <asp:Button Text="Guardar" runat="server" CssClass="btn btn-dark btn-lg m-1" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+
+
         <div class="row p-2">
             <div class="col-2">
                 <p class="h2">Filtrar lista</p>
@@ -25,11 +100,11 @@
             <div class="col-2 ">
 
                 <div class="row">
-                    <asp:DropDownList ID="DDLEstado" runat="server" CssClass="row-2 btn btn-dark btn-sm" OnSelectedIndexChanged="DDLEstado_SelectedIndexChanged" AutoPostBack="true"></asp:DropDownList>
+                    <asp:DropDownList ID="DDLEstado" runat="server" CssClass="row-2 btn btn-dark btn-sm" OnSelectedIndexChanged="DDLEstado_SelectedIndexChanged" AutoPostBack="true" ></asp:DropDownList>
                 </div>
 
                 <div class="row mt-2">
-                    <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="row-2 btn btn-dark btn-sm"></asp:DropDownList>
+                    <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="row-2 btn btn-dark btn-sm" OnSelectedIndexChanged="DDLCategorias_SelectedIndexChanged" AutoPostBack="true"></asp:DropDownList>
                 </div>
 
             </div>
@@ -84,32 +159,32 @@
     </div>
 
     <div class="row bg-white rounded m-2 p-4">
- 
+
         <asp:UpdatePanel runat="server">
             <ContentTemplate>
-            <asp:GridView ID="GVProductos" runat="server" AutoGenerateColumns="false"
-                OnDataBound="GVProductos_DataBound"
-                OnRowDataBound="GVProductos_RowDataBound"
-                CssClass="table small">
-                <headerstyle horizontalalign="Left" verticalalign="Middle" cssclass="small" />
-                <rowstyle horizontalalign="Left" verticalalign="Middle" cssclass="small" />
-                <columns>
-                    <asp:BoundField HeaderText="Nombre" DataField="Nombre" HeaderStyle-CssClass="columna-grilla" ItemStyle-CssClass="columna-grilla" />
-                    <asp:BoundField HeaderText="Categoria" DataField="Categoria" HeaderStyle-CssClass="columna-grilla" ItemStyle-CssClass="columna-grilla" />
-                    <asp:BoundField HeaderText="Valor" DataFormatString="{0:C}" DataField="Valor" HeaderStyle-CssClass="columna-grilla-sm" ItemStyle-HorizontalAlign="Right" ItemStyle-Width="30px" />
-                    <asp:BoundField HeaderText="Vegano" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="AptoVegano" />
-                    <asp:BoundField HeaderText="Celiaco" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="AptoCeliaco" />
-                    <asp:BoundField HeaderText="Alcohol" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="Alcohol" />
-                    <asp:BoundField HeaderText="Stock" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="Stock" />
-                    <asp:BoundField HeaderText="Estado" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="Activo" />
-                    <asp:BoundField HeaderText="Tiempo Cocción" DataField="TiempoCoccion" HeaderStyle-CssClass="columna-grilla-sm" ItemStyle-CssClass="columna-grilla-sm" />
-                    <asp:ButtonField runat="server" ControlStyle-CssClass="btn btn-dark" Text="🖍" ItemStyle-CssClass="columna-grilla-btn" HeaderStyle-CssClass="columna-grilla-btn" />
-                    <asp:ButtonField runat="server" ControlStyle-CssClass="btn btn-dark" Text="🗑" ItemStyle-CssClass="columna-grilla-btn" HeaderStyle-CssClass="columna-grilla-btn" />
+                <asp:GridView ID="GVProductos" runat="server" AutoGenerateColumns="false"
+                    OnDataBound="GVProductos_DataBound"
+                    OnRowDataBound="GVProductos_RowDataBound"
+                    CssClass="table small">
+                    <HeaderStyle HorizontalAlign="Left" VerticalAlign="Middle" CssClass="small" />
+                    <RowStyle HorizontalAlign="Left" VerticalAlign="Middle" CssClass="small" />
+                    <Columns>
+                        <asp:BoundField HeaderText="Nombre" DataField="Nombre" HeaderStyle-CssClass="columna-grilla" ItemStyle-CssClass="columna-grilla" />
+                        <asp:BoundField HeaderText="Categoria" DataField="Categoria" HeaderStyle-CssClass="columna-grilla" ItemStyle-CssClass="columna-grilla" />
+                        <asp:BoundField HeaderText="Valor" DataFormatString="{0:C}" DataField="Valor" HeaderStyle-CssClass="columna-grilla-sm" ItemStyle-HorizontalAlign="Right" ItemStyle-Width="30px" />
+                        <asp:BoundField HeaderText="Vegano" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="AptoVegano" />
+                        <asp:BoundField HeaderText="Celiaco" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="AptoCeliaco" />
+                        <asp:BoundField HeaderText="Alcohol" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="Alcohol" />
+                        <asp:BoundField HeaderText="Stock" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="Stock" />
+                        <asp:BoundField HeaderText="Estado" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="Activo" />
+                        <asp:BoundField HeaderText="Tiempo Cocción" DataField="TiempoCoccion" HeaderStyle-CssClass="columna-grilla-sm" ItemStyle-CssClass="columna-grilla-sm" />
+                        <asp:ButtonField runat="server" ControlStyle-CssClass="btn btn-dark" Text="🖍" ItemStyle-CssClass="columna-grilla-btn" HeaderStyle-CssClass="columna-grilla-btn" />
+                        <asp:ButtonField runat="server" ControlStyle-CssClass="btn btn-dark" Text="🗑" ItemStyle-CssClass="columna-grilla-btn" HeaderStyle-CssClass="columna-grilla-btn" />
 
-                </columns>
+                    </Columns>
 
-            </asp:GridView>
-                </ContentTemplate>
+                </asp:GridView>
+            </ContentTemplate>
         </asp:UpdatePanel>
 
 
@@ -119,24 +194,11 @@
     <%--BOTONERA--%>
     <div class="row bg-white rounded p-2  m-2 rounded justify-content-center">
 
-        <div class="col-2 me-2 btn btn-dark">
+        <div class="col-2 me-2 btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalProductos">
             <i class="row fa fa-cutlery align-items-center justify-content-center" style="font-size: 3rem;" aria-hidden="true"></i>
-
-            <asp:LinkButton ID="LBtnNuevoPlato" runat="server"
-                CssClass="h5">
-                        <label>Nuevo Plato</label>
-            </asp:LinkButton>
-
+            <p class="h5">Nuevo producto</p>
         </div>
 
-        <div class="col-2 me-2 btn btn-dark">
-            <i class="row fa fa-wine-glass align-items-center justify-content-center" style="font-size: 3rem;" aria-hidden="true"></i>
-
-            <asp:LinkButton ID="LBtnNuevaBebida" runat="server"
-                CssClass="h5">
-                       <label>Nueva Bebida</label>
-            </asp:LinkButton>
-        </div>
 
         <div class="col-2 me-2 btn btn-dark">
             <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>

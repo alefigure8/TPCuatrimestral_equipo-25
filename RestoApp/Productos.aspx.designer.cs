@@ -15,6 +15,33 @@ namespace RestoApp
     {
 
         /// <summary>
+        /// modalDDLCategorias control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList modalDDLCategorias;
+
+        /// <summary>
+        /// modalDDLEstado control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList modalDDLEstado;
+
+        /// <summary>
+        /// modalCheckBoxAtributos control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList modalCheckBoxAtributos;
+
+        /// <summary>
         /// TxtBuscar control.
         /// </summary>
         /// <remarks>
@@ -139,24 +166,6 @@ namespace RestoApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView GVProductos;
-
-        /// <summary>
-        /// LBtnNuevoPlato control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LBtnNuevoPlato;
-
-        /// <summary>
-        /// LBtnNuevaBebida control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LBtnNuevaBebida;
 
         /// <summary>
         /// LBtnCategorías control.

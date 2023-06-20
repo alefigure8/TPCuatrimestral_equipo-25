@@ -10,6 +10,7 @@ using Negocio;
 using Opciones;
 using System.Data;
 using System.Web.UI.HtmlControls;
+using System.Reflection;
 
 namespace RestoApp
 {
@@ -65,15 +66,24 @@ namespace RestoApp
             DDLEstado.Items.Add("Estado");
             DDLEstado.Items.Add("Activo");
             DDLEstado.Items.Add("Inactivo");
+
+            modalDDLEstado.Items.Add("Estado");
+            modalDDLEstado.Items.Add("Activo");
+            modalDDLEstado.Items.Add("Inactivo");
+
         }
 
         public void CargarDDLCategorias()
         {
             
             DDLCategorias.Items.Add("Categorias");
+            modalDDLCategorias.Items.Add("Categorias");
+
             foreach (CategoriaProducto CPaux in ListaCategoriasProducto)
             {
                 DDLCategorias.Items.Add(CPaux.Descripcion);
+                modalDDLCategorias.Items.Add(CPaux.Descripcion);
+
             }
         }
 
@@ -96,6 +106,10 @@ namespace RestoApp
             CheckBoxAtributos.Items.Add(ColumnasDB.Producto.AptoVegano);
             CheckBoxAtributos.Items.Add(ColumnasDB.Producto.AptoCeliaco);
             CheckBoxAtributos.Items.Add(ColumnasDB.Producto.Alcohol);
+
+            modalCheckBoxAtributos.Items.Add(ColumnasDB.Producto.AptoVegano);
+            modalCheckBoxAtributos.Items.Add(ColumnasDB.Producto.AptoCeliaco);
+            modalCheckBoxAtributos.Items.Add(ColumnasDB.Producto.Alcohol);
         }
 
 
@@ -162,42 +176,52 @@ namespace RestoApp
 
         }
 
-        protected void DDLEstado_SelectedIndexChanged(object sender, EventArgs e)
+        protected void NewListaFiltrada()
         {
             ListaFiltrada = new List<Producto>();
+        }
 
-            switch (DDLEstado.SelectedIndex)
+        protected void DDLEstado_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            if (DDLEstado.SelectedIndex != 0)
             {
-               
+                ValidarListaFiltrada();
 
-                case 1:
-                    {
-                        foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+                switch (DDLEstado.SelectedIndex)
+                {
+                    case 1:
                         {
-                            if (PAux.Activo == true)
+                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
                             {
-                               ListaFiltrada.Add(PAux);
+                                if (PAux.Activo == true)
+                                {
+                                    ListaFiltrada.Add(PAux);
+                                }
                             }
+                            break;
                         }
-                        break;
-                    }
-                case 2:
-                    {
-                        foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+                    case 2:
                         {
-                            
-                            if (PAux.Activo == false)
+                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
                             {
-                                ListaFiltrada.Add(PAux);
+
+                                if (PAux.Activo == false)
+                                {
+                                    ListaFiltrada.Add(PAux);
+                                }
                             }
+                            break;
                         }
-                        break;
-                    }
+                }
+                Session["ListaFiltrada"] = ListaFiltrada;
+                GVProductos.DataSource = Session["ListaFiltrada"];
+                GVProductos.DataBind();
             }
-
-            Session["ListaFiltrada"] = ListaFiltrada;
-            GVProductos.DataSource = Session["ListaFiltrada"];
-            GVProductos.DataBind();
+            else
+            {
+                ListarProductos();
+            }
 
 
 
@@ -206,6 +230,68 @@ namespace RestoApp
         protected void btnLimpiarFiltro_Click(object sender, EventArgs e)
         {
             ListarProductos();
+        }
+
+        protected void DDLCategorias_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(DDLCategorias.SelectedIndex!=0)
+            {
+                ValidarListaFiltrada();
+                switch (DDLCategorias.SelectedIndex)
+                {
+                    case 1:
+                        {
+                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+                            {
+                                if (!(PAux.Categoria == 1))
+                                {
+                                    ListaFiltrada.Remove(PAux);
+                                }
+                            }
+                            break;
+                        }
+                    case 2:
+                        {
+                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+                            {
+
+                                if (PAux.Categoria == 2)
+                                {
+                                    ListaFiltrada.Remove(PAux);
+                                }
+                            }
+                            break;
+                        }
+                }
+                Session["ListaFiltrada"] = ListaFiltrada;
+                GVProductos.DataSource = Session["ListaFiltrada"];
+                GVProductos.DataBind();
+
+            }
+            else
+            {
+                ListarProductos();
+            }
+
+        }
+
+        protected void ValidarListaFiltrada()
+        {
+            if (ListaFiltrada == null)
+            {
+                NewListaFiltrada();
+            }
+
+        }
+
+        protected void AplicarFiltro(object sender, EventArgs e)
+        {
+       
+        }
+
+        protected void LBtnNuevoPlato_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
