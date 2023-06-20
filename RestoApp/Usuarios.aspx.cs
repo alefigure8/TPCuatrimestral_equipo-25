@@ -36,6 +36,16 @@ namespace RestoApp
             UsuarioNegocio listausuarios = new UsuarioNegocio();
             List<Usuario> Listausuarios = listausuarios.Listar();
 
+            if(AutentificacionUsuario.esAdmin(usuario))
+            {
+                Listausuarios.RemoveAll(x => x.Tipo == ColumnasDB.TipoUsuario.Admin);
+            }
+            if (AutentificacionUsuario.esGerente(usuario))
+            {
+                Listausuarios.RemoveAll(x => x.Tipo == ColumnasDB.TipoUsuario.Admin);
+                Listausuarios.RemoveAll(x => x.Tipo == ColumnasDB.TipoUsuario.Gerente);
+             }
+
             DataTable dataTable = new DataTable();
             dataTable.Columns.Add("Id", typeof(int));
             dataTable.Columns.Add("Nombres", typeof(string));
