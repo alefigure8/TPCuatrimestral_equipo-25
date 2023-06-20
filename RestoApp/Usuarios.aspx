@@ -13,14 +13,10 @@
   <asp:LinkButton class="btn btn-dark" type="button" id="BtnBusqueda" runat="server"><i class="fa-solid fa-magnifying-glass"></i></asp:LinkButton>
     </div>
             </div>
-        <div class="col-3">
-            <asp:DropDownList CssClass="form-control" runat="server" ></asp:DropDownList>
-
-        </div>
-        </div>
+                </div>
       <div class="row" style="margin-top:20px; justify-content:center;">
           <div class="col-6">
-      <asp:GridView ID="GDVEmpleados" runat="server" style="border-radius:5px;" BackColor="Ivory">
+      <asp:GridView ID="GDVEmpleados" runat="server" style="border-radius:5px;" BackColor="Ivory" AllowSorting=true OnSorting="GDVEmpleados_Sorting">
             <HeaderStyle HorizontalAlign="Center" BackColor="#212529" BorderColor="#666666" cssClass="celda" ForeColor="#CCCCCC" />
              <RowStyle HorizontalAlign="Center" VerticalAlign="Middle" cssClass="celda"/>
           <SelectedRowStyle BackColor="#212529" ForeColor="#CCCCCC" />
