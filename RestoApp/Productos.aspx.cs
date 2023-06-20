@@ -103,13 +103,13 @@ namespace RestoApp
 
         public void CargarAtributos()
         {
-            CheckBoxAtributos.Items.Add(ColumnasDB.Producto.AptoVegano);
-            CheckBoxAtributos.Items.Add(ColumnasDB.Producto.AptoCeliaco);
-            CheckBoxAtributos.Items.Add(ColumnasDB.Producto.Alcohol);
+            CheckBoxAtributos.Items.Add("Vegano");
+            CheckBoxAtributos.Items.Add("Celiaco");
+            CheckBoxAtributos.Items.Add("Alcohol");
 
-            modalCheckBoxAtributos.Items.Add(ColumnasDB.Producto.AptoVegano);
-            modalCheckBoxAtributos.Items.Add(ColumnasDB.Producto.AptoCeliaco);
-            modalCheckBoxAtributos.Items.Add(ColumnasDB.Producto.Alcohol);
+            modalCheckBoxAtributos.Items.Add("Vegano");
+            modalCheckBoxAtributos.Items.Add("Celiaco");
+            modalCheckBoxAtributos.Items.Add("Alcohol");
         }
 
 
@@ -131,10 +131,7 @@ namespace RestoApp
 
         }
 
-        protected void GVProductos_DataBound(object sender, EventArgs e)
-        {
-
-        }
+      
 
         protected void GVProductos_RowDataBound(object sender, GridViewRowEventArgs e)
         {
@@ -292,6 +289,51 @@ namespace RestoApp
         protected void LBtnNuevoPlato_Click(object sender, EventArgs e)
         {
 
+        }
+
+      
+        protected void GuardarNuevoProducto_Click(object sender, EventArgs e)
+        {
+
+            if (!string.IsNullOrWhiteSpace(NuevoProductoNombre.Text) &&
+           !string.IsNullOrWhiteSpace(NuevoProductoDescripcion.Text) &&
+           !string.IsNullOrWhiteSpace(NuevoProductoValor.Text) &&
+           modalDDLCategorias.SelectedIndex != 0 &&
+           modalDDLEstado.SelectedIndex != 0 &&
+           !string.IsNullOrWhiteSpace(NuevoProductoStock.Text))
+            {
+
+                Producto NuevoProducto = new Producto();
+                NuevoProducto.Nombre = NuevoProductoNombre.Text;
+                NuevoProducto.Descripcion = NuevoProductoDescripcion.Text;
+                NuevoProducto.Valor = decimal.Parse(NuevoProductoValor.Text);
+                NuevoProducto.Categoria = modalDDLCategorias.SelectedIndex;
+                bool estado = modalDDLEstado.SelectedIndex-1 == 0 ? false : true;
+                NuevoProducto.Activo = estado;
+                
+                 Convert.ToBoolean(modalDDLEstado.SelectedIndex);
+
+                if (modalCheckBoxAtributos.SelectedItem.Value == "Vegano")
+                {
+                    NuevoProducto.AptoVegano = true;
+                }
+                if (modalCheckBoxAtributos.SelectedItem.Value == "Celiaco")
+                {
+                    NuevoProducto.AptoCeliaco = true;
+                }
+                if (modalCheckBoxAtributos.SelectedItem.Value == "Alcohol")
+                {
+                    NuevoProducto.Alcohol = true;
+                }
+                NuevoProducto.TiempoCoccion =  TimeSpan.Parse(NuevoProductoTiempoCoccion.Text);
+                NuevoProducto.Stock = int.Parse(NuevoProductoStock.Text);
+
+                ProductoNegocio PNaux = new ProductoNegocio();
+                PNaux.NuevoProducto(NuevoProducto);
+
+
+
+            }
         }
     }
 }

@@ -25,14 +25,14 @@
                                 <div class="row p-1">
                                     <div class="col-2"><label class="form-label">Nombre: </label></div>
                                     <div class="col"> 
-                                        <asp:TextBox CssClass="form-control" runat="server" Text=""></asp:TextBox>
+                                        <asp:TextBox CssClass="form-control" runat="server" Text="" ID="NuevoProductoNombre" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
                                     </div>
                                 </div>
 
                                 <div class="row p-1">
                                     <div class="col-3"><label class="form-label">Descripcion: </label> </div>
                                     <div class="col">
-                                        <asp:TextBox  runat="server" CssClass="form-control" ></asp:TextBox>
+                                        <asp:TextBox  runat="server" CssClass="form-control" ID="NuevoProductoDescripcion" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
                                     </div>
                                 </div>
 
@@ -40,13 +40,13 @@
                                 <div class="row p-1">
                                      <div class="col-2"><label class="form-label">Valor: </label> </div>
                                     <div class="col">
-                                        <asp:TextBox  runat="server" CssClass="form-control" ></asp:TextBox>
+                                        <asp:TextBox CssClass="form-control" type="number" ID="NuevoProductoValor" runat="server"  style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
                                     </div>
                                 </div>
 
                                 <div class="row p-1">
-                                        <asp:DropDownList ID="modalDDLCategorias" runat="server" CssClass="col btn btn-dark btn-sm m-1"   DataMember="DDLEstado"></asp:DropDownList>
-                                        <asp:DropDownList ID="modalDDLEstado" runat="server" CssClass="col btn btn-dark btn-sm m-1" ></asp:DropDownList>
+                                        <asp:DropDownList ID="modalDDLCategorias" runat="server" CssClass="col btn btn-dark btn-sm m-1"   DataMember="modalDDLCategorias"></asp:DropDownList>
+                                        <asp:DropDownList ID="modalDDLEstado" runat="server" CssClass="col btn btn-dark btn-sm m-1" DataMember="modalDDLEstado"></asp:DropDownList>
                                 </div>
 
 
@@ -56,14 +56,14 @@
                                 <div class="row p-1">
                                      <div class="col-3"><label class="form-label">Tiempo Cocción: </label> </div>
                                     <div class="col">
-                                        <asp:TextBox  runat="server" CssClass="form-control" ></asp:TextBox>
+                                        <asp:TextBox  runat="server" ID="NuevoProductoTiempoCoccion" CssClass="form-control" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
                                     </div>
                                 </div>
 
                                 <div class="row p-1">
                                      <div class="col-2"><label class="form-label">Stock: </label> </div>
                                     <div class="col">
-                                        <asp:TextBox  runat="server" CssClass="form-control" ></asp:TextBox>
+                                        <asp:TextBox ID="NuevoProductoStock" runat="server" CssClass="form-control" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
                                     </div>
                                 </div>
 
@@ -76,7 +76,7 @@
                     </div>
                     <div class="d-flex justify-content-center">
                         <asp:Button Text="Cancelar" runat="server" CssClass="btn btn-dark btn-lg m-1" data-bs-toggle="modal" data-bs-target="#exampleModal" />
-                        <asp:Button Text="Guardar" runat="server" CssClass="btn btn-dark btn-lg m-1" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+                        <asp:Button ID="GuardarNuevoProducto" Text="Guardar" runat="server" OnClick="GuardarNuevoProducto_Click" CssClass="btn btn-dark btn-lg m-1" data-bs-toggle="modal" data-bs-target="#exampleModal" />
                     </div>
                 </div>
             </div>
@@ -163,7 +163,6 @@
         <asp:UpdatePanel runat="server">
             <ContentTemplate>
                 <asp:GridView ID="GVProductos" runat="server" AutoGenerateColumns="false"
-                    OnDataBound="GVProductos_DataBound"
                     OnRowDataBound="GVProductos_RowDataBound"
                     CssClass="table small">
                     <HeaderStyle HorizontalAlign="Left" VerticalAlign="Middle" CssClass="small" />

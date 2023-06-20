@@ -15,6 +15,33 @@ namespace RestoApp
     {
 
         /// <summary>
+        /// NuevoProductoNombre control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox NuevoProductoNombre;
+
+        /// <summary>
+        /// NuevoProductoDescripcion control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox NuevoProductoDescripcion;
+
+        /// <summary>
+        /// NuevoProductoValor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox NuevoProductoValor;
+
+        /// <summary>
         /// modalDDLCategorias control.
         /// </summary>
         /// <remarks>
@@ -40,6 +67,33 @@ namespace RestoApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBoxList modalCheckBoxAtributos;
+
+        /// <summary>
+        /// NuevoProductoTiempoCoccion control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox NuevoProductoTiempoCoccion;
+
+        /// <summary>
+        /// NuevoProductoStock control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox NuevoProductoStock;
+
+        /// <summary>
+        /// GuardarNuevoProducto control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button GuardarNuevoProducto;
 
         /// <summary>
         /// TxtBuscar control.
