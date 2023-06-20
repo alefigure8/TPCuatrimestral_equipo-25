@@ -90,5 +90,6 @@ body {
 }
 
 .columna-grilla-btn{
-    max-width: 10px !important;
+    max-width: 50px !important;
+    background-color: red !important;
 }

@@ -177,8 +177,23 @@
                         <asp:BoundField HeaderText="Stock" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="Stock" />
                         <asp:BoundField HeaderText="Estado" ItemStyle-CssClass="columna-grilla-sm" HeaderStyle-CssClass="columna-grilla-sm" DataField="Activo" />
                         <asp:BoundField HeaderText="Tiempo Cocción" DataField="TiempoCoccion" HeaderStyle-CssClass="columna-grilla-sm" ItemStyle-CssClass="columna-grilla-sm" />
-                        <asp:ButtonField runat="server" ControlStyle-CssClass="btn btn-dark" Text="🖍" ItemStyle-CssClass="columna-grilla-btn" HeaderStyle-CssClass="columna-grilla-btn" />
-                        <asp:ButtonField runat="server" ControlStyle-CssClass="btn btn-dark" Text="🗑" ItemStyle-CssClass="columna-grilla-btn" HeaderStyle-CssClass="columna-grilla-btn" />
+                       <%-- <asp:ButtonField runat="server" Text="🖍" ItemStyle-CssClass="columna-grilla-btn" HeaderStyle-CssClass="columna-grilla-btn" />--%>
+                       
+                        <asp:TemplateField ControlStyle-CssClass="btn btn-dark"  HeaderStyle-Width="20px">
+                            <ItemTemplate>
+                                <asp:Button ID="btnModificarProducto" runat="server" Text="🖍" 
+                                     CommandArgument='<%# Container.DataItemIndex %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+
+                         <asp:TemplateField ControlStyle-CssClass="btn btn-dark"  HeaderStyle-Width="20px">
+                            <ItemTemplate >
+                                <asp:Button runat="server" Text="🗑" 
+                                    OnClick="EliminarProducto" CommandArgument='<%#Eval("Id")%>'/>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
 
                     </Columns>
 

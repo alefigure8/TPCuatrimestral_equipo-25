@@ -162,7 +162,7 @@ namespace RestoApp
                 resultado = (bool.Parse(e.Row.Cells[5].Text)) == true ? "✔" : "✖";
                 e.Row.Cells[5].Text = resultado;
 
-                resultado = (bool.Parse(e.Row.Cells[7].Text)) == true ? "Activo" : "Inactivo";
+                resultado = (bool.Parse(e.Row.Cells[7].Text)) == false ? "Inactivo" : "Activo";
                 e.Row.Cells[7].Text = resultado;
 
             }
@@ -334,6 +334,13 @@ namespace RestoApp
 
 
             }
+        }
+
+        public void EliminarProducto(object sender, System.EventArgs e)
+        {
+            Button button = sender as Button;
+            ProductoNegocio PNaux = new ProductoNegocio();
+            PNaux.EliminarProducto(int.Parse(button.CommandArgument));
         }
     }
 }
