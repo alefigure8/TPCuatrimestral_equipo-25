@@ -12,5 +12,7 @@ namespace Dominio
         public int? Mesero { get; set; }
         public int Mesa { get; set; }
 		public DateTime Fecha { get; set; }
+		public TimeSpan Apertura { get; set; }
+		public TimeSpan? Cierre { get; set; }
 	}
 }

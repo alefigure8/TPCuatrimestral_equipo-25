@@ -16,7 +16,8 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
     let mesasAsignadas = new Array(cantidadMesasGuardas)
     mesasAsignadas.fill(0)
 
-   //let mesasAsignadas = JSON.parsemesasAsignadasJSON)
+    //CARGAMOS MESAS POR DIA GUARDADAS
+    let numeroMesasPorDiaArray = JSON.parse(numeroMesasPorDiaJSON)
      
     function CargarMesasGuardas() {
 
@@ -24,20 +25,38 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
         for (let i = 0; i < cantidadMesasGuardas; i++) {
 
-            mesas.innerHTML += `
-                <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
-                    <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
-                        <div class="bg-dark-subtle w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${numeroMesasGuardasArray[i]}">
-                            <i class="fa-solid fa-utensils fs-4"></i>
-                        </div>
-                    </div>
-                    <div class=" w-100 text-light d-flex justify-content-center">
-                        <div class="w-50 bg-black rounded-4 text-center">
-                            <small class="fw-bold">${numeroMesasGuardasArray[i]}</small>
-                        </div>
+            if (numeroMesasPorDiaArray.some(el => el.mesa === i + 1)) {
+                mesas.innerHTML += `
+            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
+                <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
+                    <div class="bg-warning w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${i + i}">
+                        <i class="fa-solid fa-utensils fs-4"></i>
                     </div>
                 </div>
+                <div class=" w-100 text-light d-flex justify-content-center">
+                    <div class="w-50 bg-black rounded-4 text-center">
+                        <small class="fw-bold">${numeroMesasGuardasArray[i]}</small>
+                    </div>
+                </div>
+            </div>
             `;
+            } else {
+                mesas.innerHTML += `
+            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
+                <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
+                    <div class="bg-dark-subtle  w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${i + i}">
+                        <i class="fa-solid fa-utensils fs-4"></i>
+                    </div>
+                </div>
+                <div class=" w-100 text-light d-flex justify-content-center">
+                    <div class="w-50 bg-black rounded-4 text-center">
+                        <small class="fw-bold">${numeroMesasGuardasArray[i]}</small>
+                    </div>
+                </div>
+            </div>
+            `;
+
+            }
 
         };
     }
@@ -46,14 +65,13 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
         CargarMesasGuardas()
     })();
 
-
-    //CARGAMOS MESAS SELECCIONADAS DESDE DROPDOWN
+    //CARGAMOS MESAS PARA SIGNAR
     function CargarMesasSeleccion(i) {
         
         mesas.innerHTML = "";
 
-        for (let j = 0; j < i ; j++) {
-            if (mesasAsignadas[j] != '0') {
+        for (let j = 0; j < i; j++) {
+            if (numeroMesasPorDiaArray.some(el => el.mesa === j + 1 && el.mesero > 0)) {
                 mesas.innerHTML += `
             <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
                 <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
@@ -89,18 +107,20 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
         for (let j = 0; j < i; j++) {
 
-            if (mesasAsignadas[j] != 0) {
+            if (numeroMesasPorDiaArray.some(el => el.mesa === j + 1)) {
                 document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
                     document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
                     document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
-                    mesasAsignadas[j] = 0;
+                    //mesasAsignadas[j] = 0;
+                    numeroMesasPorDiaArray.find(el => el.mesa === j + 1).mesero = 0;
                     CargarMesasSeleccion(i);
                 });
             } else {
                 document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
                     document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
                     document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
-                    mesasAsignadas[j] = 1;
+                    //mesasAsignadas[j] = 1;
+                    numeroMesasPorDiaArray.push({ mesa: j + 1, mesero: parseInt(idMesero) });
                     CargarMesasSeleccion(i);
                 });
             }
@@ -143,7 +163,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ array: mesasAsignadas, idMesero })
+                body: JSON.stringify({ array: numeroMesasPorDiaArray })
             })
                 .then(function (response) {
                     if (response.ok) {

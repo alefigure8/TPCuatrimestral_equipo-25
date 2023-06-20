@@ -187,9 +187,8 @@ namespace Negocio
 
 			try
 			{
-				datos.setQuery($"SELECT {ColumnasDB.MesasPorDia.Id}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.Fecha} " +
-					$"FROM {ColumnasDB.MesasPorDia.DB} " +
-					$"WHERE {ColumnasDB.MesasPorDia.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}'");
+				datos.setQuery($"SELECT {ColumnasDB.MesasPorDia.Id}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.Fecha}, {ColumnasDB.MesasPorDia.Apertura}, {ColumnasDB.MesasPorDia.Cierre} " +
+					$"FROM {ColumnasDB.MesasPorDia.DB}");
 
 				datos.executeReader();
 
@@ -200,8 +199,8 @@ namespace Negocio
 					auxMesero.Id = (Int32)datos.Reader[ColumnasDB.MesasPorDia.Id];
 
 					//MESERO
-					object valorMesa = datos.Reader[ColumnasDB.MesasPorDia.IdMesero];
-					auxMesero.Mesero = DBNull.Value.Equals(valorMesa) ? (int?)null : Convert.ToInt32(valorMesa); ;
+					object valorMesero = datos.Reader[ColumnasDB.MesasPorDia.IdMesero];
+					auxMesero.Mesero = DBNull.Value.Equals(valorMesero) ? (int?)null : Convert.ToInt32(valorMesero); ;
 
 					//MESA
 					if (datos.Reader[ColumnasDB.MesasPorDia.IdMesa] != null)
@@ -210,6 +209,14 @@ namespace Negocio
 					//FECHA
 					if (datos.Reader[ColumnasDB.MesasPorDia.Fecha] != null)
 						auxMesero.Fecha = (DateTime)datos.Reader[ColumnasDB.MesasPorDia.Fecha];
+
+					//APERTURA
+					if (datos.Reader[ColumnasDB.MesasPorDia.Apertura] != null)
+						auxMesero.Apertura = (TimeSpan)datos.Reader[ColumnasDB.MesasPorDia.Apertura];
+
+					//SALIDA
+					object valorCierre = datos.Reader[ColumnasDB.MesasPorDia.Cierre];
+					auxMesero.Cierre = DBNull.Value.Equals(valorCierre) ? (TimeSpan?)null : (TimeSpan)valorCierre; ;
 
 					mesas.Add(auxMesero);
 				}
@@ -257,8 +264,8 @@ namespace Negocio
 			{
 				try
 				{
-					datos.setQuery($"INSERT INTO {ColumnasDB.MesasPorDia.DB} ({ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.Fecha}) " +
-					$"VALUES ({mesa}, {mesero}, '{DateTime.Now.ToString("yyyy - MM - dd")}')"
+					datos.setQuery($"INSERT INTO {ColumnasDB.MesasPorDia.DB} ({ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.Fecha}, {ColumnasDB.MesasPorDia.Apertura}) " +
+					$"VALUES ({mesa}, {mesero}, '{DateTime.Now.ToString("yyyy - MM - dd")}', '{DateTime.Now.ToString("HH:mm:ss")}') "
 					+ "SELECT CAST(scope_identity() AS int)");
 					id = datos.executeScalar();
 				}
@@ -297,15 +304,11 @@ namespace Negocio
 				if (!estaCargadaLaMesa)
 				{
 					//Si no está cargado el mesero, lo cargamos
-					datos.setQuery($"UPDATE {ColumnasDB.MesasPorDia.DB} SET {ColumnasDB.MesasPorDia.IdMesero} = '{mesero}' WHERE {ColumnasDB.MesasPorDia.Id} = {idMesaPorDia}");
+					datos.setQuery($"UPDATE {ColumnasDB.MesasPorDia.DB} SET {ColumnasDB.MesasPorDia.Cierre} = '{DateTime.Now.ToString("HH:mm:ss")}' WHERE {ColumnasDB.MesasPorDia.Id} = {idMesaPorDia}");
 					return datos.executeNonQuery();
 				}
-				else
-				{
-					//Si el mesero está cargado, lo dejamos como null
-					datos.setQuery($"UPDATE {ColumnasDB.MesasPorDia.DB} SET {ColumnasDB.MesasPorDia.IdMesero} = null WHERE {ColumnasDB.MesasPorDia.Id} = {idMesaPorDia}");
-					return datos.executeNonQuery();
-				}
+
+				return false;
 			}
 			catch(Exception ex)
 			{

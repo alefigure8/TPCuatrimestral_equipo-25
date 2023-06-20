@@ -68,6 +68,8 @@ namespace Opciones
 			public const string IdMesa = "IdMesa";
 			public const string IdMesero = "IdMesero";
 			public const string Fecha = "Fecha";
+			public const string Apertura = "Apertura";
+			public const string Cierre = "Cierre";
 			public const string DB = "MesasPorDia";
 		}
 
