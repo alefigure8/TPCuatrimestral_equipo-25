@@ -17,11 +17,18 @@ namespace RestoApp
     {
         public Usuario usuario { get; set; }
         public List<CategoriaProducto> ListaCategoriasProducto;
+        public List<Producto> ListaProductos;
+        public List<Producto> ListaFiltrada;
         protected void Page_Load(object sender, EventArgs e)
         {
 
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
+
+
+
+            CategoriaProductoNegocio CategoriaProductoNegocio = new CategoriaProductoNegocio();
+            ListaCategoriasProducto = CategoriaProductoNegocio.Listar();
 
             if (!IsPostBack)
             {
@@ -31,7 +38,7 @@ namespace RestoApp
 
             if (AutentificacionUsuario.esGerente(usuario))
             {
-               
+
             }
             if (AutentificacionUsuario.esMesero(usuario))
             {
@@ -40,9 +47,10 @@ namespace RestoApp
 
 
 
-            }
 
-            protected void IniciarDDL()
+        }
+
+        protected void IniciarDDL()
         {
             CargarDDLEstado();
             CargarDDLCategorias();
@@ -61,8 +69,7 @@ namespace RestoApp
 
         public void CargarDDLCategorias()
         {
-            CategoriaProductoNegocio CategoriaProductoNegocio = new CategoriaProductoNegocio();
-            ListaCategoriasProducto = CategoriaProductoNegocio.Listar();
+            
             DDLCategorias.Items.Add("Categorias");
             foreach (CategoriaProducto CPaux in ListaCategoriasProducto)
             {
@@ -97,8 +104,8 @@ namespace RestoApp
         public void ListarProductos()
         {
             ProductoNegocio productoNegocio = new ProductoNegocio();
-            Session.Add("ProductosDisponibles", productoNegocio.ListarProductos());
-            GVProductos.DataSource = Session["ProductosDisponibles"];
+            Session.Add("ListaProductos", productoNegocio.ListarProductos());
+            GVProductos.DataSource = Session["ListaProductos"];
             GVProductos.DataBind();
         }
 
@@ -112,7 +119,7 @@ namespace RestoApp
 
         protected void GVProductos_DataBound(object sender, EventArgs e)
         {
-           
+
         }
 
         protected void GVProductos_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -133,9 +140,10 @@ namespace RestoApp
                         }
                 }
 
+
+
                 string resultado = (bool.Parse(e.Row.Cells[3].Text)) == true ? "✔" : "✖";
                 e.Row.Cells[3].Text = resultado;
-                e.Row.Cells[3].CssClass = "columna-grilla-sm";
 
                 resultado = (bool.Parse(e.Row.Cells[4].Text)) == true ? "✔" : "✖";
                 e.Row.Cells[4].Text = resultado;
@@ -148,12 +156,56 @@ namespace RestoApp
 
             }
 
-            e.Row.Cells[0].CssClass = "columna-grilla";
 
-           
+
+
 
         }
 
-       
+        protected void DDLEstado_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ListaFiltrada = new List<Producto>();
+
+            switch (DDLEstado.SelectedIndex)
+            {
+               
+
+                case 1:
+                    {
+                        foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+                        {
+                            if (PAux.Activo == true)
+                            {
+                               ListaFiltrada.Add(PAux);
+                            }
+                        }
+                        break;
+                    }
+                case 2:
+                    {
+                        foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+                        {
+                            
+                            if (PAux.Activo == false)
+                            {
+                                ListaFiltrada.Add(PAux);
+                            }
+                        }
+                        break;
+                    }
+            }
+
+            Session["ListaFiltrada"] = ListaFiltrada;
+            GVProductos.DataSource = Session["ListaFiltrada"];
+            GVProductos.DataBind();
+
+
+
+        }
+
+        protected void btnLimpiarFiltro_Click(object sender, EventArgs e)
+        {
+            ListarProductos();
+        }
     }
 }
