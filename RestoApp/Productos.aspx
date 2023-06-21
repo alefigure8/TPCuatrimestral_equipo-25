@@ -10,7 +10,7 @@
     <div class="row bg-white rounded m-2 p-4 small">
 
 
-        <!-- Modal -->
+        <!-- Modal Nuevo Producto-->
         <div class="modal fade" id="modalProductos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -82,6 +82,86 @@
             </div>
         </div>
         <!-- Modal -->
+
+
+                <!-- Modal Nuevo Modificar Producto-->
+
+    <asp:UpdatePanel runat="server" ID="UPModificarProducto" UpdateMode="Conditional">
+        <ContentTemplate>
+                <div class="modal fade" id="modalModificarProductos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="p-4 d-flex justify-content-between">
+                        <h5 class="modal-title">Modificar Producto</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="p-2">
+                        <div class="d-flex justify-content-center ">
+                            <div class="col form-control">
+
+                                <div class="row p-1">
+                                    <div class="col-2"><asp:label runat="server" class="form-label" ID="MPlblNombre">Nombre: </asp:label></div>
+                                    <div class="col"> 
+                                        <asp:TextBox CssClass="form-control"  runat="server" ID="MPnombre1" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
+                                    </div>
+                                </div>
+
+                                <div class="row p-1">
+                                    <div class="col-3"><label class="form-label">Descripcion: </label> </div>
+                                    <div class="col">
+                                        <asp:TextBox  runat="server" CssClass="form-control" ID="MPDescripcion" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
+                                    </div>
+                                </div>
+
+
+                                <div class="row p-1">
+                                     <div class="col-2"><label class="form-label">Valor: </label> </div>
+                                    <div class="col">
+                                        <asp:TextBox CssClass="form-control" type="number" ID="MPvalor" runat="server"  style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
+                                    </div>
+                                </div>
+
+                                <div class="row p-1">
+                                        <asp:DropDownList ID="MPDDLCategoria" runat="server" CssClass="col btn btn-dark btn-sm m-1"   DataMember="modalDDLCategorias"></asp:DropDownList>
+                                        <asp:DropDownList ID="MPDDLEstado" runat="server" CssClass="col btn btn-dark btn-sm m-1" DataMember="modalDDLEstado"></asp:DropDownList>
+                                </div>
+
+
+
+                                <asp:CheckBoxList ID="MPCheckBoxAtributos" runat="server"></asp:CheckBoxList>
+
+                                <div class="row p-1">
+                                     <div class="col-3"><label class="form-label">Tiempo Cocción: </label> </div>
+                                    <div class="col">
+                                        <asp:TextBox  runat="server" ID="MPtiempococcion" CssClass="form-control" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
+                                    </div>
+                                </div>
+
+                                <div class="row p-1">
+                                     <div class="col-2"><label class="form-label">Stock: </label> </div>
+                                    <div class="col">
+                                        <asp:TextBox ID="MPStock" runat="server" CssClass="form-control" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <asp:Button Text="Cancelar" runat="server" CssClass="btn btn-dark btn-lg m-1" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+                        <asp:Button ID="MPBtnModificarProducto" Text="Guardar" runat="server" OnClick="MPBtnModificarProducto_Click"  UseSubmitBehavior="false" CssClass="btn btn-dark btn-lg m-1"  data-bs-toggle="modal" data-bs-target="#exampleModal" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        </ContentTemplate>
+
+    </asp:UpdatePanel>
+        <!-- Fin Modal Modificar Producto -->
 
 
         <div class="row p-2">
@@ -182,7 +262,7 @@
                         <asp:TemplateField ControlStyle-CssClass="btn btn-dark"  HeaderStyle-Width="20px">
                             <ItemTemplate>
                                 <asp:Button ID="btnModificarProducto" runat="server" Text="🖍" 
-                                     CommandArgument='<%# Container.DataItemIndex %>' />
+                                     OnClick="btnModificarProducto_Click" CommandArgument='<%#Eval("Id")%>' data-bs-toggle="modal" data-bs-target="#modalModificarProductos" />
                             </ItemTemplate>
                         </asp:TemplateField>
 

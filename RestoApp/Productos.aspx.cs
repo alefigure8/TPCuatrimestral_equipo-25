@@ -71,6 +71,10 @@ namespace RestoApp
             modalDDLEstado.Items.Add("Activo");
             modalDDLEstado.Items.Add("Inactivo");
 
+            MPDDLEstado.Items.Add("Estado");
+            MPDDLEstado.Items.Add("Activo");
+            MPDDLEstado.Items.Add("Inactivo");
+
         }
 
         public void CargarDDLCategorias()
@@ -78,11 +82,12 @@ namespace RestoApp
             
             DDLCategorias.Items.Add("Categorias");
             modalDDLCategorias.Items.Add("Categorias");
-
+            MPDDLCategoria.Items.Add("Categorias");
             foreach (CategoriaProducto CPaux in ListaCategoriasProducto)
             {
                 DDLCategorias.Items.Add(CPaux.Descripcion);
                 modalDDLCategorias.Items.Add(CPaux.Descripcion);
+                MPDDLCategoria.Items.Add(CPaux.Descripcion);
 
             }
         }
@@ -110,6 +115,10 @@ namespace RestoApp
             modalCheckBoxAtributos.Items.Add("Vegano");
             modalCheckBoxAtributos.Items.Add("Celiaco");
             modalCheckBoxAtributos.Items.Add("Alcohol");
+
+            MPCheckBoxAtributos.Items.Add("Vegano");
+            MPCheckBoxAtributos.Items.Add("Celiaco");
+            MPCheckBoxAtributos.Items.Add("Alcohol");
         }
 
 
@@ -295,7 +304,7 @@ namespace RestoApp
         protected void GuardarNuevoProducto_Click(object sender, EventArgs e)
         {
 
-            if (!string.IsNullOrWhiteSpace(NuevoProductoNombre.Text) &&
+           if (!string.IsNullOrWhiteSpace(NuevoProductoNombre.Text) &&
            !string.IsNullOrWhiteSpace(NuevoProductoDescripcion.Text) &&
            !string.IsNullOrWhiteSpace(NuevoProductoValor.Text) &&
            modalDDLCategorias.SelectedIndex != 0 &&
@@ -342,5 +351,46 @@ namespace RestoApp
             ProductoNegocio PNaux = new ProductoNegocio();
             PNaux.EliminarProducto(int.Parse(button.CommandArgument));
         }
+
+        protected void btnModificarProducto_Click(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+            Producto Paux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+            Session.Add("ProductoAModificar", Paux); 
+        }
+
+        protected void MPBtnModificarProducto_Click(object sender, EventArgs e)
+        {
+            Producto Paux = ((Producto)(Session["ProductoAModificar"]));
+            Paux.Nombre = string.IsNullOrEmpty(MPnombre1.Text) ? Paux.Nombre : MPnombre1.Text;
+            Paux.Descripcion = string.IsNullOrEmpty(MPDescripcion.Text) ? Paux.Descripcion : MPDescripcion.Text;
+            Paux.Valor = string.IsNullOrEmpty(MPvalor.Text) ? Paux.Valor : decimal.Parse(MPvalor.Text);
+            Paux.Categoria = MPDDLCategoria.SelectedIndex != 0 && MPDDLCategoria != null ? MPDDLCategoria.SelectedIndex : Paux.Categoria;
+            bool estado = MPDDLEstado.SelectedIndex == 2 ? false : true;
+            Paux.Activo = estado;
+            Paux.AptoCeliaco = MPCheckBoxAtributos.Items.FindByText("Celiaco").Selected == true ? true : false;
+            Paux.Alcohol = MPCheckBoxAtributos.Items.FindByText("Alcohol").Selected == true ? true : false;
+            Paux.TiempoCoccion = string.IsNullOrEmpty(MPtiempococcion.Text) ? Paux.TiempoCoccion : TimeSpan.Parse(MPtiempococcion.Text);
+            Paux.AptoVegano = MPCheckBoxAtributos.Items.FindByText("Vegano").Selected == true ? true : false;
+            Paux.Stock = string.IsNullOrEmpty(MPStock.Text) ? Paux.Stock : int.Parse(MPStock.Text);
+
+            ProductoNegocio PNaux = new ProductoNegocio();
+                try
+                {
+                    PNaux.ModificarProducto(Paux);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+            
+
+
+            
+        }
+
+     
     }
 }
