@@ -230,12 +230,29 @@ namespace RestoApp
         protected void BtnEliminarusuario_Click(object sender, EventArgs e)
         {
    
-            int datakey = Int32.Parse(GDVEmpleados.SelectedDataKey.ToString());
+           
         }
 
         protected void GDVEmpleados_RowCommand(object sender, GridViewCommandEventArgs e)
         {
+            if (e.CommandName == "EliminarUsuario")
+            {
+                UsuarioNegocio negocio = new UsuarioNegocio();
+                int rowIndex = Convert.ToInt32(e.CommandArgument);
+                List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
 
+                if (rowIndex >= 0 && rowIndex < listausuarios.Count)
+                {
+                    Usuario usuarioSeleccionado = listausuarios[rowIndex];
+                                 
+                    int idUsuario = usuarioSeleccionado.Id;
+                                       
+                    negocio.BajalogicaUsuario(idUsuario);
+
+                    // Vuelve a cargar los datos en el GridView después de eliminar el usuario
+                    CargarDgv();
+                }
+            }
         }
     }
 

@@ -18,7 +18,8 @@ namespace Negocio
             {
 				datos.setQuery($"SELECT {ColumnasDB.Usuario.Id}, {ColumnasDB.Usuario.Nombres}, {ColumnasDB.Usuario.Apellidos}, {ColumnasDB.Usuario.Mail}, {ColumnasDB.Usuario.Pass}, {ColumnasDB.TipoUsuario.Descripcion} " +
 					$"FROM {ColumnasDB.Usuario.DB} " +
-					$"INNER JOIN {ColumnasDB.TipoUsuario.DB} ON {ColumnasDB.Usuario.TipoUsuario} = {ColumnasDB.TipoUsuario.Id}"); 
+					$"INNER JOIN {ColumnasDB.TipoUsuario.DB} ON {ColumnasDB.Usuario.TipoUsuario} = {ColumnasDB.TipoUsuario.Id} " +
+					$"WHERE {ColumnasDB.Usuario.Activo} = 1 "); 
 				datos.executeReader();
                     
 
@@ -187,7 +188,7 @@ namespace Negocio
             {
                 
 				datos.setQuery($"UPDATE {ColumnasDB.Usuario.DB} set {ColumnasDB.Usuario.Activo} = 0 WHERE {ColumnasDB.Usuario.Id} = {id}");                   
-                datos.executeReader();
+      
 
                 if (datos.executeNonQuery())
                 {
