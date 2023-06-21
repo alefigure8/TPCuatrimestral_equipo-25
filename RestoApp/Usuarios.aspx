@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Usuarios.aspx.cs" Inherits="RestoApp.Usuarios" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Usuarios.aspx.cs" Inherits="RestoApp.Usuarios"  %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
@@ -15,31 +15,34 @@
             </div>
                 </div>
       <div class="row" style="margin-top:20px; justify-content:center;">
-          <div class="col-6">
-      <asp:GridView ID="GDVEmpleados" runat="server" style="border-radius:5px;" BackColor="Ivory" AllowSorting=true OnSorting="GDVEmpleados_Sorting">
+          <div class="col-9" style="height:500px; overflow-y: auto;">
+      <asp:GridView ID="GDVEmpleados" runat="server" style="border-radius:5px; margin-right:0px;padding-right:0px;" BackColor="Ivory" AllowSorting=true OnSorting="GDVEmpleados_Sorting" OnRowDataBound="GDVEmpleados_RowDataBound" OnSelectedIndexChanged="GDVEmpleados_SelectedIndexChanged" AutoPostBack="true" DataKeyNames="IdUsuario" OnRowCommand="GDVEmpleados_RowCommand" >
             <HeaderStyle HorizontalAlign="Center" BackColor="#212529" BorderColor="#666666" cssClass="celda" ForeColor="#CCCCCC" />
              <RowStyle HorizontalAlign="Center" VerticalAlign="Middle" cssClass="celda"/>
-          <SelectedRowStyle BackColor="#212529" ForeColor="#CCCCCC" />
 
-            
+             <Columns>
+
+                             <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:LinkButton ID="BtnEliminarusuario" runat="server" class="btn btn-dark" OnClick="BtnEliminarusuario_Click"><i class="fa-solid fa-user-minus"></i></asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                 <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:LinkButton ID="BtnModificarusuario" runat="server" class="btn btn-dark">  <i class="fa-solid fa-user-gear"></i></asp:LinkButton>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+
+
+   
       </asp:GridView>
-              </div>
-          <div class="col-3">
-              <div class="row">
-                  <asp:LinkButton ID="BtnAgregar" runat="server" class="btn btn-dark" style="margin-left:20px; margin-bottom:10px;">Agregar</asp:LinkButton>
-              </div>
-                   <div class="row">
-                  <asp:LinkButton ID="BtnModificar" runat="server" class="btn btn-dark" style="margin-left:20px; margin-bottom:10px;">Modificar</asp:LinkButton>
-              </div>
-               <div class="row">
-                  <asp:LinkButton ID="BtnEliminar" runat="server" class="btn btn-dark" style="margin-left:20px; margin-bottom:10px;" >Eliminar</asp:LinkButton>
-              </div>
-               <div class="row">
-                  <asp:LinkButton ID="BtnVer" runat="server" class="btn btn-dark" style="margin-left:20px; margin-bottom:10px;" >Ver</asp:LinkButton>
-              </div>
+           </div>      
 
-          </div>
-          </div>
+
+
+
+
  <div class="row" style="justify-content:center;">
     <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="margin-left:20px; margin-bottom:10px; height:40px; width:77%;" data-bs-toggle="dropdown" data-bs-theme="dark"></asp:LinkButton>
     <asp:Panel ID="DropdownPanel" runat="server" CssClass="dropdown-menu" style="width:64%; background-color:#343a40" ForeColor="#CCCCCC">

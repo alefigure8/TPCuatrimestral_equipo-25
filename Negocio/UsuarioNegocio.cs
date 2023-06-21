@@ -177,5 +177,33 @@ namespace Negocio
 
 		}
         
+		public bool BajalogicaUsuario(int id)
+		{
+
+            Usuario usuario = new Usuario();
+            AccesoDB datos = new AccesoDB();
+
+            try
+            {
+                
+				datos.setQuery($"UPDATE {ColumnasDB.Usuario.DB} set {ColumnasDB.Usuario.Activo} = 0 WHERE {ColumnasDB.Usuario.Id} = {id}");                   
+                datos.executeReader();
+
+                if (datos.executeNonQuery())
+                {
+                    datos.closeConnection();
+                    return true;
+                }
+            }
+            catch (Exception Ex)
+            {
+                throw Ex;
+            }
+            finally
+            {
+                datos.closeConnection();
+            }
+			return false;
+        }
     }
 }

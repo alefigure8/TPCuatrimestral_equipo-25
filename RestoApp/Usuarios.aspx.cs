@@ -1,5 +1,7 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
@@ -21,7 +23,7 @@ namespace RestoApp
 
         List<Usuario> Listausuarios;
 
-      
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -70,23 +72,9 @@ namespace RestoApp
                 Listausuarios.RemoveAll(x => x.Tipo == ColumnasDB.TipoUsuario.Gerente);
             }
 
-            DataTable dataTable = new DataTable();
-            dataTable.Columns.Add(ColumnasDB.Usuario.Id, typeof(int));
-            dataTable.Columns.Add(ColumnasDB.Usuario.Nombres, typeof(string));
-            dataTable.Columns.Add(ColumnasDB.Usuario.Apellidos, typeof(string));
-            dataTable.Columns.Add(ColumnasDB.Usuario.Mail, typeof(string));
-            dataTable.Columns.Add(ColumnasDB.Usuario.Pass, typeof(string));
-            dataTable.Columns.Add(ColumnasDB.Usuario.TipoUsuario, typeof(string));
-            dataTable.Columns.Add("Fecha de alta", typeof(DateTime));
-            dataTable.Columns.Add("Fecha de baja", typeof(DateTime));
-
-            foreach (var usuario in Listausuarios)
-            {
-                dataTable.Rows.Add(usuario.Id, usuario.Nombres, usuario.Apellidos, usuario.Mail, usuario.Password, usuario.Tipo);
-            }
 
             Session.Add("listaactual", Listausuarios);
-            GDVEmpleados.DataSource = Listausuarios;
+            GDVEmpleados.DataSource = Convertidordatatable(Listausuarios);
             GDVEmpleados.DataBind();
 
         }
@@ -94,9 +82,8 @@ namespace RestoApp
         protected void GDVEmpleados_Sorting(object sender, GridViewSortEventArgs e)
         {
             string columnaseleccionada = e.SortExpression;
-
             Listausuarios = (List<Usuario>)Session["listaactual"];
-            
+
             bool idasc = (bool)Session["idasc"];
             bool nombreasc = (bool)Session["nombreasc"];
             bool apellidoasc = (bool)Session["apellidoasc"];
@@ -118,7 +105,7 @@ namespace RestoApp
                     Listausuarios = Listausuarios.OrderBy(x => x.Id).ToList();
                     idasc = true;
                     Session.Add("idasc", idasc);
-                    
+
                 }
 
             }
@@ -166,10 +153,10 @@ namespace RestoApp
                     Listausuarios = Listausuarios.OrderBy(x => x.Mail).ToList();
                     mailasc = true;
                     Session.Add("mailasc", mailasc);
-                    
+
                 }
             }
-            else if (columnaseleccionada == "Tipo")
+            else if (columnaseleccionada == ColumnasDB.Usuario.TipoUsuario)
             {
                 if (tipoasc)
                 {
@@ -182,14 +169,75 @@ namespace RestoApp
                     Listausuarios = Listausuarios.OrderBy(x => x.Tipo).ToList();
                     tipoasc = true;
                     Session.Add("tipoasc", tipoasc);
-                    
+
                 }
             }
-                   
+
             Session.Add("listaactual", Listausuarios);
-            GDVEmpleados.DataSource = Listausuarios;
+            GDVEmpleados.DataSource = Convertidordatatable(Listausuarios);
             GDVEmpleados.DataBind();
 
         }
+
+        public DataTable Convertidordatatable(List<Usuario> listausuarios)
+        {
+
+            if (listausuarios != null)
+            {
+
+                DataTable dataTable = new DataTable();
+                dataTable.Columns.Add(ColumnasDB.Usuario.Id, typeof(int));
+                dataTable.Columns.Add(ColumnasDB.Usuario.Nombres, typeof(string));
+                dataTable.Columns.Add(ColumnasDB.Usuario.Apellidos, typeof(string));
+                dataTable.Columns.Add(ColumnasDB.Usuario.Mail, typeof(string));
+                dataTable.Columns.Add(ColumnasDB.Usuario.Pass, typeof(string));
+                dataTable.Columns.Add(ColumnasDB.Usuario.TipoUsuario, typeof(string));
+                dataTable.Columns.Add("Fecha de alta", typeof(DateTime));
+                dataTable.Columns.Add("Fecha de baja", typeof(DateTime));
+
+                foreach (var usuario in listausuarios)
+                {
+                    dataTable.Rows.Add(usuario.Id, usuario.Nombres, usuario.Apellidos, usuario.Mail, usuario.Password, usuario.Tipo);
+                }
+
+                return dataTable;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        protected void GDVEmpleados_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+              
+
+            }
+        }
+
+        protected void GDVEmpleados_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+
+           
+
+
+            
+        }
+
+        protected void BtnEliminarusuario_Click(object sender, EventArgs e)
+        {
+   
+            int datakey = Int32.Parse(GDVEmpleados.SelectedDataKey.ToString());
+        }
+
+        protected void GDVEmpleados_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+
+        }
     }
+
+    
 }

@@ -27,6 +27,7 @@ namespace Opciones
 			public const string Mail = "Mail";
 			public const string Pass = "Pass";
 			public const string TipoUsuario = "TipoUsuario";
+			public const string Activo = "Activo";
 			public const string DB = "USUARIO";
 		}
 
