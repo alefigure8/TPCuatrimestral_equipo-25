@@ -30,7 +30,7 @@
                         </asp:TemplateField>
                  <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:LinkButton ID="BtnModificarusuario" runat="server" class="btn btn-dark">  <i class="fa-solid fa-user-gear"></i></asp:LinkButton>
+                                <asp:LinkButton ID="BtnModificarusuario" runat="server" class="btn btn-dark"  CommandName="ModificarUsuario" CommandArgument='<%# Container.DataItemIndex %>' OnClick="BtnModificarusuario_Click" >  <i class="fa-solid fa-user-gear"></i></asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
@@ -45,7 +45,10 @@
 
 
  <div class="col-3">
-    <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="height:40px;width:100%;" data-bs-toggle="dropdown" data-bs-theme="dark"><i class="fa-solid fa-user-plus"> </i></asp:LinkButton>
+     <%if ((bool)Session["modificar"] == false)
+         {
+%>
+    <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="height:40px;width:100%;" data-bs-toggle="dropdown" data-bs-theme="dark"><i class="fa-solid fa-user-plus"></i></asp:LinkButton>
     <asp:Panel ID="DropdownPanel" runat="server" CssClass="dropdown-menu" style="background-color:#343a40; width:19%; padding:2px;" ForeColor="#CCCCCC">
         <div class="col">
             <div class="row">
@@ -74,14 +77,52 @@
   </div>                      
              
         <div class="row">
-        <asp:LinkButton ID="BtnConfirmarcambios" runat="server" class="btn btn-dark " style="height:40px;width:90%; margin-left:14px; margin-top:10px; margin-bottom:5px;" OnClick="BtnConfirmarcambios_Click" > Confirmar <i class="fa-solid fa-check"></i></asp:LinkButton>
+        <asp:LinkButton ID="BtnConfirmarcambios" runat="server" class="btn btn-dark " style="height:40px;width:90%; margin-left:14px; margin-top:10px; margin-bottom:5px;" OnClick="BtnConfirmarcambios_Click" AutoPostBack="true" > Confirmar <i class="fa-solid fa-check"></i></asp:LinkButton>
                  </div>
                </div>
     </asp:Panel>
+     <%}
+         else
+         {  %>
+     <asp:LinkButton ID="LinkButton2" runat="server" class="btn btn-dark dropdown-toggle" style="height:40px;width:100%;" data-bs-toggle="dropdown" data-bs-theme="dark"> <i class="fa-solid fa-user-gear"></i></asp:LinkButton>
+    <asp:Panel ID="Panel1" runat="server" CssClass="dropdown-menu show" style="background-color:#343a40; width:19%; padding:2px;" ForeColor="#CCCCCC">
+        <div class="col">
+            <div class="row">
+        <asp:Label ID="LblId2" runat="server" Text="Id:"></asp:Label>
+        <asp:TextBox ID="TxtId2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>
+                </div>
+                      <div class="row">
+         <asp:Label ID="LblNombres2" runat="server" Text="Nombres:"></asp:Label>
+        <asp:TextBox ID="TxtNombres2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>
+</div>
+            <div class="row">
+        <asp:Label ID="LblApellidos2" runat="server" Text="Apellidos:"></asp:Label>
+        <asp:TextBox ID="TxtApellidos2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>  
+                </div>
+             <div class="row">
+             <asp:Label ID="LblMail2" runat="server" Text="Mail:"></asp:Label>
+        <asp:TextBox ID="TxtMail2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>   
+          </div>
+                <div class="row">
+         <asp:Label ID="LblPass2" runat="server" Text="Password:"></asp:Label>
+        <asp:TextBox ID="TxtPass2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox> 
+  </div>        
+            <div class="row">
+         <asp:Label ID="LblTipouser" runat="server" Text="TipoUsuario:"></asp:Label>
+        <asp:DropDownList ID="DdlTipo2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:DropDownList> 
+  </div>                      
+             
+        <div class="row">
+        <asp:LinkButton ID="BtnConfirmarcambios2" runat="server" class="btn btn-dark " style="height:40px;width:90%; margin-left:14px; margin-top:10px; margin-bottom:5px;" OnClick="BtnConfirmarcambios_Click" AutoPostBack="true" > Confirmar <i class="fa-solid fa-check"></i></asp:LinkButton>
+                 </div>
+               </div>
+    </asp:Panel>
+     <%} %>
+
+
       </div>  
       </div>
 </div>
-
 
 </asp:Content>
 

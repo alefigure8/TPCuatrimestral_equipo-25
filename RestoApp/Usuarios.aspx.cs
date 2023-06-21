@@ -20,7 +20,7 @@ namespace RestoApp
     public partial class Usuarios : System.Web.UI.Page
     {
         public Usuario usuario { get; set; }
-
+     
         List<Usuario> Listausuarios;
 
 
@@ -32,9 +32,12 @@ namespace RestoApp
 
             if (!IsPostBack)
             {
+                bool modificar = false;
+                Session.Add("modificar", modificar);
                 CargarDgv();
                 Cargarestadossorting();
                 CargarDdltipo();
+                TxtId.Enabled = false;
 
             }
 
@@ -92,7 +95,7 @@ namespace RestoApp
 
 
 
-            if (columnaseleccionada == "Id")
+            if (columnaseleccionada == ColumnasDB.Usuario.Id)
             {
                 if (idasc)
                 {
@@ -246,12 +249,33 @@ namespace RestoApp
 
                     int idUsuario = usuarioSeleccionado.Id;
 
-                   // Si el usuario hace clic en "Aceptar", se realizará la baja lógica
                     negocio.BajalogicaUsuario(idUsuario);
 
                     // Vuelve a cargar los datos en el GridView después de eliminar el usuario
                     CargarDgv();
                 }
+            }
+            if(e.CommandName == "ModificarUsuario")
+            {
+                UsuarioNegocio negocio = new UsuarioNegocio();
+                int rowIndex = Convert.ToInt32(e.CommandArgument);
+                List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
+
+                if (rowIndex >= 0 && rowIndex < listausuarios.Count)
+                {
+                    Usuario usuarioSeleccionado = listausuarios[rowIndex];
+
+                    TxtApellidos2.Text = usuarioSeleccionado.Apellidos;
+                    TxtNombres2.Text = usuarioSeleccionado.Nombres;
+                    TxtId2.Text = usuarioSeleccionado.Id.ToString();
+                    TxtMail2.Text = usuarioSeleccionado.Mail;
+                    TxtPass2.Text = usuarioSeleccionado.Password;
+                                       
+
+                    // Vuelve a cargar los datos en el GridView después de eliminar el usuario
+                    CargarDgv();
+                }
+
             }
         }
 
@@ -266,7 +290,24 @@ namespace RestoApp
             nuevousuario.Password = TxtPassword.Text.ToString();
 
             usuarioNegocio.Agregarusuario(nuevousuario);
+            CargarDgv();
             
+        }
+
+        protected void BtnModificarusuario_Click(object sender, EventArgs e)
+        {
+            bool aux;
+            if ((bool)Session["modificar"]==false)
+            {
+                aux = true;
+               Session.Add("modificar", aux);
+
+            }
+            else
+            {
+                aux = false;
+                Session.Add("modificar", aux);
+            }
         }
     }
 
