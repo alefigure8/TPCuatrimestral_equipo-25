@@ -244,9 +244,13 @@ namespace RestoApp
                 if (rowIndex >= 0 && rowIndex < listausuarios.Count)
                 {
                     Usuario usuarioSeleccionado = listausuarios[rowIndex];
-                                 
+
                     int idUsuario = usuarioSeleccionado.Id;
-                                       
+
+                    // Registra el script JavaScript para mostrar la ventana de confirmación
+                    ClientScript.RegisterStartupScript(this.GetType(), "confirm", "return confirm('¿Estás seguro de continuar?');", true);
+
+                    // Si el usuario hace clic en "Aceptar", se realizará la baja lógica
                     negocio.BajalogicaUsuario(idUsuario);
 
                     // Vuelve a cargar los datos en el GridView después de eliminar el usuario

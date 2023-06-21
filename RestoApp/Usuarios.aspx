@@ -3,7 +3,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-  
+
+
   <div class="container">
 
     <div class="row" style="justify-content:center; margin-top:20px;">
@@ -24,7 +25,7 @@
 
                              <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:LinkButton ID="BtnEliminarusuario" runat="server" class="btn btn-dark" OnClick="BtnEliminarusuario_Click" CommandName="EliminarUsuario" CommandArgument='<%# Container.DataItemIndex %>'><i class="fa-solid fa-user-minus"></i></asp:LinkButton>
+                                <asp:LinkButton ID="BtnEliminarusuario" runat="server" class="btn btn-dark" OnClick="BtnEliminarusuario_Click" CommandName="EliminarUsuario" CommandArgument='<%# Container.DataItemIndex %>' OnClientClick="return confirm('¿Estás seguro que desea eliminar este usuario?');"><i class="fa-solid fa-user-minus"></i></asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
                  <asp:TemplateField>
@@ -79,5 +80,6 @@
     </asp:Panel>
       </div>
 </div>
+      </div>
 </asp:Content>
 
