@@ -17,7 +17,7 @@
                 </div>
       <div class="row" style="margin-top:20px; justify-content:center;">
           <div class="col-9" style="height:500px; overflow-y: auto;">
-      <asp:GridView ID="GDVEmpleados" runat="server" style="border-radius:5px; margin-right:0px;padding-right:0px;" BackColor="Ivory" AllowSorting=true OnSorting="GDVEmpleados_Sorting" OnRowDataBound="GDVEmpleados_RowDataBound" OnSelectedIndexChanged="GDVEmpleados_SelectedIndexChanged" AutoPostBack="true" DataKeyNames="IdUsuario" OnRowCommand="GDVEmpleados_RowCommand" >
+      <asp:GridView ID="GDVEmpleados" runat="server"  BackColor="Ivory" AllowSorting=true OnSorting="GDVEmpleados_Sorting" OnRowDataBound="GDVEmpleados_RowDataBound"  AutoPostBack="true" DataKeyNames="IdUsuario" OnRowCommand="GDVEmpleados_RowCommand" >
             <HeaderStyle HorizontalAlign="Center" BackColor="#212529" BorderColor="#666666" cssClass="celda" ForeColor="#CCCCCC" />
              <RowStyle HorizontalAlign="Center" VerticalAlign="Middle" cssClass="celda"/>
 
@@ -25,7 +25,7 @@
 
                              <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:LinkButton ID="BtnEliminarusuario" runat="server" class="btn btn-dark" OnClick="BtnEliminarusuario_Click" CommandName="EliminarUsuario" CommandArgument='<%# Container.DataItemIndex %>' OnClientClick="return confirm('¿Estás seguro que desea eliminar este usuario?');"><i class="fa-solid fa-user-minus"></i></asp:LinkButton>
+                                <asp:LinkButton ID="BtnEliminarusuario" runat="server" class="btn btn-dark"  CommandName="EliminarUsuario" CommandArgument='<%# Container.DataItemIndex %>' OnClientClick="return confirm('¿Estás seguro que desea eliminar este usuario?');"><i class="fa-solid fa-user-minus"></i></asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
                  <asp:TemplateField>
@@ -38,48 +38,46 @@
 
    
       </asp:GridView>
-           </div>      
+                     </div>
 
 
 
 
 
- <div class="row" style="justify-content:center;">
-    <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="margin-left:20px; margin-bottom:10px; height:40px; width:77%;" data-bs-toggle="dropdown" data-bs-theme="dark"></asp:LinkButton>
-    <asp:Panel ID="DropdownPanel" runat="server" CssClass="dropdown-menu" style="width:64%; background-color:#343a40" ForeColor="#CCCCCC">
+ <div class="col-3">
+    <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="height:40px;width:100%;" data-bs-toggle="dropdown" data-bs-theme="dark"><i class="fa-solid fa-user-plus"> </i></asp:LinkButton>
+    <asp:Panel ID="DropdownPanel" runat="server" CssClass="dropdown-menu" style="background-color:#343a40; width:19%; padding:2px;" ForeColor="#CCCCCC">
         <div class="col">
             <div class="row">
         <asp:Label ID="LblId" runat="server" Text="Id:"></asp:Label>
-        <asp:TextBox ID="TxtId" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>
+        <asp:TextBox ID="TxtId" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>
                 </div>
-            <div class="row">
-             <asp:Label ID="LblMail" runat="server" Text="Mail:"></asp:Label>
-        <asp:TextBox ID="TxtMail" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>   
-          </div>
-           <div class="row">
+                      <div class="row">
          <asp:Label ID="LblNombres" runat="server" Text="Nombres:"></asp:Label>
-        <asp:TextBox ID="TxtNombres" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>
+        <asp:TextBox ID="TxtNombres" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>
 </div>
-                <div class="row">
-         <asp:Label ID="LblPassword" runat="server" Text="Password:"></asp:Label>
-        <asp:TextBox ID="TxtPassword" runat="server" CssClass="form-control" TextMode="Password" style="width:80%; margin-left:14px;"></asp:TextBox> 
-  </div>
             <div class="row">
         <asp:Label ID="LblApellidos" runat="server" Text="Apellidos:"></asp:Label>
-        <asp:TextBox ID="TxtApellidos" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>  
+        <asp:TextBox ID="TxtApellidos" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>  
                 </div>
+             <div class="row">
+             <asp:Label ID="LblMail" runat="server" Text="Mail:"></asp:Label>
+        <asp:TextBox ID="TxtMail" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>   
+          </div>
+                <div class="row">
+         <asp:Label ID="LblPassword" runat="server" Text="Password:"></asp:Label>
+        <asp:TextBox ID="TxtPassword" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox> 
+  </div>        
             <div class="row">
-          <asp:Label ID="LblFdA" runat="server" Text="Fecha de alta:"></asp:Label>
-        <asp:TextBox ID="TxtFdA" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>   
-     </div>
-  <div class="row">
-                    <asp:Label ID="LblFdB" runat="server" Text="Fecha de baja:"></asp:Label>
-        <asp:TextBox ID="TxtFdB" runat="server" CssClass="form-control" style="width:80%; margin-left:14px;"></asp:TextBox>  
-      </div>
-            </div>
+         <asp:Label ID="LblTipo" runat="server" Text="TipoUsuario:"></asp:Label>
+        <asp:DropDownList ID="DdlTipo" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:DropDownList> 
+  </div>
+                        
+              </div>  
     </asp:Panel>
       </div>
 </div>
       </div>
+
 </asp:Content>
 

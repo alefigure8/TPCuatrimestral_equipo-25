@@ -34,7 +34,7 @@ namespace RestoApp
             {
                 CargarDgv();
                 Cargarestadossorting();
-
+                CargarDdltipo();
 
             }
 
@@ -193,7 +193,7 @@ namespace RestoApp
                 dataTable.Columns.Add(ColumnasDB.Usuario.Pass, typeof(string));
                 dataTable.Columns.Add(ColumnasDB.Usuario.TipoUsuario, typeof(string));
                 dataTable.Columns.Add("Fecha de alta", typeof(DateTime));
-                dataTable.Columns.Add("Fecha de baja", typeof(DateTime));
+          
 
                 foreach (var usuario in listausuarios)
                 {
@@ -217,20 +217,19 @@ namespace RestoApp
             }
         }
 
-        protected void GDVEmpleados_SelectedIndexChanged(object sender, EventArgs e)
+        public void CargarDdltipo()
         {
 
+            DdlTipo.Items.Add(ColumnasDB.TipoUsuario.Mesero);
 
-           
-
-
+            if (AutentificacionUsuario.esAdmin(usuario))
+            {
+                DdlTipo.Items.Add(ColumnasDB.TipoUsuario.Gerente);
+            }
             
-        }
 
-        protected void BtnEliminarusuario_Click(object sender, EventArgs e)
-        {
-   
-           
+
+
         }
 
         protected void GDVEmpleados_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -247,10 +246,7 @@ namespace RestoApp
 
                     int idUsuario = usuarioSeleccionado.Id;
 
-                    // Registra el script JavaScript para mostrar la ventana de confirmación
-                    ClientScript.RegisterStartupScript(this.GetType(), "confirm", "return confirm('¿Estás seguro de continuar?');", true);
-
-                    // Si el usuario hace clic en "Aceptar", se realizará la baja lógica
+                   // Si el usuario hace clic en "Aceptar", se realizará la baja lógica
                     negocio.BajalogicaUsuario(idUsuario);
 
                     // Vuelve a cargar los datos en el GridView después de eliminar el usuario
