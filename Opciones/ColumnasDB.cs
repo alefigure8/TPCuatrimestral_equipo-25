@@ -29,7 +29,9 @@ namespace Opciones
 			public const string TipoUsuario = "TipoUsuario";
 			public const string Activo = "Activo";
 			public const string DB = "USUARIO";
-		}
+			public const string Fechaalta = "Fechaalta";
+       
+        }
 
 		public struct Mesa
 		{

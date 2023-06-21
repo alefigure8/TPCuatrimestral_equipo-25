@@ -206,5 +206,61 @@ namespace Negocio
             }
 			return false;
         }
+
+		public bool Agregarusuario(Usuario nuevousuario)
+		{
+            AccesoDB datos = new AccesoDB();
+			int tipo=0;
+
+			if (nuevousuario.Tipo == ColumnasDB.TipoUsuario.Mesero)
+			{
+				tipo = 3;
+			}
+			else if(nuevousuario.Tipo == ColumnasDB.TipoUsuario.Gerente)
+			{
+
+				tipo = 2;
+			}
+
+
+            try
+            {
+				               
+				datos.setQuery($"INSERT INTO " +
+                   $"{ColumnasDB.Usuario.DB} (" +
+                   $"{ColumnasDB.Usuario.Nombres}," +
+                   $"{ColumnasDB.Usuario.Apellidos}," +
+                   $"{ColumnasDB.Usuario.Mail}, " +
+                   $"{ColumnasDB.Usuario.Pass}, " +
+                   $"{ColumnasDB.Usuario.Fechaalta}, " +
+                   $"{ColumnasDB.Usuario.Activo}, " +
+                   $"{ColumnasDB.Usuario.TipoUsuario}) " +
+                   $"VALUES ('{nuevousuario.Nombres}', " +
+                    $"'{nuevousuario.Apellidos}', " +
+                    $"'{nuevousuario.Mail}', " +
+                    $"'{nuevousuario.Password}', " +
+                    $"GETDATE(), " +
+                    $"1 ," +
+                    $"'{tipo}')");
+
+                if (datos.executeNonQuery())
+                {
+                    datos.closeConnection();
+                    return true;
+                }
+            }
+            catch (Exception Ex)
+            {
+                throw Ex;
+            }
+            finally
+            {
+                datos.closeConnection();
+            }
+            return false;
+
+
+
+        }
     }
 }

@@ -71,13 +71,17 @@
             <div class="row">
          <asp:Label ID="LblTipo" runat="server" Text="TipoUsuario:"></asp:Label>
         <asp:DropDownList ID="DdlTipo" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:DropDownList> 
-  </div>
-                        
-              </div>  
+  </div>                      
+             
+        <div class="row">
+        <asp:LinkButton ID="BtnConfirmarcambios" runat="server" class="btn btn-dark " style="height:40px;width:90%; margin-left:14px; margin-top:10px; margin-bottom:5px;" OnClick="BtnConfirmarcambios_Click" > Confirmar <i class="fa-solid fa-check"></i></asp:LinkButton>
+                 </div>
+               </div>
     </asp:Panel>
+      </div>  
       </div>
 </div>
-      </div>
+
 
 </asp:Content>
 

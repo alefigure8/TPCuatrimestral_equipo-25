@@ -254,6 +254,20 @@ namespace RestoApp
                 }
             }
         }
+
+         public void BtnConfirmarcambios_Click(object sender, EventArgs e)
+        {
+            Usuario nuevousuario = new Usuario();
+            UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+            nuevousuario.Apellidos = TxtApellidos.Text.ToString();
+            nuevousuario.Nombres = TxtNombres.Text.ToString();
+            nuevousuario.Tipo = DdlTipo.SelectedValue.ToString();
+            nuevousuario.Mail = TxtMail.Text.ToString();
+            nuevousuario.Password = TxtPassword.Text.ToString();
+
+            usuarioNegocio.Agregarusuario(nuevousuario);
+            
+        }
     }
 
     
