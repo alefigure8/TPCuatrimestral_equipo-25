@@ -79,13 +79,17 @@ body {
 
 /* Columnas */
 .columna-grilla {
-    max-width: 120px;
+    max-width: 30px !important;
     text-align: start;
-    background-color: red !important;
 }
 
 .columna-grilla-sm {
-    max-width: 80px;
-    text-align: justify;
-   
+    max-width: 30px !important;
+    text-align: center !important;
+    color: green;
+}
+
+.columna-grilla-btn{
+    max-width: 50px !important;
+    background-color: red !important;
 }

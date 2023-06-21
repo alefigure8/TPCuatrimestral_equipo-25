@@ -9,7 +9,7 @@
 
         <div class="col-4 bg-dark"></div>
 
-        <div class="col-4">
+        <div class="col-4 bg-white">
             <h2 class="display-4 bg-secondary text-white row">Menú disponible</h2>
             <asp:Repeater runat="server" ID="ProductoRepetidor">
                 <ItemTemplate>

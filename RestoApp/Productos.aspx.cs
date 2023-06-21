@@ -10,6 +10,7 @@ using Negocio;
 using Opciones;
 using System.Data;
 using System.Web.UI.HtmlControls;
+using System.Reflection;
 
 namespace RestoApp
 {
@@ -17,11 +18,18 @@ namespace RestoApp
     {
         public Usuario usuario { get; set; }
         public List<CategoriaProducto> ListaCategoriasProducto;
+        public List<Producto> ListaProductos;
+        public List<Producto> ListaFiltrada;
         protected void Page_Load(object sender, EventArgs e)
         {
 
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
+
+
+
+            CategoriaProductoNegocio CategoriaProductoNegocio = new CategoriaProductoNegocio();
+            ListaCategoriasProducto = CategoriaProductoNegocio.Listar();
 
             if (!IsPostBack)
             {
@@ -31,7 +39,7 @@ namespace RestoApp
 
             if (AutentificacionUsuario.esGerente(usuario))
             {
-               
+
             }
             if (AutentificacionUsuario.esMesero(usuario))
             {
@@ -40,9 +48,10 @@ namespace RestoApp
 
 
 
-            }
 
-            protected void IniciarDDL()
+        }
+
+        protected void IniciarDDL()
         {
             CargarDDLEstado();
             CargarDDLCategorias();
@@ -57,16 +66,24 @@ namespace RestoApp
             DDLEstado.Items.Add("Estado");
             DDLEstado.Items.Add("Activo");
             DDLEstado.Items.Add("Inactivo");
+
+            modalDDLEstado.Items.Add("Estado");
+            modalDDLEstado.Items.Add("Activo");
+            modalDDLEstado.Items.Add("Inactivo");
+
         }
 
         public void CargarDDLCategorias()
         {
-            CategoriaProductoNegocio CategoriaProductoNegocio = new CategoriaProductoNegocio();
-            ListaCategoriasProducto = CategoriaProductoNegocio.Listar();
+            
             DDLCategorias.Items.Add("Categorias");
+            modalDDLCategorias.Items.Add("Categorias");
+
             foreach (CategoriaProducto CPaux in ListaCategoriasProducto)
             {
                 DDLCategorias.Items.Add(CPaux.Descripcion);
+                modalDDLCategorias.Items.Add(CPaux.Descripcion);
+
             }
         }
 
@@ -86,9 +103,13 @@ namespace RestoApp
 
         public void CargarAtributos()
         {
-            CheckBoxAtributos.Items.Add(ColumnasDB.Producto.AptoVegano);
-            CheckBoxAtributos.Items.Add(ColumnasDB.Producto.AptoCeliaco);
-            CheckBoxAtributos.Items.Add(ColumnasDB.Producto.Alcohol);
+            CheckBoxAtributos.Items.Add("Vegano");
+            CheckBoxAtributos.Items.Add("Celiaco");
+            CheckBoxAtributos.Items.Add("Alcohol");
+
+            modalCheckBoxAtributos.Items.Add("Vegano");
+            modalCheckBoxAtributos.Items.Add("Celiaco");
+            modalCheckBoxAtributos.Items.Add("Alcohol");
         }
 
 
@@ -97,8 +118,8 @@ namespace RestoApp
         public void ListarProductos()
         {
             ProductoNegocio productoNegocio = new ProductoNegocio();
-            Session.Add("ProductosDisponibles", productoNegocio.ListarProductos());
-            GVProductos.DataSource = Session["ProductosDisponibles"];
+            Session.Add("ListaProductos", productoNegocio.ListarProductos());
+            GVProductos.DataSource = Session["ListaProductos"];
             GVProductos.DataBind();
         }
 
@@ -110,10 +131,7 @@ namespace RestoApp
 
         }
 
-        protected void GVProductos_DataBound(object sender, EventArgs e)
-        {
-           
-        }
+      
 
         protected void GVProductos_RowDataBound(object sender, GridViewRowEventArgs e)
         {
@@ -133,9 +151,10 @@ namespace RestoApp
                         }
                 }
 
+
+
                 string resultado = (bool.Parse(e.Row.Cells[3].Text)) == true ? "✔" : "✖";
                 e.Row.Cells[3].Text = resultado;
-                e.Row.Cells[3].CssClass = "columna-grilla-sm";
 
                 resultado = (bool.Parse(e.Row.Cells[4].Text)) == true ? "✔" : "✖";
                 e.Row.Cells[4].Text = resultado;
@@ -143,17 +162,185 @@ namespace RestoApp
                 resultado = (bool.Parse(e.Row.Cells[5].Text)) == true ? "✔" : "✖";
                 e.Row.Cells[5].Text = resultado;
 
-                resultado = (bool.Parse(e.Row.Cells[7].Text)) == true ? "Activo" : "Inactivo";
+                resultado = (bool.Parse(e.Row.Cells[7].Text)) == false ? "Inactivo" : "Activo";
                 e.Row.Cells[7].Text = resultado;
 
             }
 
-            e.Row.Cells[0].CssClass = "columna-grilla";
 
-           
+
+
 
         }
 
+        protected void NewListaFiltrada()
+        {
+            ListaFiltrada = new List<Producto>();
+        }
+
+        protected void DDLEstado_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            if (DDLEstado.SelectedIndex != 0)
+            {
+                ValidarListaFiltrada();
+
+                switch (DDLEstado.SelectedIndex)
+                {
+                    case 1:
+                        {
+                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+                            {
+                                if (PAux.Activo == true)
+                                {
+                                    ListaFiltrada.Add(PAux);
+                                }
+                            }
+                            break;
+                        }
+                    case 2:
+                        {
+                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+                            {
+
+                                if (PAux.Activo == false)
+                                {
+                                    ListaFiltrada.Add(PAux);
+                                }
+                            }
+                            break;
+                        }
+                }
+                Session["ListaFiltrada"] = ListaFiltrada;
+                GVProductos.DataSource = Session["ListaFiltrada"];
+                GVProductos.DataBind();
+            }
+            else
+            {
+                ListarProductos();
+            }
+
+
+
+        }
+
+        protected void btnLimpiarFiltro_Click(object sender, EventArgs e)
+        {
+            ListarProductos();
+        }
+
+        protected void DDLCategorias_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(DDLCategorias.SelectedIndex!=0)
+            {
+                ValidarListaFiltrada();
+                switch (DDLCategorias.SelectedIndex)
+                {
+                    case 1:
+                        {
+                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+                            {
+                                if (!(PAux.Categoria == 1))
+                                {
+                                    ListaFiltrada.Remove(PAux);
+                                }
+                            }
+                            break;
+                        }
+                    case 2:
+                        {
+                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+                            {
+
+                                if (PAux.Categoria == 2)
+                                {
+                                    ListaFiltrada.Remove(PAux);
+                                }
+                            }
+                            break;
+                        }
+                }
+                Session["ListaFiltrada"] = ListaFiltrada;
+                GVProductos.DataSource = Session["ListaFiltrada"];
+                GVProductos.DataBind();
+
+            }
+            else
+            {
+                ListarProductos();
+            }
+
+        }
+
+        protected void ValidarListaFiltrada()
+        {
+            if (ListaFiltrada == null)
+            {
+                NewListaFiltrada();
+            }
+
+        }
+
+        protected void AplicarFiltro(object sender, EventArgs e)
+        {
        
+        }
+
+        protected void LBtnNuevoPlato_Click(object sender, EventArgs e)
+        {
+
+        }
+
+      
+        protected void GuardarNuevoProducto_Click(object sender, EventArgs e)
+        {
+
+            if (!string.IsNullOrWhiteSpace(NuevoProductoNombre.Text) &&
+           !string.IsNullOrWhiteSpace(NuevoProductoDescripcion.Text) &&
+           !string.IsNullOrWhiteSpace(NuevoProductoValor.Text) &&
+           modalDDLCategorias.SelectedIndex != 0 &&
+           modalDDLEstado.SelectedIndex != 0 &&
+           !string.IsNullOrWhiteSpace(NuevoProductoStock.Text))
+            {
+
+                Producto NuevoProducto = new Producto();
+                NuevoProducto.Nombre = NuevoProductoNombre.Text;
+                NuevoProducto.Descripcion = NuevoProductoDescripcion.Text;
+                NuevoProducto.Valor = decimal.Parse(NuevoProductoValor.Text);
+                NuevoProducto.Categoria = modalDDLCategorias.SelectedIndex;
+                bool estado = modalDDLEstado.SelectedIndex-1 == 0 ? false : true;
+                NuevoProducto.Activo = estado;
+                
+                 Convert.ToBoolean(modalDDLEstado.SelectedIndex);
+
+                if (modalCheckBoxAtributos.SelectedItem.Value == "Vegano")
+                {
+                    NuevoProducto.AptoVegano = true;
+                }
+                if (modalCheckBoxAtributos.SelectedItem.Value == "Celiaco")
+                {
+                    NuevoProducto.AptoCeliaco = true;
+                }
+                if (modalCheckBoxAtributos.SelectedItem.Value == "Alcohol")
+                {
+                    NuevoProducto.Alcohol = true;
+                }
+                NuevoProducto.TiempoCoccion =  TimeSpan.Parse(NuevoProductoTiempoCoccion.Text);
+                NuevoProducto.Stock = int.Parse(NuevoProductoStock.Text);
+
+                ProductoNegocio PNaux = new ProductoNegocio();
+                PNaux.NuevoProducto(NuevoProducto);
+
+
+
+            }
+        }
+
+        public void EliminarProducto(object sender, System.EventArgs e)
+        {
+            Button button = sender as Button;
+            ProductoNegocio PNaux = new ProductoNegocio();
+            PNaux.EliminarProducto(int.Parse(button.CommandArgument));
+        }
     }
 }

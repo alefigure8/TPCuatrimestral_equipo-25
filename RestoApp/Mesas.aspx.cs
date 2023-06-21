@@ -10,6 +10,9 @@ using System.Web.UI.WebControls;
 using Dominio;
 using Negocio;
 using Helper;
+using System.Collections;
+using System.Diagnostics;
+using System.Web.Services.Description;
 
 namespace RestoApp
 {
@@ -18,6 +21,7 @@ namespace RestoApp
 		public static List<Mesa> mesas;
 		public List<Usuario> meseros = new List<Usuario>();
 		public List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
+		public List<MesaPorDia> mesasPorDia;
 		public Usuario usuario { get; set; }
 
 		protected void Page_Load(object sender, EventArgs e)
@@ -29,14 +33,9 @@ namespace RestoApp
 			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
 			{
 				CargarMesas();
-				CargarNumeroDeMesasAlDesplegable();
 				CargarMesasGuardadas();
+				CargarMesasPorDiaGuardadas();
 				CargarMeseros();
-			}
-
-			//CONTENIDO MESERO
-			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
-			{
 			}
 		}
 
@@ -46,20 +45,9 @@ namespace RestoApp
 			mesas = mesaNegocio.Listar();
 		}
 
-		//Ponemos el número de mesas de la base de datos en el dropdown
-		private void CargarNumeroDeMesasAlDesplegable()
-		{
-			int numeroMesas = mesas.Count();
-			//Mandamos el dato a main.js
-			ClientScript.RegisterStartupScript(this.GetType(), "cantidadMesas", $"var cantidadMesas = '{numeroMesas}';", true);
-		}
-
 		//Cargamos las mesas Activas
 		private void CargarMesasGuardadas()
 		{
-			//Buscamos mesas activas
-			List<Mesa> mesasGuardadas = mesas.FindAll(m => m.Activo == true);
-
 			//Guardamos número de mesa activas
 			List<int> numeroMesasGuardas = new List<int>();
 			numeroMesasGuardas = mesas.Select(m => m.Activo == true ? m.Numero : 0).ToList();
@@ -69,39 +57,67 @@ namespace RestoApp
 
 			//Mandamos el dato a main.js
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasGuardas", $"var numeroMesasGuardasJSON = '{numeroMesasGuardasJSON}';", true);
+		}
 
+		private void CargarMesasPorDiaGuardadas()
+		{
+			//Enviar Mesas por día con idMeseros
+			MesaNegocio mesaNegocio = new MesaNegocio();
+			
+
+			List<MesaPorDia> mesasPorDia = new List<MesaPorDia>();
+			mesasPorDia = mesaNegocio.ListarMesaPorDia().FindAll(mesa => mesa.Cierre == null);
+	
+			//Creamos objeto con mesa y mesero
+			List<object> objetos = new List<object>();
+
+			foreach (var item in mesasPorDia)
+			{
+				//Crear objeto para javascript
+				objetos.Add(new { mesa = item.Mesa, mesero = item.Mesero });
+			}
+
+			// Convierte la lista en una cadena JSON
+			var numeroMesasPorDiaJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(objetos);
+
+			//Mandamos el dato a main.js
+			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasPorDia", $"var numeroMesasPorDiaJSON = '{numeroMesasPorDiaJSON}';", true);
 		}
 
 		private void CargarMeseros()
 		{
-			UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
-			meseros = usuarioNegocio.ListarMeseros();
-
 			MesaNegocio mesaNegocio = new MesaNegocio();
 			meserosPorDia = mesaNegocio.ListaMeseroPorDia();
-
-			foreach (Usuario mesero in meseros)
-			{
-				mesero.Password = null;
-			}
-
+			
 			repeaterMeseros.DataSource = meserosPorDia;
 			repeaterMeseros.DataBind();
 		}
 
 		//Obtenemos los datos desde Main.js
 		[WebMethod]
-		public static void GuardarMesas(int[] array)
+		public static void GuardarMesas(Dictionary<string, int>[] array)
 		{
-
 			MesaNegocio mesaNegocio = new MesaNegocio();
-			for (int i = 0; i < array.Length; i++)
+			List<MesaPorDia> mesasPorDiaAbierta = new List<MesaPorDia>();
+			mesasPorDiaAbierta = mesaNegocio.ListarMesaPorDia().FindAll(mesa => mesa.Cierre == null);
+			
+			foreach (var diccionario in array)
 			{
-				//Verificar cambios
-				if (Mesas.mesas[i].Activo != (array[i] == 1))
-					mesaNegocio.ActivarMesasPorNumero(i + 1, array[i]);
-			}
 
+				var numeroMesa = diccionario["mesa"];
+				var numeroMesero = diccionario["mesero"];
+
+				if(!mesasPorDiaAbierta.Exists(el => el.Mesa == numeroMesa))
+				{
+					mesaNegocio.CrearMesaPorDia(numeroMesero, numeroMesa);
+				}
+
+				if (mesasPorDiaAbierta.Exists(el => el.Mesa == numeroMesa && el.Mesero != numeroMesero && el.Mesero != null))
+				{
+					mesaNegocio.ModificarMesaPorDia(mesasPorDiaAbierta.Find(el => el.Mesa == numeroMesa).Id, numeroMesa, numeroMesero);
+				}
+
+			}
 		}
 	}
 }
