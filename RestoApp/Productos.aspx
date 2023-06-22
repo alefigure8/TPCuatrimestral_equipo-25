@@ -75,8 +75,8 @@
 
                     </div>
                     <div class="d-flex justify-content-center">
-                        <asp:Button Text="Cancelar" runat="server" CssClass="btn btn-dark btn-lg m-1" data-bs-toggle="modal" data-bs-target="#exampleModal" />
-                        <asp:Button ID="GuardarNuevoProducto" Text="Guardar" runat="server" OnClick="GuardarNuevoProducto_Click" CssClass="btn btn-dark btn-lg m-1" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+                        <asp:Button Text="Cancelar" runat="server" CssClass="btn btn-dark btn-lg m-1" data-bs-toggle="modal" data-bs-target="#modalProductos" />
+                        <asp:Button ID="GuardarNuevoProducto" Text="Guardar" runat="server" OnClick="GuardarNuevoProducto_Click" CssClass="btn btn-dark btn-lg m-1" data-bs-toggle="modal" data-bs-target="#modalProductos" OnClientClick="return ValidarCampos();" ClientIDMode="Static" />
                     </div>
                 </div>
             </div>
@@ -84,7 +84,7 @@
         <!-- Modal -->
 
 
-                <!-- Modal Nuevo Modificar Producto-->
+                <!-- Modal Modificar Producto-->
 
     <asp:UpdatePanel runat="server" ID="UPModificarProducto" UpdateMode="Conditional">
         <ContentTemplate>
@@ -321,10 +321,4 @@
 
 
     </div>
-
-
-
-
-
-
 </asp:Content>
