@@ -217,7 +217,7 @@ namespace Negocio
             }
             else if (tipo == ColumnasDB.TipoUsuario.Gerente)
 			{
-                id = 2;
+                id = 1;
             }
             return id;
         }
@@ -226,7 +226,6 @@ namespace Negocio
 		{
             AccesoDB datos = new AccesoDB();
 			int tipo=convertidordetipousuario(nuevousuario.Tipo);
-
 			
 
 

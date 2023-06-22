@@ -7,17 +7,17 @@
 
   <div class="container">
 
-    <div class="row" style="justify-content:center; margin-top:20px;">
+    <div class="row" style="justify-content:flex-start; margin-top:20px;">
         <div class="col-6">
    <div class="input-group mb-3" style="box-shadow:0 2px 4px rgba(0, 0, 0, 0.3)">
-  <asp:Textbox type="text" class="form-control" placeholder="Ingresa tu busqueda" id="TxtBusqueda" runat="server"></asp:Textbox>
-  <asp:LinkButton class="btn btn-dark" type="button" id="BtnBusqueda" runat="server"><i class="fa-solid fa-magnifying-glass"></i></asp:LinkButton>
+  <asp:Textbox type="text" class="form-control" placeholder="Ingresa tu busqueda" id="TxtBusqueda" runat="server" OnTextChanged="TxtBusqueda_TextChanged" AutoPostBack="true"></asp:Textbox>
+  <asp:LinkButton class="btn btn-dark" type="button" id="BtnBusqueda" runat="server" OnClick="BtnBusqueda_Click"><i class="fa-solid fa-magnifying-glass"></i></asp:LinkButton>
     </div>
             </div>
                 </div>
       <div class="row" style="margin-top:20px; justify-content:center;">
-          <div class="col-9" style="height:500px; overflow-y: auto;">
-      <asp:GridView ID="GDVEmpleados" runat="server"  BackColor="Ivory" AllowSorting=true OnSorting="GDVEmpleados_Sorting" OnRowDataBound="GDVEmpleados_RowDataBound" DataKeyNames="IdUsuario" OnRowCommand="GDVEmpleados_RowCommand" >
+          <div class="col-9 d-flex" style="height:500px; overflow-y: auto; justify-content:flex-end; padding:0px;">
+      <asp:GridView Width="100%" ID="GDVEmpleados" runat="server"  BackColor="Ivory" AllowSorting=true OnSorting="GDVEmpleados_Sorting"  DataKeyNames="IdUsuario" OnRowCommand="GDVEmpleados_RowCommand" >
             <HeaderStyle HorizontalAlign="Center" BackColor="#212529" BorderColor="#666666" cssClass="celda" ForeColor="#CCCCCC" />
              <RowStyle HorizontalAlign="Center" VerticalAlign="Middle" cssClass="celda"/>
 
@@ -54,7 +54,7 @@
         <div class="col">
             <div class="row">
         <asp:Label ID="LblId" runat="server" Text="Id:"></asp:Label>
-        <asp:TextBox ID="TxtId" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>
+        <asp:TextBox ID="TxtId" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;" Enabled="false"></asp:TextBox>
                 </div>
                       <div class="row">
          <asp:Label ID="LblNombres" runat="server" Text="Nombres:"></asp:Label>

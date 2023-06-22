@@ -14,7 +14,8 @@ using Dominio;
 using Helper;
 using Negocio;
 using Opciones;
-
+using System.ComponentModel;
+using System.Net;
 
 namespace RestoApp
 {
@@ -24,10 +25,9 @@ namespace RestoApp
      
         List<Usuario> Listausuarios;
 
-
-
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Si esta logueado asignamos el usuario a la variable usuario
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
@@ -38,11 +38,7 @@ namespace RestoApp
                 CargarDgv();
                 Cargarestadossorting();
                 CargarDdltipo();
-                TxtId.Enabled = false;
-
             }
-
-
         }
 
         public void Cargarestadossorting()
@@ -65,23 +61,27 @@ namespace RestoApp
 
             UsuarioNegocio listausuarios = new UsuarioNegocio();
             Listausuarios = listausuarios.Listar();
-
-            if (AutentificacionUsuario.esAdmin(usuario))
-            {
-                Listausuarios.RemoveAll(x => x.Tipo == ColumnasDB.TipoUsuario.Admin);
-            }
-            if (AutentificacionUsuario.esGerente(usuario))
-            {
-                Listausuarios.RemoveAll(x => x.Tipo == ColumnasDB.TipoUsuario.Admin);
-                Listausuarios.RemoveAll(x => x.Tipo == ColumnasDB.TipoUsuario.Gerente);
-            }
-
-
+            Listausuarios = Filtrolistasegunusuario(usuario, Listausuarios);
             Session.Add("listaactual", Listausuarios);
             GDVEmpleados.DataSource = Convertidordatatable(Listausuarios);
             GDVEmpleados.DataBind();
 
         }
+
+        public List<Usuario> Filtrolistasegunusuario(Usuario usuario, List<Usuario> lista)
+        {
+            if (AutentificacionUsuario.esAdmin(usuario))
+            {
+                lista.RemoveAll(x => x.Tipo == ColumnasDB.TipoUsuario.Admin);
+            }
+            if (AutentificacionUsuario.esGerente(usuario))
+            {
+               lista.RemoveAll(x => x.Tipo == ColumnasDB.TipoUsuario.Admin);
+                lista.RemoveAll(x => x.Tipo == ColumnasDB.TipoUsuario.Gerente);
+            }
+            return lista;
+                    }
+
 
         protected void GDVEmpleados_Sorting(object sender, GridViewSortEventArgs e)
         {
@@ -211,14 +211,6 @@ namespace RestoApp
             }
         }
 
-        protected void GDVEmpleados_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            if (e.Row.RowType == DataControlRowType.DataRow)
-            {
-              
-
-            }
-        }
 
         public void Limpiarcamposdetexto()
          {
@@ -227,7 +219,6 @@ namespace RestoApp
             TxtId.Text = "";
             TxtMail.Text = "";
             TxtPassword.Text = "";
-
 
         }
 
@@ -242,43 +233,38 @@ namespace RestoApp
             }
             
 
-
-
         }
 
         protected void GDVEmpleados_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "EliminarUsuario")
             {
-                UsuarioNegocio negocio = new UsuarioNegocio();
-                int rowIndex = Convert.ToInt32(e.CommandArgument);
-                List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
-
-                if (rowIndex >= 0 && rowIndex < listausuarios.Count)
-                {
-                    Usuario usuarioSeleccionado = listausuarios[rowIndex];
-
-                    int idUsuario = usuarioSeleccionado.Id;
-
-                    negocio.BajalogicaUsuario(idUsuario);
-
-                    // Vuelve a cargar los datos en el GridView después de eliminar el usuario
-                    CargarDgv();
-                }
-            }
-            if(e.CommandName == "ModificarUsuario")
-            {
-                if ((bool)Session["modificar"])
+                if (AutentificacionUsuario.esAdmin(usuario) || AutentificacionUsuario.esGerente(usuario))
                 {
                     UsuarioNegocio negocio = new UsuarioNegocio();
                     int rowIndex = Convert.ToInt32(e.CommandArgument);
-
                     List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
 
                     if (rowIndex >= 0 && rowIndex < listausuarios.Count)
                     {
                         Usuario usuarioSeleccionado = listausuarios[rowIndex];
 
+                        negocio.BajalogicaUsuario(usuarioSeleccionado.Id);
+
+                        CargarDgv();
+                    }
+                }
+            }
+            if(e.CommandName == "ModificarUsuario")
+            {
+                if ((bool)Session["modificar"])
+                {
+                   int rowIndex = Convert.ToInt32(e.CommandArgument);
+                    List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
+
+                    if (rowIndex >= 0 && rowIndex < listausuarios.Count)
+                    {
+                        Usuario usuarioSeleccionado = listausuarios[rowIndex];
                         TxtApellidos.Text = usuarioSeleccionado.Apellidos;
                         TxtNombres.Text = usuarioSeleccionado.Nombres;
                         TxtId.Text = usuarioSeleccionado.Id.ToString();
@@ -302,29 +288,35 @@ namespace RestoApp
             bool aux;
             if ((bool)Session["modificar"] == false)
             {
-                if (Regex.IsMatch(TxtMail.Text, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
+                if (AutentificacionUsuario.esAdmin(usuario) || AutentificacionUsuario.esGerente(usuario))
                 {
-                    Usuario nuevousuario = new Usuario();
-                    UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
-                    nuevousuario.Apellidos = TxtApellidos.Text.ToString();
-                    nuevousuario.Nombres = TxtNombres.Text.ToString();
-                    nuevousuario.Tipo = DdlTipo.SelectedValue.ToString();
-                    nuevousuario.Mail = TxtMail.Text.ToString();
-                    nuevousuario.Password = TxtPassword.Text.ToString();
+                    if (emailvalido(TxtMail.Text.ToString()))
+                    {
+                        Usuario nuevousuario = new Usuario();
+                        UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+                        nuevousuario.Apellidos = TxtApellidos.Text.ToString();
+                        nuevousuario.Nombres = TxtNombres.Text.ToString();
+                        nuevousuario.Tipo = DdlTipo.SelectedValue.ToString();
+                        nuevousuario.Mail = TxtMail.Text.ToString();
+                        nuevousuario.Password = TxtPassword.Text.ToString();
 
-                    usuarioNegocio.Agregarusuario(nuevousuario);
-                    LblError.Visible = false;
-                    CargarDgv();
-                    Limpiarcamposdetexto();
+                        usuarioNegocio.Agregarusuario(nuevousuario);
+                        LblError.Visible = false;
+                        CargarDgv();
+                        Limpiarcamposdetexto();
+                    }
+                    else
+                    {
+                        LblError.Text = "*El mail ingresado no es válido.";
+                        LblError.Visible = true;
+                    }
                 }
-                else
-                {
-                    LblError.Text = "*El mail ingresado no es válido.";
-                    LblError.Visible = true;
-                }
+               
             }
             else
             {
+                if (emailvalido(TxtMail.Text.ToString()))
+                {
                 Usuario usuariomodificado = new Usuario();
                 UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
                 usuariomodificado.Id = Convert.ToInt32(TxtId.Text);
@@ -333,16 +325,26 @@ namespace RestoApp
                 usuariomodificado.Mail = TxtMail.Text;
                 usuariomodificado.Password = TxtPassword.Text;
                 usuariomodificado.Tipo = DdlTipo.SelectedValue.ToString();
-
                 usuarioNegocio.Modificarusuario(usuariomodificado);
 
+                LblError.Visible = false;
                 aux = false;
                 Session.Add("modificar", aux);
                 CargarDgv();
                 Limpiarcamposdetexto();
-
+                }
+                else
+                {
+                    LblError.Text = "*El mail ingresado no es válido.";
+                    LblError.Visible = true;
+                }
             }
             
+        }
+
+        public bool emailvalido(string email)
+        {
+            return Regex.IsMatch(email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
         }
 
         protected void BtnModificarusuario_Click(object sender, EventArgs e)
@@ -364,7 +366,52 @@ namespace RestoApp
                 }
             }
         }
+
+        protected void BtnBusqueda_Click(object sender, EventArgs e)
+        {
+            if (TxtBusqueda.Text == "")
+            {
+                CargarDgv();
+            }
+            else
+            {
+                UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+                List<Usuario> listausuarios = new List<Usuario>();
+                listausuarios = usuarioNegocio.Listar();
+          
+                Session.Add("listaactual", listausuarios);
+                listausuarios = Listafiltrada(listausuarios);
+                GDVEmpleados.DataSource = Convertidordatatable(listausuarios);
+                GDVEmpleados.DataBind();
+            }
+        }
+
+        public List<Usuario> Listafiltrada(List<Usuario> lista)
+        {
+            lista.RemoveAll(x => !x.Nombres.ToUpper().Contains(TxtBusqueda.Text.ToUpper()));
+            lista.RemoveAll(x => !x.Apellidos.ToUpper().Contains(TxtBusqueda.Text.ToUpper()));
+            lista.RemoveAll(x => !x.Mail.ToUpper().Contains(TxtBusqueda.Text.ToUpper()));
+            lista.RemoveAll(x => !x.Tipo.ToUpper().Contains(TxtBusqueda.Text.ToUpper()));
+
+            return lista;
+        }
+
+        protected void TxtBusqueda_TextChanged(object sender, EventArgs e)
+        {
+
+            List<Usuario> Listafiltrada = new List<Usuario>();
+
+            if (TxtBusqueda.Text.Count() > 0)
+            {
+                Listafiltrada = ((List<Usuario>)Session["listaactual"]).FindAll(x => x.Nombres.ToUpper().Contains(TxtBusqueda.Text.ToUpper()) || x.Apellidos.ToUpper().Contains(TxtBusqueda.Text.ToUpper()) || x.Mail.ToUpper().Contains(TxtBusqueda.Text.ToUpper()));
+                GDVEmpleados.DataSource = Convertidordatatable(Listafiltrada);
+                GDVEmpleados.DataBind();
+            }
+            else
+            {
+                CargarDgv();
+            }
+        }
     }
 
-    
 }
