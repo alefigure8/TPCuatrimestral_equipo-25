@@ -332,6 +332,44 @@ namespace Negocio
 				datos.closeConnection();
 			}
 		}
+
+		//Listamos los ids de los meseros activos que tienen mesas abiertas
+		public List<int> ListaIdMeserosActivosConMesasAbiertas()
+		{
+			AccesoDB datos = new AccesoDB();
+			
+			List<int> IDMeseros = new List<int>();
+
+			try
+			{
+				datos.setQuery($"SELECT MeseroPD.{ColumnasDB.MeseroPorDia.Id} " +
+					$"FROM {ColumnasDB.MeseroPorDia.DB} MeseroPD " +
+					$"INNER JOIN {ColumnasDB.MesasPorDia.DB} MesaPD " +
+					$" ON MesaPD.{ColumnasDB.MesasPorDia.IdMeseroPorDia} = MeseroPD.{ColumnasDB.MeseroPorDia.Id} " +
+					$"WHERE MesaPD.{ColumnasDB.MesasPorDia.Cierre} IS NULL " +
+					$"AND MeseroPD.{ColumnasDB.MeseroPorDia.Salida} = '00:00:00' ");
+
+				datos.executeReader();
+				
+				while (datos.Reader.Read())
+				{
+					IDMeseros.Add(Convert.ToInt32(datos.Reader[ColumnasDB.MeseroPorDia.Id]));
+				}
+
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+			
+
+			return IDMeseros;
+			
+		}
 	}
 }
 	

@@ -15,12 +15,21 @@ namespace RestoApp
 	{
 
 		/// <summary>
-		/// repeaterMeseros control.
+		/// repeaterMeserosAsignados control.
 		/// </summary>
 		/// <remarks>
 		/// Auto-generated field.
 		/// To modify move field declaration from designer file to code-behind file.
 		/// </remarks>
-		protected global::System.Web.UI.WebControls.Repeater repeaterMeseros;
+		protected global::System.Web.UI.WebControls.Repeater repeaterMeserosAsignados;
+
+		/// <summary>
+		/// repeaterMeserosNoAsignados control.
+		/// </summary>
+		/// <remarks>
+		/// Auto-generated field.
+		/// To modify move field declaration from designer file to code-behind file.
+		/// </remarks>
+		protected global::System.Web.UI.WebControls.Repeater repeaterMeserosNoAsignados;
 	}
 }

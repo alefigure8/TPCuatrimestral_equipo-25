@@ -20,7 +20,8 @@ namespace RestoApp
 	{
 		public static List<Mesa> mesas;
 		public List<Usuario> meseros = new List<Usuario>();
-		public List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
+		public List<MeseroPorDia> meserosPorDiaNoAsignados = new List<MeseroPorDia>();
+		public List<MeseroPorDia> meserosPorDiaAsignados = new List<MeseroPorDia>();
 		public List<MesaPorDia> mesasPorDia;
 		public Usuario usuario { get; set; }
 
@@ -87,10 +88,26 @@ namespace RestoApp
 		private void CargarMeseros()
 		{
 			MesaNegocio mesaNegocio = new MesaNegocio();
-			meserosPorDia = mesaNegocio.ListaMeseroPorDia();
+
+			List<int> IdMeserosConMesasAbiertas = mesaNegocio.ListaIdMeserosActivosConMesasAbiertas();
+			List<MeseroPorDia> meseroPorDia = mesaNegocio.ListaMeseroPorDia();
 			
-			repeaterMeseros.DataSource = meserosPorDia;
-			repeaterMeseros.DataBind();
+			//Meseros no asignados
+			meserosPorDiaNoAsignados = meseroPorDia.Where(usuario => !IdMeserosConMesasAbiertas.Contains(usuario.Id)).ToList();
+
+			//Meseros asignados
+			meserosPorDiaAsignados = meseroPorDia.Where(usuario => IdMeserosConMesasAbiertas.Contains(usuario.Id)).ToList();
+
+			//Colocar cantidad de mesas asignadas
+			meserosPorDiaAsignados.ForEach(mesero => mesero.MesasAsignadas = IdMeserosConMesasAbiertas.FindAll(id => id == mesero.Id).Count);
+
+			//Repeater Meseros No Asignados
+			repeaterMeserosNoAsignados.DataSource = meserosPorDiaNoAsignados;
+			repeaterMeserosNoAsignados.DataBind();
+
+			//Repeater Meseros Asignados
+			repeaterMeserosAsignados.DataSource = meserosPorDiaAsignados;
+			repeaterMeserosAsignados.DataBind();
 		}
 
 		//Obtenemos los datos desde Main.js
@@ -98,7 +115,9 @@ namespace RestoApp
 		public static void GuardarMesas(Dictionary<string, int>[] array)
 		{
 			MesaNegocio mesaNegocio = new MesaNegocio();
+
 			List<MesaPorDia> mesasPorDiaAbierta = new List<MesaPorDia>();
+
 			mesasPorDiaAbierta = mesaNegocio.ListarMesaPorDia().FindAll(mesa => mesa.Cierre == null);
 			
 			foreach (var diccionario in array)
