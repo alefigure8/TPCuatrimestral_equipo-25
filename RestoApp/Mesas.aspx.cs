@@ -74,7 +74,7 @@ namespace RestoApp
 			foreach (var item in mesasPorDia)
 			{
 				//Crear objeto para javascript
-				objetos.Add(new { mesa = item.Mesa, mesero = item.Mesero });
+				objetos.Add(new { mesa = item.Mesa, mesero = item.Mesero, idmeseropordia = item.IDMeseroPorDia, abierta = true });
 			}
 
 			// Convierte la lista en una cadena JSON
@@ -106,13 +106,17 @@ namespace RestoApp
 
 				var numeroMesa = diccionario["mesa"];
 				var numeroMesero = diccionario["mesero"];
+				var numeromeseropordia = diccionario["idmeseropordia"];
+				var estaAbierta = diccionario["abierta"];
 
-				if(!mesasPorDiaAbierta.Exists(el => el.Mesa == numeroMesa))
+				//Abrimos mesa
+				if (!mesasPorDiaAbierta.Exists(el => el.Mesa == numeroMesa))
 				{
-					mesaNegocio.CrearMesaPorDia(numeroMesero, numeroMesa);
+					mesaNegocio.CrearMesaPorDia(numeroMesero, numeroMesa, numeromeseropordia);
 				}
 
-				if (mesasPorDiaAbierta.Exists(el => el.Mesa == numeroMesa && el.Mesero != numeroMesero && el.Mesero != null))
+				//Cerramos mesa
+				if (mesasPorDiaAbierta.Exists(el => el.Mesa == numeroMesa && el.Mesero == numeroMesero && estaAbierta == 0))
 				{
 					mesaNegocio.ModificarMesaPorDia(mesasPorDiaAbierta.Find(el => el.Mesa == numeroMesa).Id, numeroMesa, numeroMesero);
 				}

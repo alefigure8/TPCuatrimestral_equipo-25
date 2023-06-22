@@ -187,8 +187,10 @@ namespace Negocio
 
 			try
 			{
-				datos.setQuery($"SELECT {ColumnasDB.MesasPorDia.Id}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.Fecha}, {ColumnasDB.MesasPorDia.Apertura}, {ColumnasDB.MesasPorDia.Cierre} " +
-					$"FROM {ColumnasDB.MesasPorDia.DB}");
+				datos.setQuery($"SELECT MesaPD.{ColumnasDB.MesasPorDia.Id}, MeseroPD.{ColumnasDB.MeseroPorDia.IdMesero}, MesaPD.{ColumnasDB.MesasPorDia.IdMesa}, MesaPD.{ColumnasDB.MesasPorDia.IdMeseroPorDia} ,MesaPD.{ColumnasDB.MesasPorDia.Fecha}, MesaPD.{ColumnasDB.MesasPorDia.Apertura}, MesaPD.{ColumnasDB.MesasPorDia.Cierre} " +
+					$"FROM {ColumnasDB.MesasPorDia.DB} MesaPD " +
+					$"INNER JOIN {ColumnasDB.MeseroPorDia.DB} MeseroPD " +
+					$" ON MesaPD.{ColumnasDB.MesasPorDia.IdMeseroPorDia} = MeseroPD.{ColumnasDB.MeseroPorDia.Id}");
 
 				datos.executeReader();
 
@@ -199,12 +201,16 @@ namespace Negocio
 					auxMesero.Id = (Int32)datos.Reader[ColumnasDB.MesasPorDia.Id];
 
 					//MESERO
-					object valorMesero = datos.Reader[ColumnasDB.MesasPorDia.IdMesero];
-					auxMesero.Mesero = DBNull.Value.Equals(valorMesero) ? (int?)null : Convert.ToInt32(valorMesero); ;
+					object valorMesero = datos.Reader[ColumnasDB.MeseroPorDia.IdMesero];
+					auxMesero.Mesero = DBNull.Value.Equals(valorMesero) ? (int?)null : Convert.ToInt32(valorMesero);
 
 					//MESA
 					if (datos.Reader[ColumnasDB.MesasPorDia.IdMesa] != null)
 						auxMesero.Mesa = (Int32)datos.Reader[ColumnasDB.MesasPorDia.IdMesa];
+
+					//MESERO POR DIA
+					object valorMeseroPorDia = datos.Reader[ColumnasDB.MesasPorDia.IdMeseroPorDia];
+					auxMesero.IDMeseroPorDia = DBNull.Value.Equals(valorMesero) ? (int?)null : Convert.ToInt32(valorMeseroPorDia);
 
 					//FECHA
 					if (datos.Reader[ColumnasDB.MesasPorDia.Fecha] != null)
@@ -233,7 +239,7 @@ namespace Negocio
 			return mesas;
 		}
 
-		public int CrearMesaPorDia(int mesero, int mesa)
+		public int CrearMesaPorDia(int mesero, int mesa, int idmeseropordia)
 		{
 			AccesoDB datos = new AccesoDB();
 			
@@ -242,11 +248,16 @@ namespace Negocio
 			bool estaCargadaLaMesa = false;
 			bool estaActivaLaMesa = false;
 
-			//Validar que el mesero no tenga la misma mesa ya asignada
-			List<MesaPorDia> mesasPorDia = this.ListarMesaPorDia();
+			//Validar si el mismo servicio de mesero tiene la mesa
+			List<MesaPorDia> mesasPorDia = this.ListarMesaPorDia().FindAll(m => m.Cierre == null);
 			foreach (MesaPorDia item in mesasPorDia)
 			{
+				//Si el mesero con el mismo servicio tiene la mesa asignada y abierta no se puede crear
 				if (item.Mesero == mesero && item.Mesa == mesa)
+					estaCargadaLaMesa = true;
+
+				//Si es la misma mesa pero su servicio está abierto no se puede crear
+				else if(item.Mesa == mesa)
 					estaCargadaLaMesa = true;
 			}
 			
@@ -264,8 +275,8 @@ namespace Negocio
 			{
 				try
 				{
-					datos.setQuery($"INSERT INTO {ColumnasDB.MesasPorDia.DB} ({ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.Fecha}, {ColumnasDB.MesasPorDia.Apertura}) " +
-					$"VALUES ({mesa}, {mesero}, '{DateTime.Now.ToString("yyyy - MM - dd")}', '{DateTime.Now.ToString("HH:mm:ss")}') "
+					datos.setQuery($"INSERT INTO {ColumnasDB.MesasPorDia.DB} ({ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.IdMeseroPorDia}, {ColumnasDB.MesasPorDia.Fecha}, {ColumnasDB.MesasPorDia.Apertura}) " +
+					$"VALUES ({mesa}, {mesero}, {idmeseropordia}, '{DateTime.Now.ToString("yyyy - MM - dd")}', '{DateTime.Now.ToString("HH:mm:ss")}') "
 					+ "SELECT CAST(scope_identity() AS int)");
 					id = datos.executeScalar();
 				}
@@ -292,7 +303,8 @@ namespace Negocio
 			bool estaCargadaLaMesa = false;
 
 			//Validar que el mesero no tenga la misma mesa ya asignada
-			List<MesaPorDia> mesasPorDia = this.ListarMesaPorDia();
+			List<MesaPorDia> mesasPorDia = this.ListarMesaPorDia().FindAll(m => m.Cierre == null);
+			
 			foreach (MesaPorDia item in mesasPorDia)
 			{
 				if (item.Mesero == mesero && item.Mesa == mesa)
@@ -301,7 +313,7 @@ namespace Negocio
 
 			try
 			{
-				if (!estaCargadaLaMesa)
+				if (estaCargadaLaMesa)
 				{
 					//Si no está cargado el mesero, lo cargamos
 					datos.setQuery($"UPDATE {ColumnasDB.MesasPorDia.DB} SET {ColumnasDB.MesasPorDia.Cierre} = '{DateTime.Now.ToString("HH:mm:ss")}' WHERE {ColumnasDB.MesasPorDia.Id} = {idMesaPorDia}");

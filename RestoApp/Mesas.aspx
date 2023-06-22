@@ -35,8 +35,8 @@
                                 <!-- Collide -->
                                 <div class="collapse" id="<%#Eval("Id") %>">
                                     <div class="p-2">
-                                        <button class="btn btn-dark" id="asignarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>">Asignar Mesas</button>
-                                        <button class="btn btn-primary" id="guardarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" disabled>Guardar</button>
+                                        <button class="btn btn-dark" id="asignarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>">Asignar Mesas</button>
+                                        <button class="btn btn-primary" id="guardarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>" disabled>Guardar</button>
                                     </div>
                                 </div>
                                 <!-- Fin Collide -->
