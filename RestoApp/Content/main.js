@@ -176,7 +176,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
             })
                 .then(function (response) {
                     if (response.ok) {
-                        console.log('Datos enviados al código detrás');
+                        location.reload();
                     } else {
                         console.error('Error al enviar los datos al código detrás');
                     }
@@ -288,7 +288,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesahabilitar.aspx') !== -1) {
         })
             .then(function (response) {
                 if (response.ok) {
-                    console.log('Datos enviados al código detrás');
+                    location.reload();
                 } else {
                     console.error('Error al enviar los datos al código detrás');
                 }
