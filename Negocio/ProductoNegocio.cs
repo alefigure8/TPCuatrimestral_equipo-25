@@ -103,8 +103,8 @@ namespace Negocio
                 //    $"{ColumnasDB.Producto.DB}" +
                 //    $"Where" +
                 //    $"{ColumnasDB.Producto.Id} =" + Id);
-                    //AccesoDB.setParameter("@id", Id);
-                    if (AccesoDB.executeNonQuery())
+                //AccesoDB.setParameter("@id", Id);
+                if (AccesoDB.executeNonQuery())
                     return true;
             }
             catch (Exception ex)
@@ -116,6 +116,44 @@ namespace Negocio
                 AccesoDB.closeConnection();
             }
             return false;
+        }
+
+        public int ModificarProducto(Dominio.Producto ProdAModificar)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            try
+            {
+                //AccesoDB.setQuery("UPDATE " +
+                //    $"{ColumnasDB.Producto.DB}" +
+                //    "SET " +
+                //    $"{ColumnasDB.Producto.Categoria} = " + ProdAModificar.Categoria + ", " +
+                //    $"{ColumnasDB.Producto.Nombre} = '" + ProdAModificar.Nombre + "', " +
+                //    $"{ColumnasDB.Producto.Descripcion} = '" + ProdAModificar.Descripcion + "', " +
+                //    $"{ColumnasDB.Producto.Valor} = " + ProdAModificar.Valor + "," +
+                //    $"{ColumnasDB.Producto.AptoVegano} = '" + ProdAModificar.AptoVegano + "', " +
+                //    $"{ColumnasDB.Producto.AptoCeliaco} = '" + ProdAModificar.AptoCeliaco + "', " +
+                //    $"{ColumnasDB.Producto.Alcohol} = '" + ProdAModificar.Alcohol + "', " +
+                //    $"{ColumnasDB.Producto.Stock} = " + ProdAModificar.Stock + "," +
+                //    $"{ColumnasDB.Producto.Activo} = '" + ProdAModificar.Activo + "', " +
+                //    $"{ColumnasDB.Producto.TiempoCoccion} = '" + ProdAModificar.TiempoCoccion + "' " +
+                //    "WHERE" + $"{ColumnasDB.Producto.Id} = " + ProdAModificar.Id );
+
+                AccesoDB.setQuery("UPDATE PRODUCTOS SET CategoriaProducto = " + ProdAModificar.Categoria + ", Nombre = '" +
+                    ProdAModificar.Nombre + "', Descripcion = '" + ProdAModificar.Descripcion + "', Valor = " + ProdAModificar.Valor +
+                    ", AptoVegano = '" + ProdAModificar.AptoVegano + "', AptoCeliaco = '" + ProdAModificar.AptoCeliaco + "', Alcohol = '" +
+                    ProdAModificar.Alcohol + "', Stock = " + ProdAModificar.Stock + ", Activo = '" + ProdAModificar.Activo + "', TiempoCoccion = '" +
+                    ProdAModificar.TiempoCoccion + "' WHERE IdProducto = " + ProdAModificar.Id);
+                   
+                return AccesoDB.executeScalar();
+            }
+            catch (Exception Ex)
+            {
+                throw Ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
         }
     }
 }
