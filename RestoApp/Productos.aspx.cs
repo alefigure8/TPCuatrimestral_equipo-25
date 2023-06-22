@@ -405,7 +405,7 @@ namespace RestoApp
         {
             Producto Paux = ((Producto)(Session["ProductoAModificar"]));
             Paux.Nombre = string.IsNullOrEmpty(MPnombre1.Text) ? Paux.Nombre : MPnombre1.Text;
-            Paux.Descripcion = string.IsNullOrEmpty(MPDescripcion.Text) ? Paux.Descripcion : MPDescripcion.Text;
+            Paux.Descripcion = string.IsNullOrEmpty(MPDescripcion.Text) ? Paux.Descripcion : MPDescripcion.Text; 
             Paux.Valor = string.IsNullOrEmpty(MPvalor.Text) ? Paux.Valor : decimal.Parse(MPvalor.Text);
             Paux.Categoria = MPDDLCategoria.SelectedIndex != 0 && MPDDLCategoria != null ? MPDDLCategoria.SelectedIndex : Paux.Categoria;
             bool estado = MPDDLEstado.SelectedIndex == 2 ? false : true;
@@ -431,6 +431,20 @@ namespace RestoApp
             {
 
                 ListarProductos();
+                MPnombre1.Text = null;
+                MPDescripcion.Text = null;
+                MPvalor.Text = null;
+                MPDDLCategoria.SelectedIndex = 0;
+                MPDDLEstado.SelectedIndex = 0;
+                MPStock = null;
+
+
+                for (int i = 0; i < MPCheckBoxAtributos.Items.Count; i++)
+                {
+                    modalCheckBoxAtributos.Items[i].Selected = false;
+                }
+
+                MPtiempococcion.Text = null;
             }
 
 
