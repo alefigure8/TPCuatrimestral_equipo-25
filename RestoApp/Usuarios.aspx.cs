@@ -297,33 +297,55 @@ namespace RestoApp
             }
         }
 
-         public void BtnConfirmaragregar_Click(object sender, EventArgs e)
+         public void BtnConfirmarcambios_Click(object sender, EventArgs e)
         {
-            if(Regex.IsMatch(TxtMail.Text, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
+            bool aux;
+            if ((bool)Session["modificar"] == false)
             {
-                Usuario nuevousuario = new Usuario();
-                UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
-                nuevousuario.Apellidos = TxtApellidos.Text.ToString();
-                nuevousuario.Nombres = TxtNombres.Text.ToString();
-                nuevousuario.Tipo = DdlTipo.SelectedValue.ToString();
-                nuevousuario.Mail = TxtMail.Text.ToString();
-                nuevousuario.Password = TxtPassword.Text.ToString();
+                if (Regex.IsMatch(TxtMail.Text, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
+                {
+                    Usuario nuevousuario = new Usuario();
+                    UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+                    nuevousuario.Apellidos = TxtApellidos.Text.ToString();
+                    nuevousuario.Nombres = TxtNombres.Text.ToString();
+                    nuevousuario.Tipo = DdlTipo.SelectedValue.ToString();
+                    nuevousuario.Mail = TxtMail.Text.ToString();
+                    nuevousuario.Password = TxtPassword.Text.ToString();
 
-                usuarioNegocio.Agregarusuario(nuevousuario);
-                LblError.Visible = false;
-                CargarDgv();
-                Limpiarcamposdetexto();
+                    usuarioNegocio.Agregarusuario(nuevousuario);
+                    LblError.Visible = false;
+                    CargarDgv();
+                    Limpiarcamposdetexto();
+                }
+                else
+                {
+                    LblError.Text = "*El mail ingresado no es válido.";
+                    LblError.Visible = true;
+                }
             }
             else
             {
-                LblError.Text = "*El mail ingresado no es válido.";
-                LblError.Visible = true;
+                Usuario usuariomodificado = new Usuario();
+                UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+                usuariomodificado.Id = Convert.ToInt32(TxtId.Text);
+                usuariomodificado.Nombres = TxtNombres.Text;
+                usuariomodificado.Apellidos = TxtApellidos.Text;
+                usuariomodificado.Mail = TxtMail.Text;
+                usuariomodificado.Password = TxtPassword.Text;
+                usuariomodificado.Tipo = DdlTipo.SelectedValue.ToString();
+
+                usuarioNegocio.Modificarusuario(usuariomodificado);
+
+                aux = false;
+                Session.Add("modificar", aux);
+                CargarDgv();
+                Limpiarcamposdetexto();
+
             }
-         
             
         }
 
-        protected void BtnConfirmarcambios_Click(object sender, EventArgs e)
+        protected void BtnModificarusuario_Click(object sender, EventArgs e)
         {
             bool aux;
             if ((bool)Session["modificar"]==false)
@@ -334,14 +356,12 @@ namespace RestoApp
             }
             else 
             {
-                List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
-                Usuario usuarioSeleccionado = listausuarios[(int)Session["rowindex"]];
-
-                    modifi
-
-                aux = false;
-                Session.Add("modificar", aux);
-                Limpiarcamposdetexto();
+                if (TxtId.Text == "")
+                {
+                    aux = false;
+                    Session.Add("modificar", aux);
+                    Limpiarcamposdetexto();
+                }
             }
         }
     }

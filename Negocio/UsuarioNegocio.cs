@@ -207,20 +207,27 @@ namespace Negocio
 			return false;
         }
 
+
+		public int convertidordetipousuario(string tipo)
+		{
+            int id = 0;
+            if (tipo == ColumnasDB.TipoUsuario.Mesero)
+			{
+                id = 3;
+            }
+            else if (tipo == ColumnasDB.TipoUsuario.Gerente)
+			{
+                id = 2;
+            }
+            return id;
+        }
+
 		public bool Agregarusuario(Usuario nuevousuario)
 		{
             AccesoDB datos = new AccesoDB();
-			int tipo=0;
+			int tipo=convertidordetipousuario(nuevousuario.Tipo);
 
-			if (nuevousuario.Tipo == ColumnasDB.TipoUsuario.Mesero)
-			{
-				tipo = 3;
-			}
-			else if(nuevousuario.Tipo == ColumnasDB.TipoUsuario.Gerente)
-			{
-
-				tipo = 2;
-			}
+			
 
 
             try
@@ -265,16 +272,16 @@ namespace Negocio
 
 		public void Modificarusuario(Usuario usuariomodificado)
 		{
-            Usuario usuario = new Usuario();
             AccesoDB datos = new AccesoDB();
 
             try            {
 
-                datos.setQuery($"UPDATE {ColumnasDB.Usuario.DB} set {ColumnasDB.Usuario.Nombres} = {usuariomodificado.Nombres}, " +
-					$"{ColumnasDB.Usuario.Apellidos} = {usuariomodificado.Apellidos}, " +
-					$"{ColumnasDB.Usuario.Mail} = {usuariomodificado.Mail}, " +
-					$"{ColumnasDB.Usuario.Pass} = {usuariomodificado.Password}, " +
-					$"{ColumnasDB.Usuario.TipoUsuario} = {usuariomodificado.Tipo} " +
+                datos.setQuery($"UPDATE {ColumnasDB.Usuario.DB} " +
+					$"set {ColumnasDB.Usuario.Nombres} = '{usuariomodificado.Nombres}', " +
+					$"{ColumnasDB.Usuario.Apellidos} = '{usuariomodificado.Apellidos}', " +
+					$"{ColumnasDB.Usuario.Mail} = '{usuariomodificado.Mail}', " +
+					$"{ColumnasDB.Usuario.Pass} = '{usuariomodificado.Password}', " +
+					$"{ColumnasDB.Usuario.TipoUsuario} = '{convertidordetipousuario(usuariomodificado.Tipo)}' " +
 					$" WHERE {ColumnasDB.Usuario.Id} = {usuariomodificado.Id}");
 
 
