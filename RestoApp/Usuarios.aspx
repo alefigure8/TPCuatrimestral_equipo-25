@@ -17,7 +17,7 @@
                 </div>
       <div class="row" style="margin-top:20px; justify-content:center;">
           <div class="col-9" style="height:500px; overflow-y: auto;">
-      <asp:GridView ID="GDVEmpleados" runat="server"  BackColor="Ivory" AllowSorting=true OnSorting="GDVEmpleados_Sorting" OnRowDataBound="GDVEmpleados_RowDataBound"  AutoPostBack="true" DataKeyNames="IdUsuario" OnRowCommand="GDVEmpleados_RowCommand" >
+      <asp:GridView ID="GDVEmpleados" runat="server"  BackColor="Ivory" AllowSorting=true OnSorting="GDVEmpleados_Sorting" OnRowDataBound="GDVEmpleados_RowDataBound" DataKeyNames="IdUsuario" OnRowCommand="GDVEmpleados_RowCommand" >
             <HeaderStyle HorizontalAlign="Center" BackColor="#212529" BorderColor="#666666" cssClass="celda" ForeColor="#CCCCCC" />
              <RowStyle HorizontalAlign="Center" VerticalAlign="Middle" cssClass="celda"/>
 
@@ -45,11 +45,12 @@
 
 
  <div class="col-3">
-     <%if ((bool)Session["modificar"] == false)
-         {
-%>
-    <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="height:40px;width:100%;" data-bs-toggle="dropdown" data-bs-theme="dark"><i class="fa-solid fa-user-plus"></i></asp:LinkButton>
-    <asp:Panel ID="DropdownPanel" runat="server" CssClass="dropdown-menu" style="background-color:#343a40; width:19%; padding:2px;" ForeColor="#CCCCCC">
+
+    <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="height:40px;width:100%;" data-bs-toggle="dropdown" data-bs-theme="dark"><%if ((bool)Session["modificar"] == false)
+                                                                                                                                                                            { %><i class="fa-solid fa-user-plus"></i><%}
+                                             else
+                                             {  %> <i class="fa-solid fa-user-gear"></i> <%} %></asp:LinkButton>
+    <asp:Panel ID="DropdownPanel" runat="server" CssClass="dropdown-menu show" style="background-color:#343a40; width:19%; padding:2px;" ForeColor="#CCCCCC">
         <div class="col">
             <div class="row">
         <asp:Label ID="LblId" runat="server" Text="Id:"></asp:Label>
@@ -65,7 +66,8 @@
                 </div>
              <div class="row">
              <asp:Label ID="LblMail" runat="server" Text="Mail:"></asp:Label>
-        <asp:TextBox ID="TxtMail" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>   
+        <asp:TextBox ID="TxtMail" ValidationGroup="" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>   
+
           </div>
                 <div class="row">
          <asp:Label ID="LblPassword" runat="server" Text="Password:"></asp:Label>
@@ -77,49 +79,15 @@
   </div>                      
              
         <div class="row">
-        <asp:LinkButton ID="BtnConfirmarcambios" runat="server" class="btn btn-dark " style="height:40px;width:90%; margin-left:14px; margin-top:10px; margin-bottom:5px;" OnClick="BtnConfirmarcambios_Click" AutoPostBack="true" > Confirmar <i class="fa-solid fa-check"></i></asp:LinkButton>
+        <asp:LinkButton ID="BtnConfirmaragregar" runat="server" class="btn btn-dark " style="height:40px;width:90%; margin-left:14px; margin-top:10px; margin-bottom:5px;" OnClick="BtnConfirmaragregar_Click" > Confirmar <i class="fa-solid fa-check"></i></asp:LinkButton>
                  </div>
+                <div class ="row">
+
+            <asp:Label ID="LblError" runat="server" Visible="false"></asp:Label>
+            </div>
                </div>
     </asp:Panel>
-     <%}
-         else
-         {  %>
-     <asp:LinkButton ID="LinkButton2" runat="server" class="btn btn-dark dropdown-toggle" style="height:40px;width:100%;" data-bs-toggle="dropdown" data-bs-theme="dark"> <i class="fa-solid fa-user-gear"></i></asp:LinkButton>
-    <asp:Panel ID="Panel1" runat="server" CssClass="dropdown-menu show" style="background-color:#343a40; width:19%; padding:2px;" ForeColor="#CCCCCC">
-        <div class="col">
-            <div class="row">
-        <asp:Label ID="LblId2" runat="server" Text="Id:"></asp:Label>
-        <asp:TextBox ID="TxtId2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>
-                </div>
-                      <div class="row">
-         <asp:Label ID="LblNombres2" runat="server" Text="Nombres:"></asp:Label>
-        <asp:TextBox ID="TxtNombres2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>
-</div>
-            <div class="row">
-        <asp:Label ID="LblApellidos2" runat="server" Text="Apellidos:"></asp:Label>
-        <asp:TextBox ID="TxtApellidos2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>  
-                </div>
-             <div class="row">
-             <asp:Label ID="LblMail2" runat="server" Text="Mail:"></asp:Label>
-        <asp:TextBox ID="TxtMail2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox>   
-          </div>
-                <div class="row">
-         <asp:Label ID="LblPass2" runat="server" Text="Password:"></asp:Label>
-        <asp:TextBox ID="TxtPass2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:TextBox> 
-  </div>        
-            <div class="row">
-         <asp:Label ID="LblTipouser" runat="server" Text="TipoUsuario:"></asp:Label>
-        <asp:DropDownList ID="DdlTipo2" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;"></asp:DropDownList> 
-  </div>                      
-             
-        <div class="row">
-        <asp:LinkButton ID="BtnConfirmarcambios2" runat="server" class="btn btn-dark " style="height:40px;width:90%; margin-left:14px; margin-top:10px; margin-bottom:5px;" OnClick="BtnConfirmarcambios_Click" AutoPostBack="true" > Confirmar <i class="fa-solid fa-check"></i></asp:LinkButton>
-                 </div>
-               </div>
-    </asp:Panel>
-     <%} %>
-
-
+    
       </div>  
       </div>
 </div>

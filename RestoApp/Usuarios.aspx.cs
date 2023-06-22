@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics.Eventing.Reader;
@@ -92,7 +93,6 @@ namespace RestoApp
             bool apellidoasc = (bool)Session["apellidoasc"];
             bool mailasc = (bool)Session["mailasc"];
             bool tipoasc = (bool)Session["tipoasc"];
-
 
 
             if (columnaseleccionada == ColumnasDB.Usuario.Id)
@@ -220,6 +220,17 @@ namespace RestoApp
             }
         }
 
+        public void Limpiarcamposdetexto()
+         {
+            TxtApellidos.Text = "";
+            TxtNombres.Text = "";
+            TxtId.Text = "";
+            TxtMail.Text = "";
+            TxtPassword.Text = "";
+
+
+        }
+
         public void CargarDdltipo()
         {
 
@@ -257,40 +268,57 @@ namespace RestoApp
             }
             if(e.CommandName == "ModificarUsuario")
             {
-                UsuarioNegocio negocio = new UsuarioNegocio();
-                int rowIndex = Convert.ToInt32(e.CommandArgument);
-                List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
-
-                if (rowIndex >= 0 && rowIndex < listausuarios.Count)
+                if ((bool)Session["modificar"])
                 {
-                    Usuario usuarioSeleccionado = listausuarios[rowIndex];
+                    UsuarioNegocio negocio = new UsuarioNegocio();
+                    int rowIndex = Convert.ToInt32(e.CommandArgument);
+                    List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
 
-                    TxtApellidos2.Text = usuarioSeleccionado.Apellidos;
-                    TxtNombres2.Text = usuarioSeleccionado.Nombres;
-                    TxtId2.Text = usuarioSeleccionado.Id.ToString();
-                    TxtMail2.Text = usuarioSeleccionado.Mail;
-                    TxtPass2.Text = usuarioSeleccionado.Password;
-                                       
+                    if (rowIndex >= 0 && rowIndex < listausuarios.Count)
+                    {
+                        Usuario usuarioSeleccionado = listausuarios[rowIndex];
 
-                    // Vuelve a cargar los datos en el GridView después de eliminar el usuario
-                    CargarDgv();
+                        TxtApellidos.Text = usuarioSeleccionado.Apellidos;
+                        TxtNombres.Text = usuarioSeleccionado.Nombres;
+                        TxtId.Text = usuarioSeleccionado.Id.ToString();
+                        TxtMail.Text = usuarioSeleccionado.Mail;
+                        TxtPassword.Text = usuarioSeleccionado.Password;
+                        DdlTipo.SelectedValue = usuarioSeleccionado.Tipo;
+
+                        CargarDgv();
+                    }
                 }
+                else
+                {
+                    Limpiarcamposdetexto();
 
+                }
             }
         }
 
-         public void BtnConfirmarcambios_Click(object sender, EventArgs e)
+         public void BtnConfirmaragregar_Click(object sender, EventArgs e)
         {
-            Usuario nuevousuario = new Usuario();
-            UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
-            nuevousuario.Apellidos = TxtApellidos.Text.ToString();
-            nuevousuario.Nombres = TxtNombres.Text.ToString();
-            nuevousuario.Tipo = DdlTipo.SelectedValue.ToString();
-            nuevousuario.Mail = TxtMail.Text.ToString();
-            nuevousuario.Password = TxtPassword.Text.ToString();
+            if(Regex.IsMatch(TxtMail.Text, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"))
+            {
+                Usuario nuevousuario = new Usuario();
+                UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+                nuevousuario.Apellidos = TxtApellidos.Text.ToString();
+                nuevousuario.Nombres = TxtNombres.Text.ToString();
+                nuevousuario.Tipo = DdlTipo.SelectedValue.ToString();
+                nuevousuario.Mail = TxtMail.Text.ToString();
+                nuevousuario.Password = TxtPassword.Text.ToString();
 
-            usuarioNegocio.Agregarusuario(nuevousuario);
-            CargarDgv();
+                usuarioNegocio.Agregarusuario(nuevousuario);
+                LblError.Visible = false;
+                CargarDgv();
+                Limpiarcamposdetexto();
+            }
+            else
+            {
+                LblError.Text = "*El mail ingresado no es válido.";
+                LblError.Visible = true;
+            }
+         
             
         }
 
@@ -303,7 +331,7 @@ namespace RestoApp
                Session.Add("modificar", aux);
 
             }
-            else
+            else 
             {
                 aux = false;
                 Session.Add("modificar", aux);
