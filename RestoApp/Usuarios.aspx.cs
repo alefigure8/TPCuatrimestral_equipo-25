@@ -272,6 +272,7 @@ namespace RestoApp
                 {
                     UsuarioNegocio negocio = new UsuarioNegocio();
                     int rowIndex = Convert.ToInt32(e.CommandArgument);
+
                     List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
 
                     if (rowIndex >= 0 && rowIndex < listausuarios.Count)
@@ -322,7 +323,7 @@ namespace RestoApp
             
         }
 
-        protected void BtnModificarusuario_Click(object sender, EventArgs e)
+        protected void BtnConfirmarcambios_Click(object sender, EventArgs e)
         {
             bool aux;
             if ((bool)Session["modificar"]==false)
@@ -333,8 +334,14 @@ namespace RestoApp
             }
             else 
             {
+                List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
+                Usuario usuarioSeleccionado = listausuarios[(int)Session["rowindex"]];
+
+                    modifi
+
                 aux = false;
                 Session.Add("modificar", aux);
+                Limpiarcamposdetexto();
             }
         }
     }

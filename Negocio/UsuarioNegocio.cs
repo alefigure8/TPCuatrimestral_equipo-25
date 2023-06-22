@@ -262,5 +262,38 @@ namespace Negocio
 
 
         }
+
+		public void Modificarusuario(Usuario usuariomodificado)
+		{
+            Usuario usuario = new Usuario();
+            AccesoDB datos = new AccesoDB();
+
+            try            {
+
+                datos.setQuery($"UPDATE {ColumnasDB.Usuario.DB} set {ColumnasDB.Usuario.Nombres} = {usuariomodificado.Nombres}, " +
+					$"{ColumnasDB.Usuario.Apellidos} = {usuariomodificado.Apellidos}, " +
+					$"{ColumnasDB.Usuario.Mail} = {usuariomodificado.Mail}, " +
+					$"{ColumnasDB.Usuario.Pass} = {usuariomodificado.Password}, " +
+					$"{ColumnasDB.Usuario.TipoUsuario} = {usuariomodificado.Tipo} " +
+					$" WHERE {ColumnasDB.Usuario.Id} = {usuariomodificado.Id}");
+
+
+                if (datos.executeNonQuery())
+                {
+                    datos.closeConnection();
+                  
+                }
+            }
+            catch (Exception Ex)
+            {
+                throw Ex;
+            }
+            finally
+            {
+                datos.closeConnection();
+            }
+
+
+        }
     }
 }

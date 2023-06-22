@@ -79,7 +79,7 @@
   </div>                      
              
         <div class="row">
-        <asp:LinkButton ID="BtnConfirmaragregar" runat="server" class="btn btn-dark " style="height:40px;width:90%; margin-left:14px; margin-top:10px; margin-bottom:5px;" OnClick="BtnConfirmaragregar_Click" > Confirmar <i class="fa-solid fa-check"></i></asp:LinkButton>
+        <asp:LinkButton ID="BtnConfirmarcambios" runat="server" class="btn btn-dark " style="height:40px;width:90%; margin-left:14px; margin-top:10px; margin-bottom:5px;" OnClick="BtnConfirmarcambios_Click" > Confirmar <i class="fa-solid fa-check"></i></asp:LinkButton>
                  </div>
                 <div class ="row">
 
