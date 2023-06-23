@@ -7,7 +7,7 @@
 
   <div class="container">
 
-    <div class="row" style="justify-content:flex-start; margin-top:20px;">
+    <div class="row" style="justify-content:center; margin-top:20px;">
         <div class="col-6">
    <div class="input-group mb-3" style="box-shadow:0 2px 4px rgba(0, 0, 0, 0.3)">
   <asp:Textbox type="text" class="form-control" placeholder="Ingresa tu busqueda" id="TxtBusqueda" runat="server" OnTextChanged="TxtBusqueda_TextChanged" AutoPostBack="true"></asp:Textbox>
@@ -52,6 +52,17 @@
                                              {  %> <i class="fa-solid fa-user-gear"></i> <%} %></asp:LinkButton>
     <asp:Panel ID="DropdownPanel" runat="server" CssClass="dropdown-menu show" style="background-color:#343a40; width:19%; padding:2px;" ForeColor="#CCCCCC">
         <div class="col">
+                 <div class="row d-flex">
+
+    </div>
+            <div class="row">
+                <div style="margin-left:30px;">
+                <asp:RadioButtonList ID="Rbnmodo" runat="server" RepeatDirection="Horizontal" Width="90%" AutoPostBack="true" OnSelectedIndexChanged="Rbnmodo_SelectedIndexChanged">
+        <asp:ListItem Text="Agregar" Value="1" Selected="True"></asp:ListItem>
+       <asp:ListItem Text="Modificar" Value="2" Enabled="false"></asp:ListItem>
+    </asp:RadioButtonList>
+                    </div>
+                </div>
             <div class="row">
         <asp:Label ID="LblId" runat="server" Text="Id:"></asp:Label>
         <asp:TextBox ID="TxtId" runat="server" CssClass="form-control" style="width:90%; margin-left:14px;" Enabled="false"></asp:TextBox>
@@ -80,6 +91,7 @@
              
         <div class="row">
         <asp:LinkButton ID="BtnConfirmarcambios" runat="server" class="btn btn-dark " style="height:40px;width:90%; margin-left:14px; margin-top:10px; margin-bottom:5px;" OnClick="BtnConfirmarcambios_Click"> Confirmar <i class="fa-solid fa-check"></i></asp:LinkButton>
+ 
                  </div>
                 <div class ="row">
 
@@ -89,8 +101,9 @@
     </asp:Panel>
     
       </div>  
+               </div>
       </div>
-</div>
+
 
 </asp:Content>
 

@@ -352,20 +352,25 @@ namespace RestoApp
             bool aux;
             if ((bool)Session["modificar"]==false)
             {
+                Rbnmodo.SelectedIndex = 1;
                 aux = true;
                Session.Add("modificar", aux);
 
             }
             else 
             {
+              
                 if (TxtId.Text == "")
                 {
+                    Rbnmodo.SelectedIndex = 0;
                     aux = false;
                     Session.Add("modificar", aux);
                     Limpiarcamposdetexto();
                 }
             }
         }
+
+     
 
         protected void BtnBusqueda_Click(object sender, EventArgs e)
         {
@@ -410,6 +415,17 @@ namespace RestoApp
             else
             {
                 CargarDgv();
+            }
+        }
+
+        protected void Rbnmodo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           bool aux;
+            if(((uint)Rbnmodo.SelectedIndex) == 0)
+            {
+                aux = false;
+                Session.Add("modificar", aux);
+                Limpiarcamposdetexto();
             }
         }
     }
