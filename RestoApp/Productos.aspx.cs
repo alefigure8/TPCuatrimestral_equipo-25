@@ -19,7 +19,6 @@ namespace RestoApp
         public Usuario usuario { get; set; }
         public List<CategoriaProducto> ListaCategoriasProducto;
         public List<Producto> ListaProductos;
-        public List<Producto> ListaFiltrada;
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -79,7 +78,7 @@ namespace RestoApp
 
         public void CargarDDLCategorias()
         {
-            
+
             DDLCategorias.Items.Add("Categorias");
             modalDDLCategorias.Items.Add("Categorias");
             MPDDLCategoria.Items.Add("Categorias");
@@ -128,7 +127,13 @@ namespace RestoApp
         {
             ProductoNegocio productoNegocio = new ProductoNegocio();
             Session.Add("ListaProductos", productoNegocio.ListarProductos());
-            GVProductos.DataSource = Session["ListaProductos"];
+            Session.Add("ListaFiltrada", productoNegocio.ListarProductos());
+            ActualizarGV();
+        }
+
+        public void ActualizarGV()
+        {
+            GVProductos.DataSource = Session["ListaFiltrada"];
             GVProductos.DataBind();
         }
 
@@ -140,7 +145,7 @@ namespace RestoApp
 
         }
 
-      
+
 
         protected void GVProductos_RowDataBound(object sender, GridViewRowEventArgs e)
         {
@@ -182,13 +187,11 @@ namespace RestoApp
 
         }
 
-        protected void NewListaFiltrada()
-        {
-            ListaFiltrada = new List<Producto>();
-        }
+
 
         protected void DDLEstado_SelectedIndexChanged(object sender, EventArgs e)
         {
+            List<Producto> ListaFiltradaAux = new List<Producto>();
 
             if (DDLEstado.SelectedIndex != 0)
             {
@@ -202,7 +205,7 @@ namespace RestoApp
                             {
                                 if (PAux.Activo == true)
                                 {
-                                    ListaFiltrada.Add(PAux);
+                                    ListaFiltradaAux.Add(PAux);
                                 }
                             }
                             break;
@@ -214,13 +217,13 @@ namespace RestoApp
 
                                 if (PAux.Activo == false)
                                 {
-                                    ListaFiltrada.Add(PAux);
+                                    ListaFiltradaAux.Add(PAux);
                                 }
                             }
                             break;
                         }
                 }
-                Session["ListaFiltrada"] = ListaFiltrada;
+                Session["ListaFiltrada"] = ListaFiltradaAux;
                 GVProductos.DataSource = Session["ListaFiltrada"];
                 GVProductos.DataBind();
             }
@@ -240,59 +243,55 @@ namespace RestoApp
 
         protected void DDLCategorias_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(DDLCategorias.SelectedIndex!=0)
-            {
-                ValidarListaFiltrada();
-                switch (DDLCategorias.SelectedIndex)
-                {
-                    case 1:
-                        {
-                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
-                            {
-                                if (!(PAux.Categoria == 1))
-                                {
-                                    ListaFiltrada.Remove(PAux);
-                                }
-                            }
-                            break;
-                        }
-                    case 2:
-                        {
-                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
-                            {
+            //    if(DDLCategorias.SelectedIndex!=0)
+            //    {
+            //        ValidarListaFiltrada();
+            //        switch (DDLCategorias.SelectedIndex)
+            //        {
+            //            case 1:
+            //                {
+            //                    foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+            //                    {
+            //                        if (!(PAux.Categoria == 1))
+            //                        {
+            //                            ListaFiltrada.Remove(PAux);
+            //                        }
+            //                    }
+            //                    break;
+            //                }
+            //            case 2:
+            //                {
+            //                    foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
+            //                    {
 
-                                if (PAux.Categoria == 2)
-                                {
-                                    ListaFiltrada.Remove(PAux);
-                                }
-                            }
-                            break;
-                        }
-                }
-                Session["ListaFiltrada"] = ListaFiltrada;
-                GVProductos.DataSource = Session["ListaFiltrada"];
-                GVProductos.DataBind();
+            //                        if (PAux.Categoria == 2)
+            //                        {
+            //                            ListaFiltrada.Remove(PAux);
+            //                        }
+            //                    }
+            //                    break;
+            //                }
+            //        }
+            //        Session["ListaFiltrada"] = ListaFiltrada;
+            //        GVProductos.DataSource = Session["ListaFiltrada"];
+            //        GVProductos.DataBind();
 
-            }
-            else
-            {
-                ListarProductos();
-            }
+            //    }
+            //    else
+            //    {
+            //        ListarProductos();
+            //    }
 
         }
 
         protected void ValidarListaFiltrada()
         {
-            if (ListaFiltrada == null)
-            {
-                NewListaFiltrada();
-            }
 
         }
 
         protected void AplicarFiltro(object sender, EventArgs e)
         {
-       
+
         }
 
         protected void LBtnNuevoPlato_Click(object sender, EventArgs e)
@@ -300,11 +299,12 @@ namespace RestoApp
 
         }
 
-      
+
         protected void GuardarNuevoProducto_Click(object sender, EventArgs e)
         {
 
-           if (!string.IsNullOrWhiteSpace(NuevoProductoNombre.Text) &&
+
+            if (!string.IsNullOrWhiteSpace(NuevoProductoNombre.Text) &&
            !string.IsNullOrWhiteSpace(NuevoProductoDescripcion.Text) &&
            !string.IsNullOrWhiteSpace(NuevoProductoValor.Text) &&
            modalDDLCategorias.SelectedIndex != 0 &&
@@ -317,10 +317,10 @@ namespace RestoApp
                 NuevoProducto.Descripcion = NuevoProductoDescripcion.Text;
                 NuevoProducto.Valor = decimal.Parse(NuevoProductoValor.Text);
                 NuevoProducto.Categoria = modalDDLCategorias.SelectedIndex;
-                bool estado = modalDDLEstado.SelectedIndex-1 == 0 ? false : true;
+                bool estado = modalDDLEstado.SelectedIndex - 1 == 0 ? false : true;
                 NuevoProducto.Activo = estado;
-                
-                 Convert.ToBoolean(modalDDLEstado.SelectedIndex);
+
+                Convert.ToBoolean(modalDDLEstado.SelectedIndex);
 
                 if (modalCheckBoxAtributos.SelectedItem.Value == "Vegano")
                 {
@@ -334,36 +334,78 @@ namespace RestoApp
                 {
                     NuevoProducto.Alcohol = true;
                 }
-                NuevoProducto.TiempoCoccion =  TimeSpan.Parse(NuevoProductoTiempoCoccion.Text);
+                NuevoProducto.TiempoCoccion = TimeSpan.Parse(NuevoProductoTiempoCoccion.Text);
                 NuevoProducto.Stock = int.Parse(NuevoProductoStock.Text);
 
                 ProductoNegocio PNaux = new ProductoNegocio();
                 PNaux.NuevoProducto(NuevoProducto);
 
+                NuevoProductoNombre.Text = null;
+                NuevoProductoDescripcion.Text = null;
+                NuevoProductoValor.Text = null;
+
+                modalDDLCategorias.SelectedIndex = 0;
+                modalDDLEstado.SelectedIndex = 0;
+                NuevoProductoStock = null;
+
+
+                for (int i = 0; i < modalCheckBoxAtributos.Items.Count; i++)
+                {
+                    modalCheckBoxAtributos.Items[i].Selected = false;
+                }
+
+                NuevoProductoTiempoCoccion.Text = null;
+
+                string script = "alert('Guardado correctamente');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+                ListarProductos();
 
 
             }
+            else
+            {
+
+
+                string script = "alert('ERROR. Todos los campos deben ser completados. Intentelo nuevamente.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+              
+            }
+
         }
 
         public void EliminarProducto(object sender, System.EventArgs e)
         {
             Button button = sender as Button;
             ProductoNegocio PNaux = new ProductoNegocio();
-            PNaux.EliminarProducto(int.Parse(button.CommandArgument));
+            try
+            {
+                PNaux.EliminarProducto(int.Parse(button.CommandArgument));
+                string script = "alert('Eliminado correctamente');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+                ListarProductos();
+            }
+
+            catch (Exception ex)
+            {
+                string script = "alert('Registro en uso. No se puede eliminar.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+                throw ex;
+            }
+
         }
 
         protected void btnModificarProducto_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
             Producto Paux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
-            Session.Add("ProductoAModificar", Paux); 
+            Session.Add("ProductoAModificar", Paux);
         }
 
         protected void MPBtnModificarProducto_Click(object sender, EventArgs e)
         {
             Producto Paux = ((Producto)(Session["ProductoAModificar"]));
             Paux.Nombre = string.IsNullOrEmpty(MPnombre1.Text) ? Paux.Nombre : MPnombre1.Text;
-            Paux.Descripcion = string.IsNullOrEmpty(MPDescripcion.Text) ? Paux.Descripcion : MPDescripcion.Text;
+            Paux.Descripcion = string.IsNullOrEmpty(MPDescripcion.Text) ? Paux.Descripcion : MPDescripcion.Text; 
             Paux.Valor = string.IsNullOrEmpty(MPvalor.Text) ? Paux.Valor : decimal.Parse(MPvalor.Text);
             Paux.Categoria = MPDDLCategoria.SelectedIndex != 0 && MPDDLCategoria != null ? MPDDLCategoria.SelectedIndex : Paux.Categoria;
             bool estado = MPDDLEstado.SelectedIndex == 2 ? false : true;
@@ -375,22 +417,42 @@ namespace RestoApp
             Paux.Stock = string.IsNullOrEmpty(MPStock.Text) ? Paux.Stock : int.Parse(MPStock.Text);
 
             ProductoNegocio PNaux = new ProductoNegocio();
-                try
+            try
+            {
+                PNaux.ModificarProducto(Paux);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+
+                ListarProductos();
+                MPnombre1.Text = null;
+                MPDescripcion.Text = null;
+                MPvalor.Text = null;
+                MPDDLCategoria.SelectedIndex = 0;
+                MPDDLEstado.SelectedIndex = 0;
+                MPStock = null;
+
+
+                for (int i = 0; i < MPCheckBoxAtributos.Items.Count; i++)
                 {
-                    PNaux.ModificarProducto(Paux);
-                }
-                catch (Exception)
-                {
-
-                    throw;
+                    modalCheckBoxAtributos.Items[i].Selected = false;
                 }
 
-            
+                MPtiempococcion.Text = null;
+            }
 
 
-            
+
+
+
         }
 
-     
+
     }
 }

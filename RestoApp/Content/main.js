@@ -6,6 +6,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
     const asignarMesas = document.querySelectorAll("#asignarMesa");
     let idMesero;
+    let idMeseroPorDia;
 
     //CARGAMOS MESAS GUARDADAS
     const mesas = document.getElementById("mesas");
@@ -18,7 +19,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
     //CARGAMOS MESAS POR DIA GUARDADAS
     let numeroMesasPorDiaArray = JSON.parse(numeroMesasPorDiaJSON)
-     
+
     function CargarMesasGuardas() {
 
         mesas.innerHTML = "";
@@ -71,7 +72,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
         mesas.innerHTML = "";
 
         for (let j = 0; j < i; j++) {
-            if (numeroMesasPorDiaArray.some(el => el.mesa === j + 1 && el.mesero > 0)) {
+            if (numeroMesasPorDiaArray.some(el => el.mesa === j + 1 && el.abierta == 1)) {
                 mesas.innerHTML += `
             <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
                 <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
@@ -111,16 +112,16 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
                 document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
                     document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
                     document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
-                    //mesasAsignadas[j] = 0;
-                    numeroMesasPorDiaArray.find(el => el.mesa === j + 1).mesero = 0;
+                    numeroMesasPorDiaArray.find(el => el.mesa === j + 1).abierta = false;
+
                     CargarMesasSeleccion(i);
                 });
             } else {
                 document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
                     document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
                     document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
-                    //mesasAsignadas[j] = 1;
-                    numeroMesasPorDiaArray.push({ mesa: j + 1, mesero: parseInt(idMesero) });
+                    numeroMesasPorDiaArray.push({ mesa: j + 1, mesero: parseInt(idMesero), idmeseropordia: parseInt(idMeseroPorDia), abierta: true });
+
                     CargarMesasSeleccion(i);
                 });
             }
@@ -134,11 +135,12 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
     //Evento del botón Asignar mesas
     asignarMesas.forEach(btn => {
         btn.addEventListener('click', () => {
-            //Cargamos los eventos de la mesa
-            CargarMesasSeleccion(cantidadMesasGuardas)
-
             //Id del mesero
             idMesero = btn.getAttribute("id-mesero");
+            idMeseroPorDia = btn.getAttribute("id-meseropordia");
+
+            //Cargamos los eventos de la mesa
+            CargarMesasSeleccion(cantidadMesasGuardas)
 
             //Habilitamos botón guardar
             guardarMesa.forEach(btn2 => {
@@ -151,9 +153,16 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
     guardarMesa.forEach(btn => {
 
+
         btn.addEventListener('click', () => {
             btn.disabled = true;
 
+            let EnviarnumeroMesasPorDiaArray = numeroMesasPorDiaArray.map((el) => {
+
+                return { mesa: el.mesa, mesero: el.mesero, idmeseropordia: el.idmeseropordia, abierta: el.abierta ? 1 : 0 }
+
+            });
+            console.log(EnviarnumeroMesasPorDiaArray)
             //Sacamos eventos a las masas
             CargarMesasSeleccion(cantidadMesasGuardas)
 
@@ -163,11 +172,11 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ array: numeroMesasPorDiaArray })
+                body: JSON.stringify({ array: EnviarnumeroMesasPorDiaArray })
             })
                 .then(function (response) {
                     if (response.ok) {
-                        console.log('Datos enviados al código detrás');
+                        location.reload();
                     } else {
                         console.error('Error al enviar los datos al código detrás');
                     }
@@ -279,7 +288,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesahabilitar.aspx') !== -1) {
         })
             .then(function (response) {
                 if (response.ok) {
-                    console.log('Datos enviados al código detrás');
+                    location.reload();
                 } else {
                     console.error('Error al enviar los datos al código detrás');
                 }
