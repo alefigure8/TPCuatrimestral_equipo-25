@@ -283,6 +283,20 @@ namespace RestoApp
             }
         }
 
+
+        public bool camposcompletos()
+        {
+            if(TxtApellidos.Text.ToString() != "" && TxtNombres.Text.ToString() != "" && TxtMail.Text.ToString() != "" && TxtPassword.Text.ToString() != "" && DdlTipo.SelectedValue.ToString() != "")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }            
+
+        }
+
          public void BtnConfirmarcambios_Click(object sender, EventArgs e)
         {
             bool aux;
@@ -290,7 +304,10 @@ namespace RestoApp
             {
                 if (AutentificacionUsuario.esAdmin(usuario) || AutentificacionUsuario.esGerente(usuario))
                 {
-                    if (emailvalido(TxtMail.Text.ToString()))
+
+
+
+                    if (emailvalido(TxtMail.Text.ToString()) && camposcompletos())
                     {
                         Usuario nuevousuario = new Usuario();
                         UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
@@ -305,7 +322,12 @@ namespace RestoApp
                         CargarDgv();
                         Limpiarcamposdetexto();
                     }
-                    else
+                    else if(!camposcompletos())
+                    {
+                        LblError.Text = "*Debe completar todos los campos.";
+                        LblError.Visible = true;
+                    }
+                    else if (!emailvalido(TxtMail.Text.ToString()))
                     {
                         LblError.Text = "*El mail ingresado no es válido.";
                         LblError.Visible = true;
