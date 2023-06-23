@@ -9,11 +9,16 @@
 
     <div class="row" style="justify-content:center; margin-top:20px;">
         <div class="col-6">
-   <div class="input-group mb-3" style="box-shadow:0 2px 4px rgba(0, 0, 0, 0.3)">
+   <div class="input-group" style="box-shadow:0 2px 4px rgba(0, 0, 0, 0.3)">
   <asp:Textbox type="text" class="form-control" placeholder="Ingresa tu busqueda" id="TxtBusqueda" runat="server" OnTextChanged="TxtBusqueda_TextChanged" AutoPostBack="true"></asp:Textbox>
   <asp:LinkButton class="btn btn-dark" type="button" id="BtnBusqueda" runat="server" OnClick="BtnBusqueda_Click"><i class="fa-solid fa-magnifying-glass"></i></asp:LinkButton>
+
     </div>
+            <div style="margin-top:0px; margin-left:2px;">
+                 <asp:Label ID="Lblbusquedafallida" Text="*La busqueda ejecutada no arrojo resultados" runat="server" />
             </div>
+            </div>
+              
                 </div>
       <div class="row" style="margin-top:20px; justify-content:center;">
           <div class="col-9 d-flex" style="height:500px; overflow-y: auto; justify-content:flex-end; padding:0px;">

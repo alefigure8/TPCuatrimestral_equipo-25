@@ -33,6 +33,7 @@ namespace RestoApp
 
             if (!IsPostBack)
             {
+                Lblbusquedafallida.Visible = false;
                 bool modificar = false;
                 Session.Add("modificar", modificar);
                 CargarDgv();
@@ -431,11 +432,21 @@ namespace RestoApp
             if (TxtBusqueda.Text.Count() > 0)
             {
                 Listafiltrada = ((List<Usuario>)Session["listaactual"]).FindAll(x => x.Nombres.ToUpper().Contains(TxtBusqueda.Text.ToUpper()) || x.Apellidos.ToUpper().Contains(TxtBusqueda.Text.ToUpper()) || x.Mail.ToUpper().Contains(TxtBusqueda.Text.ToUpper()));
-                GDVEmpleados.DataSource = Convertidordatatable(Listafiltrada);
-                GDVEmpleados.DataBind();
+                if(Listafiltrada.Count == 0)
+                {
+                    Lblbusquedafallida.Visible = true;
+                }
+                else
+                {
+                    GDVEmpleados.DataSource = Convertidordatatable(Listafiltrada);
+                    GDVEmpleados.DataBind();
+                    Lblbusquedafallida.Visible = false;
+                }
+             
             }
             else
             {
+                Lblbusquedafallida.Visible = false;
                 CargarDgv();
             }
         }
