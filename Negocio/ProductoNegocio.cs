@@ -171,7 +171,7 @@ namespace Negocio
                + $"{ColumnasDB.Producto.Descripcion}, {ColumnasDB.Producto.Valor}, {ColumnasDB.Producto.AptoVegano},"
                + $"{ColumnasDB.Producto.AptoCeliaco}, {ColumnasDB.Producto.Alcohol}, {ColumnasDB.Producto.Stock},"
                + $"{ColumnasDB.Producto.Activo}, {ColumnasDB.Producto.TiempoCoccion}, {ColumnasDB.ProductoDD.Fecha}, {ColumnasDB.ProductoDD.StockInicial}, {ColumnasDB.ProductoDD.StockCierre}  " 
-               + $" FROM {ColumnasDB.Producto.DB}");
+               + $" FROM {ColumnasDB.ProductoDD.DB}");
                 AccesoDB.executeReader();
                 while (AccesoDB.Reader.Read())
                 {
@@ -199,6 +199,54 @@ namespace Negocio
             catch (Exception ex)
             {
                 throw ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+        }
+
+        public int AgregarProductoDD(ProductoDelDia ProductoDelDia)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            try
+            {
+                AccesoDB.setQuery($"INSERT INTO " +
+                    $"{ColumnasDB.ProductoDD.DB} (" +
+                    $"{ColumnasDB.Producto.Id}," +
+                    $"{ColumnasDB.Producto.Categoria}," +
+                    $"{ColumnasDB.Producto.Nombre}," +
+                    $"{ColumnasDB.Producto.Descripcion}, " +
+                    $"{ColumnasDB.Producto.Valor}, " +
+                    $"{ColumnasDB.Producto.AptoVegano}, " +
+                    $"{ColumnasDB.Producto.AptoCeliaco}, " +
+                    $"{ColumnasDB.Producto.Alcohol}," +
+                    $"{ColumnasDB.Producto.Stock}," +
+                    $"{ColumnasDB.Producto.Activo}," +
+                    $"{ColumnasDB.Producto.TiempoCoccion}, " +
+                    $"{ColumnasDB.ProductoDD.Fecha}, " +
+                    $"{ColumnasDB.ProductoDD.StockInicial}, " +
+                    $"{ColumnasDB.ProductoDD.StockCierre})" +
+                    $"VALUES (" +
+                     $"{ProductoDelDia.Id}," +
+                    $"'{ProductoDelDia.Categoria}'," +
+                    $"'{ProductoDelDia.Nombre}'," +
+                    $"'{ProductoDelDia.Descripcion}'," +
+                    $" {ProductoDelDia.Valor}," +
+                    $"'{ProductoDelDia.AptoVegano}'," +
+                    $"'{ProductoDelDia.AptoCeliaco}'," +
+                    $"'{ProductoDelDia.Alcohol}'," +
+                    $" {ProductoDelDia.Stock}," +
+                    $"'{ProductoDelDia.Activo}'," +
+                    $"'{ProductoDelDia.TiempoCoccion}'," +
+                    $"'{ProductoDelDia.Fecha}'," +
+                    $"{ProductoDelDia.StockInicio}," +
+                    $"{ProductoDelDia.StockCierre})");
+                return AccesoDB.executeScalar();
+            }
+            catch (Exception Ex)
+            {
+                throw Ex;
             }
             finally
             {

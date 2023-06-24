@@ -38,47 +38,35 @@
     %>
 
     <%--    Contenedor  --%>
-    <div class="row bg-white m-2">
+    <div class="row bg-white rounded m-2 p-1">
 
         <%--Productos Disponibles--%>
-        <div class="col m-3">
-             <h2 class="row rounded">Productos disponibles</h2>
+        <div class="col p-4">
+            <h2 class="row rounded">Productos disponibles</h2>
             <asp:Repeater runat="server" ID="ProductoRepetidor">
-                
-                <ItemTemplate> 
+                <ItemTemplate>
                     <div class="row border border-1">
-                        <span class="col-3 align-middle"><%#Eval("Nombre")%></span>
-                        <span class="col-3 align-middle"> Stock: <%#Eval("Stock")%> </span> 
+                        <span class="col-4 align-middle"><%#Eval("Nombre")%></span>
+                        <span class="col-4 align-middle">Stock: <%#Eval("Stock")%> </span>
+                        <asp:LinkButton runat="server" ID="BtnAgregarAPDD" Text=">" CssClass="col-4 btn btn-sm btn-dark" />
+
                     </div>
                 </ItemTemplate>
-                
-                
-                <%--<ItemTemplate> 
-                    <div class="row border align-middle">
-                        <div class="col-3 align-middle"><p class="hover-shadow text-uppercase align-middle"><%#Eval("Nombre")%></p></div>
-                        <div class="col-3"><p> Stock: <%#Eval("Stock")%></p> </div> 
-                    </div>
-                </ItemTemplate>--%>
-
             </asp:Repeater>
         </div>
 
         <%--Productos Del Dia--%>
-        <div class="col">
-             <h2 class="bg-secondary text-white row">Menú disponible</h2>
-            <asp:Repeater runat="server" ID="Repeater2">
+     <div class="col p-4">
+            <h2 class="row rounded">Menú actual</h2>
+            <asp:Repeater runat="server" ID="Repeater1">
                 <ItemTemplate>
-                    <div class="row border-bottom ">
-                        <h5 class="card-title hover-shadow "><%#Eval("Nombre")%> </h5>
-                        <br />
-                        <p class="blockquote-footer">
-                            Descripción: <%#Eval("Descripcion")%>
-                            <br />
-                            Valor: $<%#Eval("Valor")%>
-                        </p>
+                    <div class="row border border-1">
+                        <span class="col-4 align-middle"><%#Eval("Nombre")%></span>
+                        <span class="col-4 align-middle">Stock: <%#Eval("Stock")%> </span>
+                        <asp:LinkButton runat="server" ID="BtnAgregarStock" Text="Agregar Stock" CssClass="col-4 btn btn-sm btn-dark" />
+                        <asp:LinkButton runat="server" ID="BtnDesactivar" Text="Desactivar de fecha" CssClass="col-4 btn btn-sm btn-dark" />
                     </div>
                 </ItemTemplate>
-
             </asp:Repeater>
         </div>
 
