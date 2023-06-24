@@ -29,13 +29,26 @@ namespace RestoApp
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
-            ProductoNegocio productoNegocio = new ProductoNegocio();
-            Session.Add("ProductosDisponibles", productoNegocio.ListarProductos());
-            ProductoRepetidor.DataSource = Session["ProductosDisponibles"];
-            ProductoRepetidor.DataBind();
-
-
+            if(!IsPostBack && AutentificacionUsuario.esGerente(usuario))
+            {
+                CheckListaProductos();
+            }
 
         }
+
+
+        protected void CheckListaProductos()
+        {
+            if (Session["ListaProductos"] == null)
+            {
+                ProductoNegocio productoNegocio = new ProductoNegocio();
+                Session.Add("ListaProductos", productoNegocio.ListarProductos());
+            }
+            ProductoRepetidor.DataSource = Session["ListaProductos"];
+            ProductoRepetidor.DataBind();
+        }
+
+
+
     }
 }

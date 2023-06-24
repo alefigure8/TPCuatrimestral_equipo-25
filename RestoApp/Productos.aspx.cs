@@ -22,10 +22,8 @@ namespace RestoApp
         protected void Page_Load(object sender, EventArgs e)
         {
 
-            if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
+           if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
-
-
 
             CategoriaProductoNegocio CategoriaProductoNegocio = new CategoriaProductoNegocio();
             ListaCategoriasProducto = CategoriaProductoNegocio.Listar();
@@ -35,19 +33,6 @@ namespace RestoApp
                 IniciarDDL();
                 ListarProductos();
             }
-
-            if (AutentificacionUsuario.esGerente(usuario))
-            {
-
-            }
-            if (AutentificacionUsuario.esMesero(usuario))
-            {
-                NoEsGerente();
-            }
-
-
-
-
         }
 
         protected void IniciarDDL()
@@ -125,8 +110,11 @@ namespace RestoApp
 
         public void ListarProductos()
         {
-            ProductoNegocio productoNegocio = new ProductoNegocio();
-            Session.Add("ListaProductos", productoNegocio.ListarProductos());
+            if (Session["ListaProductos"] == null)
+            {
+                ProductoNegocio productoNegocio = new ProductoNegocio();
+                Session.Add("ListaProductos", productoNegocio.ListarProductos());
+            }
             GVProductos.DataSource = Session["ListaProductos"];
             GVProductos.DataBind();
         }
@@ -137,16 +125,6 @@ namespace RestoApp
             GVProductos.DataSource = ListaFiltrada;
             GVProductos.DataBind();
         }
-
-        public void NoEsGerente()
-        {
-            DDLEstado.Visible = false;
-            PanelValor.Visible = false;
-            PanelStock.Visible = false;
-
-        }
-
-
 
         protected void GVProductos_RowDataBound(object sender, GridViewRowEventArgs e)
         {
