@@ -12,7 +12,7 @@
 
         <div class="col-4 bg-white">
             <h2 class="display-4 bg-secondary text-white row">Menú disponible</h2>
-            <asp:Repeater runat="server" ID="ProductoDDRepetidor">
+            <asp:Repeater runat="server" ID="MenuRepetidor">
                 <ItemTemplate>
                     <div class="row border-bottom ">
                         <h5 class="card-title hover-shadow "><%#Eval("Nombre")%> </h5>
@@ -58,7 +58,7 @@
         <%--Productos Del Dia--%>
      <div class="col p-4">
             <h2 class="row rounded">Menú actual</h2>
-            <asp:Repeater runat="server" ID="Repeater1">
+            <asp:Repeater runat="server" ID="ProductoDelDiaRepetidor">
                 <ItemTemplate>
                     <div class="row border border-1">
                         <span class="col-4 align-middle"><%#Eval("Nombre")%></span>

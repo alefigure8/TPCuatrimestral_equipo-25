@@ -40,7 +40,7 @@ namespace RestoApp
 
         }
 
-
+        //Lista de productos que se pueden agregar al menu del dia porque estan activos
         protected void CheckListaProductos()
         {
             if (Session["ListaProductos"] == null)
@@ -54,12 +54,13 @@ namespace RestoApp
             ProductoRepetidor.DataBind();
         }
 
+        // Lista de productos del día completa
         protected void ListarProductosDelDia()
         {
             ProductoNegocio ProductoNegocio = new ProductoNegocio();
-            Session.Add("ListaProductosDelDia", ProductoNegocio.ListarProductos());
-            ProductoDDRepetidor.DataSource = Session["ListaProductosDelDia"];
-            ProductoDDRepetidor.DataBind();
+            Session.Add("ListaProductosDelDia", ProductoNegocio.ListarProductosDelDia());
+            ProductoDelDiaRepetidor.DataSource = Session["ListaProductosDelDia"];
+            ProductoDelDiaRepetidor.DataBind();
         }
 
 

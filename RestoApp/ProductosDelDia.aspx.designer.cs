@@ -15,13 +15,13 @@ namespace RestoApp
     {
 
         /// <summary>
-        /// ProductoDDRepetidor control.
+        /// MenuRepetidor control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater ProductoDDRepetidor;
+        protected global::System.Web.UI.WebControls.Repeater MenuRepetidor;
 
         /// <summary>
         /// ProductoRepetidor control.
@@ -33,12 +33,12 @@ namespace RestoApp
         protected global::System.Web.UI.WebControls.Repeater ProductoRepetidor;
 
         /// <summary>
-        /// Repeater1 control.
+        /// ProductoDelDiaRepetidor control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater Repeater1;
+        protected global::System.Web.UI.WebControls.Repeater ProductoDelDiaRepetidor;
     }
 }
