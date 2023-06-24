@@ -29,9 +29,13 @@ namespace RestoApp
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
-            if(!IsPostBack && AutentificacionUsuario.esGerente(usuario))
+            if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
             {
                 CheckListaProductos();
+            }
+            else if (!IsPostBack)
+            {
+                ListarProductosDelDia();
             }
 
         }
@@ -44,8 +48,18 @@ namespace RestoApp
                 ProductoNegocio productoNegocio = new ProductoNegocio();
                 Session.Add("ListaProductos", productoNegocio.ListarProductos());
             }
-            ProductoRepetidor.DataSource = Session["ListaProductos"];
+            List<Producto> ListaProductosDisponibles = (List<Producto>)Session["ListaProductos"];
+            ListaProductosDisponibles.RemoveAll(x => x.Activo == false);          
+            ProductoRepetidor.DataSource = ListaProductosDisponibles;
             ProductoRepetidor.DataBind();
+        }
+
+        protected void ListarProductosDelDia()
+        {
+            ProductoNegocio ProductoNegocio = new ProductoNegocio();
+            Session.Add("ListaProductosDelDia", ProductoNegocio.ListarProductos());
+            ProductoDDRepetidor.DataSource = Session["ListaProductosDelDia"];
+            ProductoDDRepetidor.DataBind();
         }
 
 

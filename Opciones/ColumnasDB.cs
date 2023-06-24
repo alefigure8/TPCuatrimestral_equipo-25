@@ -65,6 +65,13 @@ namespace Opciones
 			public const string DB = "Productos";
         }
 
+		public struct ProductoDD
+		{
+			public const string Fecha = "Fecha";
+			public const string StockInicial = "StockInicial";
+			public const string StockCierre = "StockCierre";
+		}
+
 		public struct MesasPorDia
 		{
 			public const string Id = "IdMesaPorDia";
