@@ -4,7 +4,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <%if (usuario?.Tipo != Opciones.ColumnasDB.TipoUsuario.Mesero && usuario?.Tipo != Opciones.ColumnasDB.TipoUsuario.Admin)
+    <%if (!Helper.AutentificacionUsuario.esUser((Dominio.Usuario)Session[Opciones.Configuracion.Session.Usuario]))
         { %>
 
     <div class="row">
@@ -32,5 +32,16 @@
     <div class="col-4 bg-dark"></div>
 
 </div>
+    <%}
+else { %>
+
+
+   
+
+
     <%} %>
+
+    
+
+
 </asp:Content>
