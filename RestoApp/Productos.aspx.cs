@@ -452,6 +452,20 @@ namespace RestoApp
                 SinCamposVacios = true;
             }
 
+
+            // check orden
+            if (DDLPrecios.SelectedIndex != 0)
+            {
+                ListaFiltrada = OrdenarPorPrecio(ListaFiltrada);
+                SinCamposVacios = true;
+            }
+            if (DDLStock.SelectedIndex != 0)
+            {
+                ListaFiltrada = OrdenarPorStock(ListaFiltrada);
+                SinCamposVacios = true;
+            }
+
+
             if (SinCamposVacios == true)
             {
                ActualizarGV(ListaFiltrada);
@@ -476,7 +490,37 @@ namespace RestoApp
             {
                 CheckBoxAtributos.Items[i].Selected = false;
             }
+        }
 
+        // Ordenar por precio
+        public List<Producto> OrdenarPorPrecio(List<Producto>ListaFiltrada) {
+            List<Producto> ListaOrdenada = new List<Producto>();
+            if (DDLPrecios.SelectedIndex == 1)
+            {
+               ListaOrdenada = ListaFiltrada.OrderBy(x => x.Valor).ToList();
+            }
+            if(DDLPrecios.SelectedIndex == 2)
+            {
+                ListaOrdenada = ListaFiltrada.OrderByDescending(x => x.Valor).ToList();
+            }
+			return ListaOrdenada;
+         }
+
+        // Ordenar por stock
+            public List<Producto> OrdenarPorStock(List<Producto> ListaFiltrada)
+        {
+
+            if (DDLStock.SelectedIndex == 1)
+            {
+                ListaFiltrada = ListaFiltrada.OrderBy(x => x.Stock).ToList();
+               
+                
+            }
+            if (DDLStock.SelectedIndex == 2)
+            {
+                ListaFiltrada = ListaFiltrada.OrderByDescending(x => x.Stock).ToList();
+            }
+            return ListaFiltrada;
         }
 
 

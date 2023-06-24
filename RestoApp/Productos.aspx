@@ -194,10 +194,10 @@
             <div class="col-2">
                 <div class="row-2 ">
                     <asp:Panel ID="PanelValor" runat="server">
-                        <label>VALOR</label>
-                        <asp:TextBox ID="tbPrecioMenor" type="number" runat="server" Text="Min" CssClass="col-md-3"></asp:TextBox>
+                        <label class="small">VALOR</label>
+                        <asp:TextBox ID="tbPrecioMenor" type="number" runat="server" Text="Min" CssClass="col-md-3 pr-4"></asp:TextBox>
                         <label>- </label>
-                          <asp:TextBox ID="tbPrecioMayor" type="number" runat="server" Text="Max" CssClass="col-md-3"></asp:TextBox>
+                          <asp:TextBox ID="tbPrecioMayor" type="number" runat="server" Text="Max" CssClass="col-md-3 pr-4"></asp:TextBox>
                     </asp:Panel>
                 </div>
                 <div class="row-2 mt-2">
@@ -207,10 +207,10 @@
             <div class="col-2">
                 <div class="row-2 ">
                     <asp:Panel ID="PanelStock" runat="server">
-                        <label>STOCK</label>
-                        <asp:TextBox ID="tbStockMenor" type="number" runat="server" Text="Min" CssClass="col-md-3"></asp:TextBox>
+                        <label class="small">STOCK</label>
+                        <asp:TextBox ID="tbStockMenor" type="number" runat="server" Text="Min" CssClass="col-md-3 pr-1"></asp:TextBox>
                         <label>- </label>
-                        <asp:TextBox ID="tbStockMayor" runat="server" type="number" Text="Max" CssClass="col-md-3"></asp:TextBox>
+                        <asp:TextBox ID="tbStockMayor" runat="server" type="number" Text="Max" CssClass="col-md-3 pr-1"></asp:TextBox>
                     </asp:Panel>
                 </div>
                 <div class="row-2 mt-2">
@@ -328,7 +328,10 @@
 
 
 
- 
+    <script>
+    var MPNomr = '<%=Session["sessionVar"]%>';
+    </script>
+
 
 
 
