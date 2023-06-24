@@ -102,7 +102,7 @@
                                 <div class="row p-1">
                                     <div class="col-2"><asp:label runat="server" class="form-label" ID="MPlblNombre">Nombre: </asp:label></div>
                                     <div class="col"> 
-                                        <asp:TextBox CssClass="form-control"  runat="server" ID="MPnombre1" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
+                                        <asp:TextBox CssClass="form-control"  runat="server" ID="MPnombre1" style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"  ></asp:TextBox>
                                     </div>
                                 </div>
 
@@ -163,7 +163,7 @@
     </asp:UpdatePanel>
         <!-- Fin Modal Modificar Producto -->
 
-
+        <%--Nav filtros--%>
         <div class="row p-2">
             <div class="col-2">
                 <p class="h2">Filtrar lista</p>
@@ -180,11 +180,11 @@
             <div class="col-2 ">
 
                 <div class="row">
-                    <asp:DropDownList ID="DDLEstado" runat="server" CssClass="row-2 btn btn-dark btn-sm" OnSelectedIndexChanged="DDLEstado_SelectedIndexChanged" AutoPostBack="true" ></asp:DropDownList>
+                    <asp:DropDownList ID="DDLEstado" runat="server" CssClass="row-2 btn btn-dark btn-sm"></asp:DropDownList>
                 </div>
 
                 <div class="row mt-2">
-                    <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="row-2 btn btn-dark btn-sm" OnSelectedIndexChanged="DDLCategorias_SelectedIndexChanged" AutoPostBack="true"></asp:DropDownList>
+                    <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="row-2 btn btn-dark btn-sm"></asp:DropDownList>
                 </div>
 
             </div>
@@ -195,9 +195,9 @@
                 <div class="row-2 ">
                     <asp:Panel ID="PanelValor" runat="server">
                         <label>VALOR</label>
-                        <asp:TextBox ID="tbPrecioMenor" runat="server" CssClass="col-md-3"></asp:TextBox>
+                        <asp:TextBox ID="tbPrecioMenor" type="number" runat="server" Text="Min" CssClass="col-md-3"></asp:TextBox>
                         <label>- </label>
-                        <asp:TextBox ID="tbPrecioMayor" runat="server" CssClass="col-md-3"></asp:TextBox>
+                          <asp:TextBox ID="tbPrecioMayor" type="number" runat="server" Text="Max" CssClass="col-md-3"></asp:TextBox>
                     </asp:Panel>
                 </div>
                 <div class="row-2 mt-2">
@@ -208,9 +208,9 @@
                 <div class="row-2 ">
                     <asp:Panel ID="PanelStock" runat="server">
                         <label>STOCK</label>
-                        <asp:TextBox ID="tbStockMenor" runat="server" CssClass="col-md-2"></asp:TextBox>
+                        <asp:TextBox ID="tbStockMenor" type="number" runat="server" Text="Min" CssClass="col-md-3"></asp:TextBox>
                         <label>- </label>
-                        <asp:TextBox ID="tbStockMayor" runat="server" CssClass="col-md-2"></asp:TextBox>
+                        <asp:TextBox ID="tbStockMayor" runat="server" type="number" Text="Max" CssClass="col-md-3"></asp:TextBox>
                     </asp:Panel>
                 </div>
                 <div class="row-2 mt-2">
@@ -226,7 +226,7 @@
 
             <div class="col-2 p">
                 <div class="row">
-                    <asp:Button runat="server" CssClass="btn btn-dark" Text="Aplicar filtros" />
+                    <asp:Button runat="server" ID="BtnAplicarFiltros" CssClass="btn btn-dark" Text="Aplicar filtros" OnClick="BtnAplicarFiltros_Click"/>
                 </div>
                 <div class="row pt-1">
                     <asp:Button ID="btnLimpiarFiltro" runat="server" CssClass="btn btn-dark" Text="Limpiar filtros" OnClick="btnLimpiarFiltro_Click" />
@@ -238,6 +238,10 @@
 
     </div>
 
+    <%--Fin nav filtros--%>
+    
+
+<%--    Grid View Lista productos--%>
     <div class="row bg-white rounded m-2 p-4">
 
         <asp:UpdatePanel runat="server">
@@ -321,4 +325,11 @@
 
 
     </div>
+
+
+
+ 
+
+
+
 </asp:Content>

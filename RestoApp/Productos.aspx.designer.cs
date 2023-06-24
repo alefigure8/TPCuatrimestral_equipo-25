@@ -303,6 +303,15 @@ namespace RestoApp
         protected global::System.Web.UI.WebControls.CheckBoxList CheckBoxAtributos;
 
         /// <summary>
+        /// BtnAplicarFiltros control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button BtnAplicarFiltros;
+
+        /// <summary>
         /// btnLimpiarFiltro control.
         /// </summary>
         /// <remarks>

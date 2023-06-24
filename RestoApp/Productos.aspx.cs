@@ -127,13 +127,14 @@ namespace RestoApp
         {
             ProductoNegocio productoNegocio = new ProductoNegocio();
             Session.Add("ListaProductos", productoNegocio.ListarProductos());
-            Session.Add("ListaFiltrada", productoNegocio.ListarProductos());
-            ActualizarGV();
+            GVProductos.DataSource = Session["ListaProductos"];
+            GVProductos.DataBind();
         }
 
-        public void ActualizarGV()
+        public void ActualizarGV(List<Producto> ListaFiltrada)
         {
-            GVProductos.DataSource = Session["ListaFiltrada"];
+            Session.Add("Lista Filtrada", ListaFiltrada);
+            GVProductos.DataSource = ListaFiltrada;
             GVProductos.DataBind();
         }
 
@@ -180,126 +181,24 @@ namespace RestoApp
                 e.Row.Cells[7].Text = resultado;
 
             }
-
-
-
-
-
         }
 
-
-
-        protected void DDLEstado_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            List<Producto> ListaFiltradaAux = new List<Producto>();
-
-            if (DDLEstado.SelectedIndex != 0)
-            {
-                ValidarListaFiltrada();
-
-                switch (DDLEstado.SelectedIndex)
-                {
-                    case 1:
-                        {
-                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
-                            {
-                                if (PAux.Activo == true)
-                                {
-                                    ListaFiltradaAux.Add(PAux);
-                                }
-                            }
-                            break;
-                        }
-                    case 2:
-                        {
-                            foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
-                            {
-
-                                if (PAux.Activo == false)
-                                {
-                                    ListaFiltradaAux.Add(PAux);
-                                }
-                            }
-                            break;
-                        }
-                }
-                Session["ListaFiltrada"] = ListaFiltradaAux;
-                GVProductos.DataSource = Session["ListaFiltrada"];
-                GVProductos.DataBind();
-            }
-            else
-            {
-                ListarProductos();
-            }
-
-
-
-        }
 
         protected void btnLimpiarFiltro_Click(object sender, EventArgs e)
         {
-            ListarProductos();
+           ListarProductos();
+           LimpiarListaFiltrada();
+            LimpiarBotonesFiltros();
         }
 
-        protected void DDLCategorias_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //    if(DDLCategorias.SelectedIndex!=0)
-            //    {
-            //        ValidarListaFiltrada();
-            //        switch (DDLCategorias.SelectedIndex)
-            //        {
-            //            case 1:
-            //                {
-            //                    foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
-            //                    {
-            //                        if (!(PAux.Categoria == 1))
-            //                        {
-            //                            ListaFiltrada.Remove(PAux);
-            //                        }
-            //                    }
-            //                    break;
-            //                }
-            //            case 2:
-            //                {
-            //                    foreach (Producto PAux in (List<Producto>)Session["ListaProductos"])
-            //                    {
-
-            //                        if (PAux.Categoria == 2)
-            //                        {
-            //                            ListaFiltrada.Remove(PAux);
-            //                        }
-            //                    }
-            //                    break;
-            //                }
-            //        }
-            //        Session["ListaFiltrada"] = ListaFiltrada;
-            //        GVProductos.DataSource = Session["ListaFiltrada"];
-            //        GVProductos.DataBind();
-
-            //    }
-            //    else
-            //    {
-            //        ListarProductos();
-            //    }
-
-        }
-
-        protected void ValidarListaFiltrada()
+        protected void LimpiarListaFiltrada()
         {
 
+            Session["ListaFiltrada"] = null;
         }
 
-        protected void AplicarFiltro(object sender, EventArgs e)
-        {
-
-        }
-
-        protected void LBtnNuevoPlato_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
+   
+  
         protected void GuardarNuevoProducto_Click(object sender, EventArgs e)
         {
 
@@ -368,7 +267,7 @@ namespace RestoApp
 
                 string script = "alert('ERROR. Todos los campos deben ser completados. Intentelo nuevamente.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
-              
+
             }
 
         }
@@ -399,6 +298,8 @@ namespace RestoApp
             Button button = sender as Button;
             Producto Paux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
             Session.Add("ProductoAModificar", Paux);
+            
+           
         }
 
         protected void MPBtnModificarProducto_Click(object sender, EventArgs e)
@@ -450,6 +351,131 @@ namespace RestoApp
 
 
 
+
+        }
+
+
+        protected void BtnAplicarFiltros_Click(object sender, EventArgs e)
+        {
+            LimpiarListaFiltrada();
+            List<Producto> ListaFiltrada;
+            ListaFiltrada = ((List<Producto>)Session["ListaProductos"]);
+            bool SinCamposVacios = false;
+            //check estado
+            if (DDLEstado.SelectedIndex > 0)
+            {
+                bool estado = DDLEstado.SelectedIndex == 1 ? true : false;
+                ListaFiltrada.RemoveAll(x => !x.Activo == estado);
+                SinCamposVacios = true;
+            }
+            // check categorias
+            if (DDLCategorias.SelectedIndex > 0)
+            {
+                ListaFiltrada.RemoveAll(x => x.Categoria != DDLCategorias.SelectedIndex);
+                SinCamposVacios = true;
+            }
+            // check rango precios
+            if (tbPrecioMenor.Text != string.Empty && tbPrecioMayor.Text != string.Empty)
+            {
+                decimal precioMaximo;
+                decimal precioMinimo;
+                if (decimal.TryParse(tbPrecioMenor.Text, out precioMinimo) && decimal.TryParse(tbPrecioMayor.Text, out precioMaximo))
+                {
+                    ListaFiltrada.RemoveAll(x => x.Valor < precioMinimo || x.Valor > precioMaximo);
+                    SinCamposVacios = true;
+                }
+            }
+            else if (tbPrecioMayor.Text != string.Empty)
+            {
+                decimal precioMaximo;
+                if (decimal.TryParse(tbPrecioMayor.Text, out precioMaximo))
+                {
+                    ListaFiltrada.RemoveAll(x => x.Valor > precioMaximo);
+                    SinCamposVacios = true;
+                }
+            }
+            else if (tbPrecioMenor.Text != string.Empty)
+            {
+                decimal precioMinimo;
+                if (decimal.TryParse(tbPrecioMenor.Text, out precioMinimo))
+                {
+                    ListaFiltrada.RemoveAll(x => x.Valor < precioMinimo);
+                    SinCamposVacios = true;
+                }
+            }
+            // check rango stock
+
+
+            if (tbStockMenor.Text != string.Empty && tbStockMayor.Text != string.Empty)
+            {
+                int stockMayor;
+                int stockMenor;
+                if (int.TryParse(tbStockMenor.Text, out stockMenor) && int.TryParse(tbStockMayor.Text, out stockMayor))
+                {
+                    ListaFiltrada.RemoveAll(x => x.Stock < stockMenor || x.Stock > stockMayor);
+                    SinCamposVacios = true;
+                }
+            }
+            else if (tbStockMayor.Text != string.Empty)
+            {
+                int stockMayor;
+                if (int.TryParse(tbStockMayor.Text, out stockMayor))
+                {
+                    ListaFiltrada.RemoveAll(x => x.Stock > stockMayor);
+                    SinCamposVacios = true;
+                }
+            }
+            else if (tbStockMenor.Text != string.Empty)
+            {
+                int stockMinimo;
+                if (int.TryParse(tbStockMenor.Text, out stockMinimo))
+                {
+                    ListaFiltrada.RemoveAll(x => x.Stock < stockMinimo);
+                    SinCamposVacios = true;
+                }
+            }
+
+            // check atributos
+            if (CheckBoxAtributos.Items[0].Selected == true)
+            {
+                ListaFiltrada.RemoveAll(x => !x.AptoVegano == true);
+                SinCamposVacios = true;
+            }
+            if (CheckBoxAtributos.Items[1].Selected == true)
+            {
+                ListaFiltrada.RemoveAll(x => !x.AptoCeliaco == true);
+                SinCamposVacios = true;
+            }
+            if (CheckBoxAtributos.Items[2].Selected)
+            {
+                ListaFiltrada.RemoveAll(x => !x.Alcohol == true);
+                SinCamposVacios = true;
+            }
+
+            if (SinCamposVacios == true)
+            {
+               ActualizarGV(ListaFiltrada);
+            }
+            
+
+        }
+
+
+        // Limpiar Botones Filtros
+        public void LimpiarBotonesFiltros()
+        {
+            DDLCategorias.SelectedIndex = 0;
+            DDLEstado.SelectedIndex = 0;
+            DDLPrecios.SelectedIndex = 0;
+            DDLStock.SelectedIndex = 0;
+            tbPrecioMayor.Text = string.Empty;
+            tbPrecioMenor.Text = string.Empty;
+            tbStockMenor.Text = string.Empty;
+            tbStockMayor.Text = string.Empty;
+            for(int i = 0; i < CheckBoxAtributos.Items.Count; i++)
+            {
+                CheckBoxAtributos.Items[i].Selected = false;
+            }
 
         }
 
