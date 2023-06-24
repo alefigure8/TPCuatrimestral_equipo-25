@@ -524,7 +524,7 @@ namespace RestoApp
         // Buscar
         protected void BtnBuscar_Click(object sender, EventArgs e)
         {
-               if (TxtBuscar.Text.Count() > 0)
+               if (TxtBuscar.Text.Count() > 0 && TxtBuscar.Text != "Ingrese nombre o descripción")
                 {
                 LimpiarListaFiltrada();
                 List<Producto> ListaFiltrada = ((List<Producto>)Session["ListaProductos"]).FindAll(x => x.Nombre.ToUpper().Contains(TxtBuscar.Text.ToUpper()) || x.Descripcion.ToUpper().Contains(TxtBuscar.Text.ToUpper()) );
