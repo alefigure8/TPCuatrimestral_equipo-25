@@ -490,31 +490,29 @@ namespace RestoApp
             {
                 CheckBoxAtributos.Items[i].Selected = false;
             }
+            TxtBuscar.Text = "Ingrese nombre o descripción";
         }
 
         // Ordenar por precio
         public List<Producto> OrdenarPorPrecio(List<Producto>ListaFiltrada) {
-            List<Producto> ListaOrdenada = new List<Producto>();
+
             if (DDLPrecios.SelectedIndex == 1)
             {
-               ListaOrdenada = ListaFiltrada.OrderBy(x => x.Valor).ToList();
+                ListaFiltrada = ListaFiltrada.OrderBy(x => x.Valor).ToList();
             }
             if(DDLPrecios.SelectedIndex == 2)
             {
-                ListaOrdenada = ListaFiltrada.OrderByDescending(x => x.Valor).ToList();
+                ListaFiltrada = ListaFiltrada.OrderByDescending(x => x.Valor).ToList();
             }
-			return ListaOrdenada;
+			return ListaFiltrada;
          }
 
         // Ordenar por stock
             public List<Producto> OrdenarPorStock(List<Producto> ListaFiltrada)
         {
-
             if (DDLStock.SelectedIndex == 1)
             {
-                ListaFiltrada = ListaFiltrada.OrderBy(x => x.Stock).ToList();
-               
-                
+                ListaFiltrada = ListaFiltrada.OrderBy(x => x.Stock).ToList(); 
             }
             if (DDLStock.SelectedIndex == 2)
             {
@@ -523,6 +521,21 @@ namespace RestoApp
             return ListaFiltrada;
         }
 
+        // Buscar
+        protected void BtnBuscar_Click(object sender, EventArgs e)
+        {
+               if (TxtBuscar.Text.Count() > 0)
+                {
+                LimpiarListaFiltrada();
+                List<Producto> ListaFiltrada = ((List<Producto>)Session["ListaProductos"]).FindAll(x => x.Nombre.ToUpper().Contains(TxtBuscar.Text.ToUpper()) || x.Descripcion.ToUpper().Contains(TxtBuscar.Text.ToUpper()) );
+                ActualizarGV(ListaFiltrada);
+                }
+        }
 
+    
+        }
+
+        
+
+        
     }
-}
