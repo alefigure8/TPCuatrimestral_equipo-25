@@ -35,7 +35,7 @@
                 <div class="collapse" id="productos-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                         <li><a href="Productos.aspx" class="nav-link ps-3">Administrar Productos</a></li>
-                        <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
+                        <li><a href="ProductosDelDia.aspx" class="nav-link ps-3">Productos del día</a></li>
                         <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
                     </ul>
                 </div>
@@ -50,10 +50,6 @@
                         <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
                     </ul>
                 </div>
-            </li>
-            <li class="mb-1">
-                <a class="btn btn-toggle align-items-center rounded collapsed text-light" aria-bs-expanded="true" href="Menu.aspx">Menú Cliente
-                </a>
             </li>
         </ul>
         <hr />
