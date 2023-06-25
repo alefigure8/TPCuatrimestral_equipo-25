@@ -1,5 +1,31 @@
 ﻿const currentPagePath = document.location.pathname.toLowerCase();
 
+//****** FUNCIONES *******/
+
+//Función para pasar numero de mesero a color
+function convertirAHexadecimal(numero) {
+    let r = (numero * 4321) % 256; // rojo
+    let g = (numero * 1234) % 256; // verde
+    let b = (numero * 9876) % 256; // azul
+    let opacity = 0.9; // Valor de opacidad deseado (por ejemplo, 0.5 para 50%)
+
+    let colorHexadecimal = '#' + toDosDigitosHex(r) + toDosDigitosHex(g) + toDosDigitosHex(b);
+
+    return colorHexadecimal + toOpacityHex(opacity);
+}
+
+//Armamos digitos hexadecimal
+function toDosDigitosHex(numero) {
+    let hex = numero.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+}
+
+//armamos opacidad
+function toOpacityHex(opacity) {
+    let opacityDecimal = Math.floor(opacity * 255);
+    return toDosDigitosHex(opacityDecimal);
+}
+
 
 //******* /Mesas.aspx *******/
 if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
@@ -20,17 +46,29 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
     //CARGAMOS MESAS POR DIA GUARDADAS
     let numeroMesasPorDiaArray = JSON.parse(numeroMesasPorDiaJSON)
 
+    //FUNCION QUE CARGA LAS MESAS ASIGNADAS Y GUARDADAS EN BASE DE DATOS QUE SIGUEN ABIERTAS
     function CargarMesasGuardas() {
 
         mesas.innerHTML = "";
 
+
         for (let i = 0; i < cantidadMesasGuardas; i++) {
 
             if (numeroMesasPorDiaArray.some(el => el.mesa === i + 1)) {
+
+                let numeroIdMesero = numeroMesasPorDiaArray.find(el => el.mesa === i + 1).mesero;
+
+                mesas.innerHTML += `
+                <style>
+                    .bg-mesa${numeroIdMesero}{
+                        background-color: ${convertirAHexadecimal(numeroIdMesero)};
+                    }
+                 </style>`
+
                 mesas.innerHTML += `
             <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
                 <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
-                    <div class="bg-warning w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${i + i}">
+                    <div class="bg-mesa${numeroIdMesero} w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" style="" id="mesa_${i + i}">
                         <i class="fa-solid fa-utensils fs-4"></i>
                     </div>
                 </div>
@@ -71,12 +109,23 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
         
         mesas.innerHTML = "";
 
+
         for (let j = 0; j < i; j++) {
+            
             if (numeroMesasPorDiaArray.some(el => el.mesa === j + 1 && el.abierta == 1)) {
+                let numeroIdMesero = numeroMesasPorDiaArray.find(el => el.mesa === j + 1 && el.abierta == 1).mesero;
+
+                mesas.innerHTML += `
+                <style>
+                    .bg-mesa${numeroIdMesero}{
+                        background-color: ${convertirAHexadecimal(numeroIdMesero)};
+                    }
+                 </style>`
+
                 mesas.innerHTML += `
             <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
-                <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
-                    <div class="bg-warning w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${j + i}">
+                <div class="bg-mesa${numeroIdMesero} w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
+                    <div class="background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${j + i}">
                         <i class="fa-solid fa-utensils fs-4"></i>
                     </div>
                 </div>
@@ -150,6 +199,13 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
         })
     })
 
+    //CAMBIAR COLORES DE MESEROS
+    let colorMesero = document.querySelectorAll("#colorMesero")
+
+    colorMesero.forEach(bg => {
+        idMeseroPorDia = bg.getAttribute("id-mesero");
+        bg.style.backgroundColor = convertirAHexadecimal(idMeseroPorDia)
+    })
 
     guardarMesa.forEach(btn => {
 

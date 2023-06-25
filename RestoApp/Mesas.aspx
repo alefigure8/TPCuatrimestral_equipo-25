@@ -23,7 +23,7 @@
                         <asp:Repeater runat="server" ID="repeaterMeserosAsignados">
                             <ItemTemplate>
                                 <div class="row border-bottom d-flex align-items-center">
-                                    <div class="bg-danger rounded" style="width: 20px; height: 20px;"></div>
+                                    <div class="rounded" style="width: 20px; height: 20px;" id="colorMesero" id-mesero="<%# Eval("IdMesero") %>"></div>
                                     <div class="col-5 fw-bold fs-6 d-flex justify-content-between align-items-center flex-grow-1">
                                         <span class="text-start"><%# Eval("Nombres") %> <%# Eval("Apellidos") %></span>
                                     </div>
