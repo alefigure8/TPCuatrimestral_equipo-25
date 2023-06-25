@@ -33,6 +33,24 @@ namespace RestoApp
 		protected global::System.Web.UI.WebControls.Button btnMeseroAlta;
 
 		/// <summary>
+		/// repeaterMeserosPresentes control.
+		/// </summary>
+		/// <remarks>
+		/// Auto-generated field.
+		/// To modify move field declaration from designer file to code-behind file.
+		/// </remarks>
+		protected global::System.Web.UI.WebControls.Repeater repeaterMeserosPresentes;
+
+		/// <summary>
+		/// repeaterMeserosAusentes control.
+		/// </summary>
+		/// <remarks>
+		/// Auto-generated field.
+		/// To modify move field declaration from designer file to code-behind file.
+		/// </remarks>
+		protected global::System.Web.UI.WebControls.Repeater repeaterMeserosAusentes;
+
+		/// <summary>
 		/// datagrid control.
 		/// </summary>
 		/// <remarks>

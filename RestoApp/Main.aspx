@@ -40,9 +40,45 @@
         </div>
         <div class="col-5">
             <div class="bg-gray-100 p-5 rounded border-1">
-                <div class="d-flex">
-                    <p>Meseros Presentes:<span class="fw-semibold"> <%= MesasAsignadas %></span></p>
-                    <a class="link-dark ms-4" href="MesaHabilitar.aspx">Asignar Mesas</a>
+                <div class="d-flex flex-column">
+                    <div class="d-flex">
+                        <p>Meseros Presentes:<span class="fw-semibold"> <%= MeserosPresentes %></span></p>
+                    </div>
+                    <!-- Tabla Meseros Presentes -->
+                    <div class="row ms-2">
+                        <asp:Repeater runat="server" ID="repeaterMeserosPresentes">
+                            <ItemTemplate>
+                                <div class="row border-bottom d-flex align-items-center">
+                                    <i class="col fa-sharp fa-solid fa-circle text-success"></i>
+                                    <div class="col-5 fw-bold fs-6 d-flex justify-content-between align-items-center flex-grow-1">
+                                        <span class="text-start"><%# Eval("Nombres") %> <%# Eval("Apellidos") %></span>
+                                    </div>
+                                    <div class="col fw-semibold"><%# Eval("MesasAsignadas") %></div>
+                                    <div class="col fw-semibold">0</div>
+                                    <a class="col" href="Mesas.aspx"><i class="fa-solid fa-bullseye text-success"></i></a>
+                                </div>
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </div>
+                    <!-- Fin Tabla Meseros Presentes -->
+
+                    <!-- Tabla Meseros Ausentes -->
+                    <div class="row ms-2">
+                        <asp:Repeater runat="server" ID="repeaterMeserosAusentes">
+                            <ItemTemplate>
+                                <div class="row border-bottom d-flex align-items-center">
+                                    <i class="col fa-sharp fa-solid fa-circle text-danger"></i>
+                                    <div class="col-5 fw-bold fs-6 d-flex justify-content-between align-items-center flex-grow-1">
+                                        <span class="text-start"><%# Eval("Nombres") %> <%# Eval("Apellidos") %></span>
+                                    </div>
+                                    <div class="col fw-semibold">0</div>
+                                    <div class="col fw-semibold">0</div>
+                                    <div class="col"><i class="fa-solid fa-bullseye text-muted"></i></div>
+                                </div>
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </div>
+                    <!-- Fin Tabla Meseros Presentes -->
                 </div>
             </div>
         </div>

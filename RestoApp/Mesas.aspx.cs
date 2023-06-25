@@ -101,6 +101,9 @@ namespace RestoApp
 			//Colocar cantidad de mesas asignadas
 			meserosPorDiaAsignados.ForEach(mesero => mesero.MesasAsignadas = IdMeserosConMesasAbiertas.FindAll(id => id == mesero.Id).Count);
 
+			Session[Configuracion.Session.MeserosAsignados] = meserosPorDiaAsignados;
+			Session[Configuracion.Session.MeserosNoAsignados] = meserosPorDiaNoAsignados;
+
 			//Repeater Meseros No Asignados
 			repeaterMeserosNoAsignados.DataSource = meserosPorDiaNoAsignados;
 			repeaterMeserosNoAsignados.DataBind();

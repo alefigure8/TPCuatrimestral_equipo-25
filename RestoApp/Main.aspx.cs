@@ -20,11 +20,13 @@ namespace RestoApp
 	{
 		public Usuario usuario { get; set; }
 		public MeseroPorDia meseroPorDia { get; set; }
-
 		public int MesasActivas { get; set; }
         public int MesasAsignadas { get; set; }
+        public int MeserosPresentes { get; set; }
 		private List<Mesa> mesas;
 		private List<MeseroPorDia> meserosPorDia;
+		public List<MeseroPorDia> meserosPorDiaNoAsignados = new List<MeseroPorDia>();
+		public List<MeseroPorDia> meserosPorDiaAsignados = new List<MeseroPorDia>();
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -40,6 +42,7 @@ namespace RestoApp
 				CargarDatosMesas();
 				CargarEstadoMesas();
 				CargarPedido();
+				CargarMeseros();
 			}
 
 			//CONTENIDO MESERO
@@ -97,8 +100,6 @@ namespace RestoApp
 			datagrid.DataBind();
 		}
 
-
-
 		private void CargarPedido()
 		{
 			//TODO: LLAMADO A DB PARA OBTENER ESTADO DE PEDIDOS
@@ -128,6 +129,50 @@ namespace RestoApp
 			// Enlazar el DataTable al DataGrid
 			datagridPedidos.DataSource = dataTable;
 			datagridPedidos.DataBind();
+		}
+
+		private void CargarMeseros()
+		{
+			MesaNegocio mesaNegocio = new MesaNegocio();
+
+			//Lista de IDs de Meseros con mesas asignadas
+			List<int> IdMeserosConMesasAbiertas = mesaNegocio.ListaIdMeserosActivosConMesasAbiertas();
+
+			//Meseros Presentes
+			List<MeseroPorDia> meseroPorDia = mesaNegocio.ListaMeseroPorDia();
+
+			//Meseros Ausentes
+			List<Usuario> meserosAusentes = mesaNegocio.ListaMeserosAusentes();
+			
+			//Meseros no asignados
+			meserosPorDiaNoAsignados = meseroPorDia.Where(usuario => !IdMeserosConMesasAbiertas.Contains(usuario.Id)).ToList();
+
+			//Meseros asignados
+			meserosPorDiaAsignados = meseroPorDia.Where(usuario => IdMeserosConMesasAbiertas.Contains(usuario.Id)).ToList();
+
+			//Colocar cantidad de mesas asignadas
+			meserosPorDiaAsignados.ForEach(mesero => mesero.MesasAsignadas = IdMeserosConMesasAbiertas.FindAll(id => id == mesero.Id).Count);
+
+			//Cantidad de Mesas Asignadas
+			foreach(var meseros in meserosPorDiaAsignados)
+			{
+				MesasAsignadas += meseros.MesasAsignadas;
+			}
+
+			//Meseros presentes
+			MeserosPresentes = meseroPorDia.Count();
+
+			//Render Meseros Presentes
+			repeaterMeserosPresentes.DataSource = meseroPorDia;
+			repeaterMeserosPresentes.DataBind();
+
+			//Render Meseros Ausentes
+			repeaterMeserosAusentes.DataSource = meserosAusentes;
+			repeaterMeserosAusentes.DataBind();
+
+			Session[Configuracion.Session.MeserosAsignados] = meserosPorDiaAsignados;
+			Session[Configuracion.Session.MeserosNoAsignados] = meserosPorDiaNoAsignados;
+
 		}
 
 		// VISTA MESERO
@@ -165,7 +210,7 @@ namespace RestoApp
 				btnMeseroAlta.CssClass = "btn btn-sm btn-warning";
 			}
 		}
-
+	
 		protected void btnMeseroAlta_Click(object sender, EventArgs e)
         {
 			usuario = (Usuario)Session[Configuracion.Session.Usuario];

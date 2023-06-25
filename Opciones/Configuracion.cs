@@ -18,6 +18,8 @@ namespace Opciones
 		{
 			public const string Usuario = "usuario";
 			public const string MeseroPorDia = "MeseroPorDia";
+			public const string MeserosNoAsignados = "MeserosNoAsignados";
+			public const string MeserosAsignados = "MeserosAsignados";
 			public const string Error = "error";
 		}
 	}

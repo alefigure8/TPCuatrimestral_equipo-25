@@ -50,6 +50,7 @@ namespace Negocio
 
 		}
 
+		//Activar Mesa
 		public void ActivarMesasPorNumero(int numero, int activo)
 		{
 			AccesoDB datos = new AccesoDB();
@@ -71,6 +72,7 @@ namespace Negocio
 			}
 		}
 
+		//Listado de Meseros presentes
 		public List<MeseroPorDia> ListaMeseroPorDia()
 		{
 			List<MeseroPorDia> mesas = new List<MeseroPorDia>();
@@ -130,6 +132,55 @@ namespace Negocio
 			return mesas;
 		}
 
+		//Listamos los meseros ausentes
+		public List<Usuario> ListaMeserosAusentes()
+		{
+			List<Usuario> meserosAusentes = new List<Usuario>();
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				datos.setQuery($"SELECT {ColumnasDB.Usuario.Id}, {ColumnasDB.Usuario.Nombres},{ColumnasDB.Usuario.Apellidos} " +
+					$"FROM {ColumnasDB.Usuario.DB} " +
+					$"WHERE {ColumnasDB.Usuario.Id} NOT IN " +
+					$"(SELECT {ColumnasDB.MeseroPorDia.IdMesero} " +
+					$"FROM {ColumnasDB.MeseroPorDia.DB} " +
+					$"INNER JOIN {ColumnasDB.Usuario.DB} " +
+					$"ON {ColumnasDB.MeseroPorDia.IdMesero} = {ColumnasDB.Usuario.Id} " +
+					$"WHERE {ColumnasDB.MeseroPorDia.Salida} = '00:00:00')");
+
+				datos.executeReader();
+
+				while (datos.Reader.Read())
+				{
+					Usuario auxMesero = new Usuario();
+					//ID
+					auxMesero.Id = (Int32)datos.Reader[ColumnasDB.Usuario.Id];
+
+					//NOMBRE
+					if (datos.Reader[ColumnasDB.Usuario.Nombres] != null)
+						auxMesero.Nombres = (string)datos.Reader[ColumnasDB.Usuario.Nombres];
+
+					//APELLIDOS
+					if (datos.Reader[ColumnasDB.Usuario.Apellidos] != null)
+						auxMesero.Apellidos = (string)datos.Reader[ColumnasDB.Usuario.Apellidos];
+
+					meserosAusentes.Add(auxMesero);
+				}
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+			return meserosAusentes;
+		}
+
+		//Activar Meseros Ausentes
 		public int CrearMeseroPorDia(MeseroPorDia meseroPorDia)
 		{
 			AccesoDB datos = new AccesoDB();
@@ -158,6 +209,7 @@ namespace Negocio
 			return id;
 		}
 
+		//Dar de Baja Meseros Presentes
 		public bool ModificarMeseroPorDia(int id, TimeSpan? salida = null)
 		{
 			AccesoDB datos = new AccesoDB();
@@ -179,7 +231,7 @@ namespace Negocio
 
 		}
 
-		//Listamos las mesas por dia
+		//Listamos las mesas que se encuentran asignadas a un mesero
 		public List<MesaPorDia> ListarMesaPorDia()
 		{
 			List<MesaPorDia> mesas = new List<MesaPorDia>();
@@ -239,6 +291,7 @@ namespace Negocio
 			return mesas;
 		}
 
+		//Asignamos Mesa que estén activas a un mesero
 		public int CrearMesaPorDia(int mesero, int mesa, int idmeseropordia)
 		{
 			AccesoDB datos = new AccesoDB();
@@ -295,7 +348,7 @@ namespace Negocio
 			return 0;
 		}
 
-		//Modificar MesaPorDia
+		//Cerrar mesa asignada a un mesero
 		public bool ModificarMesaPorDia(int idMesaPorDia,int mesa, int mesero)
 		{
 			AccesoDB datos = new AccesoDB();
