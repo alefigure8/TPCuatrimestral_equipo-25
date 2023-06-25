@@ -31,8 +31,9 @@ namespace RestoApp
             if (!IsPostBack)
             {
                 IniciarDDL();
-                ListarProductos();
+                
             }
+            ListarProductos();
         }
 
         protected void IniciarDDL()
@@ -110,11 +111,10 @@ namespace RestoApp
 
         public void ListarProductos()
         {
-            if (Session["ListaProductos"] == null)
-            {
-                ProductoNegocio productoNegocio = new ProductoNegocio();
-                Session.Add("ListaProductos", productoNegocio.ListarProductos());
-            }
+            Session["ListaProductos"] = null;
+            ProductoNegocio productoNegocio = new ProductoNegocio();
+            Session.Add("ListaProductos", productoNegocio.ListarProductos());
+            
             GVProductos.DataSource = Session["ListaProductos"];
             GVProductos.DataBind();
         }

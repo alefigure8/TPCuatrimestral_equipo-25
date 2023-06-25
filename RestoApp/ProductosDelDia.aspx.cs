@@ -61,11 +61,6 @@ namespace RestoApp
             ProductoNegocio ProductoNegocio = new ProductoNegocio();
             Session.Add("ListaProductosDelDia", ProductoNegocio.ListarProductosDelDia());
             ProductoDelDiaRepetidor.DataSource = Session["ListaProductosDelDia"];
-            for (int i = 0; i < ProductoDelDiaRepetidor.Items.Count; i++)
-            {
-                ProductoDelDia PDDaux = (ProductoDelDia)ProductoDelDiaRepetidor.Items[i].DataItem;
-                //BtnDesactivar.Text = PDDaux.Activo == true ? "Cerrar" : "Abrir";
-            }
             ProductoDelDiaRepetidor.DataBind();
         }
 
@@ -84,6 +79,7 @@ namespace RestoApp
         {
             Button button = sender as Button;
             Producto Paux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+            int Cat = Paux.Categoria;
             ProductoDelDia PDDAux = new ProductoDelDia(Paux);
             ProductoNegocio PNaux = new ProductoNegocio();
             PNaux.AgregarProductoDD(PDDAux);
@@ -93,14 +89,33 @@ namespace RestoApp
         protected void BtnDesactivar_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
+            ProductoDelDia PDDAux = ((List<ProductoDelDia>)Session["ListaProductosDelDia"]).Find(x => x.Id == int.Parse(button.CommandArgument));
             if(button.Text.ToLower() == "cerrar")
             {
-
+                CerrarProductoDelDia(PDDAux);
             }
             else if(button.Text.ToLower() == "abrir")
             {
-
+                AbrirProductoDelDia(PDDAux);
             }
+        }
+
+        protected void CerrarProductoDelDia(ProductoDelDia PDDAux)
+        {
+            PDDAux.Activo = false;
+            PDDAux.StockCierre = (((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == PDDAux.Id)).Stock;
+            ProductoNegocio PNAux = new ProductoNegocio();
+            PNAux.ModificarProductoDD(PDDAux);
+            ListarProductosDelDia();
+            
+        }
+        protected void AbrirProductoDelDia(ProductoDelDia PDDAux)
+        {
+            PDDAux.Activo = true;
+            PDDAux.StockCierre = (((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == PDDAux.Id)).Stock;
+            ProductoNegocio PNAux = new ProductoNegocio();
+            PNAux.ModificarProductoDD(PDDAux);
+            ListarProductosDelDia();
         }
     }
 }

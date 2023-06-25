@@ -16,6 +16,7 @@ namespace Dominio
 
         public ProductoDelDia(Producto aux) {
             this.Id = aux.Id;
+            this.Categoria = aux.Categoria;
             this.Nombre = aux.Nombre;
             this.Descripcion = aux.Descripcion;
             this.Valor = aux.Valor;

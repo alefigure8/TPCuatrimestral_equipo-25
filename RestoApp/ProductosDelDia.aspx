@@ -57,17 +57,16 @@
         </div>
 
         <%--Productos Del Dia--%>
-     <div class="col">
+        <div class="col">
             <h2 class="row rounded">Menú actual</h2>
             <asp:Repeater runat="server" ID="ProductoDelDiaRepetidor">
                 <ItemTemplate>
                     <div class="row p-1">
                         <span class="col-4"><%#Eval("Nombre")%></span>
-                        <asp:Button runat="server" ID="BtnAgregarStock" Text="Agregar Stock" CssClass="col-3 btn btn-sm btn-dark m-1" />
-                        <asp:Button runat="server" ID="BtnDesactivar" OnClick="BtnDesactivar_Click"
-                                Text=<%#Eval("Activo").Equals(true) ? "Cerrar" : "Abrir" %>
-                            
-                            CssClass="col-3 btn btn-sm btn-dark m-1" />
+                        <span class="col">
+                        <asp:Button runat="server" ID="BtnAgregarStock" Text="Agregar Stock" CssClass="col btn btn-sm btn-dark m-1" />
+                        <asp:Button runat="server" ID="BtnDesactivar" OnClick="BtnDesactivar_Click" Text='<%#Eval("Activo").Equals(true) ? "Cerrar" : "Abrir" %>' CommandArgument='<%#Eval("Id") %>' CssClass="col-2 btn btn-sm btn-dark m-1" />
+                        </span>
                     </div>
                 </ItemTemplate>
             </asp:Repeater>
