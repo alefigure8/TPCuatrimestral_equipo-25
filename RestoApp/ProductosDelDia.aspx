@@ -38,17 +38,18 @@
     %>
 
     <%--    Contenedor  --%>
-    <div class="row bg-white rounded m-2 p-1">
+    <div class="row bg-white rounded m-2 p-4">
 
         <%--Productos Disponibles--%>
-        <div class="col p-4">
+        <div class="col">
             <h2 class="row rounded">Productos disponibles</h2>
             <asp:Repeater runat="server" ID="ProductoRepetidor">
                 <ItemTemplate>
-                    <div class="row border border-1">
+                    <div class="row p-1">
                         <span class="col-4 align-middle"><%#Eval("Nombre")%></span>
-                        <span class="col-4 align-middle">Stock: <%#Eval("Stock")%> </span>
-                        <asp:LinkButton runat="server" ID="BtnAgregarAPDD" Text=">" CssClass="col-4 btn btn-sm btn-dark" />
+                        <span class="col-3 align-middle">Stock: <%#Eval("Stock")%> </span>
+                        <span class="col-3 align-middle">Categoria <%#Eval("Categoria")%> </span>
+                        <asp:Button runat="server" ID="BtnAgregarAPDD" OnClick="BtnAgregarAPDD_Click" CommandArgument='<%#Eval("Id")%>' Text=">" CssClass="col btn btn-sm btn-dark columna-grilla-btn" />
 
                     </div>
                 </ItemTemplate>
@@ -56,15 +57,17 @@
         </div>
 
         <%--Productos Del Dia--%>
-     <div class="col p-4">
+     <div class="col">
             <h2 class="row rounded">Menú actual</h2>
             <asp:Repeater runat="server" ID="ProductoDelDiaRepetidor">
                 <ItemTemplate>
-                    <div class="row border border-1">
-                        <span class="col-4 align-middle"><%#Eval("Nombre")%></span>
-                        <span class="col-4 align-middle">Stock: <%#Eval("Stock")%> </span>
-                        <asp:LinkButton runat="server" ID="BtnAgregarStock" Text="Agregar Stock" CssClass="col-4 btn btn-sm btn-dark" />
-                        <asp:LinkButton runat="server" ID="BtnDesactivar" Text="Desactivar de fecha" CssClass="col-4 btn btn-sm btn-dark" />
+                    <div class="row p-1">
+                        <span class="col-4"><%#Eval("Nombre")%></span>
+                        <asp:Button runat="server" ID="BtnAgregarStock" Text="Agregar Stock" CssClass="col-3 btn btn-sm btn-dark m-1" />
+                        <asp:Button runat="server" ID="BtnDesactivar" OnClick="BtnDesactivar_Click"
+                                Text=<%#Eval("Activo").Equals(true) ? "Cerrar" : "Abrir" %>
+                            
+                            CssClass="col-3 btn btn-sm btn-dark m-1" />
                     </div>
                 </ItemTemplate>
             </asp:Repeater>
