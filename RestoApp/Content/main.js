@@ -68,7 +68,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
                 mesas.innerHTML += `
             <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
                 <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
-                    <div class="bg-mesa${numeroIdMesero} w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" style="" id="mesa_${i + i}">
+                    <div class="bg-mesa${numeroIdMesero} w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id-mesero="${numeroIdMesero}" id="mesa_${i + i}">
                         <i class="fa-solid fa-utensils fs-4"></i>
                     </div>
                 </div>
@@ -125,7 +125,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
                 mesas.innerHTML += `
             <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
                 <div class="bg-mesa${numeroIdMesero} w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
-                    <div class="background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${j + i}">
+                    <div class="background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id-mesero="${numeroIdMesero}" id="mesa_${j + i}">
                         <i class="fa-solid fa-utensils fs-4"></i>
                     </div>
                 </div>
@@ -157,18 +157,27 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
         for (let j = 0; j < i; j++) {
 
+            let numeroIdMesero = numeroMesasPorDiaArray.find(el => el.mesa === j + 1)?.mesero;
+            
             if (numeroMesasPorDiaArray.some(el => el.mesa === j + 1)) {
-                document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
-                    document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
-                    document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
-                    numeroMesasPorDiaArray.find(el => el.mesa === j + 1).abierta = false;
 
-                    CargarMesasSeleccion(i);
+                document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
+                    
+                    //Si el mesero elegido no es el mismo que tiene la mesa asignada, no se puede cambiar
+                    if (numeroIdMesero == idMesero) {
+                        console.log("Desasigna mesa")
+                        document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
+                        numeroMesasPorDiaArray.find(el => el.mesa === j + 1).abierta = false;
+
+                        CargarMesasSeleccion(i);
+                    }
                 });
             } else {
+
                 document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
+                    console.log("Asigna mesa")
                     document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
-                    document.getElementById(`mesa_${j + i}`).classList.toggle("bg-warning");
+                    document.getElementById(`mesa_${j + i}`).style.backgroundColor = convertirAHexadecimal(idMesero);
                     numeroMesasPorDiaArray.push({ mesa: j + 1, mesero: parseInt(idMesero), idmeseropordia: parseInt(idMeseroPorDia), abierta: true });
 
                     CargarMesasSeleccion(i);
@@ -188,14 +197,14 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
             idMesero = btn.getAttribute("id-mesero");
             idMeseroPorDia = btn.getAttribute("id-meseropordia");
 
-            //Cargamos los eventos de la mesa
-            CargarMesasSeleccion(cantidadMesasGuardas)
-
             //Habilitamos botón guardar
             guardarMesa.forEach(btn2 => {
                 if (btn2.getAttribute("id-mesero") == idMesero)
                     btn2.disabled = false;
             });
+
+            //Cargamos los eventos de la mesa
+            CargarMesasSeleccion(cantidadMesasGuardas)
         })
     })
 
@@ -218,7 +227,6 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
                 return { mesa: el.mesa, mesero: el.mesero, idmeseropordia: el.idmeseropordia, abierta: el.abierta ? 1 : 0 }
 
             });
-            console.log(EnviarnumeroMesasPorDiaArray)
             //Sacamos eventos a las masas
             CargarMesasSeleccion(cantidadMesasGuardas)
 
