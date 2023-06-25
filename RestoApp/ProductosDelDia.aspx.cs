@@ -117,5 +117,24 @@ namespace RestoApp
             PNAux.ModificarProductoDD(PDDAux);
             ListarProductosDelDia();
         }
+
+        protected void BtnAgregarStock_Click(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+            ProductoDelDia PDDAux = ((List<ProductoDelDia>)Session["ListaProductosDelDia"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+            
+        }
+
+        protected void BtnSumarStock_Click(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+            ProductoDelDia PDDAux = ((List<ProductoDelDia>)Session["ListaProductosDelDia"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+            PDDAux.Activo = true;
+            PDDAux.StockCierre = (((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == PDDAux.Id)).Stock;
+            ProductoNegocio PNAux = new ProductoNegocio();
+            PNAux.ModificarProductoDD(PDDAux);
+            ListarProductosDelDia();
+        }
+
     }
 }

@@ -64,8 +64,12 @@
                     <div class="row p-1">
                         <span class="col-4"><%#Eval("Nombre")%></span>
                         <span class="col">
-                        <asp:Button runat="server" ID="BtnAgregarStock" Text="Agregar Stock" CssClass="col btn btn-sm btn-dark m-1" />
-                        <asp:Button runat="server" ID="BtnDesactivar" OnClick="BtnDesactivar_Click" Text='<%#Eval("Activo").Equals(true) ? "Cerrar" : "Abrir" %>' CommandArgument='<%#Eval("Id") %>' CssClass="col-2 btn btn-sm btn-dark m-1" />
+                            
+                            <asp:Button runat="server" ID="BtnDesactivar" OnClick="BtnDesactivar_Click" Text='<%#Eval("Activo").Equals(true) ? "Cerrar" : "Abrir" %>' CommandArgument='<%#Eval("Id") %>' CssClass="col-2 btn btn-sm btn-dark m-1" />
+                            <asp:TextBox runat="server" TextMode="Number" Visible="true" ID="tbAgregarStock" CssClass="col-2"></asp:TextBox>
+                            <asp:Button runat="server" ID="BtnAgregarStock" Text="Agregar Stock" OnClick="BtnAgregarStock_Click" CssClass="col btn btn-sm btn-dark m-1" CommandArgument='<%#Eval("Id") %>' />
+                      
+
                         </span>
                     </div>
                 </ItemTemplate>
