@@ -238,7 +238,6 @@ namespace Negocio
                    $"{ColumnasDB.Usuario.Apellidos}," +
                    $"{ColumnasDB.Usuario.Mail}, " +
                    $"{ColumnasDB.Usuario.Pass}, " +
-                   $"{ColumnasDB.Usuario.Fechaalta}, " +
                    $"{ColumnasDB.Usuario.Activo}, " +
                    $"{ColumnasDB.Usuario.TipoUsuario}) " +
                    $"VALUES ('{nuevousuario.Nombres}', " +

@@ -21,7 +21,7 @@
               
                 </div>
       <div class="row" style="margin-top:20px; justify-content:center;">
-          <div class="col-9 d-flex" style="height:500px; overflow-y: auto; justify-content:flex-end; padding:0px;">
+          <div class="col-8 d-flex" style="height:500px; overflow-y: auto; justify-content:flex-end; padding:0px;">
       <asp:GridView Width="100%" ID="GDVEmpleados" runat="server"  BackColor="Ivory" AllowSorting=true OnSorting="GDVEmpleados_Sorting"  DataKeyNames="IdUsuario" OnRowCommand="GDVEmpleados_RowCommand" >
             <HeaderStyle HorizontalAlign="Center" BackColor="#212529" BorderColor="#666666" cssClass="celda" ForeColor="#CCCCCC" />
              <RowStyle HorizontalAlign="Center" VerticalAlign="Middle" cssClass="celda"/>
@@ -49,12 +49,10 @@
 
 
 
- <div class="col-3">
-
-    <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="height:40px;width:100%;" data-bs-toggle="dropdown" data-bs-theme="dark"><%if ((bool)Session["modificar"] == false)
-                                                                                                                                                                            { %><i class="fa-solid fa-user-plus"></i><%}
-                                             else
-                                             {  %> <i class="fa-solid fa-user-gear"></i> <%} %></asp:LinkButton>
+ <div class="col-4">
+     
+    <asp:LinkButton ID="LinkButton1" runat="server" class="btn btn-dark dropdown-toggle" style="height:40px;width:74%;" data-bs-toggle="dropdown" data-bs-theme="dark"><%if ((bool)Session["modificar"] == false){ %><i class="fa-solid fa-user-plus"></i><%}
+    else {  %> <i class="fa-solid fa-user-gear"></i> <%} %></asp:LinkButton>
     <asp:Panel ID="DropdownPanel" runat="server" CssClass="dropdown-menu show" style="background-color:#343a40; width:19%; padding:2px;" ForeColor="#CCCCCC">
         <div class="col">
                  <div class="row d-flex">

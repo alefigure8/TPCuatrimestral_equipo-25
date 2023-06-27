@@ -196,7 +196,7 @@ namespace RestoApp
                 dataTable.Columns.Add(ColumnasDB.Usuario.Mail, typeof(string));
                 dataTable.Columns.Add(ColumnasDB.Usuario.Pass, typeof(string));
                 dataTable.Columns.Add(ColumnasDB.Usuario.TipoUsuario, typeof(string));
-                dataTable.Columns.Add("Fecha de alta", typeof(DateTime));
+               // dataTable.Columns.Add("Fecha de alta", typeof(DateTime));
           
 
                 foreach (var usuario in listausuarios)
@@ -260,7 +260,9 @@ namespace RestoApp
             {
                 if ((bool)Session["modificar"])
                 {
-                   int rowIndex = Convert.ToInt32(e.CommandArgument);
+                    if (AutentificacionUsuario.esAdmin(usuario) || AutentificacionUsuario.esGerente(usuario))
+                    {
+                        int rowIndex = Convert.ToInt32(e.CommandArgument);
                     List<Usuario> listausuarios = (List<Usuario>)Session["listaactual"];
 
                     if (rowIndex >= 0 && rowIndex < listausuarios.Count)
@@ -274,6 +276,7 @@ namespace RestoApp
                         DdlTipo.SelectedValue = usuarioSeleccionado.Tipo;
 
                         CargarDgv();
+                    }
                     }
                 }
                 else
@@ -306,8 +309,6 @@ namespace RestoApp
                 if (AutentificacionUsuario.esAdmin(usuario) || AutentificacionUsuario.esGerente(usuario))
                 {
 
-
-
                     if (emailvalido(TxtMail.Text.ToString()) && camposcompletos())
                     {
                         Usuario nuevousuario = new Usuario();
@@ -338,7 +339,7 @@ namespace RestoApp
             }
             else
             {
-                if (emailvalido(TxtMail.Text.ToString()))
+                if (emailvalido(TxtMail.Text.ToString()) && camposcompletos())
                 {
                 Usuario usuariomodificado = new Usuario();
                 UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
@@ -356,7 +357,12 @@ namespace RestoApp
                 CargarDgv();
                 Limpiarcamposdetexto();
                 }
-                else
+                else if (!camposcompletos())
+                {
+                    LblError.Text = "*Debe completar todos los campos.";
+                    LblError.Visible = true;
+                }
+                else if (!emailvalido(TxtMail.Text.ToString()))
                 {
                     LblError.Text = "*El mail ingresado no es válido.";
                     LblError.Visible = true;
