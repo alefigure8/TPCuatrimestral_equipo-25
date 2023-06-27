@@ -77,13 +77,28 @@ namespace RestoApp
 
         protected void BtnAgregarAPDD_Click(object sender, EventArgs e)
         {
-            Button button = sender as Button;
-            Producto Paux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
-            int Cat = Paux.Categoria;
-            ProductoDelDia PDDAux = new ProductoDelDia(Paux);
-            ProductoNegocio PNaux = new ProductoNegocio();
-            PNaux.AgregarProductoDD(PDDAux);
-            ListarProductosDelDia();
+            try
+            {
+                Button button = sender as Button;
+                Producto Paux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+                int Cat = Paux.Categoria;
+                ProductoDelDia PDDAux = new ProductoDelDia(Paux);
+                ProductoNegocio PNaux = new ProductoNegocio();
+                PNaux.AgregarProductoDD(PDDAux);
+                ListarProductosDelDia();
+            }
+            catch (Exception ex)
+            {
+
+                string script = "alert('Ya se encuentra en el menú actual');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+              
+            }
+            finally
+            {
+                ListarProductosDelDia();
+            }
+        
         }
 
         protected void BtnDesactivar_Click(object sender, EventArgs e)
