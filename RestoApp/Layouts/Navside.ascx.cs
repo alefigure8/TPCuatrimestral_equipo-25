@@ -38,6 +38,7 @@ namespace RestoApp.Layouts
 		protected void salir_click(object sender, EventArgs e)
 		{
 			Session[Configuracion.Session.Usuario] = null;
+			Session[Configuracion.Session.MeseroPorDia] = null;
 			Session[Configuracion.Session.Error] = null;
 			Response.Redirect(Configuracion.Pagina.Login, false);
 		}
