@@ -44,7 +44,7 @@ namespace RestoApp.Layouts
 
 		protected void Btn_Perfil_Click(object sender, EventArgs e)
 		{
-
-		}
+            Response.Redirect(Configuracion.Pagina.Perfil, false);
+        }
 	}
 }
