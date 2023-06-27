@@ -14,7 +14,7 @@ namespace RestoApp.Layouts
 	public partial class Navside : System.Web.UI.UserControl
 	{
 		public Usuario usuario { get; set; }
-		public MeseroPorDia meseroPorDia {get; set;}
+		public MeseroPorDia meseroPorDia { get; set; }
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			if (!AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
@@ -40,6 +40,11 @@ namespace RestoApp.Layouts
 			Session[Configuracion.Session.Usuario] = null;
 			Session[Configuracion.Session.Error] = null;
 			Response.Redirect(Configuracion.Pagina.Login, false);
+		}
+
+		protected void Btn_Perfil_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

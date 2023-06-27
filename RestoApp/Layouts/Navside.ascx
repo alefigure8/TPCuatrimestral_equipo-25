@@ -88,12 +88,16 @@
             <ul
                 class="dropdown-menu dropdown-menu-dark text-small shadow"
                 aria-labelledby="dropdownUser1">
-                <li><a class="dropdown-item" href="#">Perfil</a></li>
+                <li>
+                    <asp:LinkButton ID="Btn_Perfil" runat="server" class="dropdown-item" Text="Perfil" OnClick="Btn_Perfil_Click"/>
+                    </li>
                 <li>
                     <hr class="dropdown-divider" />
                 </li>
                 <li>
-                    <asp:LinkButton runat="server" OnClick="salir_click" class="dropdown-item" Text="Salir" /></li>
+                    <asp:LinkButton runat="server" OnClick="salir_click" class="dropdown-item" Text="Salir" />
+
+                </li>
             </ul>
         </div>
     </div>
