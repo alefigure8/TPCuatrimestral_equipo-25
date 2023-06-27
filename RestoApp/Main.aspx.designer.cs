@@ -69,6 +69,15 @@ namespace RestoApp
 		protected global::System.Web.UI.WebControls.DataGrid datagridPedidos;
 
 		/// <summary>
+		/// repeaterMesasAsigndas control.
+		/// </summary>
+		/// <remarks>
+		/// Auto-generated field.
+		/// To modify move field declaration from designer file to code-behind file.
+		/// </remarks>
+		protected global::System.Web.UI.WebControls.Repeater repeaterMesasAsigndas;
+
+		/// <summary>
 		/// MenuDelDia control.
 		/// </summary>
 		/// <remarks>
