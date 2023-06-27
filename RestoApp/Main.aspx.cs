@@ -302,8 +302,17 @@ namespace RestoApp
 				{
 					repeaterMesasAsigndas.DataSource = mesasAsignadas;
 					repeaterMesasAsigndas.DataBind();
+
+					if(mesasAsignadas.Count > 0)
+					{
+						lbSinMesasAsignadas.Text = String.Empty;
+						return;
+					}
+						
 				}
 			}
+
+			lbSinMesasAsignadas.Text = "No cuenta con mesas asignadas. Comuníquese con el Gerente.";
 		}
 	}
 }

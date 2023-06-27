@@ -141,7 +141,7 @@
             <Ssection class="row bg-white rounded p-2 justify-content-around">
                 <h3>Mis Mesas</h3>
                 <div class="row justify-content-around justify-items-start p-3">
-
+                    <asp:Label runat="server" ID="lbSinMesasAsignadas"></asp:Label>
                     <!-- MESAS ASIGNADAS-->
                     <asp:Repeater runat="server" ID="repeaterMesasAsigndas">
                         <ItemTemplate>
