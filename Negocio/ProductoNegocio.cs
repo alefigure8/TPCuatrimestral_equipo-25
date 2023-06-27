@@ -171,7 +171,7 @@ namespace Negocio
                + $"{ColumnasDB.Producto.Descripcion}, {ColumnasDB.Producto.Valor}, {ColumnasDB.Producto.AptoVegano},"
                + $"{ColumnasDB.Producto.AptoCeliaco}, {ColumnasDB.Producto.Alcohol}, {ColumnasDB.Producto.Stock},"
                + $"{ColumnasDB.Producto.Activo}, {ColumnasDB.Producto.TiempoCoccion}, {ColumnasDB.ProductoDD.Fecha}, {ColumnasDB.ProductoDD.StockInicial}, {ColumnasDB.ProductoDD.StockCierre}  " 
-               + $" FROM {ColumnasDB.ProductoDD.DB}");
+               + $" FROM {ColumnasDB.ProductoDD.DB} WHERE {ColumnasDB.ProductoDD.Fecha} =  TRY_CONVERT(DATE,GETDATE())");
                 AccesoDB.executeReader();
                 while (AccesoDB.Reader.Read())
                 {
