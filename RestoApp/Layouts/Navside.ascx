@@ -40,6 +40,8 @@
                     </ul>
                 </div>
             </li>
+              <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                { %>
             <li class="mb-1">
                 <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#usuarios-collapse" aria-bs-expanded="true">Usuarios
                 </a>
@@ -51,6 +53,7 @@
                     </ul>
                 </div>
             </li>
+                <%}%>
         </ul>
         <hr />
         <div class="dropdown">
