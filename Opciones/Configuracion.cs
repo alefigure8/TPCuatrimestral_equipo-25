@@ -12,6 +12,7 @@ namespace Opciones
 		{
 			public const string Login = "Default.aspx";
 			public const string Main = "Main.aspx";
+			public const string Perfil = "Perfil.aspx";
 		}
 
 		public struct Session
