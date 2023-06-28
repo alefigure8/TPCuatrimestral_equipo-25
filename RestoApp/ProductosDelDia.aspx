@@ -65,7 +65,7 @@
                         <span class="col-4"><%#Eval("Nombre")%></span>
                         <span class="col">
                             
-                            <asp:Button runat="server" ID="BtnDesactivar" OnClick="BtnDesactivar_Click" Text='<%#Eval("Activo").Equals(true) ? "Cerrar" : "Abrir" %>' CommandArgument='<%#Eval("Id") %>' CssClass="col-2 btn btn-sm btn-dark m-1" />
+                            <asp:Button runat="server" ID="BtnDesactivar" OnClick="BtnDesactivar_Click" Text='<%#Eval("Activo").Equals(true) ? "Cerrar" : "Reabrir" %>' CommandArgument='<%#Eval("Id") %>' CssClass="col-3 btn btn-sm btn-dark m-1" />
                             <asp:TextBox runat="server" TextMode="Number" Visible="true" ID="tbAgregarStock" CssClass="col-2"></asp:TextBox>
                            <asp:Button runat="server" ID="BtnAgregarStock" Text="Agregar Stock" OnClick="BtnAgregarStock_Click" CssClass="col btn btn-sm btn-dark m-1" CommandArgument='<%#Eval("Id") %>' />
 
@@ -74,15 +74,42 @@
                 </ItemTemplate>
             </asp:Repeater>
         </div>
+    </div>
+     <%}
+        else if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+        {
+    %>
+          
+    <div class="row">
+        <div class="col-4 bg-dark"></div>
+
+        <div class="col-4 bg-white">
+            <h2 class="display-4 bg-secondary text-white row">Menú disponible</h2>
+            <asp:Repeater runat="server" ID="MenuMeseroRep">
+                <ItemTemplate>
+                    <div class="row border-bottom ">
+                        <h5 class="card-title hover-shadow "><%#Eval("Nombre")%> </h5>
+                        <br />
+                        <p class="blockquote-footer">
+                            Descripción: <%#Eval("Descripcion")%>
+                            <br />
+                            Valor: $<%#Eval("Valor")%>
+                        </p>
+                    </div>
+                </ItemTemplate>
+
+            </asp:Repeater>
+        </div>
 
 
-
+        <div class="col-4 bg-dark"></div>
 
     </div>
 
 
 
+      <%}
+    %>
 
 
-    <%}%>
 </asp:Content>

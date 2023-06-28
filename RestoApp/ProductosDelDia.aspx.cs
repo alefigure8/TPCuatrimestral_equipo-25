@@ -34,6 +34,10 @@ namespace RestoApp
                 ListaProductosDisponibles();
                 ListarProductosDelDia();
             }
+            else if(!IsPostBack && AutentificacionUsuario.esMesero(usuario))
+            {
+                ListarMenuMesero();
+            }
             else if (!IsPostBack)
             {
                 ListarMenu();
@@ -74,6 +78,20 @@ namespace RestoApp
             MenuRepetidor.DataBind();
         }
 
+        // Lista de productos en menú actual
+        protected void ListarMenuMesero()
+        {
+
+            ProductoNegocio ProductoNegocio = new ProductoNegocio();
+            Session.Add("ListaMenu", ProductoNegocio.ListarProductosDelDia());
+            List<ProductoDelDia> ListaProductosDisponibles = ProductoNegocio.ListarProductosDelDia();
+           ListaProductosDisponibles.RemoveAll(x => x.Activo == false);
+            MenuMeseroRep.DataSource = Session["ListaMenu"];
+            MenuMeseroRep.DataBind();
+        }
+
+
+
         protected void BtnAgregarAPDD_Click(object sender, EventArgs e)
         {
             try
@@ -108,7 +126,7 @@ namespace RestoApp
             {
                 CerrarProductoDelDia(PDDAux);
             }
-            else if(button.Text.ToLower() == "abrir")
+            else if(button.Text.ToLower() == "reabrir")
             {
                 AbrirProductoDelDia(PDDAux);
             }
