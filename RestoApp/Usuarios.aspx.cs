@@ -30,7 +30,7 @@ namespace RestoApp
             // Si esta logueado asignamos el usuario a la variable usuario
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
-
+        
             if (!IsPostBack)
             {
                 Lblbusquedafallida.Visible = false;
