@@ -39,6 +39,7 @@
                                     <div class="p-2">
                                         <button class="btn btn-dark" id="asignarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>">Asignar Mesas</button>
                                         <button class="btn btn-primary" id="guardarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>" disabled>Guardar</button>
+                                        <button class="btn btn-warning" id="cancelarMesa" onclick="return false;" disabled>Cancelar</button>
                                     </div>
                                 </div>
                                 <!-- Fin Collide -->
@@ -70,6 +71,7 @@
                                     <div class="p-2">
                                         <button class="btn btn-dark" id="asignarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>">Asignar Mesas</button>
                                         <button class="btn btn-primary" id="guardarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>" disabled>Guardar</button>
+                                        <button class="btn btn-primary" id="cancelarMesa" onclick="return false;" disabled>Cancelar</button>
                                     </div>
                                 </div>
                                 <!-- Fin Collide -->

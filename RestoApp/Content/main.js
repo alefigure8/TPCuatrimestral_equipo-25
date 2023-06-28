@@ -30,7 +30,31 @@ function toOpacityHex(opacity) {
 //******* /Mesas.aspx *******/
 if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
+    //Botón
+    const guardarMesa = document.querySelectorAll("#guardarMesa");
     const asignarMesas = document.querySelectorAll("#asignarMesa");
+    const btncancelar = document.querySelectorAll("#cancelarMesa");
+
+    //Funciones para modificar estados de los botones
+    function botonCancelar(opcion) {
+        btncancelar.forEach(btn4 => {
+            btn4.disabled = opcion;
+        });
+    }
+
+    function botonAsignarMesa(opcion) {
+        asignarMesas.forEach(btn3 => {
+            btn3.disabled = opcion;
+        });
+    }
+
+    function botonGuardar(opcion) {
+        guardarMesa.forEach(btn2 => {
+            if (btn2.getAttribute("id-mesero") == idMesero)
+                btn2.disabled = opcion;
+        });
+    }
+
     let idMesero;
     let idMeseroPorDia;
 
@@ -39,12 +63,9 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
     let numeroMesasGuardasArray = JSON.parse(numeroMesasGuardasJSON).filter(x => x != 0);
     const cantidadMesasGuardas = numeroMesasGuardasArray.length;
 
-    //TODO: TRAER VECTOR DE DB
-    let mesasAsignadas = new Array(cantidadMesasGuardas)
-    mesasAsignadas.fill(0)
-
     //CARGAMOS MESAS POR DIA GUARDADAS
     let numeroMesasPorDiaArray = JSON.parse(numeroMesasPorDiaJSON)
+    let numeroMesasPorDiaArrayCopy = structuredClone(numeroMesasPorDiaArray)
 
     //FUNCION QUE CARGA LAS MESAS ASIGNADAS Y GUARDADAS EN BASE DE DATOS QUE SIGUEN ABIERTAS
     function CargarMesasGuardas() {
@@ -103,6 +124,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
     (function () {
         CargarMesasGuardas()
     })();
+
 
     //CARGAMOS MESAS PARA SIGNAR
     function CargarMesasSeleccion(i) {
@@ -187,8 +209,23 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
     }
 
-    //Botón guardar asignacion
-    const guardarMesa = document.querySelectorAll("#guardarMesa");
+
+    //Eventos del boton cancelar
+    btncancelar.forEach(btnc => {
+        btnc.addEventListener('click', btn => {
+
+            //Copiamos el array original que no fue modificado
+            numeroMesasPorDiaArray = structuredClone(numeroMesasPorDiaArrayCopy)
+
+            //Cargamos las mesas al estado anterior
+            CargarMesasGuardas()
+
+            //Modificamos estados de las mesas
+            botonGuardar(true)
+            botonAsignarMesa(false)
+            botonCancelar(true)
+        })
+    })
 
     //Evento del botón Asignar mesas
     asignarMesas.forEach(btn => {
@@ -197,16 +234,16 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
             idMesero = btn.getAttribute("id-mesero");
             idMeseroPorDia = btn.getAttribute("id-meseropordia");
 
-            //Habilitamos botón guardar
-            guardarMesa.forEach(btn2 => {
-                if (btn2.getAttribute("id-mesero") == idMesero)
-                    btn2.disabled = false;
-            });
+            //Modificamos estados de botones
+            botonGuardar(false)
+            botonAsignarMesa(true)
+            botonCancelar(false)
 
             //Cargamos los eventos de la mesa
             CargarMesasSeleccion(cantidadMesasGuardas)
         })
     })
+
 
     //CAMBIAR COLORES DE MESEROS
     let colorMesero = document.querySelectorAll("#colorMesero")
@@ -218,15 +255,21 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
     guardarMesa.forEach(btn => {
 
+        //Copiamos array a guardar en copia
+        numeroMesasPorDiaArrayCopy = structuredClone(numeroMesasPorDiaArray)
 
         btn.addEventListener('click', () => {
-            btn.disabled = true;
+            //Modificamos estados de los botones
+            botonGuardar(true)
+            botonAsignarMesa(false)
+            botonGuardar(true)
 
             let EnviarnumeroMesasPorDiaArray = numeroMesasPorDiaArray.map((el) => {
 
                 return { mesa: el.mesa, mesero: el.mesero, idmeseropordia: el.idmeseropordia, abierta: el.abierta ? 1 : 0 }
 
             });
+
             //Sacamos eventos a las masas
             CargarMesasSeleccion(cantidadMesasGuardas)
 

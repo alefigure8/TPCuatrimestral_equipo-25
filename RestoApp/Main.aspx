@@ -24,6 +24,7 @@
     <!-- Agregar Mesas habilitadas, mozos habilitados, productos, -->
     <div class="row">
 
+        <!-- VISTA GERENTE -->
         <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente)
             {%>
         <div class="col-5">
@@ -123,57 +124,49 @@
 
             </div>
         </div>
-        <% }
+        <% } %>
 
-            if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
 
-            {%>
+
+
+        <!-- VISTA MESERO -->
+        <%
+        if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+
+        {%>
 
         <div class="row p-3 justify-content-between ">
 
-            <div class="row bg-white rounded p-2 justify-content-around">
-
-                <div class="row h3">Mis mesas </div>
-
-
+            <!-- SECCION MESAS ASIGNDAS -->
+            <Ssection class="row bg-white rounded p-2 justify-content-around">
+                <h3>Mis Mesas</h3>
                 <div class="row justify-content-around justify-items-start p-3">
+                    <asp:Label runat="server" ID="lbSinMesasAsignadas"></asp:Label>
+                    <!-- MESAS ASIGNADAS-->
+                    <asp:Repeater runat="server" ID="repeaterMesasAsigndas">
+                        <ItemTemplate>
 
+                            <!-- MESAS -->
+                            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
+                                <div class="bg-warning w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
+                                    <div class="background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center">
+                                        <i class="fa-solid fa-utensils fs-4"></i>
+                                    </div>
+                                </div>
+                                <div class=" w-100 text-light d-flex justify-content-center">
+                                    <div class="w-50 bg-black rounded-4 text-center">
+                                        <small class="fw-bold"><%# Eval("Mesa") %></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- FIN MESAS -->
 
-                    <div class="col-2">
-                        <div class=" status-free rounded p-3">
-                            Mesa #02
-                     <p>(Disponible)</p>
-                        </div>
-                        <button class="btn btn-dark">Abrir </button>
-                    </div>
-
-                    <div class="col-2">
-                        <div class=" status-busy rounded p-3">
-                            Mesa #05
-                     <p>(Ocupada)</p>
-                        </div>
-                        <button class="btn btn-dark">Cerrar </button>
-                    </div>
-
-                    <div class="col-2">
-                        <div class=" status-busy rounded p-3">
-                            Mesa #07
-                     <p>(Ocupada)</p>
-                        </div>
-                        <a class="btn btn-dark">Cerrar</a>
-                    </div>
-
-
-                    <div class="col-2">
-                        <div class=" status-free rounded p-3">
-                            Mesa #12
-                     <p>(Disponible)</p>
-                        </div>
-                        <button class="btn btn-dark">Abrir </button>
-                    </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                    <!-- FIN MESAS ASIGNADAS -->
                 </div>
-
-            </div>
+            </Ssection>
+            <!-- FIN SECCION MESAS ASIGNDAS -->
 
             <div>
                 <br />

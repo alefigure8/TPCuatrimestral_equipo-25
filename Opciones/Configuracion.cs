@@ -22,6 +22,7 @@ namespace Opciones
 			public const string MeserosNoAsignados = "MeserosNoAsignados";
 			public const string MeserosAsignados = "MeserosAsignados";
 			public const string Error = "error";
+			public const string MesasAsignada = "MesasAsignadas";
 		}
 	}
 }

@@ -34,6 +34,10 @@ namespace RestoApp
                 ListaProductosDisponibles();
                 ListarProductosDelDia();
             }
+            else if(!IsPostBack && AutentificacionUsuario.esMesero(usuario))
+            {
+                ListarMenuMesero();
+            }
             else if (!IsPostBack)
             {
                 ListarMenu();
@@ -44,11 +48,10 @@ namespace RestoApp
         //Lista de productos que se pueden agregar al menu del dia porque estan activos
         protected void ListaProductosDisponibles()
         {
-            if (Session["ListaProductos"] == null)
-            {
-                ProductoNegocio productoNegocio = new ProductoNegocio();
-                Session.Add("ListaProductos", productoNegocio.ListarProductos());
-            }
+            Session["ListaProductos"] = null;
+            ProductoNegocio productoNegocio = new ProductoNegocio();
+            Session.Add("ListaProductos", productoNegocio.ListarProductos());
+            
             List<Producto> ListaProductosDisponibles = (List<Producto>)Session["ListaProductos"];
             ListaProductosDisponibles.RemoveAll(x => x.Activo == false);          
             ProductoRepetidor.DataSource = ListaProductosDisponibles;
@@ -74,6 +77,20 @@ namespace RestoApp
             MenuRepetidor.DataSource = Session["ListaMenu"];
             MenuRepetidor.DataBind();
         }
+
+        // Lista de productos en menú actual
+        protected void ListarMenuMesero()
+        {
+
+            ProductoNegocio ProductoNegocio = new ProductoNegocio();
+            Session.Add("ListaMenu", ProductoNegocio.ListarProductosDelDia());
+            List<ProductoDelDia> ListaProductosDisponibles = ProductoNegocio.ListarProductosDelDia();
+           ListaProductosDisponibles.RemoveAll(x => x.Activo == false);
+            MenuMeseroRep.DataSource = Session["ListaMenu"];
+            MenuMeseroRep.DataBind();
+        }
+
+
 
         protected void BtnAgregarAPDD_Click(object sender, EventArgs e)
         {
@@ -109,7 +126,7 @@ namespace RestoApp
             {
                 CerrarProductoDelDia(PDDAux);
             }
-            else if(button.Text.ToLower() == "abrir")
+            else if(button.Text.ToLower() == "reabrir")
             {
                 AbrirProductoDelDia(PDDAux);
             }
@@ -134,21 +151,23 @@ namespace RestoApp
         }
 
         protected void BtnAgregarStock_Click(object sender, EventArgs e)
-        {
-            Button button = sender as Button;
-            ProductoDelDia PDDAux = ((List<ProductoDelDia>)Session["ListaProductosDelDia"]).Find(x => x.Id == int.Parse(button.CommandArgument));
-            
-        }
+  {
 
-        protected void BtnSumarStock_Click(object sender, EventArgs e)
-        {
             Button button = sender as Button;
-            ProductoDelDia PDDAux = ((List<ProductoDelDia>)Session["ListaProductosDelDia"]).Find(x => x.Id == int.Parse(button.CommandArgument));
-            PDDAux.Activo = true;
-            PDDAux.StockCierre = (((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == PDDAux.Id)).Stock;
-            ProductoNegocio PNAux = new ProductoNegocio();
-            PNAux.ModificarProductoDD(PDDAux);
-            ListarProductosDelDia();
+            RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
+            TextBox tbAgregarStock = repeaterItem.FindControl("tbAgregarStock") as TextBox;
+            if (tbAgregarStock != null)
+            {
+                ProductoDelDia PDDAux = ((List<ProductoDelDia>)Session["ListaProductosDelDia"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+                PDDAux.Activo = true;
+                PDDAux.Stock += int.Parse(tbAgregarStock.Text);
+                PDDAux.StockInicio += int.Parse(tbAgregarStock.Text);
+                ProductoNegocio PNAux = new ProductoNegocio();
+                PNAux.ModificarProductoDD(PDDAux);
+                PNAux.ModificarProducto(PDDAux);
+                ListaProductosDisponibles();
+                ListarProductosDelDia();
+            }
         }
 
     }

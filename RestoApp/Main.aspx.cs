@@ -54,6 +54,7 @@ namespace RestoApp
 
 				CargarMenuDisponible();
 				CargarMeseroPorDia();
+				CargarMesasAsignadas();
 			}
 		}
 
@@ -191,11 +192,12 @@ namespace RestoApp
 
 			meserosPorDia = mesaNegocio.ListaMeseroPorDia();
 
-			//Verificamos si hay un mesero con el mismo id, el mismo día y con fecha de salida en 0 que ya esté dado de alta
+			//Verificamos si el mesero está dado de alta y no de baja
 			meseroPorDia = meserosPorDia.Find(mesero => mesero.IdMesero == usuario.Id && DateTime.Now.ToString("yyyy-MM-dd") == mesero.Fecha.ToString("yyyy-MM-dd") && mesero.Salida == new TimeSpan(0,0,0));
 
 			if(meseroPorDia != null)
 			{
+				//Si hay un mesero dado de alta, lo guardamos en sesión
 				Session[Configuracion.Session.MeseroPorDia] = meseroPorDia;
 
 				if (meseroPorDia.Id > 0)
@@ -237,6 +239,7 @@ namespace RestoApp
 					Console.WriteLine(ex);
 				}
 
+				//Si se crea correctamente cambiamos el texto del botón
 				if (meseroPorDia.Id > 0)
 				{
 					btnMeseroAlta.Text = "Darse de Baja";
@@ -250,8 +253,22 @@ namespace RestoApp
 				try
 				{
 					MesaNegocio mesaNegocio = new MesaNegocio();
-					bool esBaja = mesaNegocio.ModificarMeseroPorDia(meseroPorDia.Id, DateTime.Now.TimeOfDay);
+					List<MesaPorDia> mesasAsignadas = (List<MesaPorDia>)Session[Configuracion.Session.MesasAsignada];
 
+					//Si tiene mesas asigndas, se cierran
+					//TODO: si tiene pedidos abierto, primero los tiene que cerrar
+					if(mesasAsignadas != null)
+					{
+						foreach(MesaPorDia item in mesasAsignadas)
+						{
+
+							mesaNegocio.ModificarMesaPorDia(item.Id, item.Mesa, (int)item.Mesero);
+						}
+					}
+
+					bool esBaja = mesaNegocio.ModificarMeseroPorDia(meseroPorDia.Id);
+
+					//Si la baja es correcta cambiamos el texto del botón y borramos sessión
 					if(esBaja)
 					{
 						btnMeseroAlta.Text = "Darse de Alta";
@@ -266,5 +283,36 @@ namespace RestoApp
 				}
 			}
 		}
-    }
+
+		private void CargarMesasAsignadas()
+		{
+			usuario = (Usuario)Session[Configuracion.Session.Usuario];
+			meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
+
+			if (meseroPorDia != null)
+			{
+				MesaNegocio mesaNegocio = new MesaNegocio();
+				List<MesaPorDia> mesasAsignadas = mesaNegocio.ListarMesaPorDia()
+					.FindAll(x => x.Mesero == meseroPorDia.IdMesero && x.Cierre == null)
+					.OrderBy(x => x.Mesa).ToList();
+
+				Session[Configuracion.Session.MesasAsignada] = mesasAsignadas;
+
+				if (mesasAsignadas != null)
+				{
+					repeaterMesasAsigndas.DataSource = mesasAsignadas;
+					repeaterMesasAsigndas.DataBind();
+
+					if(mesasAsignadas.Count > 0)
+					{
+						lbSinMesasAsignadas.Text = String.Empty;
+						return;
+					}
+						
+				}
+			}
+
+			lbSinMesasAsignadas.Text = "No cuenta con mesas asignadas. Comuníquese con el Gerente.";
+		}
+	}
 }

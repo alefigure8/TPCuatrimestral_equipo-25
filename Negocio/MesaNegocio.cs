@@ -214,6 +214,11 @@ namespace Negocio
 		{
 			AccesoDB datos = new AccesoDB();
 
+			if(salida == null)
+			{
+				salida = DateTime.Now.TimeOfDay;
+			}
+
 			try
 			{
 				datos.setQuery($"UPDATE {ColumnasDB.MeseroPorDia.DB} SET {ColumnasDB.MeseroPorDia.Salida} = '{salida}' WHERE {ColumnasDB.MeseroPorDia.Id} = {id}");

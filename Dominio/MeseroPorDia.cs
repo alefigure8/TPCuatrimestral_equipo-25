@@ -20,6 +20,7 @@ namespace Dominio
 
         public MeseroPorDia()
         {
+			Id = 0;
 			MesasAsignadas = 0;
 			MesasConPedidos = 0;
 		}

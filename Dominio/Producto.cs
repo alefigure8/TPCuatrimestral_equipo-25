@@ -19,5 +19,23 @@ namespace Dominio
         public int Stock { get; set; }
         public bool Activo { get; set; }
         public TimeSpan TiempoCoccion { get; set; }
+
+        public Producto()
+        { }
+
+            public Producto(ProductoDelDia aux)
+        {
+            this.Id = aux.Id;
+            this.Categoria = aux.Categoria;
+            this.Nombre = aux.Nombre;
+            this.Descripcion = aux.Descripcion;
+            this.Valor = aux.Valor;
+            this.AptoVegano = aux.AptoVegano;
+            this.AptoCeliaco = aux.AptoCeliaco;
+            this.Activo = aux.Activo;
+            this.Alcohol = aux.Alcohol;
+            this.TiempoCoccion = aux.TiempoCoccion;
+            this.Stock = aux.Stock;
+        }
     }
 }
