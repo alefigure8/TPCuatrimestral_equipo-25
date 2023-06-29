@@ -18,7 +18,7 @@ namespace RestoApp
 {
 	public partial class Mesas : System.Web.UI.Page
 	{
-		public static List<Mesa> mesas;
+		public List<Mesa> mesas;
 		public List<Usuario> meseros = new List<Usuario>();
 		public List<MeseroPorDia> meserosPorDiaNoAsignados = new List<MeseroPorDia>();
 		public List<MeseroPorDia> meserosPorDiaAsignados = new List<MeseroPorDia>();

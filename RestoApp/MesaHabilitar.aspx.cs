@@ -71,7 +71,7 @@ namespace RestoApp
 			for (int i = 0; i < array.Length; i++)
 			{
 				//Verificar cambios
-				if (Mesas.mesas[i].Activo != (array[i] == 1))
+				if (mesas[i].Activo != (array[i] == 1))
 					mesaNegocio.ActivarMesasPorNumero(i + 1, array[i]);
 			}
 

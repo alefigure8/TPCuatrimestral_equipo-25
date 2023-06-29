@@ -28,6 +28,7 @@
         <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente)
             {%>
         <div class="col-5">
+            <!-- Estado de las mesas -->
             <div class="bg-gray-100 rounded border-1 p-5">
                 <div class="d-flex">
                     <p>Mesas Activas:<span class="fw-semibold"> <%= MesasActivas %></span></p>
@@ -37,7 +38,11 @@
                     <p>Mesas Asignadas:<span class="fw-semibold"> <%= MesasAsignadas %></span></p>
                     <a class="link-dark ms-4" href="Mesas.aspx">Asignar Mesas</a>
                 </div>
+                <div class="d-flex overflow-hidden row" id="section-mesa">
+                    <!-- Renderizar mesas -->
+                </div>
             </div>
+            <!-- Fin  Estado de las mesas -->
         </div>
         <div class="col-5">
             <div class="bg-gray-100 p-5 rounded border-1">
@@ -252,23 +257,164 @@
                         </ItemTemplate>
                     </asp:Repeater>
                 </div>
-
-
             </div>
-
-
         </div>
-
-
     </div>
-
-
-
-
 
 
     <% } %>
     </div>
 
+<!--************* ESTILOS Y SCRIPTS *************** -->
+|<!-- Styles Mesas -->
+    <style>
+        :root {
+            --bg-danger: #ffc107;
+            --bg-mesero: #17a2b8;
+        }
+
+        .mesa {
+            width: 75px;
+            height: 75px;
+            border-radius: 10%;
+            margin: 10px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mesa p {
+            font-size: 15px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .mesaTop{
+            width: 100%;
+            height: 15px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .mesaBottom{
+            width: 100%;
+            height: 15px;
+            background-color: var(--bg-danger);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+|<!-- Fin Styles Mesas -->
+
+|<!-- Scripts Mesas -->
+<script>
+    let numeroMesa = <%: MesasActivas %>;
+    let sectionMesa = document.getElementById("section-mesa");
+
+    //Traemos datos de mesas desde codebehind
+    function obtenerDatosMesas() {
+        return new Promise((resolve) => {
+            if (typeof datosMesasArray !== 'undefined') {
+                const datosMesas = JSON.parse(datosMesasArray)
+                const numeroMesas = JSON.parse(numeroMesasActivasArray)
+                resolve({ datosMesas, numeroMesas });
+            } else {
+                const intervalo = setInterval(() => {
+                    if (typeof datosMesasArray !== 'undefined') {
+                        clearInterval(intervalo);
+                        const datosMesas = JSON.parse(datosMesasArray)
+                        const numeroMesas = JSON.parse(numeroMesasActivasArray)
+                        resolve({ datosMesas, numeroMesas });
+                    }
+                }, 0);
+            }
+        });
+    }
+
+    //Llamamos datos de las mesas
+    obtenerDatosMesas()
+        .then(({ datosMesas, numeroMesas }) => {
+            console.log(numeroMesas)
+            renderMesa(datosMesas, numeroMesas);
+        });
+
+    function renderMesa(datosMesa, numeroMesas) {
+
+        //BORRAR!
+        console.log(datosMesa)
+
+        for (let i = 0; i < numeroMesa; i++) {
+            //Buscamos mesa
+            let mesa = datosMesa.find(item => item.mesa == i + 1)
+
+            //color del Mesero
+            let colorMesero;
+
+            if (mesa) {
+                colorMesero = convertirAHexadecimal(mesa.mesero)
+            } else {
+                colorMesero = "#666"
+            }
+
+            //Main
+            let mainDiv = document.createElement("div");
+            mainDiv.classList.add("d-flex", "mesa", "bg-body-secondary");
+
+            //Top -- Background según mesero
+            let mesaTop = document.createElement("div");
+            mesaTop.classList.add("mesaTop");
+            mesaTop.style.background = colorMesero
+
+            //Bottom -- Background según estado
+            let mesaBottom = document.createElement("div");
+            mesaBottom.classList.add("mesaBottom");
+
+            //Numero
+            let mesaNumber = document.createElement("div");
+            //TODO poner numero de mesa
+            mesaNumber.innerHTML = `<p>${numeroMesas[i].Numero}</p>`;
+
+            //Appends
+            mainDiv.appendChild(mesaTop);
+            mainDiv.appendChild(mesaNumber);
+            mainDiv.appendChild(mesaBottom);
+            sectionMesa.appendChild(mainDiv);
+        }
+    }
+
+    //Función para pasar numero de mesero a color
+    function convertirAHexadecimal(numero) {
+        let r = (numero * 4321) % 256; // rojo
+        let g = (numero * 1234) % 256; // verde
+        let b = (numero * 9876) % 256; // azul
+        let opacity = 0.9; // Valor de opacidad deseado (por ejemplo, 0.5 para 50%)
+
+        let colorHexadecimal = '#' + toDosDigitosHex(r) + toDosDigitosHex(g) + toDosDigitosHex(b);
+
+        return colorHexadecimal + toOpacityHex(opacity);
+    }
+
+    //Armamos digitos hexadecimal
+    function toDosDigitosHex(numero) {
+        let hex = numero.toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    }
+
+    //armamos opacidad
+    function toOpacityHex(opacity) {
+        let opacityDecimal = Math.floor(opacity * 255);
+        return toDosDigitosHex(opacityDecimal);
+    }
+</script>
+|<!-- Fin Scripts Mesas -->
+
 
 </asp:Content>
+
+
+

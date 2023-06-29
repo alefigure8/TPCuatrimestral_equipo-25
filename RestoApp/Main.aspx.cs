@@ -18,15 +18,19 @@ namespace RestoApp
 {
 	public partial class Main1 : System.Web.UI.Page
 	{
+		//Public
 		public Usuario usuario { get; set; }
 		public MeseroPorDia meseroPorDia { get; set; }
 		public int MesasActivas { get; set; }
         public int MesasAsignadas { get; set; }
         public int MeserosPresentes { get; set; }
-		private List<Mesa> mesas;
-		private List<MeseroPorDia> meserosPorDia;
 		public List<MeseroPorDia> meserosPorDiaNoAsignados = new List<MeseroPorDia>();
 		public List<MeseroPorDia> meserosPorDiaAsignados = new List<MeseroPorDia>();
+		public List<object> datosMesas = new List<object>();
+
+		//Private
+		private List<Mesa> mesas;
+		private List<MesaPorDia> mesasPorDia;
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -63,9 +67,35 @@ namespace RestoApp
 			{
 				MesaNegocio mesaNegocio = new MesaNegocio();
 				mesas = mesaNegocio.Listar();
+				mesasPorDia = mesaNegocio.ListarMesaPorDia();
+				
+				//Guardamos cantidad de mesas activas
 				MesasActivas = mesas.FindAll(m => m.Activo == true).Count();
-				MesasAsignadas = 0; //TODO DB DE MESA POR DIA
-				//MesasAsignadas = mesas.FindAll(m => m.Activo == true && m.Mesero != null).Count();
+								
+				//Guardamos la cantidad de mesas asignadas
+				foreach(var item in meserosPorDiaAsignados)
+				{
+					//Sumamos mesas a mesas asignadas
+					MesasAsignadas += item.MesasAsignadas > 0 ? 1 : 0;
+				}
+
+				//Guardamos dato de cada mesa en una lista de diccionarios
+				foreach(var item in mesasPorDia)
+				{
+					//Guardamos datos en datosMesas de cuyas mesas el cierre sea Null
+					if(item.Cierre == null)
+						datosMesas.Add(new { mesa = item.Mesa, mesero = item.Mesero });
+				}
+
+				List<Mesa> mesasActivasNumeros = mesas.FindAll(m => m.Activo == true);
+
+				// Convierte la lista en una cadena JSON
+				string datosMesasJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(datosMesas);
+				string mesasActivasJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(mesasActivasNumeros);
+
+				//Mandamos el dato a main.js
+				ClientScript.RegisterStartupScript(this.GetType(), "datosMesasArray", $"var datosMesasArray = '{datosMesasJSON}';", true);
+				ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasActivasArray", $"var numeroMesasActivasArray = '{mesasActivasJSON}';", true);
 			}
 		}
 
