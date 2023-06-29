@@ -96,12 +96,12 @@ namespace RestoApp
         protected global::System.Web.UI.WebControls.Repeater PlatosDelDia;
 
         /// <summary>
-        /// Bebidas control.
+        /// BebidasDelDia control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater Bebidas;
+        protected global::System.Web.UI.WebControls.Repeater BebidasDelDia;
     }
 }

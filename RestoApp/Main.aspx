@@ -221,8 +221,8 @@
 
             <%--SECCION MENU RAPIDO--%>
 
-            <div class="row bg-white rounded p-2 justify-content-around m-1 mt-2">
-                <div class="col">
+            <div class="row bg-white rounded p-2 justify-content-around m-1 mt-2 " >
+                <div class="col p-2">
                     <h2 class="h3">Platos Disponibles:</h2>
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
@@ -238,9 +238,9 @@
                 </div>
 
 
-                <div class="col">
+                <div class="col p-2">
                     <h2 class="h3">Bebidas Disponibles:</h2>
-                    <asp:Repeater runat="server" ID="Bebidas">
+                    <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
                             <div class="row">
                                 <div class="col-4 h5"><%#Eval("Nombre")%> </div>
