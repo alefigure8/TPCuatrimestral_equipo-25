@@ -81,11 +81,11 @@ namespace RestoApp
         // Lista de productos en menú actual
         protected void ListarMenuMesero()
         {
-
+            Session["ListaMenu"] = null;
             ProductoNegocio ProductoNegocio = new ProductoNegocio();
             Session.Add("ListaMenu", ProductoNegocio.ListarProductosDelDia());
             List<ProductoDelDia> ListaProductosDisponibles = ProductoNegocio.ListarProductosDelDia();
-           ListaProductosDisponibles.RemoveAll(x => x.Activo == false);
+            ListaProductosDisponibles.RemoveAll(x => x.Activo == false);
             MenuMeseroRep.DataSource = Session["ListaMenu"];
             MenuMeseroRep.DataBind();
         }

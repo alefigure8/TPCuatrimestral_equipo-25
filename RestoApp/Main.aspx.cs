@@ -179,9 +179,12 @@ namespace RestoApp
 		// VISTA MESERO
 		private void CargarMenuDisponible()
 		{
-            ProductoNegocio productoNegocio = new ProductoNegocio();
-            Session.Add("ProductosDisponibles", productoNegocio.ListarProductos());
-            MenuDelDia.DataSource = Session["ProductosDisponibles"];
+            Session["ListaMenu"] = null;
+            ProductoNegocio ProductoNegocio = new ProductoNegocio();
+            Session.Add("ListaMenu", ProductoNegocio.ListarProductosDelDia());
+            List<ProductoDelDia> ListaProductosDisponibles = ProductoNegocio.ListarProductosDelDia();
+            ListaProductosDisponibles.RemoveAll(x => x.Activo == false);
+			MenuDelDia.DataSource = ListaProductosDisponibles;
             MenuDelDia.DataBind();
         }
 

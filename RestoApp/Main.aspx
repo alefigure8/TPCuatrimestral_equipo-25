@@ -138,7 +138,7 @@
         <div class="row p-3 justify-content-between ">
 
             <!-- SECCION MESAS ASIGNDAS -->
-            <Ssection class="row bg-white rounded p-2 justify-content-around">
+            <Section class="row bg-white rounded p-2 justify-content-around m-1">
                 <h3>Mis Mesas</h3>
                 <div class="row justify-content-around justify-items-start p-3">
                     <asp:Label runat="server" ID="lbSinMesasAsignadas"></asp:Label>
@@ -165,14 +165,13 @@
                     </asp:Repeater>
                     <!-- FIN MESAS ASIGNADAS -->
                 </div>
-            </Ssection>
+            </Section>
             <!-- FIN SECCION MESAS ASIGNDAS -->
 
-            <div>
-                <br />
-            </div>
+      
 
-            <div class="row bg-white rounded p-3 justify-content-around">
+            <%--SECCION PEDIDOS EN CURSO--%>
+            <div class="row bg-white rounded p-2 justify-content-around m-1 mt-2">
 
                 <div class="row h3">Mis pedidos en curso </div>
 
@@ -218,12 +217,11 @@
 
             </div>
 
-            <br />
 
-            <div>
-                <br />
-            </div>
-            <div class="row bg-white rounded p-3">
+
+            <%--SECCION MENU RAPIDO--%>
+
+            <div class="row bg-white rounded p-2 justify-content-around m-1 mt-2">
                 <h2 class="h3">Menú Disponible:</h2>
                 <asp:Repeater runat="server" ID="MenuDelDia">
                     <ItemTemplate>
