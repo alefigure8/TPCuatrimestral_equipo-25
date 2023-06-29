@@ -182,13 +182,31 @@ namespace RestoApp
             Session["ListaMenu"] = null;
             ProductoNegocio ProductoNegocio = new ProductoNegocio();
             Session.Add("ListaMenu", ProductoNegocio.ListarProductosDelDia());
-            List<ProductoDelDia> ListaProductosDisponibles = ProductoNegocio.ListarProductosDelDia();
-            ListaProductosDisponibles.RemoveAll(x => x.Activo == false);
-			MenuDelDia.DataSource = ListaProductosDisponibles;
-            MenuDelDia.DataBind();
+			CargarPlatosDelDia();
+			CargarBebidasDelDia();
         }
 
-		private void CargarMeseroPorDia()
+
+		private void CargarPlatosDelDia()
+		{
+            List<ProductoDelDia> ListaProductosDisponibles = (List<ProductoDelDia>)Session["ListaMenu"];
+            ListaProductosDisponibles.RemoveAll(x => x.Activo == false && x.Categoria != 1);
+            PlatosDelDia.DataSource = ListaProductosDisponibles;
+            PlatosDelDia.DataBind();
+        }
+
+        private void CargarBebidasDelDia()
+        {
+            List<ProductoDelDia> ListaProductosDisponibles = (List<ProductoDelDia>)Session["ListaMenu"];
+            ListaProductosDisponibles.RemoveAll(x => x.Activo == false && x.Categoria != 2);
+            PlatosDelDia.DataSource = ListaProductosDisponibles;
+            PlatosDelDia.DataBind();
+        }
+
+
+
+
+        private void CargarMeseroPorDia()
 		{
 			List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
 			MesaNegocio mesaNegocio = new MesaNegocio();

@@ -20,7 +20,7 @@
                         <p class="blockquote-footer">
                             Descripción: <%#Eval("Descripcion")%>
                             <br />
-                            Valor: $<%#Eval("Valor")%>
+                              <%#Eval("Valor","{0:C}")%>
                         </p>
                     </div>
                 </ItemTemplate>

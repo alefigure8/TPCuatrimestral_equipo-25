@@ -4,7 +4,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-     <!-- Updatea Panel Botón Mesero -->
+    <!-- Updatea Panel Botón Mesero -->
     <asp:UpdatePanel ID="UpdatePanel1"
         runat="server">
         <ContentTemplate>
@@ -19,7 +19,7 @@
             </div>
         </ContentTemplate>
     </asp:UpdatePanel>
-     <!-- Fin Updatea Panel Botón Mesero -->
+    <!-- Fin Updatea Panel Botón Mesero -->
 
     <!-- Agregar Mesas habilitadas, mozos habilitados, productos, -->
     <div class="row">
@@ -131,14 +131,14 @@
 
         <!-- VISTA MESERO -->
         <%
-        if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+            if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
 
-        {%>
+            {%>
 
         <div class="row p-3 justify-content-between ">
 
             <!-- SECCION MESAS ASIGNDAS -->
-            <Section class="row bg-white rounded p-2 justify-content-around m-1">
+            <section class="row bg-white rounded p-2 justify-content-around m-1">
                 <h3>Mis Mesas</h3>
                 <div class="row justify-content-around justify-items-start p-3">
                     <asp:Label runat="server" ID="lbSinMesasAsignadas"></asp:Label>
@@ -165,10 +165,10 @@
                     </asp:Repeater>
                     <!-- FIN MESAS ASIGNADAS -->
                 </div>
-            </Section>
+            </section>
             <!-- FIN SECCION MESAS ASIGNDAS -->
 
-      
+
 
             <%--SECCION PEDIDOS EN CURSO--%>
             <div class="row bg-white rounded p-2 justify-content-around m-1 mt-2">
@@ -222,19 +222,38 @@
             <%--SECCION MENU RAPIDO--%>
 
             <div class="row bg-white rounded p-2 justify-content-around m-1 mt-2">
-                <h2 class="h3">Menú Disponible:</h2>
-                <asp:Repeater runat="server" ID="MenuDelDia">
-                    <ItemTemplate>
-                        <div class="row">
-                            <h5 class="card-title"><%#Eval("Nombre")%> </h5>
-                            <br />
-                            <p class="small text-gray-600">
-                                Tiempo Cocción: <%#Eval("TiempoCoccion")%>  -    
-                                Valor: $<%#Eval("Valor")%>
-                            </p>
-                        </div>
-                    </ItemTemplate>
-                </asp:Repeater>
+                <div class="col">
+                    <h2 class="h3">Platos Disponibles:</h2>
+                    <asp:Repeater runat="server" ID="PlatosDelDia">
+                        <ItemTemplate>
+                            <div class="row">
+                                <div class="col-4 h5"><%#Eval("Nombre")%> </div>
+                                <div class="col-2 h5"><%#Eval("Valor","{0:C}")%> </div>
+                                <div class="col-2">
+                                    <asp:Button runat="server" Text="+" CssClass="btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+
+
+                <div class="col">
+                    <h2 class="h3">Bebidas Disponibles:</h2>
+                    <asp:Repeater runat="server" ID="Bebidas">
+                        <ItemTemplate>
+                            <div class="row">
+                                <div class="col-4 h5"><%#Eval("Nombre")%> </div>
+                                <div class="col-2 h5"><%#Eval("Valor","{0:C}")%> </div>
+                                <div class="col-2">
+                                    <asp:Button runat="server" Text="+" CssClass="btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
+                                </div>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+
+
             </div>
 
 
