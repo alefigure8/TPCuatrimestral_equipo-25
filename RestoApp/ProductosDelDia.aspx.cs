@@ -81,11 +81,11 @@ namespace RestoApp
         // Lista de productos en menú actual
         protected void ListarMenuMesero()
         {
-
+            Session["ListaMenu"] = null;
             ProductoNegocio ProductoNegocio = new ProductoNegocio();
             Session.Add("ListaMenu", ProductoNegocio.ListarProductosDelDia());
             List<ProductoDelDia> ListaProductosDisponibles = ProductoNegocio.ListarProductosDelDia();
-           ListaProductosDisponibles.RemoveAll(x => x.Activo == false);
+            ListaProductosDisponibles.RemoveAll(x => x.Activo == false);
             MenuMeseroRep.DataSource = Session["ListaMenu"];
             MenuMeseroRep.DataBind();
         }
@@ -170,5 +170,24 @@ namespace RestoApp
             }
         }
 
+        protected void BtnVerDetalle_Click(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+
+            RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
+            Panel PanelDetalle = repeaterItem.FindControl("PanelDetalles") as Panel;
+
+            if (button.Text.ToLower() == "ver detalle")
+            {
+                PanelDetalle.Visible = true;
+                button.Text = "Ocultar detalle";
+
+            }
+            else
+            {
+                PanelDetalle.Visible = false;
+                button.Text = "Ver detalle";
+            }
+        }
     }
 }

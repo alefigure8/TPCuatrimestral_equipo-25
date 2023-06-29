@@ -14,7 +14,7 @@ namespace Negocio
 		//DB Alejandro
 		//string serverName = "localhost\\SQLEXPRESS";
         //DB Diego
-        //string serverName = "localhost\\SQLLAB";
+        string serverName = "localhost\\SQLLAB";
         //
         //DB Fede
         //

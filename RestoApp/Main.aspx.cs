@@ -179,13 +179,34 @@ namespace RestoApp
 		// VISTA MESERO
 		private void CargarMenuDisponible()
 		{
-            ProductoNegocio productoNegocio = new ProductoNegocio();
-            Session.Add("ProductosDisponibles", productoNegocio.ListarProductos());
-            MenuDelDia.DataSource = Session["ProductosDisponibles"];
-            MenuDelDia.DataBind();
+            Session["ListaMenu"] = null;
+            ProductoNegocio ProductoNegocio = new ProductoNegocio();
+            Session.Add("ListaMenu", ProductoNegocio.ListarProductosDelDia());
+			CargarPlatosDelDia();
+			CargarBebidasDelDia();
         }
 
-		private void CargarMeseroPorDia()
+
+		private void CargarPlatosDelDia()
+		{
+            List<ProductoDelDia> ListaProductosDisponibles = (List<ProductoDelDia>)Session["ListaMenu"];
+            ListaProductosDisponibles.RemoveAll(x => x.Activo == false && x.Categoria != 1);
+            PlatosDelDia.DataSource = ListaProductosDisponibles;
+            PlatosDelDia.DataBind();
+        }
+
+        private void CargarBebidasDelDia()
+        {
+            List<ProductoDelDia> ListaProductosDisponibles = (List<ProductoDelDia>)Session["ListaMenu"];
+            ListaProductosDisponibles.RemoveAll(x => x.Activo == false && x.Categoria != 2);
+            PlatosDelDia.DataSource = ListaProductosDisponibles;
+            PlatosDelDia.DataBind();
+        }
+
+
+
+
+        private void CargarMeseroPorDia()
 		{
 			List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
 			MesaNegocio mesaNegocio = new MesaNegocio();
