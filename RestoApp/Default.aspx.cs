@@ -37,7 +37,7 @@ namespace RestoApp
 				if (AutentificacionUsuario.esUser(usuario))
 				{
 					//Borramos password
-					usuario.Password = null;
+					//usuario.Password = null;
 					//Guardamos usuario en session
 					Session[Configuracion.Session.Usuario] = usuario;
 					//Redirigimos a Panel

@@ -61,7 +61,7 @@
             <div class="row">
                 <div style="margin-left:30px;">
                 <asp:RadioButtonList ID="Rbnmodo" runat="server" RepeatDirection="Horizontal" Width="90%" AutoPostBack="true" OnSelectedIndexChanged="Rbnmodo_SelectedIndexChanged">
-        <asp:ListItem Text="Agregar" Value="1" Selected="True"></asp:ListItem>
+        <asp:ListItem Text="Agregar" Value="1" ></asp:ListItem>
        <asp:ListItem Text="Modificar" Value="2" Enabled="false"></asp:ListItem>
     </asp:RadioButtonList>
                     </div>

@@ -17,6 +17,7 @@ using Opciones;
 using System.ComponentModel;
 using System.Net;
 
+
 namespace RestoApp
 {
     public partial class Usuarios : System.Web.UI.Page
@@ -30,10 +31,12 @@ namespace RestoApp
             // Si esta logueado asignamos el usuario a la variable usuario
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
-
+        
             if (!IsPostBack)
             {
+        
                 Lblbusquedafallida.Visible = false;
+                Rbnmodo.SelectedIndex = 0;
                 bool modificar = false;
                 Session.Add("modificar", modificar);
                 CargarDgv();
@@ -322,6 +325,9 @@ namespace RestoApp
                         usuarioNegocio.Agregarusuario(nuevousuario);
                         LblError.Visible = false;
                         CargarDgv();
+
+                    
+
                         Limpiarcamposdetexto();
                     }
                     else if(!camposcompletos())
@@ -356,6 +362,8 @@ namespace RestoApp
                 Session.Add("modificar", aux);
                 CargarDgv();
                 Limpiarcamposdetexto();
+                Rbnmodo.SelectedIndex = 0;
+
                 }
                 else if (!camposcompletos())
                 {

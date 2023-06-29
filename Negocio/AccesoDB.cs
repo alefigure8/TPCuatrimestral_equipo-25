@@ -18,7 +18,7 @@ namespace Negocio
         //
         //DB Fede
         //
-        // string serverName = "localhost\\";
+         string serverName = "localhost\\";
 
 
         //DB Nombre
