@@ -170,5 +170,24 @@ namespace RestoApp
             }
         }
 
+        protected void BtnVerDetalle_Click(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+
+            RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
+            Panel PanelDetalle = repeaterItem.FindControl("PanelDetalles") as Panel;
+
+            if (button.Text.ToLower() == "ver detalle")
+            {
+                PanelDetalle.Visible = true;
+                button.Text = "Ocultar detalle";
+
+            }
+            else
+            {
+                PanelDetalle.Visible = false;
+                button.Text = "Ver detalle";
+            }
+        }
     }
 }

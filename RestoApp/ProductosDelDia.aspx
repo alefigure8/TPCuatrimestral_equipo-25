@@ -80,29 +80,55 @@
         {
     %>
           
-    <div class="row">
-        <div class="col-4 bg-dark"></div>
+    <div class="row m-2 rounded">
+        <div class="col-2 bg-dark"></div>
 
-        <div class="col-4 bg-white">
+        <div class="col bg-white">
             <h2 class="display-4 bg-secondary text-white row">Menú disponible</h2>
             <asp:Repeater runat="server" ID="MenuMeseroRep">
                 <ItemTemplate>
-                    <div class="row border-bottom ">
-                        <h5 class="card-title hover-shadow "><%#Eval("Nombre")%> </h5>
-                        <br />
-                        <p class="blockquote-footer">
-                            Descripción: <%#Eval("Descripcion")%>
-                            <br />
-                            Valor: $<%#Eval("Valor")%>
-                        </p>
-                    </div>
+
+                   <div class="row border-bottom p-2">
+
+                       <div class="col">
+
+                           <div class="row h4 text-uppercase">
+                               <%#Eval("Nombre")%> 
+                           </div>
+
+                           <asp:Panel runat="server" ID="PanelDetalles" CssClass="row small" Visible="false">
+                               <div class="row">
+                                   <div class="col">
+                                    <%#Eval("Descripcion")%> 
+                                </div>
+                                   <div class="col-2">
+                                <%#Eval("Valor","{0:C}")%>
+                                       </div>
+                               </div>
+                                
+                                 <%#Eval("AptoVegano").Equals(true) ? "· Es apto vegano" : string.Empty %>
+                                 <%#Eval("AptoCeliaco").Equals(true) ? "· Es apto celiaco" : string.Empty %>
+                                 <%#Eval("Alcohol").Equals(true) ? "· Contiene Alcohol" : string.Empty %>
+                                 <%#Eval("TiempoCoccion")!=null ? "· Cocción:" : string.Empty  %> <%#Eval("TiempoCoccion")%>  
+                           </asp:Panel>
+
+                       </div>
+
+
+                       <div class="col-3">
+                        <asp:Button runat="server" CssClass="row btn btn-dark btn-sm small m-1" Text="Agregar  a pedido"/>
+                       <asp:Button runat="server" CssClass="row btn btn-dark btn-sm small m-1" Text="Ver detalle" ID="BtnVerDetalle" OnClick="BtnVerDetalle_Click"/>
+                       </div>
+                   </div> 
+                   
+
                 </ItemTemplate>
 
             </asp:Repeater>
         </div>
 
 
-        <div class="col-4 bg-dark"></div>
+        <div class="col-2 bg-dark"></div>
 
     </div>
 
