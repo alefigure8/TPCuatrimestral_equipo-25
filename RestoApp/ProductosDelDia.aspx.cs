@@ -89,9 +89,6 @@ namespace RestoApp
             MenuMeseroRep.DataSource = Session["ListaMenu"];
             MenuMeseroRep.DataBind();
         }
-
-
-
         protected void BtnAgregarAPDD_Click(object sender, EventArgs e)
         {
             try
@@ -117,7 +114,6 @@ namespace RestoApp
             }
         
         }
-
         protected void BtnDesactivar_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
@@ -131,7 +127,6 @@ namespace RestoApp
                 AbrirProductoDelDia(PDDAux);
             }
         }
-
         protected void CerrarProductoDelDia(ProductoDelDia PDDAux)
         {
             PDDAux.Activo = false;
@@ -149,14 +144,13 @@ namespace RestoApp
             PNAux.ModificarProductoDD(PDDAux);
             ListarProductosDelDia();
         }
-
         protected void BtnAgregarStock_Click(object sender, EventArgs e)
   {
 
             Button button = sender as Button;
             RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
             TextBox tbAgregarStock = repeaterItem.FindControl("tbAgregarStock") as TextBox;
-            if (tbAgregarStock != null)
+            if (tbAgregarStock.Text != string.Empty)
             {
                 ProductoDelDia PDDAux = ((List<ProductoDelDia>)Session["ListaProductosDelDia"]).Find(x => x.Id == int.Parse(button.CommandArgument));
                 PDDAux.Activo = true;
@@ -169,7 +163,6 @@ namespace RestoApp
                 ListarProductosDelDia();
             }
         }
-
         protected void BtnVerDetalle_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
@@ -187,6 +180,25 @@ namespace RestoApp
             {
                 PanelDetalle.Visible = false;
                 button.Text = "Ver detalle";
+            }
+        }
+        protected void BtnQuitarStock_Click(object sender, EventArgs e)
+        {
+
+            Button button = sender as Button;
+            RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
+            TextBox tbAgregarStock = repeaterItem.FindControl("tbAgregarStock") as TextBox;
+            if (tbAgregarStock.Text != string.Empty)
+            {
+                ProductoDelDia PDDAux = ((List<ProductoDelDia>)Session["ListaProductosDelDia"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+                PDDAux.Activo = true;
+                PDDAux.Stock -= int.Parse(tbAgregarStock.Text);
+                PDDAux.StockInicio -= int.Parse(tbAgregarStock.Text);
+                ProductoNegocio PNAux = new ProductoNegocio();
+                PNAux.ModificarProductoDD(PDDAux);
+                PNAux.ModificarProducto(PDDAux);
+                ListaProductosDisponibles();
+                ListarProductosDelDia();
             }
         }
     }

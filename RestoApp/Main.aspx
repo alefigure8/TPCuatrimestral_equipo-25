@@ -227,8 +227,8 @@
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <div class="col-4 h5"><%#Eval("Nombre")%> </div>
-                                <div class="col-2 h5"><%#Eval("Valor","{0:C}")%> </div>
+                                <div class="col h5"><%#Eval("Nombre")%> </div>
+                                <div class="col h5"><%#Eval("Valor","{0:C}")%> </div>
                                 <div class="col-2">
                                     <asp:Button runat="server" Text="+" CssClass="btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
                                 </div>
@@ -243,8 +243,8 @@
                     <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <div class="col-4 h5"><%#Eval("Nombre")%> </div>
-                                <div class="col-2 h5"><%#Eval("Valor","{0:C}")%> </div>
+                                <div class="col h5"><%#Eval("Nombre")%> </div>
+                                <div class="col h5"><%#Eval("Valor","{0:C}")%> </div>
                                 <div class="col-2">
                                     <asp:Button runat="server" Text="+" CssClass="btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
                                 </div>

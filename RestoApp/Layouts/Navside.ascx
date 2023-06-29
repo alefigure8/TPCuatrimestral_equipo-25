@@ -30,12 +30,33 @@
             </li>
             <%}%>
             <li class="mb-1">
-                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#productos-collapse" aria-bs-expanded="true">Productos
+                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#productos-collapse" aria-bs-expanded="true">
+                   <%--Si es gerente o admin la solapa se llama productos, si no, se llama menu--%>
+                          <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                              { %>  Productos
+                    <%} else
+            { %>
+                Menu
+                    <%            } %>
                 </a>
                 <div class="collapse" id="productos-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                        <%--Si es gerente o admin puede ver la opcion administrar producto--%>
+                          <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                              { %>
                         <li><a href="Productos.aspx" class="nav-link ps-3">Administrar Productos</a></li>
-                        <li><a href="ProductosDelDia.aspx" class="nav-link ps-3">Productos del día</a></li>
+                        <%} %>
+                        <li><a href="ProductosDelDia.aspx" class="nav-link ps-3">
+                              <%--Si es gerente o admin la solapa se llama productos, si no, se llama menu--%>
+                          <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                              { %> 
+                            Productos del día
+                               <%} else
+            { %>
+                Menu completo
+                    <%            } %>
+
+                            </a></li>
                         <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
                     </ul>
                 </div>

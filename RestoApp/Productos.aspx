@@ -285,7 +285,8 @@
                         <asp:TemplateField ControlStyle-CssClass="btn btn-dark" HeaderStyle-Width="20px">
                             <ItemTemplate>
                                 <asp:Button ID="btnModificarProducto" runat="server" Text="🖍"
-                                    OnClick="btnModificarProducto_Click" CommandArgument='<%#Eval("Id")%>' data-bs-toggle="modal" data-bs-target="#modalModificarProductos" />
+                                    OnClick="btnModificarProducto_Click" CommandArgument='<%#Eval("Id")%>' 
+                                    data-bs-toggle="modal" data-bs-target="#modalModificarProductos" />
                             </ItemTemplate>
                         </asp:TemplateField>
 
