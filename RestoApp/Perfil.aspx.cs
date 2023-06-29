@@ -1,12 +1,11 @@
-﻿using Helper;
+﻿using Dominio;
+using Helper;
 using Opciones;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using Dominio;
+using Negocio;
+using System.Timers;
+using System.EnterpriseServices;
 
 namespace RestoApp
 {
@@ -19,14 +18,25 @@ namespace RestoApp
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
+           
+
+
             if (!IsPostBack)
             {
+
+
                 bool Aux = false;
-                Session.Add("Passvisible", Aux);
+                   Session.Add("Passvisible", Aux);
                 Session.Add("Modificarpass", Aux);
-                Cargartextboxs();
+                       Cargartextboxs();
+
             }
         }
+
+
+
+
+
 
         public void Cargartextboxs()
         {
@@ -39,7 +49,8 @@ namespace RestoApp
                 txtEmail.Text = usuario.Mail.ToString();
                 TxtPassword.Enabled = false;
                 TxtPassword.TextMode = TextBoxMode.Password;
-                TxtPassword.Attributes["value"] = usuario.Password.ToString();
+                TxtPassword.Attributes["value"] = usuario.Password.ToString();            
+
             }
 
 
@@ -48,36 +59,74 @@ namespace RestoApp
 
         protected void btnVerPassword_Click(object sender, EventArgs e)
         {
+
             bool aux;
             if ((bool)Session["Passvisible"] == false)
-            {
+            {   
                 aux = true;
                 Session.Add("Passvisible", aux);
                 TxtPassword.TextMode = TextBoxMode.SingleLine;
+                LblAvisopass.Visible = false;
             }
             else
             {
-                aux = false;
-                Session.Add("Passvisible", aux);
-                TxtPassword.TextMode = TextBoxMode.Password;
+                if ((bool)Session["Modificarpass"] == false)
+                {
+                    aux = false;
+                    Session.Add("Passvisible", aux);
+                    TxtPassword.TextMode = TextBoxMode.Password;
+                    LblAvisopass.Visible = false;
+                }
+                else
+                {
+                    aux = true;
+                    Session.Add("Passvisible", aux);
+                    TxtPassword.TextMode = TextBoxMode.SingleLine;
+                    LblAvisopass.Visible = false;
+                }
+   
+
             }
+
         }
+
+
 
         protected void BtnModificarPass_Click(object sender, EventArgs e)
         {
+
             bool aux;
             if ((bool)Session["Modificarpass"] == false)
             {
                 aux = true;
                 Session.Add("Modificarpass", aux);
-                TxtPassword.Enabled= aux;
+                Session.Add("Passvisible", aux);
+                TxtPassword.TextMode = TextBoxMode.SingleLine;
+                TxtPassword.Enabled = aux;
+                LblAvisopass.Visible = false;
+
             }
             else
             {
+
+                UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+                usuario.Password = TxtPassword.Text.ToString();
+                usuarioNegocio.Modificarusuario(usuario);
+                Cargartextboxs();
+
                 aux = false;
                 Session.Add("Modificarpass", aux);
+                Session.Add("Passvisible", aux);
                 TxtPassword.Enabled = aux;
+                              
+          
+               LblAvisopass.Text = "Contraseña modificada con exito!";
+                LblAvisopass.Visible = true;
+
+                 
+
             }
+
         }
     }
 }

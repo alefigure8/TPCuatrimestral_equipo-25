@@ -28,10 +28,10 @@ namespace RestoApp.Layouts
 				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
 					meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
 
-				if (!IsPostBack)
-				{
+				//if (!IsPostBack)
+				//{
 					usuario = (Usuario)Session[Configuracion.Session.Usuario];
-				}
+				//}
 			}
 		}
 
