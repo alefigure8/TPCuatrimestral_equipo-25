@@ -66,7 +66,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
     //CARGAMOS MESAS POR DIA GUARDADAS
     let numeroMesasPorDiaArray = JSON.parse(numeroMesasPorDiaJSON)
     let numeroMesasPorDiaArrayCopy = structuredClone(numeroMesasPorDiaArray)
-
+    console.log(numeroMesasPorDiaArrayCopy)
     //FUNCION QUE CARGA LAS MESAS ASIGNADAS Y GUARDADAS EN BASE DE DATOS QUE SIGUEN ABIERTAS
     function CargarMesasGuardas() {
 
@@ -75,9 +75,9 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
         for (let i = 0; i < cantidadMesasGuardas; i++) {
 
-            if (numeroMesasPorDiaArray.some(el => el.mesa === i + 1)) {
+            if (numeroMesasPorDiaArray.some(el => el.mesa === numeroMesasGuardasArray[i])) {
 
-                let numeroIdMesero = numeroMesasPorDiaArray.find(el => el.mesa === i + 1).mesero;
+                let numeroIdMesero = numeroMesasPorDiaArray.find(el => el.mesa === numeroMesasGuardasArray[i]).mesero;
 
                 mesas.innerHTML += `
                 <style>
@@ -134,8 +134,10 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
         for (let j = 0; j < i; j++) {
             
-            if (numeroMesasPorDiaArray.some(el => el.mesa === j + 1 && el.abierta == 1)) {
-                let numeroIdMesero = numeroMesasPorDiaArray.find(el => el.mesa === j + 1 && el.abierta == 1).mesero;
+            if (numeroMesasPorDiaArray.some(el => el.mesa === numeroMesasGuardasArray[j] && el.abierta == true)) {
+                let numeroIdMesero = numeroMesasPorDiaArray.find(el => el.mesa === numeroMesasGuardasArray[j] && el.abierta == 1).mesero;
+
+                console.log('Entramos')
 
                 mesas.innerHTML += `
                 <style>
@@ -179,9 +181,9 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
 
         for (let j = 0; j < i; j++) {
 
-            let numeroIdMesero = numeroMesasPorDiaArray.find(el => el.mesa === j + 1)?.mesero;
+            let numeroIdMesero = numeroMesasPorDiaArray.find(el => el.mesa === numeroMesasGuardasArray[j])?.mesero;
             
-            if (numeroMesasPorDiaArray.some(el => el.mesa === j + 1)) {
+            if (numeroMesasPorDiaArray.some(el => el.mesa === numeroMesasGuardasArray[j])) {
 
                 document.getElementById(`mesa_${j + i}`).addEventListener("click", () => {
                     
@@ -189,8 +191,8 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
                     if (numeroIdMesero == idMesero) {
                         console.log("Desasigna mesa")
                         document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
-                        numeroMesasPorDiaArray.find(el => el.mesa === j + 1).abierta = false;
-
+                        numeroMesasPorDiaArray.find(el => el.mesa == numeroMesasGuardasArray[j]).abierta = false;
+                        console.log(numeroMesasPorDiaArray)
                         CargarMesasSeleccion(i);
                     }
                 });
@@ -200,7 +202,8 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
                     console.log("Asigna mesa")
                     document.getElementById(`mesa_${j + i}`).classList.toggle("bg-dark-subtle");
                     document.getElementById(`mesa_${j + i}`).style.backgroundColor = convertirAHexadecimal(idMesero);
-                    numeroMesasPorDiaArray.push({ mesa: j + 1, mesero: parseInt(idMesero), idmeseropordia: parseInt(idMeseroPorDia), abierta: true });
+                    numeroMesasPorDiaArray.push({ mesa: numeroMesasGuardasArray[j], mesero: parseInt(idMesero), idmeseropordia: parseInt(idMeseroPorDia), abierta: true });
+                    console.log(numeroMesasPorDiaArray)
 
                     CargarMesasSeleccion(i);
                 });
