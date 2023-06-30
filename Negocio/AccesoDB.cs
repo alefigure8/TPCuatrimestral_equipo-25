@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Net.Sockets;
+using System.Web.Configuration;
 
 namespace Negocio
 {
@@ -12,25 +13,25 @@ namespace Negocio
 
 		// Datos de la Base
 		//DB Alejandro
-		string serverName = "localhost\\SQLEXPRESS";
-        //DB Diego
-        //string serverName = "localhost\\SQLLAB";
-        //
-        //DB Fede
-        //
-        //string serverName = "localhost\\";
+		//string serverName = "localhost\\SQLEXPRESS";
+		//DB Diego
+		//string serverName = "localhost\\SQLLAB";
+		//
+		//DB Fede
+		//
+		//string serverName = "localhost\\";
 
 
-        //DB Nombre
-        string dataBase = "RestoDB";
+		//DB Nombre
+		//string dataBase = "RestoDB";
 
 		//Datos de la Base - SOMEE
-		//string connectionString = WebConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
-
+		string connectionString = WebConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
+	
 		public AccesoDB()
 		{
-			connection = new SqlConnection($"server={serverName}; database={dataBase}; integrated security=true; TrustServerCertificate=True");
-			//connection = new SqlConnection(connectionString);
+			//connection = new SqlConnection($"server={serverName}; database={dataBase}; integrated security=true; TrustServerCertificate=True");
+			connection = new SqlConnection(connectionString);
 			command = new SqlCommand();
 		}
 
