@@ -344,6 +344,10 @@
 
     function renderMesa(datosMesa, numeroMesas) {
 
+        //BORRAR!
+        console.log("Datos", datosMesa)
+        console.log("Numeros", numeroMesas)
+
         for (let i = 0; i < numeroMesa; i++) {
             //Buscamos mesa
             let mesa = datosMesa.find(item => item.mesa == numeroMesas[i].Numero)
