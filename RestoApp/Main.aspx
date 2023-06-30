@@ -339,18 +339,14 @@
     //Llamamos datos de las mesas
     obtenerDatosMesas()
         .then(({ datosMesas, numeroMesas }) => {
-            console.log(numeroMesas)
             renderMesa(datosMesas, numeroMesas);
         });
 
     function renderMesa(datosMesa, numeroMesas) {
 
-        //BORRAR!
-        console.log(datosMesa)
-
         for (let i = 0; i < numeroMesa; i++) {
             //Buscamos mesa
-            let mesa = datosMesa.find(item => item.mesa == i + 1)
+            let mesa = datosMesa.find(item => item.mesa == numeroMesas[i].Numero)
 
             //color del Mesero
             let colorMesero;
