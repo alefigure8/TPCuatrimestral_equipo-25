@@ -159,17 +159,18 @@
             <!-- SECCION MESAS ASIGNDAS -->
             <section class="col-10 bg-white rounded p-3 justify-content-around m-1">
                 <div class="h3">Mis Mesas </div>
-                <div class="row justify-content-around justify-items-start p-3">
+                <div class="row justify-content-around justify-items-start p-3" id="section-mesa-mesero">
                     <asp:Label runat="server" ID="lbSinMesasAsignadas"></asp:Label>
+
                     <!-- MESAS ASIGNADAS-->
-                    <asp:Repeater runat="server" ID="repeaterMesasAsigndas">
-                        <ItemTemplate>
+                    <%--<asp:Repeater runat="server" ID="repeaterMesasAsigndas">
+                        <ItemTemplate>--%>
 
                             <!-- MESAS -->
-                            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
+                            <%--<div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
                                 <div class="bg-warning w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
                                     <div class="background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center">
-                                        <i class="fa-solid fa-utensils fs-4"></i>
+                                            <i class="fa-solid fa-utensils fs-4"></i>
                                     </div>
                                 </div>
                                 <div class=" w-100 text-light d-flex justify-content-center">
@@ -177,11 +178,15 @@
                                         <small class="fw-bold"><%# Eval("Mesa") %></small>
                                     </div>
                                 </div>
-                            </div>
+                            </div>--%>
                             <!-- FIN MESAS -->
 
-                        </ItemTemplate>
-                    </asp:Repeater>
+
+                            
+
+                       <%-- </ItemTemplate>
+                    </asp:Repeater>--%>
+
                     <!-- FIN MESAS ASIGNADAS -->
                 </div>
             </section>
@@ -365,14 +370,17 @@
 
 |<!-- Scripts Mesas -->
 <script>
+    let tipoUsuario = "<%: tipoUsuario%>";
     let numeroMesa = <%: MesasActivas %>;
     let sectionMesa = document.getElementById("section-mesa");
+    let sectionMesaMesero = document.getElementById("section-mesa-mesero")
     const modal = document.getElementById("modalMesas");
     const closeModalBtn = document.getElementsByClassName("close")[0];
     let contenidoModal = document.getElementById("modal-content");
 
-    //Traemos datos de mesas desde codebehind
-    function obtenerDatosMesas() {
+    //Traemos datos de mesas desde codebehind del Gerente
+    function obtenerDatosMesasGerente() {
+
         return new Promise((resolve) => {
             if (typeof datosMesasArray !== 'undefined') {
                 const datosMesas = JSON.parse(datosMesasArray)
@@ -391,17 +399,43 @@
         });
     }
 
-    //Llamamos datos de las mesas
-    obtenerDatosMesas()
-        .then(({ datosMesas, numeroMesas }) => {
-            renderMesa(datosMesas, numeroMesas);
+    //Traemos datos de mesas desde codebehind del Mesero
+    function obtenerDatosMesasMesero() {
+
+        return new Promise((resolve) => {
+            if (typeof numeroMesasArray !== 'undefined') {
+                const numeroMesas = JSON.parse(numeroMesasArray)
+                resolve({ numeroMesas });
+            } else {
+                const intervalo = setInterval(() => {
+                    if (typeof numeroMesasArray !== 'undefined') {
+                        clearInterval(intervalo);
+                        const numeroMesas = JSON.parse(numeroMesasArray)
+                        resolve({ numeroMesas });
+                    }
+                }, 0);
+            }
         });
+    }
 
-    function renderMesa(datosMesa, numeroMesas) {
+    //Llamamos datos de las mesas del Gerente
+    if (tipoUsuario == "Gerente") {
+        obtenerDatosMesasGerente()
+            .then(({ datosMesas, numeroMesas }) => {
+                renderMesaGerente(datosMesas, numeroMesas);
+            });
+    }
 
-        //BORRAR!
-        console.log("Datos", datosMesa)
-        console.log("Numeros", numeroMesas)
+    //Llamamos datos de las mesas del Mesero
+    if (tipoUsuario == "Mesero") {
+        obtenerDatosMesasMesero()
+            .then(({ numeroMesas }) => {
+                renderMesaMesero(numeroMesas);
+            });
+    }
+
+    //Funcion Gerente
+    function renderMesaGerente(datosMesa, numeroMesas) {
 
         for (let i = 0; i < numeroMesa; i++) {
             //Buscamos mesa
@@ -460,6 +494,61 @@
                     <p class="fw-bold">Estado: <span class="fw-normal">Cerrada</span></p>
                     `;
                 }
+
+            })
+        }
+    }
+
+    //Función Mesero
+    function renderMesaMesero(numeroMesas) {
+
+        for (i = 0; i < numeroMesas.length; i++) {
+
+            //Mesa
+            var mainDiv = document.createElement("div");
+            mainDiv.className = "col-6 col-sm-3 d-flex justify-content-center flex-column m-4";
+            mainDiv.style.height = "150px";
+            mainDiv.style.width = "150px";
+
+            var div1 = document.createElement("div");
+            div1.className = "bg-warning w-100 h-100 border rounded-circle border-dark-subtle p-1 btn";
+            div1.id = "mesa_" + numeroMesas[i].mesa;
+
+            var div2 = document.createElement("div");
+            div2.className = "background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center";
+
+            var icon = document.createElement("i");
+            icon.className = "fa-solid fa-utensils fs-4";
+
+            div2.appendChild(icon);
+            div1.appendChild(div2);
+            mainDiv.appendChild(div1);
+
+            var div3 = document.createElement("div");
+            div3.className = "w-100 text-light d-flex justify-content-center";
+
+            var div4 = document.createElement("div");
+            div4.className = "w-50 bg-black rounded-4 text-center";
+
+            var small = document.createElement("small");
+            small.className = "fw-bold";
+            small.innerText = numeroMesas[i].mesa;
+
+            div4.appendChild(small);
+            div3.appendChild(div4);
+            mainDiv.appendChild(div3);
+            sectionMesaMesero.appendChild(mainDiv);
+
+            //Evento y Modal
+            let numeroDeMesa = numeroMesas[i].mesa;
+            let mesaEvento = document.getElementById(`mesa_${numeroMesas[i].mesa}`);
+
+            mesaEvento.addEventListener('click', () => {
+                modal.style.display = "block";
+                contenidoModal.innerHTML = "";
+                contenidoModal.innerHTML += `
+                <p>Mesa ${numeroDeMesa}</p>
+                `;
 
             })
         }

@@ -25,5 +25,12 @@ namespace Opciones
 			public const string Error = "error";
 			public const string MesasAsignada = "MesasAsignadas";
 		}
+
+		public struct Rol
+		{
+			public const string Admin = "Admin";
+			public const string Gerente = "Gerente";
+			public const string Mesero = "Mesero";
+		}
 	}
 }

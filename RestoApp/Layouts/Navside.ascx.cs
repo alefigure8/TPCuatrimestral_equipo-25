@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Dominio;
 using Helper;
@@ -26,12 +28,19 @@ namespace RestoApp.Layouts
 			{
 				//Verificamos que si ya está en memoria el meseropordia
 				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
+				{
 					meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
+				}
 
-				//if (!IsPostBack)
-				//{
-					usuario = (Usuario)Session[Configuracion.Session.Usuario];
-				//}
+				usuario = (Usuario)Session[Configuracion.Session.Usuario];
+
+				//TODO: Actualizar estado de empleado
+				string botonID = (string)Session["BotonID"];
+				hiddenBotonID.Value = botonID;
+
+				if (!IsPostBack)
+				{
+				}
 			}
 		}
 
@@ -47,5 +56,6 @@ namespace RestoApp.Layouts
 		{
             Response.Redirect(Configuracion.Pagina.Perfil, false);
         }
+
 	}
 }

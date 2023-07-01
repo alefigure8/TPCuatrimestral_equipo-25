@@ -13,6 +13,7 @@ using Dominio;
 using Opciones;
 using Helper;
 using System.Data;
+using System.Web.UI.HtmlControls;
 
 namespace RestoApp
 {
@@ -23,7 +24,8 @@ namespace RestoApp
 		public MeseroPorDia meseroPorDia { get; set; }
 		public int MesasActivas { get; set; }
         public int MesasAsignadas { get; set; }
-        public int MeserosPresentes { get; set; }		
+        public int MeserosPresentes { get; set; }
+		public string tipoUsuario;
 
 		//Private
 		private List<MeseroPorDia> meserosPorDiaNoAsignados = new List<MeseroPorDia>();
@@ -40,6 +42,7 @@ namespace RestoApp
 			// CONTENIDO GERENTE
 			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
 			{
+				tipoUsuario = Configuracion.Rol.Gerente;
 				CargarMeseros();
 				CargarDatosMesas();
 				CargarEstadoMesas();
@@ -52,7 +55,8 @@ namespace RestoApp
 				//Verificamos que si ya está en memoria el meseropordia
 				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
 					meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
-
+				
+				tipoUsuario = Configuracion.Rol.Mesero;
 				CargarMenuDisponible();
 				CargarMeseroPorDia();
 				CargarMesasAsignadas();
@@ -281,6 +285,9 @@ namespace RestoApp
 			usuario = Helper.Session.GetUsuario();
 			meseroPorDia = Helper.Session.GetMeseroPorDia();
 
+			//BTN
+			Session["BotonID"] = btnMeseroAlta.ClientID;
+
 			if (meseroPorDia == null)
 			{
 				//Darse de Alta
@@ -366,10 +373,27 @@ namespace RestoApp
 
 				if (mesasAsignadas != null)
 				{
-					repeaterMesasAsigndas.DataSource = mesasAsignadas;
-					repeaterMesasAsigndas.DataBind();
+					//repeaterMesasAsigndas.DataSource = mesasAsignadas;
+					//repeaterMesasAsigndas.DataBind();
 
-					if(mesasAsignadas.Count > 0)
+					//Creamos Objetos con los números de mesas asignadas
+					List<object> datosMesas = new List<object>();
+
+					foreach (MesaPorDia mesa in Helper.Session.GetMesasAsignadas())
+					{
+						//Guardamos datos en datosMesas de cuyas mesas el cierre sea Null
+						if (mesa.Cierre == null)
+						{
+
+							datosMesas.Add(new { mesa = mesa.Mesa });
+						}
+					}
+
+					//Madar datos a script
+					string numeroMesasJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(datosMesas);
+					ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasArray", $"var numeroMesasArray = '{numeroMesasJSON}';", true);
+
+					if (mesasAsignadas.Count > 0)
 					{
 						lbSinMesasAsignadas.Text = String.Empty;
 						return;
