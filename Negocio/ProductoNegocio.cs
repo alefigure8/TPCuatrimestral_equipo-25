@@ -232,15 +232,17 @@ namespace Negocio
                     $"'{ProductoDelDia.Categoria}'," +
                     $"'{ProductoDelDia.Nombre}'," +
                     $"'{ProductoDelDia.Descripcion}'," +
+                    //$" {ProductoDelDia.Valor.ToString().Replace(",", ".")}," +
                     $" {ProductoDelDia.Valor}," +
-                    $"'{ProductoDelDia.AptoVegano}'," +
+					$"'{ProductoDelDia.AptoVegano}'," +
                     $"'{ProductoDelDia.AptoCeliaco}'," +
                     $"'{ProductoDelDia.Alcohol}'," +
                     $" {ProductoDelDia.Stock}," +
                     $"'{ProductoDelDia.Activo}'," +
                     $"'{ProductoDelDia.TiempoCoccion}'," +
+                    //$"'{ProductoDelDia.Fecha.ToString("yyyy-MM-dd")}'," +
                     $"'{ProductoDelDia.Fecha}'," +
-                    $"{ProductoDelDia.StockInicio}," +
+					$"{ProductoDelDia.StockInicio}," +
                     $"{ProductoDelDia.StockCierre})");
                 return AccesoDB.executeScalar();
             }

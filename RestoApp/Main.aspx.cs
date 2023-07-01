@@ -78,13 +78,13 @@ namespace RestoApp
 					//Sumamos mesas a mesas asignadas
 					MesasAsignadas += item.MesasAsignadas > 0 ? 1 : 0;
 				}
-
+				
 				//Guardamos dato de cada mesa en una lista de diccionarios
 				foreach(var item in mesasPorDia)
 				{
 					//Guardamos datos en datosMesas de cuyas mesas el cierre sea Null
 					if(item.Cierre == null)
-						datosMesas.Add(new { mesa = item.Mesa, mesero = item.Mesero });
+						datosMesas.Add(new { mesa = item.Mesa, mesero = item.Mesero, nombre = meserosPorDiaAsignados.Find( el => el.IdMesero == item.Mesero)?.Nombres });
 				}
 
 				List<Mesa> mesasActivasNumeros = mesas.FindAll(m => m.Activo == true);
