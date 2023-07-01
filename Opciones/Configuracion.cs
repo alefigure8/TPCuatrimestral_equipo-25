@@ -18,6 +18,7 @@ namespace Opciones
 		public struct Session
 		{
 			public const string Usuario = "usuario";
+			public const string Mesas = "Mesas";
 			public const string MeseroPorDia = "MeseroPorDia";
 			public const string MeserosNoAsignados = "MeserosNoAsignados";
 			public const string MeserosAsignados = "MeserosAsignados";

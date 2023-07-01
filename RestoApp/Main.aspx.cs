@@ -23,30 +23,29 @@ namespace RestoApp
 		public MeseroPorDia meseroPorDia { get; set; }
 		public int MesasActivas { get; set; }
         public int MesasAsignadas { get; set; }
-        public int MeserosPresentes { get; set; }
-		public List<MeseroPorDia> meserosPorDiaNoAsignados = new List<MeseroPorDia>();
-		public List<MeseroPorDia> meserosPorDiaAsignados = new List<MeseroPorDia>();
-		public List<object> datosMesas = new List<object>();
+        public int MeserosPresentes { get; set; }		
 
 		//Private
+		private List<MeseroPorDia> meserosPorDiaNoAsignados = new List<MeseroPorDia>();
+		private List<MeseroPorDia> meserosPorDiaAsignados = new List<MeseroPorDia>();
 		private List<Mesa> mesas;
 		private List<MesaPorDia> mesasPorDia;
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			//Verificar que sea usuario
-			if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
-				usuario = (Usuario)Session[Configuracion.Session.Usuario];
+			if (AutentificacionUsuario.esUser(Helper.Session.GetUsuario()))
+					usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
 
 
 			// CONTENIDO GERENTE
 			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
 			{
+				CargarMeseros();
 				CargarDatosMesas();
 				CargarEstadoMesas();
 				CargarPedido();
-				CargarMeseros();
 			}
 
 			//CONTENIDO MESERO
@@ -65,26 +64,33 @@ namespace RestoApp
 		private void CargarDatosMesas()
 		{
 			{
+				//Llamdados a DB
 				MesaNegocio mesaNegocio = new MesaNegocio();
 				mesas = mesaNegocio.Listar();
 				mesasPorDia = mesaNegocio.ListarMesaPorDia();
-				
+
+				//Sessiones
+				Helper.Session.SetMesas(mesas);
+				Helper.Session.SetMesasAsignadas(mesasPorDia);
+
 				//Guardamos cantidad de mesas activas
 				MesasActivas = mesas.FindAll(m => m.Activo == true).Count();
-								
+					
 				//Guardamos la cantidad de mesas asignadas
-				foreach(var item in meserosPorDiaAsignados)
+				foreach(MeseroPorDia mesero in Helper.Session.GetMeserosAsignados())
 				{
 					//Sumamos mesas a mesas asignadas
-					MesasAsignadas += item.MesasAsignadas > 0 ? 1 : 0;
+					MesasAsignadas += mesero.MesasAsignadas > 0 ? 1 : 0;
 				}
-				
-				//Guardamos dato de cada mesa en una lista de diccionarios
-				foreach(var item in mesasPorDia)
+
+				//Guardamos dato de cada mesa en una lista de Objects
+				List<object> datosMesas = new List<object>();
+
+				foreach(MesaPorDia mesa in Helper.Session.GetMesasAsignadas())
 				{
 					//Guardamos datos en datosMesas de cuyas mesas el cierre sea Null
-					if(item.Cierre == null)
-						datosMesas.Add(new { mesa = item.Mesa, mesero = item.Mesero, nombre = meserosPorDiaAsignados.Find( el => el.IdMesero == item.Mesero)?.Nombres });
+					if(mesa.Cierre == null)
+						datosMesas.Add(new { mesa = mesa.Mesa, mesero = mesa.Mesero, nombre = meserosPorDiaAsignados.Find( el => el.IdMesero == mesa.Mesero)?.Nombres });
 				}
 
 				List<Mesa> mesasActivasNumeros = mesas.FindAll(m => m.Activo == true);
@@ -184,6 +190,10 @@ namespace RestoApp
 			//Colocar cantidad de mesas asignadas
 			meserosPorDiaAsignados.ForEach(mesero => mesero.MesasAsignadas = IdMeserosConMesasAbiertas.FindAll(id => id == mesero.Id).Count);
 
+			//Sessions
+			Helper.Session.SetMeserosAsignados(meserosPorDiaAsignados);
+			Helper.Session.SetMeserosNoAsignados(meserosPorDiaNoAsignados);
+		
 			//Cantidad de Mesas Asignadas
 			foreach(var meseros in meserosPorDiaAsignados)
 			{
@@ -200,9 +210,6 @@ namespace RestoApp
 			//Render Meseros Ausentes
 			repeaterMeserosAusentes.DataSource = meserosAusentes;
 			repeaterMeserosAusentes.DataBind();
-
-			Session[Configuracion.Session.MeserosAsignados] = meserosPorDiaAsignados;
-			Session[Configuracion.Session.MeserosNoAsignados] = meserosPorDiaNoAsignados;
 
 		}
 
@@ -231,9 +238,6 @@ namespace RestoApp
             BebidasDelDia.DataBind();
         }
 
-
-
-
         private void CargarMeseroPorDia()
 		{
 			List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
@@ -246,8 +250,8 @@ namespace RestoApp
 
 			if(meseroPorDia != null)
 			{
-				//Si hay un mesero dado de alta, lo guardamos en sesión
-				Session[Configuracion.Session.MeseroPorDia] = meseroPorDia;
+				// Session
+				Helper.Session.SetMeseroPorDia(meseroPorDia);
 
 				if (meseroPorDia.Id > 0)
 				{
@@ -264,8 +268,9 @@ namespace RestoApp
 	
 		protected void btnMeseroAlta_Click(object sender, EventArgs e)
         {
-			usuario = (Usuario)Session[Configuracion.Session.Usuario];
-			meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
+			// Session
+			usuario = Helper.Session.GetUsuario();
+			meseroPorDia = Helper.Session.GetMeseroPorDia();
 
 			if (meseroPorDia == null)
 			{
@@ -293,7 +298,7 @@ namespace RestoApp
 				{
 					btnMeseroAlta.Text = "Darse de Baja";
 					btnMeseroAlta.CssClass = "btn btn-sm btn-light";
-					Session[Configuracion.Session.MeseroPorDia] = meseroPorDia;
+					Helper.Session.SetMeseroPorDia(meseroPorDia);
 				}
 			}
 			else
@@ -302,11 +307,12 @@ namespace RestoApp
 				try
 				{
 					MesaNegocio mesaNegocio = new MesaNegocio();
-					List<MesaPorDia> mesasAsignadas = (List<MesaPorDia>)Session[Configuracion.Session.MesasAsignada];
+
+					List<MesaPorDia> mesasAsignadas = Helper.Session.GetMesasAsignadas();
 
 					//Si tiene mesas asigndas, se cierran
 					//TODO: si tiene pedidos abierto, primero los tiene que cerrar
-					if(mesasAsignadas != null)
+					if (mesasAsignadas != null)
 					{
 						foreach(MesaPorDia item in mesasAsignadas)
 						{
@@ -323,7 +329,8 @@ namespace RestoApp
 						btnMeseroAlta.Text = "Darse de Alta";
 						btnMeseroAlta.CssClass = "btn btn-sm btn-warning";
 						meseroPorDia = null;
-						Session[Configuracion.Session.MeseroPorDia] = null;
+						Helper.Session.SetMeseroPorDia(null);
+						
 					}
 				}
 				catch(Exception ex)
@@ -335,8 +342,9 @@ namespace RestoApp
 
 		private void CargarMesasAsignadas()
 		{
-			usuario = (Usuario)Session[Configuracion.Session.Usuario];
-			meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
+			// Session
+			usuario = Helper.Session.GetUsuario();
+			meseroPorDia = Helper.Session.GetMeseroPorDia();
 
 			if (meseroPorDia != null)
 			{
@@ -345,7 +353,7 @@ namespace RestoApp
 					.FindAll(x => x.Mesero == meseroPorDia.IdMesero && x.Cierre == null)
 					.OrderBy(x => x.Mesa).ToList();
 
-				Session[Configuracion.Session.MesasAsignada] = mesasAsignadas;
+				Helper.Session.SetMesasAsignadas(mesasAsignadas);
 
 				if (mesasAsignadas != null)
 				{
