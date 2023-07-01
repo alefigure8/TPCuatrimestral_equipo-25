@@ -8,8 +8,8 @@
 
     <div class="container" >
     <div class="row d-flex" style="justify-content:flex-start; margin-top:40px; margin-left:40px";>
-            
-        <div class="col-6 text-white bg-dark" style="width:400px; border-radius:5px; padding:10px;padding-left:20px;padding-right:20px;">
+        
+        <div class="col-6 text-black bg-white" style="width:400px; border-radius:5px; padding:10px;padding-left:20px;padding-right:20px; box-shadow: 0 2px 4px #797c81;border-inline-color:#797c81;">
                             
             <div class="row d-flex" style="justify-content:center;">
                     
@@ -23,35 +23,35 @@
                </div>
         <div class="row">
                 <asp:Label ID="LblID" runat="server" Text="Id"></asp:Label>
-                <asp:TextBox ID="TxtId" runat="server" CssClass="form-control"></asp:TextBox>
+                <asp:TextBox ID="TxtId" runat="server" CssClass="form-control" Style="box-shadow: 0 2px 4px #797c81;border-color:#797c81;"></asp:TextBox>
         </div> 
         <div class="row">
             
                 <asp:Label ID="lblNombre" runat="server" Text="Nombre"></asp:Label>
-                <asp:TextBox ID="TxtNombre" runat="server" CssClass="form-control"></asp:TextBox>
+                <asp:TextBox ID="TxtNombre" runat="server" CssClass="form-control" Style="box-shadow: 0 2px 4px #797c81;border-color:#797c81;"></asp:TextBox>
             </div>
        
         <div class="row">
             
                 <asp:Label ID="lblApellido" runat="server" Text="Apellido"></asp:Label>
-                <asp:TextBox ID="TxtApellido" runat="server" CssClass="form-control"></asp:TextBox>
+                <asp:TextBox ID="TxtApellido" runat="server" CssClass="form-control" Style="box-shadow: 0 2px 4px #797c81;border-color:#797c81;"></asp:TextBox>
             </div>
      
         <div class="row">
       
                 <asp:Label ID="lblEmail" runat="server" Text="Email"></asp:Label>
-                <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control"></asp:TextBox>
+                <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" Style="box-shadow: 0 2px 4px #797c81;border-color:#797c81;"></asp:TextBox>
             </div>
           
             <asp:UpdatePanel ID="UpdatePanelPassword" runat="server">
                <ContentTemplate>
             <div class="row" >
              
-           <asp:Label ID="LblPassword" runat="server" Text="Password"></asp:Label>
+           <asp:Label ID="LblPassword" runat="server" Text="Password" ></asp:Label>
           
            <div class="col-9" style="padding:0px; margin-right:0px;">
              
-                     <asp:TextBox ID="TxtPassword" runat="server" CssClass="form-control" ></asp:TextBox>
+                     <asp:TextBox ID="TxtPassword" runat="server" CssClass="form-control" Style="box-shadow: 0 2px 4px #797c81;border-color:#797c81;"></asp:TextBox>
          
                       </div>
          
@@ -64,7 +64,7 @@
                      </div>
                 <div class="col-6">
 
-                   <asp:LinkButton ID="BtnModificarPass" runat="server" BorderColor="#797c81"  style="margin-left: -5px;" OnClick="BtnModificarPass_Click" class="btn btn-dark">
+                   <asp:LinkButton ID="BtnModificarPass" runat="server" BorderColor="#797c81"  style="margin-left: -5px;" OnClick="BtnModificarPass_Click" class="btn btn-outline-dark">
                        <% if ((bool)Session["Modificarpass"] == false) { %><i class="fa-solid fa-pen" style="color: #797c81;"></i><% } else { %> <i class="fa-solid fa-check" style="color: #797c81;"></i> <%} %> </asp:LinkButton>
                         </div>
                    </div>
