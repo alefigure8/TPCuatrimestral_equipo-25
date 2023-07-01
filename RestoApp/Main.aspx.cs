@@ -35,9 +35,7 @@ namespace RestoApp
 		{
 			//Verificar que sea usuario
 			if (AutentificacionUsuario.esUser(Helper.Session.GetUsuario()))
-					usuario = (Usuario)Session[Configuracion.Session.Usuario];
-
-
+					usuario = Helper.Session.GetUsuario();
 
 			// CONTENIDO GERENTE
 			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
@@ -73,7 +71,7 @@ namespace RestoApp
 				Helper.Session.SetMesas(mesas);
 				Helper.Session.SetMesasAsignadas(mesasPorDia);
 
-				//Guardamos cantidad de mesas activas
+				//Guardamos cantidad de mesas activas para mostrar en ASPX
 				MesasActivas = mesas.FindAll(m => m.Activo == true).Count();
 					
 				//Guardamos la cantidad de mesas asignadas
@@ -83,6 +81,8 @@ namespace RestoApp
 					MesasAsignadas += mesero.MesasAsignadas > 0 ? 1 : 0;
 				}
 
+				List<MeseroPorDia> meserosAsignados = Helper.Session.GetMeserosAsignados();
+
 				//Guardamos dato de cada mesa en una lista de Objects
 				List<object> datosMesas = new List<object>();
 
@@ -90,9 +90,13 @@ namespace RestoApp
 				{
 					//Guardamos datos en datosMesas de cuyas mesas el cierre sea Null
 					if(mesa.Cierre == null)
-						datosMesas.Add(new { mesa = mesa.Mesa, mesero = mesa.Mesero, nombre = meserosPorDiaAsignados.Find( el => el.IdMesero == mesa.Mesero)?.Nombres });
+					{
+
+						datosMesas.Add(new { mesa = mesa.Mesa, mesero = mesa.Mesero, nombre = meserosAsignados.Find(el => el.IdMesero == mesa.Mesero)?.Nombres, apellido = meserosAsignados.Find(el => el.IdMesero == mesa.Mesero)?.Apellidos });
+					}
 				}
 
+				//Buscamos las mesas activas
 				List<Mesa> mesasActivasNumeros = mesas.FindAll(m => m.Activo == true);
 
 				// Convierte la lista en una cadena JSON
@@ -188,7 +192,8 @@ namespace RestoApp
 			meserosPorDiaAsignados = meseroPorDia.Where(usuario => IdMeserosConMesasAbiertas.Contains(usuario.Id)).ToList();
 
 			//Colocar cantidad de mesas asignadas
-			meserosPorDiaAsignados.ForEach(mesero => mesero.MesasAsignadas = IdMeserosConMesasAbiertas.FindAll(id => id == mesero.Id).Count);
+			meserosPorDiaAsignados.ForEach(mesero => mesero.MesasAsignadas = IdMeserosConMesasAbiertas
+			.FindAll(id => id == mesero.Id).Count);
 
 			//Sessions
 			Helper.Session.SetMeserosAsignados(meserosPorDiaAsignados);
@@ -210,9 +215,9 @@ namespace RestoApp
 			//Render Meseros Ausentes
 			repeaterMeserosAusentes.DataSource = meserosAusentes;
 			repeaterMeserosAusentes.DataBind();
-
 		}
 
+		
 		// VISTA MESERO
 		private void CargarMenuDisponible()
 		{
@@ -226,14 +231,18 @@ namespace RestoApp
 
 		private void CargarPlatosDelDia()
 		{
-			List<ProductoDelDia> ListaProductosDisponibles = ((List<ProductoDelDia>)Session["ListaMenu"]).FindAll(x => x.Activo == true && x.Categoria == 1);
+			List<ProductoDelDia> ListaProductosDisponibles = ((List<ProductoDelDia>)Session["ListaMenu"])
+				.FindAll(x => x.Activo == true && x.Categoria == 1);
+			
             PlatosDelDia.DataSource = ListaProductosDisponibles;
             PlatosDelDia.DataBind();
         }
 
         private void CargarBebidasDelDia()
         {
-            List<ProductoDelDia> ListaProductosDisponibles = ((List<ProductoDelDia>)Session["ListaMenu"]).FindAll(x => x.Activo == true && x.Categoria == 2);
+            List<ProductoDelDia> ListaProductosDisponibles = ((List<ProductoDelDia>)Session["ListaMenu"])
+				.FindAll(x => x.Activo == true && x.Categoria == 2);
+			
             BebidasDelDia.DataSource = ListaProductosDisponibles;
             BebidasDelDia.DataBind();
         }

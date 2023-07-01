@@ -131,7 +131,18 @@
         </div>
         <% } %>
 
+        <div id="modalMesas" class="modal">
+            <div class="modal-content">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="modal-title">Mesero Asignado</h5>
+                    <span class="close">&times;</span>
+                </div>
+                <div id="modal-content" class="modal-body">
 
+                    <!-- Desde JS -->
+                </div>
+            </div>
+        </div>
 
 
         <!-- VISTA MESERO -->
@@ -284,6 +295,8 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+          cursor: pointer;
+
         }
 
         .mesa p {
@@ -308,6 +321,42 @@
             bottom: 0;
             left: 0;
         }
+
+        .modal {
+          display: none; /* Ocultar el modal por defecto */
+          position: fixed;
+          z-index: 1;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: rgba(0, 0, 0, 0.4); /* Fondo semitransparente */
+        }
+
+        .modal-content {
+          background-color: #fefefe;
+          margin: 15% auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 20%;
+        }
+
+        .close {
+            display: flex;
+            justify-content: end;
+          color: #aaaaaa;
+          font-size: 28px;
+          font-weight: bold;
+          cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+          color: #000;
+          text-decoration: none;
+          cursor: pointer;
+        }
     </style>
 |<!-- Fin Styles Mesas -->
 
@@ -315,6 +364,9 @@
 <script>
     let numeroMesa = <%: MesasActivas %>;
     let sectionMesa = document.getElementById("section-mesa");
+    const modal = document.getElementById("modalMesas");
+    const closeModalBtn = document.getElementsByClassName("close")[0];
+    let contenidoModal = document.getElementById("modal-content");
 
     //Traemos datos de mesas desde codebehind
     function obtenerDatosMesas() {
@@ -364,6 +416,10 @@
             //Main
             let mainDiv = document.createElement("div");
             mainDiv.classList.add("d-flex", "mesa", "bg-body-secondary");
+            let idMesa = mesa ? 'mesa_'+mesa.mesa : 'mesa'
+            mainDiv.setAttribute("id", idMesa);
+            let meseroNoAsignado = "No Asignado";
+            mainDiv.setAttribute("title", `Mesero: ${mesa ? mesa.nombre + ' ' + mesa.apellido : meseroNoAsignado}`);
 
             //Top -- Background según mesero
             let mesaTop = document.createElement("div");
@@ -384,8 +440,33 @@
             mainDiv.appendChild(mesaNumber);
             mainDiv.appendChild(mesaBottom);
             sectionMesa.appendChild(mainDiv);
+
+            //Evento de la mesa
+            let mesaEvento = document.getElementById(idMesa);
+            mesaEvento.addEventListener('click', () => {
+
+                //Buscar ids con numeros
+                let contieneNumero = /\d/.test(idMesa)
+
+                if (contieneNumero) {
+                    modal.style.display = "block";
+                    contenidoModal.innerHTML = "";
+                    contenidoModal.innerHTML += `
+                    <p class="fw-bold">Nombre: <span class="fw-normal">${mesa.nombre} ${mesa.apellido}</span></p>
+                    <p class="fw-bold">Mesa: <span class="fw-normal">${mesa.mesa}</span></p>
+                    <p class="fw-bold">Estado: <span class="fw-normal">Cerrada</span></p>
+                    `;
+                }
+
+            })
         }
     }
+
+    //Boton modal para cerrar
+    closeModalBtn.addEventListener("click", function () {
+        modal.style.display = "none";
+    });
+
 
     //Función para pasar numero de mesero a color
     function convertirAHexadecimal(numero) {
