@@ -92,6 +92,7 @@
                     <asp:UpdatePanel ID="UpdatePanel1"
                         runat="server">
                         <ContentTemplate>
+                            <asp:HiddenField ID="hiddenBotonID" runat="server" />
                             <!-- Estado del mesero -->
                             <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero && meseroPorDia == null)
                                 { %>
@@ -101,6 +102,9 @@
                             <%} %>
                             <!-- Fin Estado del mesero -->
                         </ContentTemplate>
+                        <Triggers>
+                            <asp:AsyncPostBackTrigger  ControlID="hiddenBotonID" EventName="ValueChanged"/>
+                        </Triggers>
                     </asp:UpdatePanel>
                 </strong>
             </a>
