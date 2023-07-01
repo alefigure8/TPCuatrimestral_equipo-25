@@ -69,9 +69,7 @@
                 <div class="collapse" id="usuarios-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                         <li><a href="usuarios.aspx" class="nav-link ps-3">Administrar usuarios</a></li>
-                        <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
-                        <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
-                    </ul>
+                       </ul>
                 </div>
             </li>
               <%}%>
