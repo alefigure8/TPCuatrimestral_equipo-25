@@ -42,11 +42,19 @@
                 <asp:Label ID="lblEmail" runat="server" Text="Email"></asp:Label>
                 <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control"></asp:TextBox>
             </div>
-       <div class="row" >
-                  <asp:Label ID="LblPassword" runat="server" Text="Password"></asp:Label>
-            <div class="col-9" style="padding:0px; margin-right:0px;">
+          
+            <asp:UpdatePanel ID="UpdatePanelPassword" runat="server">
+               <ContentTemplate>
+            <div class="row" >
+             
+           <asp:Label ID="LblPassword" runat="server" Text="Password"></asp:Label>
+          
+           <div class="col-9" style="padding:0px; margin-right:0px;">
+             
                      <asp:TextBox ID="TxtPassword" runat="server" CssClass="form-control" ></asp:TextBox>
-                </div>
+         
+                      </div>
+         
             <div class="col-3" >
                 <div class="row d-flex" style="justify-content:space-around; padding:0px">
                 <div class="col-6">
@@ -63,6 +71,8 @@
 
             </div>
             </div>
+                            </ContentTemplate>
+               </asp:UpdatePanel>
             <div class="row">
                 <asp:Label ID="LblAvisopass" runat="server" Visible="false"></asp:Label>
 
