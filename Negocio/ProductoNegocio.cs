@@ -240,8 +240,8 @@ namespace Negocio
                     $" {ProductoDelDia.Stock}," +
                     $"'{ProductoDelDia.Activo}'," +
                     $"'{ProductoDelDia.TiempoCoccion}'," +
-                    //$"'{ProductoDelDia.Fecha.ToString("yyyy-MM-dd")}'," +
-                    $"'{ProductoDelDia.Fecha}'," +
+                    $"'{ProductoDelDia.Fecha.ToString("yyyy-MM-dd")}'," +
+                    //$"'{ProductoDelDia.Fecha}'," +
 					$"{ProductoDelDia.StockInicio}," +
                     $"{ProductoDelDia.StockCierre})");
                 return AccesoDB.executeScalar();

@@ -194,7 +194,7 @@ namespace RestoApp
                 NuevoProducto.Descripcion = NuevoProductoDescripcion.Text;
                 NuevoProducto.Valor = decimal.Parse(NuevoProductoValor.Text);
                 NuevoProducto.Categoria = modalDDLCategorias.SelectedIndex;
-                bool estado = modalDDLEstado.SelectedIndex - 1 == 0 ? false : true;
+                bool estado = modalDDLEstado.SelectedIndex == 2 ? false : true;
                 NuevoProducto.Activo = estado;
 
                 Convert.ToBoolean(modalDDLEstado.SelectedIndex);
