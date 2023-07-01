@@ -31,9 +31,9 @@ namespace RestoApp
             if (!IsPostBack)
             {
                 IniciarDDL();
-                
+                ListarProductos();
             }
-            ListarProductos();
+           
         }
 
         protected void IniciarDDL()
@@ -232,12 +232,8 @@ namespace RestoApp
                 }
 
                 NuevoProductoTiempoCoccion.Text = null;
-
-                string script = "alert('Guardado correctamente');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
                 ListarProductos();
-
-
+                Response.Redirect("Productos.aspx");
             }
             else
             {
@@ -247,6 +243,7 @@ namespace RestoApp
                 ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
 
             }
+            
 
         }
 
@@ -510,8 +507,13 @@ namespace RestoApp
                 }
         }
 
-    
+      
+        protected void Prueba_Click(object sender, EventArgs e)
+        {
+            string script = "alert('Llamada');";
+            ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
         }
+    }
 
         
 

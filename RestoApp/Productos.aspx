@@ -298,6 +298,12 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:Button ID="Prueba" runat="server" OnClick="Prueba_Click" Text="Prueba"></asp:Button>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
 
                     </Columns>
 
