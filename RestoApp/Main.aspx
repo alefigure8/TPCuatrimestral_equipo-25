@@ -8,14 +8,17 @@
     <asp:UpdatePanel ID="UpdatePanel1"
         runat="server">
         <ContentTemplate>
-            <div class="d-flex align-items-center gap-3 mb-3">
-                <h4 class="text-gray-100">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
-                <!-- Boton Mesero -->
-                <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
-                    { %>
-                <asp:Button CssClass="btn btn-sm" Text="Darse de Alta" runat="server" ID="btnMeseroAlta" OnClick="btnMeseroAlta_Click" />
-                <%} %>
+            <div class="d-flex align-items-center justify-content-between row">
+                <div class="d-flex align-items-center gap-3 mb-3 col-5">
+                    <h4 class="text-gray-100">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
+                    <!-- Boton Mesero -->
+                    <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+                        { %>
+                    <asp:Button CssClass="btn btn-sm" Text="Darse de Alta" runat="server" ID="btnMeseroAlta" OnClick="btnMeseroAlta_Click" />
+                    <%} %>
+                </div>
                 <!-- Fin Boton Mesero -->
+                <p class="fw-semibold text-gray-100 col-3"> <%: DateTime.Now %></p>
             </div>
         </ContentTemplate>
     </asp:UpdatePanel>
@@ -133,7 +136,7 @@
 
         <div id="modalMesas" class="modal">
             <div class="modal-content">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center border-1 border-bottom">
                     <h5 class="modal-title">Mesero Asignado</h5>
                     <span class="close">&times;</span>
                 </div>
@@ -323,39 +326,39 @@
         }
 
         .modal {
-          display: none; /* Ocultar el modal por defecto */
-          position: fixed;
-          z-index: 1;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-          background-color: rgba(0, 0, 0, 0.4); /* Fondo semitransparente */
+            display: none; /* Ocultar el modal por defecto */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4); /* Fondo semitransparente */
         }
 
         .modal-content {
-          background-color: #fefefe;
-          margin: 15% auto;
-          padding: 20px;
-          border: 1px solid #888;
-          width: 20%;
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 20%;
         }
 
         .close {
             display: flex;
             justify-content: end;
-          color: #aaaaaa;
-          font-size: 28px;
-          font-weight: bold;
-          cursor: pointer;
+            color: #aaaaaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
         .close:hover,
         .close:focus {
-          color: #000;
-          text-decoration: none;
-          cursor: pointer;
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 |<!-- Fin Styles Mesas -->

@@ -255,7 +255,7 @@ namespace RestoApp
 			meserosPorDia = mesaNegocio.ListaMeseroPorDia();
 
 			//Verificamos si el mesero está dado de alta y no de baja
-			meseroPorDia = meserosPorDia.Find(mesero => mesero.IdMesero == usuario.Id && DateTime.Now.ToString("yyyy-MM-dd") == mesero.Fecha.ToString("yyyy-MM-dd") && mesero.Salida == new TimeSpan(0,0,0));
+			meseroPorDia = meserosPorDia.Find(mesero => mesero.IdMesero == usuario.Id && mesero.Salida == new TimeSpan(0,0,0));
 
 			if(meseroPorDia != null)
 			{
