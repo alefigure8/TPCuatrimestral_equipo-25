@@ -8,7 +8,7 @@
     <asp:UpdatePanel ID="UpdatePanel1"
         runat="server">
         <ContentTemplate>
-            <div class="d-flex align-items-center justify-content-between row">
+            <div class="d-flex align-items-center row">
                 <div class="d-flex align-items-center gap-3 mb-3 col-5">
                     <h4 class="text-gray-100">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
                     <!-- Boton Mesero -->
@@ -18,14 +18,14 @@
                     <%} %>
                 </div>
                 <!-- Fin Boton Mesero -->
-                <p class="fw-semibold text-gray-100 col-3"> <%: DateTime.Now %></p>
+                <p class="fw-semibold text-gray-100 text-end col-5"> <%: DateTime.Now %></p>
             </div>
         </ContentTemplate>
     </asp:UpdatePanel>
     <!-- Fin Updatea Panel Botón Mesero -->
 
     <!-- Agregar Mesas habilitadas, mozos habilitados, productos, -->
-    <div class="row">
+    <div class="row content-fluid">
 
         <!-- VISTA GERENTE -->
         <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente)
@@ -154,11 +154,11 @@
 
             {%>
 
-        <div class="row p-3 justify-content-between ">
+        <div class="row content-fluid">
 
             <!-- SECCION MESAS ASIGNDAS -->
-            <section class="row bg-white rounded p-2 justify-content-around m-1">
-                <h3>Mis Mesas</h3>
+            <section class="col-10 bg-white rounded p-3 justify-content-around m-1">
+                <div class="h3">Mis Mesas </div>
                 <div class="row justify-content-around justify-items-start p-3">
                     <asp:Label runat="server" ID="lbSinMesasAsignadas"></asp:Label>
                     <!-- MESAS ASIGNADAS-->
@@ -190,19 +190,19 @@
 
 
             <%--SECCION PEDIDOS EN CURSO--%>
-            <div class="row bg-white rounded p-2 justify-content-around m-1 mt-2">
+            <div class="col-10 bg-white rounded p-3 justify-content-around m-1 mt-2 content-fluid">
 
-                <div class="row h3">Mis pedidos en curso </div>
+                <div class="h3">Mis pedidos en curso </div>
 
-                <div class="col d-inline-flex p-2  justify-content-around">
+                <div class="col d-inline-flex p-2 justify-content-around">
                     <div class="card">
                         <div class="card-body">
                             <p class="card-text">
                                 Mesa ## | Pedido ## | Estado 
+                            </p>
                                 <br />
                                 <button class="btn btn-dark">Detalle</button>
                                 <button class="btn btn-dark">Cerrar</button>
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -212,10 +212,10 @@
                         <div class="card-body">
                             <p class="card-text">
                                 Mesa ## | Pedido ## | Estado 
+                            </p>
                                 <br />
                                 <button class="btn btn-dark">Detalle</button>
                                 <button class="btn btn-dark">Cerrar</button>
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -225,10 +225,10 @@
                         <div class="card-body">
                             <p class="card-text">
                                 Mesa ## | Pedido ## | Estado 
+                            </p>
                                 <br />
                                 <button class="btn btn-dark">Detalle</button>
                                 <button class="btn btn-dark">Cerrar</button>
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -240,8 +240,8 @@
 
             <%--SECCION MENU RAPIDO--%>
 
-            <div class="row bg-white rounded p-2 justify-content-around m-1 mt-2 " >
-                <div class="col p-2">
+            <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 " >
+                <div class="col-5 p-2">
                     <h2 class="h3">Platos Disponibles:</h2>
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
@@ -257,7 +257,7 @@
                 </div>
 
 
-                <div class="col p-2">
+                <div class="col-5 p-2">
                     <h2 class="h3">Bebidas Disponibles:</h2>
                     <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
