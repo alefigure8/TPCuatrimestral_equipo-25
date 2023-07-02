@@ -197,8 +197,8 @@
                     </div>
                     <div class="p-2">
                         <div class="d-flex justify-content-center ">
-                            <div class="col form-control">
-                                <div class="row">
+                            <div class="col form-control bg-dark">
+                                <div class="row text-white h5">
                                     <span class="col-1 align-middle">ID</span>
                                     <span class="col align-middle">Categoría</span>
                                 </div>
@@ -206,12 +206,41 @@
 
                                 <asp:Repeater runat="server" ID="CategoriasRepetidor">
                                     <ItemTemplate>
-                                        <div class="row p-1">
-                                            <span class="col-1 align-middle"><%#Eval("Id")%></span>
-                                            <span class="col align-middle"><%#Eval("Descripcion")%> </span>
+                                        <div class="row bg-white p-1">
+                                            <span class="col-1 align-middle bg-white"><%#Eval("Id")%></span>
+                                            <span class="col align-middle bg-white"><%#Eval("Descripcion")%> </span>
+                                            <span class="col-3 bg-white">
+                                                <div class="col btn btn-dark pl-2" title="Modificar Categoria">
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                </div>
+                                                <div class="col btn btn-dark" title="Marcar como Inactiva">
+                                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                                </div>
+                                            </span>
                                         </div>
                                     </ItemTemplate>
                                 </asp:Repeater>
+
+                                <div class="row bg-dark text-white">
+                                    <span class="row m-2" style="font-size: 12px">NUEVA CATEGORIA:</span>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <asp:TextBox runat="server" Text="Ingresar Descripción"></asp:TextBox>
+                                        </div>
+                                        <div class="col btn btn-dark" title="Guardar Nuevo Registro">
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        </div>
+                                        <div class="col btn btn-dark" title="Cancelar">
+                                            <i class="fa fa-ban" aria-hidden="true"></i>
+                                        </div>
+                                        
+                                    </div>
+
+
+                                </div>
+
+
 
 
                             </div>
