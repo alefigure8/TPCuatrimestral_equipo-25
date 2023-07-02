@@ -199,18 +199,22 @@ namespace RestoApp
 
                 Convert.ToBoolean(modalDDLEstado.SelectedIndex);
 
-                if (modalCheckBoxAtributos.SelectedItem.Value == "Vegano")
+                if(modalCheckBoxAtributos.SelectedItem != null)
                 {
-                    NuevoProducto.AptoVegano = true;
+                    if (modalCheckBoxAtributos.SelectedItem.Value == "Vegano")
+                    {
+                        NuevoProducto.AptoVegano = true;
+                    }
+                    if (modalCheckBoxAtributos.SelectedItem.Value == "Celiaco")
+                    {
+                        NuevoProducto.AptoCeliaco = true;
+                    }
+                    if (modalCheckBoxAtributos.SelectedItem.Value == "Alcohol")
+                    {
+                        NuevoProducto.Alcohol = true;
+                    }
                 }
-                if (modalCheckBoxAtributos.SelectedItem.Value == "Celiaco")
-                {
-                    NuevoProducto.AptoCeliaco = true;
-                }
-                if (modalCheckBoxAtributos.SelectedItem.Value == "Alcohol")
-                {
-                    NuevoProducto.Alcohol = true;
-                }
+               
                 NuevoProducto.TiempoCoccion = TimeSpan.Parse(NuevoProductoTiempoCoccion.Text);
                 NuevoProducto.Stock = int.Parse(NuevoProductoStock.Text);
 
