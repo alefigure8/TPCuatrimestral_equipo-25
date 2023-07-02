@@ -130,19 +130,21 @@ namespace RestoApp
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                switch ((int.Parse(e.Row.Cells[1].Text)))
-                {
-                    case 1:
-                        {
-                            e.Row.Cells[1].Text = ListaCategoriasProducto[0].Descripcion;
-                            break;
-                        }
-                    case 2:
-                        {
-                            e.Row.Cells[1].Text = ListaCategoriasProducto[1].Descripcion;
-                            break;
-                        }
-                }
+                //switch ((int.Parse(e.Row.Cells[1].Text)))
+                //{
+                //    case 1:
+                //        {
+                //            e.Row.Cells[1].Text = ListaCategoriasProducto[0].Descripcion;
+                //            break;
+                //        }
+                //    case 2:
+                //        {
+                            e.Row.Cells[1].Text = ListaCategoriasProducto[int.Parse(e.Row.Cells[1].Text)].Descripcion;
+                //            break;
+                //        }
+                //}
+
+                
 
 
 
