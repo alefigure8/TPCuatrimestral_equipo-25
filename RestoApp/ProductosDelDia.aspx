@@ -43,12 +43,12 @@
         <%--Productos Disponibles--%>
         <div class="col">
             <h2 class="row rounded">Productos disponibles</h2>
-            <asp:Repeater runat="server" ID="ProductoRepetidor">
+            <asp:Repeater runat="server" ID="ProductoRepetidor" OnItemDataBound="ProductoRepetidor_ItemDataBound">
                 <ItemTemplate>
                     <div class="row p-1">
                         <span class="col-4 align-middle"><%#Eval("Nombre")%></span>
                         <span class="col-3 align-middle">Stock: <%#Eval("Stock")%> </span>
-                        <span class="col-3 align-middle">Categoria <%#Eval("Categoria")%> </span>
+                        <asp:Label ID="lblCategoria" runat="server" CssClass="col-3 align-middle" Text='<%#Eval("Categoria")%> '></asp:Label>
                         <asp:Button runat="server" ID="BtnAgregarAPDD" OnClick="BtnAgregarAPDD_Click" CommandArgument='<%#Eval("Id")%>' Text=">" CssClass="col btn btn-sm btn-dark columna-grilla-btn" />
 
                     </div>

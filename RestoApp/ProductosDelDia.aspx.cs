@@ -14,6 +14,7 @@ namespace RestoApp
     public partial class Menu : System.Web.UI.Page
     {
         public Usuario usuario { get; set; }
+        public List<CategoriaProducto> ListaCategoriasProducto;
 
         protected void Page_PreInit(object sender, EventArgs e)
         {
@@ -26,6 +27,10 @@ namespace RestoApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
+
+
+            CategoriaProductoNegocio CategoriaProductoNegocio = new CategoriaProductoNegocio();
+            ListaCategoriasProducto = CategoriaProductoNegocio.Listar();
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
@@ -43,6 +48,7 @@ namespace RestoApp
                 ListarMenu();
             }
 
+
         }
 
         //Lista de productos que se pueden agregar al menu del dia porque estan activos
@@ -51,9 +57,10 @@ namespace RestoApp
             Session["ListaProductos"] = null;
             ProductoNegocio productoNegocio = new ProductoNegocio();
             Session.Add("ListaProductos", productoNegocio.ListarProductos());
-            
+
             List<Producto> ListaProductosDisponibles = (List<Producto>)Session["ListaProductos"];
-            ListaProductosDisponibles.RemoveAll(x => x.Activo == false);          
+            ListaProductosDisponibles.RemoveAll(x => x.Activo == false);
+
             ProductoRepetidor.DataSource = ListaProductosDisponibles;
             ProductoRepetidor.DataBind();
         }
@@ -201,5 +208,17 @@ namespace RestoApp
                 ListarProductosDelDia();
             }
         }
+
+        protected void ProductoRepetidor_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+
+            
+                Label lbl = e.Item.FindControl("lblCategoria") as Label;
+                int variable = int.Parse(lbl.Text);
+                lbl.Text = ListaCategoriasProducto[variable-1].Descripcion;
+            
+        }
+
+
     }
 }
