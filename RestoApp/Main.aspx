@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Main.aspx.cs" Inherits="RestoApp.Main1" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Main.aspx.cs" Inherits="RestoApp.Main1" EnableEventValidation="false"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
@@ -133,21 +133,7 @@
             </div>
         </div>
         <% } %>
-
-        <div id="modalMesas" class="modal">
-            <div class="modal-content">
-                <div class="d-flex justify-content-between align-items-center border-1 border-bottom">
-                    <h5 class="modal-title">Mesero Asignado</h5>
-                    <span class="close">&times;</span>
-                </div>
-                <div id="modal-content" class="modal-body">
-
-                    <!-- Desde JS -->
-                </div>
-            </div>
-        </div>
-
-
+        
         <!-- VISTA MESERO -->
         <%
             if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
@@ -160,6 +146,8 @@
             <section class="col-10 bg-white rounded p-3 justify-content-around m-1">
                 <div class="h3">Mis Mesas </div>
                 <div class="row justify-content-around justify-items-start p-3" id="section-mesa-mesero">
+
+                    <!-- Mensaje de Mesas asignadas -->
                     <asp:Label runat="server" ID="lbSinMesasAsignadas"></asp:Label>
 
                     <!-- MESAS ASIGNADAS-->
@@ -180,9 +168,6 @@
                                 </div>
                             </div>--%>
                             <!-- FIN MESAS -->
-
-
-                            
 
                        <%-- </ItemTemplate>
                     </asp:Repeater>--%>
@@ -284,6 +269,21 @@
     <% } %>
     </div>
 
+
+    <!-- MODAL -->
+    <div id="modalMesas" class="modal">
+        <div class="modal-content">
+            <div class="d-flex justify-content-between align-items-center border-1 border-bottom" >
+                <h5 class="modal-title" id="modal-titulo">Mesero Asignado</h5>
+                <span class="close">&times;</span>
+            </div>
+            <div id="modal-content" class="modal-body">
+
+                <!-- Desde JS -->
+            </div>
+        </div>
+    </div>
+
 <!--************* ESTILOS Y SCRIPTS *************** -->
 |<!-- Styles Mesas -->
     <style>
@@ -347,7 +347,7 @@
             margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 20%;
+            width: 25%;
         }
 
         .close {
@@ -365,6 +365,55 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        .botonPedido{
+            cursor: pointer;
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: 1fr 30px;
+            border: none;
+            outline: none;
+        }
+
+        .btnAbrirMeasa{
+            background-color: #FFC107;
+            border-color: #FFC107;
+        }
+
+        .btnAbrirMeasa:hover{
+            background-color: #ffc107c4;
+            border-color: #ffc107c4;
+        }
+
+        .btnAbrirPedido{
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .btnAbrirPedido:hover{
+            background-color: #0d6dfdc4;
+            border-color: #0d6dfdc4;
+        }
+
+        .btnPedidos{
+            background-color: #198754;
+            border-color: #198754;
+        }
+
+        .btnPedidos:hover{
+            background-color: #198754c2;
+            border-color: #198754c2;
+        }
+
+        .btnTicket{
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btnTicket:hover{
+            background-color: #dc3546c4;
+            border-color: #dc3546c4;
+        }
     </style>
 |<!-- Fin Styles Mesas -->
 
@@ -376,6 +425,7 @@
     let sectionMesaMesero = document.getElementById("section-mesa-mesero")
     const modal = document.getElementById("modalMesas");
     const closeModalBtn = document.getElementsByClassName("close")[0];
+    const modalTitulo = document.getElementById("modal-titulo");
     let contenidoModal = document.getElementById("modal-content");
 
     //Traemos datos de mesas desde codebehind del Gerente
@@ -478,6 +528,9 @@
             mainDiv.appendChild(mesaBottom);
             sectionMesa.appendChild(mainDiv);
 
+            //Titulo
+            modalTitulo.textContent = "Mesero Asignado";
+
             //Evento de la mesa
             let mesaEvento = document.getElementById(idMesa);
             mesaEvento.addEventListener('click', () => {
@@ -544,10 +597,48 @@
             let mesaEvento = document.getElementById(`mesa_${numeroMesas[i].mesa}`);
 
             mesaEvento.addEventListener('click', () => {
+                modalTitulo.textContent = `Mesa Asignada ${numeroDeMesa}`
                 modal.style.display = "block";
                 contenidoModal.innerHTML = "";
                 contenidoModal.innerHTML += `
-                <p>Mesa ${numeroDeMesa}</p>
+                <div class="row d-flex flex-column justify-content-center gap-2 p-3 ms-3">
+                    <div class="col d-flex gap-4">
+                        <button class="btnAbrirMeasa botonPedido" style="width: 150px; height: 150px;">
+                                <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                                    <i class="fa-solid fa-plus fs-1 text-white"></i>
+                                </div>
+                                <div class="row-cols-1 text-white">
+                                    <p class="fw-semibold">Abrir Mesa</p>
+                                </div>
+                        </button>
+                        <button class="btn btnAbrirPedido botonPedido" style="width: 150px; height: 150px;">
+                            <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                                <i class="fa-solid fa-utensils fs-1 text-white"></i>
+                            </div>
+                            <div class="row-cols-1 text-white">
+                                <p class="fw-semibold">Abrir Pedido</p>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="col d-flex gap-4 mt-3">
+                        <button class="btn btnPedidos botonPedido" style="width: 150px; height: 150px;">
+                            <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                                <i class="fa-solid fa-list fs-1 text-white"></i>
+                            </div>
+                            <div class="row-cols-1 text-white">
+                                <p class="fw-semibold">Pedidos</p>
+                            </div>
+                        </button>
+                        <button class="btn btnTicket botonPedido" style="width: 150px; height: 150px;">
+                            <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                                <i class="fa-solid fa-dollar fs-1 text-white"></i>
+                            </div>
+                            <div class="row-cols-1 text-white">
+                                <p class="fw-semibold">Ticket</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
                 `;
 
             })

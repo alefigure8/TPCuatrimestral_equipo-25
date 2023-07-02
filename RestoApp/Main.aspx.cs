@@ -40,7 +40,7 @@ namespace RestoApp
 					usuario = Helper.Session.GetUsuario();
 
 			// CONTENIDO GERENTE
-			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
+			if (AutentificacionUsuario.esGerente(usuario))
 			{
 				tipoUsuario = Configuracion.Rol.Gerente;
 				CargarMeseros();
@@ -50,16 +50,17 @@ namespace RestoApp
 			}
 
 			//CONTENIDO MESERO
-			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
+			if (AutentificacionUsuario.esMesero(usuario))
 			{
 				//Verificamos que si ya está en memoria el meseropordia
 				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
 					meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
-				
+
 				tipoUsuario = Configuracion.Rol.Mesero;
 				CargarMenuDisponible();
 				CargarMeseroPorDia();
 				CargarMesasAsignadas();
+
 			}
 		}
 
