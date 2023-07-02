@@ -204,6 +204,33 @@ namespace RestoApp
         protected global::System.Web.UI.WebControls.Repeater CategoriasRepetidor;
 
         /// <summary>
+        /// tbNuevaCategoria control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbNuevaCategoria;
+
+        /// <summary>
+        /// btnGuardarCategoria control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnGuardarCategoria;
+
+        /// <summary>
+        /// btnCancelarCategoria control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton btnCancelarCategoria;
+
+        /// <summary>
         /// TxtBuscar control.
         /// </summary>
         /// <remarks>

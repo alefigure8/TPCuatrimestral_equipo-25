@@ -595,7 +595,16 @@ namespace RestoApp
             else { return false; }
         }
 
-    
+        protected void btnCancelarCategoria_Click(object sender, EventArgs e)
+        {
+            Console.Write("hola");
+        }
+
+        protected void btnGuardarCategoria_Click(object sender, EventArgs e)
+        {
+
+            Console.Write("hola");
+        }
     }
 
 

@@ -43,9 +43,7 @@
 
         <%--Productos Disponibles--%>
         <div class="col">
-            <h2 class="row rounded">Productos disponibles</h2>
-
-            <div class="row p-1 bg-dark text-white h5">
+            <h2 class="row rounded">Productos disponibles</h2>            <div class="row p-1 bg-dark text-white h5">
                 <span class="col-3 align-middle">Producto </span>
                 <span class="col-3 align-middle">Stock </span>
                 <span class="col-3 align-middle">Categoria </span>

@@ -226,15 +226,22 @@
 
                                     <div class="row">
                                         <div class="col">
-                                            <asp:TextBox runat="server" Text="Ingresar Descripción"></asp:TextBox>
+                                            <asp:TextBox ID="tbNuevaCategoria" runat="server" CssClass="form-control" Text="Ingresar Descripción"></asp:TextBox>
                                         </div>
-                                        <div class="col btn btn-dark" title="Guardar Nuevo Registro">
+                                       
+
+
+                                        <asp:LinkButton runat="server" ID="btnGuardarCategoria" CssClass="col-1 btn btn-dark" ToolTip="Guardar Registro" OnClick="btnGuardarCategoria_Click">
                                             <i class="fa fa-check" aria-hidden="true"></i>
-                                        </div>
-                                        <div class="col btn btn-dark" title="Cancelar">
+                                        </asp:LinkButton>
+
+
+                                        <asp:LinkButton runat="server" ID="btnCancelarCategoria" CssClass="col-1 btn btn-dark" ToolTip="Cancelar" OnClick="btnCancelarCategoria_Click">
                                             <i class="fa fa-ban" aria-hidden="true"></i>
-                                        </div>
-                                        
+                                        </asp:LinkButton>
+
+
+
                                     </div>
 
 
