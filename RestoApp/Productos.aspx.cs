@@ -22,7 +22,7 @@ namespace RestoApp
         protected void Page_Load(object sender, EventArgs e)
         {
 
-           if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
+            if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
             CategoriaProductoNegocio CategoriaProductoNegocio = new CategoriaProductoNegocio();
@@ -33,7 +33,7 @@ namespace RestoApp
                 IniciarDDL();
                 ListarProductos();
             }
-           
+
         }
 
         protected void IniciarDDL()
@@ -114,7 +114,7 @@ namespace RestoApp
             Session["ListaProductos"] = null;
             ProductoNegocio productoNegocio = new ProductoNegocio();
             Session.Add("ListaProductos", productoNegocio.ListarProductos());
-            
+
             GVProductos.DataSource = Session["ListaProductos"];
             GVProductos.DataBind();
         }
@@ -130,7 +130,7 @@ namespace RestoApp
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                e.Row.Cells[1].Text = ListaCategoriasProducto[int.Parse(e.Row.Cells[1].Text)-1].Descripcion;
+                e.Row.Cells[1].Text = ListaCategoriasProducto[int.Parse(e.Row.Cells[1].Text) - 1].Descripcion;
 
                 string resultado = (bool.Parse(e.Row.Cells[3].Text)) == true ? "✔" : "✖";
                 e.Row.Cells[3].Text = resultado;
@@ -150,8 +150,8 @@ namespace RestoApp
 
         protected void btnLimpiarFiltro_Click(object sender, EventArgs e)
         {
-           ListarProductos();
-           LimpiarListaFiltrada();
+            ListarProductos();
+            LimpiarListaFiltrada();
             LimpiarBotonesFiltros();
         }
 
@@ -161,8 +161,8 @@ namespace RestoApp
             Session["ListaFiltrada"] = null;
         }
 
-   
-  
+
+
         protected void GuardarNuevoProducto_Click(object sender, EventArgs e)
         {
 
@@ -185,7 +185,7 @@ namespace RestoApp
 
                 Convert.ToBoolean(modalDDLEstado.SelectedIndex);
 
-                if(modalCheckBoxAtributos.SelectedItem != null)
+                if (modalCheckBoxAtributos.SelectedItem != null)
                 {
                     if (modalCheckBoxAtributos.SelectedItem.Value == "Vegano")
                     {
@@ -200,7 +200,7 @@ namespace RestoApp
                         NuevoProducto.Alcohol = true;
                     }
                 }
-               
+
                 NuevoProducto.TiempoCoccion = TimeSpan.Parse(NuevoProductoTiempoCoccion.Text);
                 NuevoProducto.Stock = int.Parse(NuevoProductoStock.Text);
 
@@ -233,7 +233,7 @@ namespace RestoApp
                 ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
 
             }
-            
+
 
         }
 
@@ -241,20 +241,29 @@ namespace RestoApp
         {
             Button button = sender as Button;
             ProductoNegocio PNaux = new ProductoNegocio();
-            try
-            {
-                PNaux.EliminarProducto(int.Parse(button.CommandArgument));
-                string script = "alert('Eliminado correctamente');";
-                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
-                ListarProductos();
-            }
 
-            catch (Exception ex)
+            if (!ValidarProducto(int.Parse(button.CommandArgument)))
+            {
+                try
+                {
+                    PNaux.EliminarProducto(int.Parse(button.CommandArgument));
+                    string script = "alert('Eliminado correctamente');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+                    ListarProductos();
+                }
+
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+            else
             {
                 string script = "alert('Registro en uso. No se puede eliminar.');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
-                throw ex;
             }
+
 
         }
 
@@ -263,15 +272,15 @@ namespace RestoApp
             Button button = sender as Button;
             Producto Paux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
             Session.Add("ProductoAModificar", Paux);
-            
-           
+
+
         }
 
         protected void MPBtnModificarProducto_Click(object sender, EventArgs e)
         {
             Producto Paux = ((Producto)(Session["ProductoAModificar"]));
             Paux.Nombre = string.IsNullOrEmpty(MPnombre1.Text) ? Paux.Nombre : MPnombre1.Text;
-            Paux.Descripcion = string.IsNullOrEmpty(MPDescripcion.Text) ? Paux.Descripcion : MPDescripcion.Text; 
+            Paux.Descripcion = string.IsNullOrEmpty(MPDescripcion.Text) ? Paux.Descripcion : MPDescripcion.Text;
             Paux.Valor = string.IsNullOrEmpty(MPvalor.Text) ? Paux.Valor : decimal.Parse(MPvalor.Text);
             Paux.Categoria = MPDDLCategoria.SelectedIndex != 0 && MPDDLCategoria != null ? MPDDLCategoria.SelectedIndex : Paux.Categoria;
             bool estado = MPDDLEstado.SelectedIndex == 2 ? false : true;
@@ -433,9 +442,9 @@ namespace RestoApp
 
             if (SinCamposVacios == true)
             {
-               ActualizarGV(ListaFiltrada);
+                ActualizarGV(ListaFiltrada);
             }
-            
+
 
         }
 
@@ -451,7 +460,7 @@ namespace RestoApp
             tbPrecioMenor.Text = string.Empty;
             tbStockMenor.Text = string.Empty;
             tbStockMayor.Text = string.Empty;
-            for(int i = 0; i < CheckBoxAtributos.Items.Count; i++)
+            for (int i = 0; i < CheckBoxAtributos.Items.Count; i++)
             {
                 CheckBoxAtributos.Items[i].Selected = false;
             }
@@ -459,25 +468,26 @@ namespace RestoApp
         }
 
         // Ordenar por precio
-        public List<Producto> OrdenarPorPrecio(List<Producto>ListaFiltrada) {
+        public List<Producto> OrdenarPorPrecio(List<Producto> ListaFiltrada)
+        {
 
             if (DDLPrecios.SelectedIndex == 1)
             {
                 ListaFiltrada = ListaFiltrada.OrderBy(x => x.Valor).ToList();
             }
-            if(DDLPrecios.SelectedIndex == 2)
+            if (DDLPrecios.SelectedIndex == 2)
             {
                 ListaFiltrada = ListaFiltrada.OrderByDescending(x => x.Valor).ToList();
             }
-			return ListaFiltrada;
-         }
+            return ListaFiltrada;
+        }
 
         // Ordenar por stock
-            public List<Producto> OrdenarPorStock(List<Producto> ListaFiltrada)
+        public List<Producto> OrdenarPorStock(List<Producto> ListaFiltrada)
         {
             if (DDLStock.SelectedIndex == 1)
             {
-                ListaFiltrada = ListaFiltrada.OrderBy(x => x.Stock).ToList(); 
+                ListaFiltrada = ListaFiltrada.OrderBy(x => x.Stock).ToList();
             }
             if (DDLStock.SelectedIndex == 2)
             {
@@ -489,23 +499,97 @@ namespace RestoApp
         // Buscar
         protected void BtnBuscar_Click(object sender, EventArgs e)
         {
-               if (TxtBuscar.Text.Count() > 0 && TxtBuscar.Text != "Ingrese nombre o descripción")
-                {
+            if (TxtBuscar.Text.Count() > 0 && TxtBuscar.Text != "Ingrese nombre o descripción")
+            {
                 LimpiarListaFiltrada();
-                List<Producto> ListaFiltrada = ((List<Producto>)Session["ListaProductos"]).FindAll(x => x.Nombre.ToUpper().Contains(TxtBuscar.Text.ToUpper()) || x.Descripcion.ToUpper().Contains(TxtBuscar.Text.ToUpper()) );
+                List<Producto> ListaFiltrada = ((List<Producto>)Session["ListaProductos"]).FindAll(x => x.Nombre.ToUpper().Contains(TxtBuscar.Text.ToUpper()) || x.Descripcion.ToUpper().Contains(TxtBuscar.Text.ToUpper()));
                 ActualizarGV(ListaFiltrada);
-                }
+            }
         }
 
-      
+
         protected void Prueba_Click(object sender, EventArgs e)
         {
             string script = "alert('Llamada');";
             ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
         }
+
+        protected void BtnAgregarStock_Click(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            GridViewRow row = (GridViewRow)button.NamingContainer;
+            TextBox tbAgregarStock = (TextBox)row.FindControl("tbAgregarStock");
+
+
+            if (tbAgregarStock != null)
+            {
+                if (!ValidarProducto(int.Parse(button.CommandArgument)))
+                {
+                    if (!string.IsNullOrEmpty(tbAgregarStock.Text))
+                    {
+                        Producto PAux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+                        PAux.Stock += int.Parse(tbAgregarStock.Text);
+                        ProductoNegocio PNAux = new ProductoNegocio();
+                        PNAux.ModificarProducto(PAux);
+                        ListarProductos();
+                    }
+                }
+                else
+                {
+                    string script = "alert('ERROR. Producto en uso. Modificar desde Productos Del Dia');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+
+                }
+
+            }
+
+        }
+
+        protected void BtnQuitarStock_Click(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            GridViewRow row = (GridViewRow)button.NamingContainer;
+            TextBox tbAgregarStock = (TextBox)row.FindControl("tbAgregarStock");
+
+            if (tbAgregarStock != null)
+            {
+                if (!ValidarProducto(int.Parse(button.CommandArgument)))
+                {
+                    if (!string.IsNullOrEmpty(tbAgregarStock.Text))
+                    {
+                        Producto PAux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+                        PAux.Stock -= int.Parse(tbAgregarStock.Text);
+                        ProductoNegocio PNAux = new ProductoNegocio();
+                        PNAux.ModificarProducto(PAux);
+                        ListarProductos();
+                    }
+                }
+                else
+                {
+                    string script = "alert('ERROR. Producto en uso. Modificar desde Productos Del Dia');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+
+                }
+
+            }
+
+        }
+
+        protected bool ValidarProducto(int id)
+        {
+            ProductoNegocio PNAux = new ProductoNegocio();
+
+            DateTime Faux = DateTime.Now;
+
+
+            if ((PNAux.BuscarProductoDelDia(id, DateTime.Now)) != null){
+                return true;
+            }
+            else { return false; }
+        }
     }
 
-        
 
-        
-    }
+
+
+}

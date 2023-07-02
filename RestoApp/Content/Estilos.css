@@ -84,10 +84,10 @@ body {
 }
 
 .columna-grilla-sm {
-    max-width: 30px !important;
-    text-align: center !important;
+    width: 30px !important;
+    
 }
 
 .columna-grilla-btn {
-    max-width: 50px !important;
+    text-align: center !important;
 }
