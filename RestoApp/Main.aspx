@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Main.aspx.cs" Inherits="RestoApp.Main1" EnableEventValidation="false"%>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Main.aspx.cs" Inherits="RestoApp.Main1" EnableEventValidation="true"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
@@ -418,7 +418,7 @@
 |<!-- Fin Styles Mesas -->
 
 |<!-- Scripts Mesas -->
-<script>
+<script id="scriptMain">
     let tipoUsuario = "<%: tipoUsuario%>";
     let numeroMesa = <%: MesasActivas %>;
     let sectionMesa = document.getElementById("section-mesa");
@@ -454,12 +454,14 @@
 
         return new Promise((resolve) => {
             if (typeof numeroMesasArray !== 'undefined') {
+                console.log(numeroMesasArray)
                 const numeroMesas = JSON.parse(numeroMesasArray)
                 resolve({ numeroMesas });
             } else {
                 const intervalo = setInterval(() => {
                     if (typeof numeroMesasArray !== 'undefined') {
                         clearInterval(intervalo);
+                        console.log(numeroMesasArray)
                         const numeroMesas = JSON.parse(numeroMesasArray)
                         resolve({ numeroMesas });
                     }
@@ -556,7 +558,7 @@
     function renderMesaMesero(numeroMesas) {
 
         for (i = 0; i < numeroMesas.length; i++) {
-
+            console.log(numeroMesas)
             //Mesa
             var mainDiv = document.createElement("div");
             mainDiv.className = "col-6 col-sm-3 d-flex justify-content-center flex-column m-4";

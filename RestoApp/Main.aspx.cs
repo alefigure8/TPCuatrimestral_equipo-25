@@ -33,6 +33,11 @@ namespace RestoApp
 		private List<Mesa> mesas;
 		private List<MesaPorDia> mesasPorDia;
 
+		//Javascript atributos
+		private string datosMesasJSON;
+		private string mesasActivasJSON;
+		private string numeroMesasJSON;
+
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			//Verificar que sea usuario
@@ -40,7 +45,7 @@ namespace RestoApp
 					usuario = Helper.Session.GetUsuario();
 
 			// CONTENIDO GERENTE
-			if (AutentificacionUsuario.esGerente(usuario))
+			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
 			{
 				tipoUsuario = Configuracion.Rol.Gerente;
 				CargarMeseros();
@@ -49,8 +54,17 @@ namespace RestoApp
 				CargarPedido();
 			}
 
+			//Si es postback, recargamos funciones de script en Gerente
+			if (IsPostBack && AutentificacionUsuario.esGerente(usuario))
+			{
+				ScriptsDataGerente();
+				string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas }) => {renderMesaGerente(datosMesas, numeroMesas); })";
+				ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
+			}
+
+
 			//CONTENIDO MESERO
-			if (AutentificacionUsuario.esMesero(usuario))
+			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
 			{
 				//Verificamos que si ya está en memoria el meseropordia
 				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
@@ -61,6 +75,14 @@ namespace RestoApp
 				CargarMeseroPorDia();
 				CargarMesasAsignadas();
 
+			}
+
+			//Si es postback, recargamos funciones de script en Mesero
+			if(IsPostBack &&  AutentificacionUsuario.esMesero(usuario))
+			{
+				ScriptsDataMesero();
+				string script = " obtenerDatosMesasMesero().then(({ numeroMesas }) => {renderMesaMesero(numeroMesas); });";
+				ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
 			}
 		}
 
@@ -105,13 +127,29 @@ namespace RestoApp
 				List<Mesa> mesasActivasNumeros = mesas.FindAll(m => m.Activo == true);
 
 				// Convierte la lista en una cadena JSON
-				string datosMesasJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(datosMesas);
-				string mesasActivasJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(mesasActivasNumeros);
+				datosMesasJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(datosMesas);
+				mesasActivasJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(mesasActivasNumeros);
 
-				//Mandamos el dato a main.js
-				ClientScript.RegisterStartupScript(this.GetType(), "datosMesasArray", $"var datosMesasArray = '{datosMesasJSON}';", true);
-				ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasActivasArray", $"var numeroMesasActivasArray = '{mesasActivasJSON}';", true);
+				//Guardamos datos en session
+				Session["datosMesasJSON"] = datosMesasJSON;
+				Session["mesasActivasJSON"] = mesasActivasJSON;
+
+				//Mandamos datos a JS
+				ScriptsDataGerente();
+				
 			}
+		}
+
+		//Metodo que enviado datos del Gerente a script
+		private void ScriptsDataGerente()
+		{
+			//Recuperamos datos por si es postback
+			mesasActivasJSON = (string)Session["mesasActivasJSON"];
+			datosMesasJSON = (string)Session["datosMesasJSON"];
+
+			//Enviamos datos a JS
+			ClientScript.RegisterStartupScript(this.GetType(), "datosMesasArray", $"var datosMesasArray = '{datosMesasJSON}';", true);
+			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasActivasArray", $"var numeroMesasActivasArray = '{mesasActivasJSON}';", true);
 		}
 
 		private void CargarEstadoMesas()
@@ -374,9 +412,6 @@ namespace RestoApp
 
 				if (mesasAsignadas != null)
 				{
-					//repeaterMesasAsigndas.DataSource = mesasAsignadas;
-					//repeaterMesasAsigndas.DataBind();
-
 					//Creamos Objetos con los números de mesas asignadas
 					List<object> datosMesas = new List<object>();
 
@@ -390,9 +425,14 @@ namespace RestoApp
 						}
 					}
 
-					//Madar datos a script
-					string numeroMesasJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(datosMesas);
-					ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasArray", $"var numeroMesasArray = '{numeroMesasJSON}';", true);
+					//Serializamos datos
+					numeroMesasJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(datosMesas);
+
+					//Guardamos datos en session para recuperar en caso de postback
+					Session["numeroMesaJSON"] = numeroMesasJSON;
+
+					//Mandamos datos a script
+					ScriptsDataMesero();
 
 					if (mesasAsignadas.Count > 0)
 					{
@@ -404,6 +444,16 @@ namespace RestoApp
 			}
 
 			lbSinMesasAsignadas.Text = "No cuenta con mesas asignadas. Comuníquese con el Gerente.";
+		}
+
+		//Enviamos datos a script para recuperar en un postback
+		private void ScriptsDataMesero()
+		{
+			//Recuperamos datos de session
+			numeroMesasJSON = (string)Session["numeroMesaJSON"];
+
+			//Mandamos a script de javascript
+			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasArray", $"var numeroMesasArray = '{numeroMesasJSON}';", true);
 		}
 	}
 }
