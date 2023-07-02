@@ -45,7 +45,7 @@
         <div class="col">
             <h2 class="row rounded">Productos disponibles</h2>
 
-            <div class="row p-1 bg-dark text-white">
+            <div class="row p-1 bg-dark text-white h5">
                 <span class="col-3 align-middle">Producto </span>
                 <span class="col-3 align-middle">Stock </span>
                 <span class="col-3 align-middle">Categoria </span>
@@ -60,7 +60,7 @@
                         <span class="col-3 align-middle"><%#Eval("Stock")%> </span>
                         <asp:Label ID="lblCategoria" runat="server" CssClass="col-3 align-middle" Font-Size="15px" Text='<%#Eval("Categoria")%> '></asp:Label>
                         <div class="col-3 d-flex justify-content-around">
-                            <asp:Button runat="server" ID="BtnAgregarAPDD" OnClick="BtnAgregarAPDD_Click" CommandArgument='<%#Eval("Id")%>' Text=">" CssClass=" btn btn-dark" />
+                            <asp:Button runat="server" ID="BtnAgregarAPDD" OnClick="BtnAgregarAPDD_Click" CommandArgument='<%#Eval("Id")%>' Text=">" CssClass=" btn btn-dark rounded-circle" />
                         </div>
 
                     </div>
@@ -71,7 +71,7 @@
         <%--Productos Del Dia--%>
         <div class="col">
             <h2 class="row rounded">Productos en menú actual</h2>
-             <div class="row p-1 bg-dark text-white">
+             <div class="row p-1 bg-dark text-white h5">
                 <span class="col-3 align-middle">  </span>
                 <span class="col-3 align-middle"> Estado </span>
                 <span class="col-3 columna-btn"> Stock </span>
@@ -84,9 +84,9 @@
                             <asp:Button runat="server" ID="BtnDesactivar" OnClick="BtnDesactivar_Click" Text='<%#Eval("Activo").Equals(true) ? "Cerrar" : "Reabrir" %>' CommandArgument='<%#Eval("Id") %>' CssClass="btn btn-dark" />
                          </span>
                         <span class="col">
-                            <asp:Button runat="server" ID="BtnAgregarStock" Text="+" ToolTip="Agregar Stock" OnClick="BtnAgregarStock_Click" CssClass="btn btn-dark " CommandArgument='<%#Eval("Id") %>' />
+                            <asp:Button runat="server" ID="BtnAgregarStock" Text="+" ToolTip="Agregar Stock" OnClick="BtnAgregarStock_Click" CssClass="btn btn-dark rounded-circle" CommandArgument='<%#Eval("Id") %>' />
                             <asp:TextBox runat="server" TextMode="Number" min="0" ID="tbAgregarStock" CssClass="col-3"></asp:TextBox>
-                            <asp:Button runat="server" ID="BtnQuitarStock" Text="-" ToolTip="Restar Stock" OnClick="BtnQuitarStock_Click" CssClass="btn btn-dark " CommandArgument='<%#Eval("Id") %>' />
+                            <asp:Button runat="server" ID="BtnQuitarStock" Text="-" ToolTip="Restar Stock" OnClick="BtnQuitarStock_Click" CssClass="btn btn-dark rounded-circle" CommandArgument='<%#Eval("Id") %>' />
                         </span>
                     </div>
                 </ItemTemplate>

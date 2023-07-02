@@ -195,6 +195,15 @@ namespace RestoApp
         protected global::System.Web.UI.WebControls.Button MPBtnModificarProducto;
 
         /// <summary>
+        /// CategoriasRepetidor control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater CategoriasRepetidor;
+
+        /// <summary>
         /// TxtBuscar control.
         /// </summary>
         /// <remarks>
@@ -337,15 +346,6 @@ namespace RestoApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView GVProductos;
-
-        /// <summary>
-        /// LBtnCategorías control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LBtnCategorías;
 
         /// <summary>
         /// LinkButton1 control.

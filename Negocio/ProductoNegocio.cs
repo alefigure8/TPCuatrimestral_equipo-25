@@ -338,6 +338,7 @@ namespace Negocio
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return null;
             }
             finally

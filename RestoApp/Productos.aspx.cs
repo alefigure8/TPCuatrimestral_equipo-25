@@ -75,6 +75,10 @@ namespace RestoApp
                 MPDDLCategoria.Items.Add(CPaux.Descripcion);
 
             }
+
+            CategoriasRepetidor.DataSource = ListaCategoriasProducto;
+            CategoriasRepetidor.DataBind();
+         
         }
 
         public void CargarDDLValor()
@@ -508,11 +512,6 @@ namespace RestoApp
         }
 
 
-        protected void Prueba_Click(object sender, EventArgs e)
-        {
-            string script = "alert('Llamada');";
-            ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
-        }
 
         protected void BtnAgregarStock_Click(object sender, EventArgs e)
         {
@@ -520,19 +519,17 @@ namespace RestoApp
             GridViewRow row = (GridViewRow)button.NamingContainer;
             TextBox tbAgregarStock = (TextBox)row.FindControl("tbAgregarStock");
 
-
-            if (tbAgregarStock != null)
+            if (!string.IsNullOrEmpty(tbAgregarStock.Text))
             {
                 if (!ValidarProducto(int.Parse(button.CommandArgument)))
                 {
-                    if (!string.IsNullOrEmpty(tbAgregarStock.Text))
-                    {
+                    
                         Producto PAux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
                         PAux.Stock += int.Parse(tbAgregarStock.Text);
                         ProductoNegocio PNAux = new ProductoNegocio();
                         PNAux.ModificarProducto(PAux);
                         ListarProductos();
-                    }
+                    
                 }
                 else
                 {
@@ -540,6 +537,12 @@ namespace RestoApp
                     ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
 
                 }
+
+            }
+            else
+            {
+                string script = "alert('Ingrese un Valor');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
 
             }
 
@@ -551,18 +554,17 @@ namespace RestoApp
             GridViewRow row = (GridViewRow)button.NamingContainer;
             TextBox tbAgregarStock = (TextBox)row.FindControl("tbAgregarStock");
 
-            if (tbAgregarStock != null)
+            if (!string.IsNullOrEmpty(tbAgregarStock.Text))
             {
                 if (!ValidarProducto(int.Parse(button.CommandArgument)))
                 {
-                    if (!string.IsNullOrEmpty(tbAgregarStock.Text))
-                    {
+                    
                         Producto PAux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
                         PAux.Stock -= int.Parse(tbAgregarStock.Text);
                         ProductoNegocio PNAux = new ProductoNegocio();
                         PNAux.ModificarProducto(PAux);
                         ListarProductos();
-                    }
+                    
                 }
                 else
                 {
@@ -570,6 +572,11 @@ namespace RestoApp
                     ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
 
                 }
+            }
+            else
+            {
+                string script = "alert('Ingrese un Valor');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
 
             }
 
@@ -582,11 +589,13 @@ namespace RestoApp
             DateTime Faux = DateTime.Now;
 
 
-            if ((PNAux.BuscarProductoDelDia(id, DateTime.Now)) != null){
+            if ((PNAux.BuscarProductoDelDia(id, DateTime.Now)).Id!=-1 && (PNAux.BuscarProductoDelDia(id, DateTime.Now))!=null) {
                 return true;
             }
             else { return false; }
         }
+
+    
     }
 
 

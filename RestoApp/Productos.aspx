@@ -46,7 +46,7 @@
                                         <label class="form-label">Valor: </label>
                                     </div>
                                     <div class="col">
-                                        <asp:TextBox CssClass="form-control" type="number" ID="NuevoProductoValor" runat="server" Style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
+                                        <asp:TextBox CssClass="form-control" ID="NuevoProductoValor" TextMode="Number" min="0" runat="server" Style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"></asp:TextBox>
                                     </div>
                                 </div>
 
@@ -183,6 +183,60 @@
         </asp:UpdatePanel>
         <!-- Fin Modal Modificar Producto -->
 
+
+
+        <!-- Modal Categorias-->
+        <div class="modal fade" id="modalCategorias" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="p-3 d-flex justify-content-between">
+                        <h5 class="modal-title">Menu Categorías</h5>
+
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                    </div>
+                    <div class="p-2">
+                        <div class="d-flex justify-content-center ">
+                            <div class="col form-control">
+                                <div class="row">
+                                    <span class="col-1 align-middle">ID</span>
+                                    <span class="col align-middle">Categoría</span>
+                                </div>
+
+
+                                <asp:Repeater runat="server" ID="CategoriasRepetidor">
+                                    <ItemTemplate>
+                                        <div class="row p-1">
+                                            <span class="col-1 align-middle"><%#Eval("Id")%></span>
+                                            <span class="col align-middle"><%#Eval("Descripcion")%> </span>
+                                        </div>
+                                    </ItemTemplate>
+                                </asp:Repeater>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <%--Nav filtros--%>
         <div class="row p-2">
             <div class="col-2">
@@ -275,24 +329,24 @@
                         <asp:BoundField HeaderText="Nombre" DataField="Nombre" HeaderStyle-CssClass="columna-grilla" />
                         <asp:BoundField HeaderText="Categoria" DataField="Categoria" HeaderStyle-CssClass="columna-grilla" />
                         <asp:BoundField HeaderText="Valor" DataFormatString="{0:C}" DataField="Valor" HeaderStyle-CssClass="columna-grilla" />
-                        <asp:BoundField HeaderText="Vegano" DataField="AptoVegano" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
-                        <asp:BoundField HeaderText="Celiaco"  DataField="AptoCeliaco" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField HeaderText="Alcohol" DataField="Alcohol" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
+                        <asp:BoundField HeaderText="Vegano" DataField="AptoVegano" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField HeaderText="Celiaco" DataField="AptoCeliaco" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField HeaderText="Alcohol" DataField="Alcohol" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
                         <asp:BoundField HeaderText="Stock" DataField="Stock" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField HeaderText="Estado"  DataField="Activo" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"  />
-                        <asp:BoundField HeaderText="Tiempo Cocción" DataField="TiempoCoccion" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
+                        <asp:BoundField HeaderText="Estado" DataField="Activo" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField HeaderText="Tiempo Cocción" DataField="TiempoCoccion" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
 
-                    
+
 
                         <asp:TemplateField HeaderText="Stock" HeaderStyle-Width="150px" ItemStyle-HorizontalAlign="Center">
-                            <ItemTemplate >
-                                <asp:Button runat="server" OnClick="BtnAgregarStock_Click" ID="BtnAgregarStock" Text="+" ToolTip="Sumar Stock" CssClass="btn btn-dark" CommandArgument='<%#Eval("Id") %>'/>
+                            <ItemTemplate>
+                                <asp:Button runat="server" OnClick="BtnAgregarStock_Click" ID="BtnAgregarStock" Text="+" ToolTip="Sumar Stock" CssClass="btn btn-dark" CommandArgument='<%#Eval("Id") %>' />
                                 <asp:TextBox runat="server" TextMode="Number" min="0" ID="tbAgregarStock" CssClass="col-4"></asp:TextBox>
                                 <asp:Button ID="BtnQuitarStock" runat="server" Text="-" ToolTip="Restar Producto" OnClick="BtnQuitarStock_Click" CommandArgument='<%#Eval("Id")%>' CssClass="btn btn-dark" />
-                             </ItemTemplate>
+                            </ItemTemplate>
                         </asp:TemplateField>
 
-                            <asp:TemplateField>
+                        <asp:TemplateField>
                             <ItemTemplate>
                                 <asp:Button ID="btnModificarProducto" runat="server" Text="🖍" ToolTip="Modificar Producto" OnClick="btnModificarProducto_Click" CommandArgument='<%#Eval("Id")%>' data-bs-toggle="modal" data-bs-target="#modalModificarProductos" CssClass="btn btn-dark" />
                                 <asp:Button runat="server" Text="🗑" OnClick="EliminarProducto" ToolTip="Eliminar Producto Permanentemente" CommandArgument='<%#Eval("Id")%>' CssClass="btn btn-dark" />
@@ -319,15 +373,12 @@
             <p class="h5">Nuevo producto</p>
         </div>
 
-
-        <div class="col-2 me-2 btn btn-dark" title="Menú Categorías">
+        <div class="col-2 me-2 btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalCategorias" title="Menú Categorías">
             <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
-
-            <asp:LinkButton ID="LBtnCategorías" runat="server"
-                CssClass="h5">
-                        <label>Categorías</label>
-            </asp:LinkButton>
+            <p class="h5">Categorias</p>
         </div>
+
+
 
         <div class="col-2 me-2 btn btn-dark" title="Modificar Selección">
             <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
