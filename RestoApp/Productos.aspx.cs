@@ -606,6 +606,23 @@ namespace RestoApp
         }
 
 
+        protected void btnModificarCategoria_Click(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+            RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
+            TextBox tbAgregarStock = repeaterItem.FindControl("tbCategoriaNombre") as TextBox;
+            if (tbAgregarStock.Text != string.Empty)
+            {
+                CategoriaProducto CPAux = new CategoriaProducto();
+                CPAux.Id = int.Parse(button.CommandArgument);
+                CPAux.Descripcion = tbNuevaCategoria.Text;
+                CategoriaProductoNegocio CNPAux = new CategoriaProductoNegocio();
+                CNPAux.AgregarCategoria(CPAux);
+                CargarDDLCategorias();
+            }
+        }
+
+
         protected void btnGuardarCategoria_Click(object sender, EventArgs e)
         {
 
@@ -619,8 +636,31 @@ namespace RestoApp
             }
         }
 
+
+
         protected void btnCancelarCategoria_Click(object sender, EventArgs e)
         {
+
+        }
+
+       
+        protected void btnActivarCategoria_Click(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+
+            try
+            {
+                CategoriaProductoNegocio CNPAux = new CategoriaProductoNegocio();
+                CNPAux.CategoriaBajaFisica(int.Parse(button.CommandArgument));
+                CargarDDLCategorias();
+            }
+            catch (Exception)
+            {
+                string script = "alert('Categoria en uso, no se puede eliminar.');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+               
+            }
+        }
 
         }
     }
@@ -628,4 +668,4 @@ namespace RestoApp
 
 
 
-}
+

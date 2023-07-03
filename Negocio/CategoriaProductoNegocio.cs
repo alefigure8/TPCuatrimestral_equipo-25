@@ -66,5 +66,28 @@ namespace Negocio
             }
         }
 
+        public int CategoriaBajaFisica(int Id)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            try
+            {
+                AccesoDB.setQuery($"DELETE FROM " +
+                    $"{ColumnasDB.CategoriaProducto.DB} " +
+                    " WHERE " + $"{ColumnasDB.CategoriaProducto.Id} = " + Id + " ");
+                return AccesoDB.executeScalar();
+              
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+           
+        }
+
+
     }
 }

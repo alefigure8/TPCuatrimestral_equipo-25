@@ -186,6 +186,7 @@
 
 
         <!-- Modal Categorias-->
+
         <div class="modal fade" id="modalCategorias" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -207,15 +208,23 @@
                                 <asp:Repeater runat="server" ID="CategoriasRepetidor">
                                     <ItemTemplate>
                                         <div class="row bg-white p-1">
-                                            <span class="col-1 align-middle bg-white"><%#Eval("Id")%></span>
-                                            <span class="col align-middle bg-white"><%#Eval("Descripcion")%> </span>
+
+                                            <div class="col-6">
+                                                <asp:UpdatePanel runat="server">
+                                                    <ContentTemplate>
+                                                        <asp:TextBox ID="tbCategoriaNombre" runat="server" AutoPostBack="true" CssClass="col align-middle bg-white border-0" Text='<%#Eval("Descripcion")%>'></asp:TextBox>
+                                                    </ContentTemplate>
+
+                                                </asp:UpdatePanel>
+                                            </div>
+
+
+
+
                                             <span class="col-3 bg-white">
-                                                <div class="col btn btn-dark pl-2" title="Modificar Categoria">
-                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                </div>
-                                                <div class="col btn btn-dark" title="Marcar como Inactiva">
-                                                    <i class="fa fa-times" aria-hidden="true"></i>
-                                                </div>
+                                                <asp:Button ID="btnModificarCategoria" CommandArgument='<%#Eval("Id") %>' Text="🖍" runat="server" CssClass="col btn btn-dark pl-2" ToolTip="ModificarCategoria" OnClick="btnModificarCategoria_Click" />
+                                                  <asp:Button  ID="btnActivarCategoria" CommandArgument='<%#Eval("Id") %>' Text="X" runat="server" CssClass="col btn btn-dark pl-2" ToolTip="Eliminar"  OnClick="btnActivarCategoria_Click"/>
+
                                             </span>
                                         </div>
                                     </ItemTemplate>
@@ -225,20 +234,20 @@
                                     <span class="row m-2" style="font-size: 12px">NUEVA CATEGORIA:</span>
 
                                     <div class="row d-flex justify-content-between">
-                                      
+
 
                                         <div class="col-6">
                                             <asp:TextBox ID="tbNuevaCategoria" runat="server" CssClass="form-control" Text="Ingresar Descripción"></asp:TextBox>
                                         </div>
-                                    
-                                        
-                                 <asp:Button ID="btnGuardarCategoria" Text="Guardar" runat="server" CssClass="col-3 btn btn-secondary" ToolTip="Guardar Registro" OnClick="btnGuardarCategoria_Click"/>
-                                        
-                                        
-                                  <asp:Button ID="btnCancelarCategoria"  Text="Cancelar" runat="server" CssClass="col-3 btn btn-secondary" ToolTip="Cancelar" OnClick="btnCancelarCategoria_Click"/>
-                                        
-                                        
-                           
+
+
+                                        <asp:Button ID="btnGuardarCategoria" Text="Guardar" runat="server" CssClass="col-3 btn btn-secondary" ToolTip="Guardar Registro" OnClick="btnGuardarCategoria_Click" />
+
+
+                                        <asp:Button ID="btnCancelarCategoria" Text="Cancelar" runat="server" CssClass="col-3 btn btn-secondary" ToolTip="Cancelar" OnClick="btnCancelarCategoria_Click" />
+
+
+
 
 
                                     </div>
@@ -257,6 +266,9 @@
                 </div>
             </div>
         </div>
+
+
+
         <!-- Modal -->
 
 
