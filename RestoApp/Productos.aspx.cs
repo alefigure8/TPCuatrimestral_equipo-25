@@ -143,7 +143,7 @@ namespace RestoApp
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                e.Row.Cells[1].Text = ListaCategoriasProducto[int.Parse(e.Row.Cells[1].Text) - 1].Descripcion;
+                e.Row.Cells[1].Text = ListaCategoriasProducto.Find(x => x.Id == int.Parse(e.Row.Cells[1].Text)).Descripcion;
 
                 string resultado = (bool.Parse(e.Row.Cells[3].Text)) == true ? "✔" : "✖";
                 e.Row.Cells[3].Text = resultado;
@@ -610,15 +610,16 @@ namespace RestoApp
         {
             Button button = sender as Button;
             RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
-            TextBox tbAgregarStock = repeaterItem.FindControl("tbCategoriaNombre") as TextBox;
-            if (tbAgregarStock.Text != string.Empty)
+            TextBox tbCategoriaNombre = repeaterItem.FindControl("tbCategoriaNombre") as TextBox;
+            if (tbCategoriaNombre.Text != string.Empty)
             {
                 CategoriaProducto CPAux = new CategoriaProducto();
                 CPAux.Id = int.Parse(button.CommandArgument);
-                CPAux.Descripcion = tbNuevaCategoria.Text;
+                CPAux.Descripcion = tbCategoriaNombre.Text;
                 CategoriaProductoNegocio CNPAux = new CategoriaProductoNegocio();
-                CNPAux.AgregarCategoria(CPAux);
+                CNPAux.ModificarCategoria(CPAux);
                 CargarDDLCategorias();
+                ListarProductos();
             }
         }
 
@@ -633,6 +634,7 @@ namespace RestoApp
                 CategoriaProductoNegocio CNPAux = new CategoriaProductoNegocio();
                 CNPAux.AgregarCategoria(CPAux);
                 CargarDDLCategorias();
+                
             }
         }
 

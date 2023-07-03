@@ -66,6 +66,30 @@ namespace Negocio
             }
         }
 
+
+        public int ModificarCategoria(CategoriaProducto CategoriaModificada)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            try
+            {
+                AccesoDB.setQuery($"UPDATE " +
+                    $"{ColumnasDB.CategoriaProducto.DB} SET " +
+                    $"{ColumnasDB.CategoriaProducto.Descripcion} = " +
+                     $"'{CategoriaModificada.Descripcion}' WHERE " +
+                     $"{ColumnasDB.CategoriaProducto.Id} = " + 
+                     $"{CategoriaModificada.Id}");
+                return AccesoDB.executeScalar();
+            }
+            catch (Exception Ex)
+            {
+                throw Ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+        }
+
         public int CategoriaBajaFisica(int Id)
         {
             AccesoDB AccesoDB = new AccesoDB();
