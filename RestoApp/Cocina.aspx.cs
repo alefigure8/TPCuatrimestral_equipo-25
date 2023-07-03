@@ -11,9 +11,23 @@ namespace RestoApp
 {
     public partial class Cocina : System.Web.UI.Page
     {
+        public DateTime Reloj { get; set; }
+
+        public List<ProductoDelDia> productoDelDias { get; set; }
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
+            if (!IsPostBack)
+            {
+                Cargarpedidosprueba();
+                Reloj = DateTime.Now;
+                Session.Add("Reloj", Reloj);
+
+            }
+            Session.Add("datatable", creardatatable());
+            GVDCocina.DataSource = creardatatable();
+            GVDCocina.DataBind();
         }
 
         public void Cargarpedidosprueba()
@@ -139,5 +153,7 @@ namespace RestoApp
 
             return horariosnoche;
         }
+
+
     }
 }
