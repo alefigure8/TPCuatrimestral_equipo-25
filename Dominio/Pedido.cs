@@ -8,16 +8,14 @@ namespace Dominio
 {
     public class Pedido
     {
-        Pedido()
+        /*Pedido()
         {
             Estadopedido = new EstadoPedido();
             Estadopedido.Id = 1;
         }
+        */
         public int Id { get; set; }
         public List<ProductoDelDia> Productosdeldia;
-        public EstadoPedido Estadopedido
-        {
-            get; set;
-        }
+        public EstadoPedido Estadopedido        {    get; set;        }
     }
 }
