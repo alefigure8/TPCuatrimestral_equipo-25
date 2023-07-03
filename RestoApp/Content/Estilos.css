@@ -91,3 +91,12 @@ body {
 .columna-grilla-btn {
     text-align: center !important;
 }
+
+
+/* Botones */
+.btnOculto {
+    background: none !important;
+    color: white !important;
+    padding: 0rem !important;
+    border: none !important;
+}

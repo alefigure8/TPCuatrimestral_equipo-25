@@ -219,7 +219,7 @@ namespace RestoApp
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnGuardarCategoria;
+        protected global::System.Web.UI.WebControls.Button btnGuardarCategoria;
 
         /// <summary>
         /// btnCancelarCategoria control.
@@ -228,7 +228,7 @@ namespace RestoApp
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton btnCancelarCategoria;
+        protected global::System.Web.UI.WebControls.Button btnCancelarCategoria;
 
         /// <summary>
         /// TxtBuscar control.

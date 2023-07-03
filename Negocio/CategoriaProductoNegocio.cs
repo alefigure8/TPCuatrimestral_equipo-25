@@ -43,5 +43,28 @@ namespace Negocio
             return ListaCategorias;
 
         }
+
+        public int AgregarCategoria(CategoriaProducto NuevaCategoria)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            try
+            {
+                AccesoDB.setQuery($"INSERT INTO " +
+                    $"{ColumnasDB.CategoriaProducto.DB} (" +
+                    $"{ColumnasDB.CategoriaProducto.Descripcion})"  +
+                    $"VALUES (" +
+                     $"'{NuevaCategoria.Descripcion}')");
+                return AccesoDB.executeScalar();
+            }
+            catch (Exception Ex)
+            {
+                throw Ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+        }
+
     }
 }

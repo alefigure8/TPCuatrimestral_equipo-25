@@ -25,9 +25,7 @@ namespace RestoApp
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
-            CategoriaProductoNegocio CategoriaProductoNegocio = new CategoriaProductoNegocio();
-            ListaCategoriasProducto = CategoriaProductoNegocio.Listar();
-
+         
             if (!IsPostBack)
             {
                 IniciarDDL();
@@ -44,6 +42,12 @@ namespace RestoApp
             CargarDDLStock();
 
             CargarAtributos();
+        }
+
+        public void ListarCategoriasProducto()
+        {
+            CategoriaProductoNegocio CategoriaProductoNegocio = new CategoriaProductoNegocio();
+            ListaCategoriasProducto = CategoriaProductoNegocio.Listar();
         }
 
         public void CargarDDLEstado()
@@ -64,6 +68,11 @@ namespace RestoApp
 
         public void CargarDDLCategorias()
         {
+            ListarCategoriasProducto();
+
+            DDLCategorias.Items.Clear();
+            modalDDLCategorias.Items.Clear();
+            MPDDLCategoria.Items.Clear();
 
             DDLCategorias.Items.Add("Categorias");
             modalDDLCategorias.Items.Add("Categorias");
@@ -78,7 +87,7 @@ namespace RestoApp
 
             CategoriasRepetidor.DataSource = ListaCategoriasProducto;
             CategoriasRepetidor.DataBind();
-         
+
         }
 
         public void CargarDDLValor()
@@ -523,13 +532,13 @@ namespace RestoApp
             {
                 if (!ValidarProducto(int.Parse(button.CommandArgument)))
                 {
-                    
-                        Producto PAux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
-                        PAux.Stock += int.Parse(tbAgregarStock.Text);
-                        ProductoNegocio PNAux = new ProductoNegocio();
-                        PNAux.ModificarProducto(PAux);
-                        ListarProductos();
-                    
+
+                    Producto PAux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+                    PAux.Stock += int.Parse(tbAgregarStock.Text);
+                    ProductoNegocio PNAux = new ProductoNegocio();
+                    PNAux.ModificarProducto(PAux);
+                    ListarProductos();
+
                 }
                 else
                 {
@@ -558,13 +567,13 @@ namespace RestoApp
             {
                 if (!ValidarProducto(int.Parse(button.CommandArgument)))
                 {
-                    
-                        Producto PAux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
-                        PAux.Stock -= int.Parse(tbAgregarStock.Text);
-                        ProductoNegocio PNAux = new ProductoNegocio();
-                        PNAux.ModificarProducto(PAux);
-                        ListarProductos();
-                    
+
+                    Producto PAux = ((List<Producto>)Session["ListaProductos"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+                    PAux.Stock -= int.Parse(tbAgregarStock.Text);
+                    ProductoNegocio PNAux = new ProductoNegocio();
+                    PNAux.ModificarProducto(PAux);
+                    ListarProductos();
+
                 }
                 else
                 {
@@ -589,21 +598,30 @@ namespace RestoApp
             DateTime Faux = DateTime.Now;
 
 
-            if ((PNAux.BuscarProductoDelDia(id, DateTime.Now)).Id!=-1 && (PNAux.BuscarProductoDelDia(id, DateTime.Now))!=null) {
+            if ((PNAux.BuscarProductoDelDia(id, DateTime.Now)).Id != -1 && (PNAux.BuscarProductoDelDia(id, DateTime.Now)) != null)
+            {
                 return true;
             }
             else { return false; }
         }
 
-        protected void btnCancelarCategoria_Click(object sender, EventArgs e)
-        {
-            Console.Write("hola");
-        }
 
         protected void btnGuardarCategoria_Click(object sender, EventArgs e)
         {
 
-            Console.Write("hola");
+            if (tbNuevaCategoria.Text != string.Empty)
+            {
+                CategoriaProducto CPAux = new CategoriaProducto();
+                CPAux.Descripcion = tbNuevaCategoria.Text;
+                CategoriaProductoNegocio CNPAux = new CategoriaProductoNegocio();
+                CNPAux.AgregarCategoria(CPAux);
+                CargarDDLCategorias();
+            }
+        }
+
+        protected void btnCancelarCategoria_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

@@ -224,22 +224,21 @@
                                 <div class="row bg-dark text-white">
                                     <span class="row m-2" style="font-size: 12px">NUEVA CATEGORIA:</span>
 
-                                    <div class="row">
-                                        <div class="col">
+                                    <div class="row d-flex justify-content-between">
+                                      
+
+                                        <div class="col-6">
                                             <asp:TextBox ID="tbNuevaCategoria" runat="server" CssClass="form-control" Text="Ingresar Descripción"></asp:TextBox>
                                         </div>
-                                       
-
-
-                                        <asp:LinkButton runat="server" ID="btnGuardarCategoria" CssClass="col-1 btn btn-dark" ToolTip="Guardar Registro" OnClick="btnGuardarCategoria_Click">
-                                            <i class="fa fa-check" aria-hidden="true"></i>
-                                        </asp:LinkButton>
-
-
-                                        <asp:LinkButton runat="server" ID="btnCancelarCategoria" CssClass="col-1 btn btn-dark" ToolTip="Cancelar" OnClick="btnCancelarCategoria_Click">
-                                            <i class="fa fa-ban" aria-hidden="true"></i>
-                                        </asp:LinkButton>
-
+                                    
+                                        
+                                 <asp:Button ID="btnGuardarCategoria" Text="Guardar" runat="server" CssClass="col-3 btn btn-secondary" ToolTip="Guardar Registro" OnClick="btnGuardarCategoria_Click"/>
+                                        
+                                        
+                                  <asp:Button ID="btnCancelarCategoria"  Text="Cancelar" runat="server" CssClass="col-3 btn btn-secondary" ToolTip="Cancelar" OnClick="btnCancelarCategoria_Click"/>
+                                        
+                                        
+                           
 
 
                                     </div>
