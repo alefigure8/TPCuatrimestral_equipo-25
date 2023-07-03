@@ -101,13 +101,6 @@ namespace RestoApp
 				//Guardamos cantidad de mesas activas para mostrar en ASPX
 				MesasActivas = mesas.FindAll(m => m.Activo == true).Count();
 					
-				//Guardamos la cantidad de mesas asignadas
-				foreach(MeseroPorDia mesero in Helper.Session.GetMeserosAsignados())
-				{
-					//Sumamos mesas a mesas asignadas
-					MesasAsignadas += mesero.MesasAsignadas > 0 ? 1 : 0;
-				}
-
 				List<MeseroPorDia> meserosAsignados = Helper.Session.GetMeserosAsignados();
 
 				//Guardamos dato de cada mesa en una lista de Objects
@@ -136,7 +129,6 @@ namespace RestoApp
 
 				//Mandamos datos a JS
 				ScriptsDataGerente();
-				
 			}
 		}
 
