@@ -43,5 +43,51 @@ namespace Negocio
             return ListaCategorias;
 
         }
+
+        public int AgregarCategoria(CategoriaProducto NuevaCategoria)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            try
+            {
+                AccesoDB.setQuery($"INSERT INTO " +
+                    $"{ColumnasDB.CategoriaProducto.DB} (" +
+                    $"{ColumnasDB.CategoriaProducto.Descripcion})"  +
+                    $"VALUES (" +
+                     $"'{NuevaCategoria.Descripcion}')");
+                return AccesoDB.executeScalar();
+            }
+            catch (Exception Ex)
+            {
+                throw Ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+        }
+
+        public int CategoriaBajaFisica(int Id)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            try
+            {
+                AccesoDB.setQuery($"DELETE FROM " +
+                    $"{ColumnasDB.CategoriaProducto.DB} " +
+                    " WHERE " + $"{ColumnasDB.CategoriaProducto.Id} = " + Id + " ");
+                return AccesoDB.executeScalar();
+              
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+           
+        }
+
+
     }
 }

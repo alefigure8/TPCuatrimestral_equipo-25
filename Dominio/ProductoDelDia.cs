@@ -12,7 +12,9 @@ namespace Dominio
         public int StockInicio { get; set; }
         public int StockCierre { get; set; }
 
-        public ProductoDelDia() { }
+        public ProductoDelDia() {
+            this.Id = -1;
+        }
 
         public ProductoDelDia(Producto aux) {
             this.Id = aux.Id;

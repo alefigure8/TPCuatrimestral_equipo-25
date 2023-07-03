@@ -144,7 +144,7 @@ namespace Negocio
                     ", AptoVegano = '" + ProdAModificar.AptoVegano + "', AptoCeliaco = '" + ProdAModificar.AptoCeliaco + "', Alcohol = '" +
                     ProdAModificar.Alcohol + "', Stock = " + ProdAModificar.Stock + ", Activo = '" + ProdAModificar.Activo + "', TiempoCoccion = '" +
                     ProdAModificar.TiempoCoccion + "' WHERE IdProducto = " + ProdAModificar.Id);
-                   
+
                 return AccesoDB.executeScalar();
             }
             catch (Exception Ex)
@@ -170,7 +170,7 @@ namespace Negocio
                 AccesoDB.setQuery($"SELECT {ColumnasDB.Producto.Id},  {ColumnasDB.Producto.Categoria}, {ColumnasDB.Producto.Nombre},"
                + $"{ColumnasDB.Producto.Descripcion}, {ColumnasDB.Producto.Valor}, {ColumnasDB.Producto.AptoVegano},"
                + $"{ColumnasDB.Producto.AptoCeliaco}, {ColumnasDB.Producto.Alcohol}, {ColumnasDB.Producto.Stock},"
-               + $"{ColumnasDB.Producto.Activo}, {ColumnasDB.Producto.TiempoCoccion}, {ColumnasDB.ProductoDD.Fecha}, {ColumnasDB.ProductoDD.StockInicial}, {ColumnasDB.ProductoDD.StockCierre}  " 
+               + $"{ColumnasDB.Producto.Activo}, {ColumnasDB.Producto.TiempoCoccion}, {ColumnasDB.ProductoDD.Fecha}, {ColumnasDB.ProductoDD.StockInicial}, {ColumnasDB.ProductoDD.StockCierre}  "
                + $" FROM {ColumnasDB.ProductoDD.DB} WHERE {ColumnasDB.ProductoDD.Fecha} =  TRY_CONVERT(DATE,GETDATE())");
                 AccesoDB.executeReader();
                 while (AccesoDB.Reader.Read())
@@ -234,7 +234,7 @@ namespace Negocio
                     $"'{ProductoDelDia.Descripcion}'," +
                     //$" {ProductoDelDia.Valor.ToString().Replace(",", ".")}," +
                     $" {ProductoDelDia.Valor}," +
-					$"'{ProductoDelDia.AptoVegano}'," +
+                    $"'{ProductoDelDia.AptoVegano}'," +
                     $"'{ProductoDelDia.AptoCeliaco}'," +
                     $"'{ProductoDelDia.Alcohol}'," +
                     $" {ProductoDelDia.Stock}," +
@@ -242,7 +242,7 @@ namespace Negocio
                     $"'{ProductoDelDia.TiempoCoccion}'," +
                     $"'{ProductoDelDia.Fecha.ToString("yyyy-MM-dd")}'," +
                     //$"'{ProductoDelDia.Fecha}'," +
-					$"{ProductoDelDia.StockInicio}," +
+                    $"{ProductoDelDia.StockInicio}," +
                     $"{ProductoDelDia.StockCierre})");
                 return AccesoDB.executeScalar();
             }
@@ -285,13 +285,61 @@ namespace Negocio
                     ", AptoVegano = '" + ProdAModificar.AptoVegano + "', AptoCeliaco = '" + ProdAModificar.AptoCeliaco + "', Alcohol = '" +
                     ProdAModificar.Alcohol + "', Stock = " + ProdAModificar.Stock + ", Activo = '" + ProdAModificar.Activo + "', TiempoCoccion = '" +
                     ProdAModificar.TiempoCoccion + "', Fecha = '" + ProdAModificar.Fecha + "', StockInicial = " + ProdAModificar.StockInicio +
-                    ", StockCierre = " + ProdAModificar.StockCierre +" WHERE IdProducto = " + ProdAModificar.Id + " AND " + "Fecha = '" + ProdAModificar.Fecha + "'");
+                    ", StockCierre = " + ProdAModificar.StockCierre + " WHERE IdProducto = " + ProdAModificar.Id + " AND " + "Fecha = '" + ProdAModificar.Fecha + "'");
 
                 return AccesoDB.executeScalar();
             }
             catch (Exception Ex)
             {
                 throw Ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+        }
+
+
+        public ProductoDelDia BuscarProductoDelDia(int id, DateTime fecha)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            List<ProductoDelDia> ListaProductosDelDia = new List<ProductoDelDia>();
+
+            try
+            {
+                AccesoDB.setQuery($"SELECT {ColumnasDB.Producto.Id},  {ColumnasDB.Producto.Categoria}, {ColumnasDB.Producto.Nombre},"
+               + $"{ColumnasDB.Producto.Descripcion}, {ColumnasDB.Producto.Valor}, {ColumnasDB.Producto.AptoVegano},"
+               + $"{ColumnasDB.Producto.AptoCeliaco}, {ColumnasDB.Producto.Alcohol}, {ColumnasDB.Producto.Stock},"
+               + $"{ColumnasDB.Producto.Activo}, {ColumnasDB.Producto.TiempoCoccion}, {ColumnasDB.ProductoDD.Fecha}, {ColumnasDB.ProductoDD.StockInicial}, {ColumnasDB.ProductoDD.StockCierre}  "
+               + $" FROM {ColumnasDB.ProductoDD.DB} WHERE {ColumnasDB.Producto.Id} = " + id + $" AND {ColumnasDB.ProductoDD.Fecha} =  '" + fecha.ToString("yyyy-MM-dd") + "'");
+                AccesoDB.executeReader();
+                ProductoDelDia PDDAux = new ProductoDelDia();
+                while (AccesoDB.Reader.Read())
+                {
+                   
+                    PDDAux.Id = (Int32)AccesoDB.Reader[ColumnasDB.Producto.Id];
+                    PDDAux.Categoria = (Int32)AccesoDB.Reader[ColumnasDB.Producto.Categoria];
+                    PDDAux.Nombre = (string)AccesoDB.Reader[ColumnasDB.Producto.Nombre];
+                    PDDAux.Descripcion = (string)AccesoDB.Reader[ColumnasDB.Producto.Descripcion];
+                    PDDAux.Valor = (Decimal)AccesoDB.Reader[ColumnasDB.Producto.Valor];
+                    PDDAux.AptoVegano = (bool)AccesoDB.Reader[ColumnasDB.Producto.AptoVegano];
+                    PDDAux.AptoCeliaco = (bool)AccesoDB.Reader[ColumnasDB.Producto.AptoCeliaco];
+                    PDDAux.Alcohol = (bool)AccesoDB.Reader[ColumnasDB.Producto.Alcohol];
+                    PDDAux.Stock = (int)AccesoDB.Reader[ColumnasDB.Producto.Stock];
+                    PDDAux.Activo = (bool)AccesoDB.Reader[ColumnasDB.Producto.Activo];
+                    PDDAux.TiempoCoccion = (TimeSpan)AccesoDB.Reader[ColumnasDB.Producto.TiempoCoccion];
+                    PDDAux.Fecha = (DateTime)AccesoDB.Reader[ColumnasDB.ProductoDD.Fecha];
+                    PDDAux.StockInicio = AccesoDB.Reader[ColumnasDB.ProductoDD.StockInicial] is DBNull ? 0 : (int)AccesoDB.Reader[ColumnasDB.ProductoDD.StockInicial];
+                    PDDAux.StockCierre = AccesoDB.Reader[ColumnasDB.ProductoDD.StockCierre] is DBNull ? 0 : (int)AccesoDB.Reader[ColumnasDB.ProductoDD.StockCierre];
+
+                   
+                }
+                return PDDAux;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
             }
             finally
             {

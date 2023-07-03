@@ -163,7 +163,7 @@ namespace RestoApp
                 PDDAux.Activo = true;
                 PDDAux.Stock += int.Parse(tbAgregarStock.Text);
                 PDDAux.StockInicio += int.Parse(tbAgregarStock.Text);
-                ProductoNegocio PNAux = new ProductoNegocio();
+                ProductoNegocio PNAux = new ProductoNegocio();  
                 PNAux.ModificarProductoDD(PDDAux);
                 PNAux.ModificarProducto(PDDAux);
                 ListaProductosDisponibles();
