@@ -605,7 +605,7 @@
                 contenidoModal.innerHTML += `
                 <div class="row d-flex flex-column justify-content-center gap-2 p-3 ms-3">
                     <div class="col d-flex gap-4">
-                        <button class="btnAbrirMeasa botonPedido" style="width: 150px; height: 150px;">
+                        <button class="btnAbrirMeasa botonPedido" style="width: 150px; height: 150px;" id="btnAbrir_${i+1}">
                                 <div class="row-cols-5 d-flex align-items-center justify-content-center">
                                     <i class="fa-solid fa-plus fs-1 text-white"></i>
                                 </div>
@@ -613,7 +613,7 @@
                                     <p class="fw-semibold">Abrir Mesa</p>
                                 </div>
                         </button>
-                        <button class="btn btnAbrirPedido botonPedido" style="width: 150px; height: 150px;">
+                        <button class="btn btnAbrirPedido botonPedido" style="width: 150px; height: 150px;" id="btnPedido_${i + 1}">
                             <div class="row-cols-5 d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-utensils fs-1 text-white"></i>
                             </div>
@@ -623,7 +623,7 @@
                         </button>
                     </div>
                     <div class="col d-flex gap-4 mt-3">
-                        <button class="btn btnPedidos botonPedido" style="width: 150px; height: 150px;">
+                        <button class="btn btnPedidos botonPedido" style="width: 150px; height: 150px;" id="btnLista_${i + 1}">
                             <div class="row-cols-5 d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-list fs-1 text-white"></i>
                             </div>
@@ -631,7 +631,7 @@
                                 <p class="fw-semibold">Pedidos</p>
                             </div>
                         </button>
-                        <button class="btn btnTicket botonPedido" style="width: 150px; height: 150px;">
+                        <button class="btn btnTicket botonPedido" style="width: 150px; height: 150px;" id="btnTicket_${i + 1}">
                             <div class="row-cols-5 d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-dollar fs-1 text-white"></i>
                             </div>
@@ -643,15 +643,43 @@
                 </div>
                 `;
 
+                //Creamos los eventos de los botones
+                eventoBotones(i)
             })
         }
+    }
+
+    //Evento botones Mesero
+    function eventoBotones(i) {
+
+        let btnServicio = document.getElementById(`btnAbrir_${i + 1}`);
+        let btnPedido = document.getElementById(`btnPedido_${i + 1}`);
+        let btnLista = document.getElementById(`btnLista_${i + 1}`);
+        let btnTicket = document.getElementById(`btnTicket_${i + 1}`);
+
+        btnServicio.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log("Abrir Servicio")
+        })
+        btnPedido.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log("Abrir Pedido")
+        })
+        btnLista.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log("Ver listado")
+        })
+        btnTicket.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log("Ticket")
+        })
+
     }
 
     //Boton modal para cerrar
     closeModalBtn.addEventListener("click", function () {
         modal.style.display = "none";
     });
-
 
     //Función para pasar numero de mesero a color
     function convertirAHexadecimal(numero) {

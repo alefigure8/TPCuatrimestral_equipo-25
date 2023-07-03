@@ -26,9 +26,9 @@ namespace RestoApp
         public int MesasAsignadas { get; set; }
         public int MeserosPresentes { get; set; }
 		public string tipoUsuario;
-
-		//Private
-		private List<MeseroPorDia> meserosPorDiaNoAsignados = new List<MeseroPorDia>();
+ 
+        //Private
+        private List<MeseroPorDia> meserosPorDiaNoAsignados = new List<MeseroPorDia>();
 		private List<MeseroPorDia> meserosPorDiaAsignados = new List<MeseroPorDia>();
 		private List<Mesa> mesas;
 		private List<MesaPorDia> mesasPorDia;
