@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -165,7 +166,95 @@ namespace RestoApp
 
             return horariosnoche;
         }
+        protected void GVDCocina_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            //recuperamos pedido de session
+            Pedido Pedido = (Pedido)Session["Pedido"];
 
+            //recuperamos datatable de session
+
+            DataTable dataTable = (DataTable)Session["datatable"];
+
+
+
+            int columnaIndice = dataTable.Columns.IndexOf("Nombre");
+            // calculamos cuantos casilleros ocupa el tiempo de coccion de cada producto
+            int casillerospedido1 = (int)Pedido.Productosdeldia[0].TiempoCoccion.TotalMinutes / 5;
+            int casillerospedido2 = (int)Pedido.Productosdeldia[1].TiempoCoccion.TotalMinutes / 5;
+
+            // creamos variable datetime y variable timespan
+            // a Timespan asignamos el horario del pedido
+            DateTime datetime = new DateTime();
+            datetime = Pedido.Estadopedido.fechaactualizacion;
+            TimeSpan TimeSpan = new TimeSpan(datetime.Hour, datetime.Minute, datetime.Second);
+
+
+            // redondeamos los minutos a multiplos de 5 y lo pasamos a string para comparar
+            // con columnas de datatable
+            int redondeomins = TimeSpan.Minutes - TimeSpan.Minutes % 5;
+            string hora = TimeSpan.Hours.ToString("00") + ":" + redondeomins.ToString("00");
+
+            // obtenemos el indice de la columna en la que se encuentra el horario del pedido
+            int casillero = dataTable.Columns.IndexOf(hora);
+            // calculamos la cantidad de casilleros que ocupa el tiempo de coccion del producto
+            casillerospedido1 = casillerospedido1 + casillero;
+            casillerospedido2 = casillerospedido2 + casillero;
+
+            // recuperamos el horario actual simulado y lo asignamos a un timespan
+            Reloj = (DateTime)Session["Reloj"];
+            TimeSpan Horaactual = new TimeSpan(Reloj.Hour, Reloj.Minute, Reloj.Second);
+            int redondeomins2 = Horaactual.Minutes - Horaactual.Minutes % 5;
+            string horaactual = Horaactual.Hours.ToString("00") + ":" + redondeomins2.ToString("00");
+            int casilleroevolucion1 = dataTable.Columns.IndexOf(horaactual);
+
+
+
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                // Obtén el valor de la celda en la columna deseada
+                //  string valorCelda = DataBinder.Eval(e.Row.DataItem, "Nombre").ToString();
+
+                // foreach 
+
+
+                if (e.Row.RowIndex == 0)
+                {
+                    for (int i = casillero; i <= casillerospedido1; i++)
+                    {
+
+                        if (i > casilleroevolucion1)
+                        {
+                            e.Row.Cells[i].BackColor = Color.LightBlue;
+                        }
+
+                    }
+                    for (int j = casillero; j <= casilleroevolucion1; j++)
+                    {
+
+                        e.Row.Cells[j].BackColor = Color.LightPink;
+                    }
+                }
+
+
+
+
+            }
+            if (e.Row.RowIndex == 1)
+            {
+                for (int i = casillero; i <= casillerospedido2; i++)
+                {
+
+                    // Cambia el color de fondo de la celda
+                    e.Row.Cells[i].BackColor = Color.LightBlue; // Cambia "Color.Red" por el color que desees
+                    {
+                        e.Row.Cells[i].BackColor = Color.LightPink;
+                    }
+
+                }
+
+
+            }
+        }
 
     }
 }
