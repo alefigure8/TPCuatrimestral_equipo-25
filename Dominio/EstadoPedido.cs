@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace Dominio
 {
-    internal class EstadoPedido
+    public class EstadoPedido
     {
+
+        public int Id { get; set; }
+        public string Descripcion { get; set; }
+
+        public DateTime fechaactualizacion;
+
     }
 }
