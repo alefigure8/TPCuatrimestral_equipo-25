@@ -1,6 +1,7 @@
 ﻿using Dominio;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -31,7 +32,7 @@ namespace RestoApp
 
             Pedido Pedido = new Pedido();
             Pedido.Productosdeldia = new List<ProductoDelDia>();
-            Pedido.Estadopedido = new EstadoPedido();
+     
 
             ProductoDelDia productodelpedido0 = new ProductoDelDia();
 
@@ -55,6 +56,39 @@ namespace RestoApp
             Session.Add("Pedido", Pedido);
 
 
+        }
+
+        public DataTable creardatatable()
+        {
+
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Nombre", typeof(string));
+
+            foreach (string horario in horariosmañana())
+            {
+                dataTable.Columns.Add(horario, typeof(string));
+
+            }
+
+            Pedido Pedido = new Pedido();
+            Pedido.Productosdeldia = new List<ProductoDelDia>();
+            Pedido.Estadopedido = new EstadoPedido();
+            Pedido = (Pedido)Session["Pedido"];
+
+
+
+
+            foreach (ProductoDelDia aux in Pedido.Productosdeldia)
+            {
+                dataTable.Rows.Add(aux.Id);
+            }
+
+
+            // Obtén el índice de la columna en la que deseas aplicar el estilo
+
+
+
+            return dataTable;
         }
 
     }
