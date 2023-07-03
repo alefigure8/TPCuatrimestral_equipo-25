@@ -8,19 +8,22 @@
         <asp:Textbox ID="Txtreloj" runat="server" Width="200px"></asp:Textbox>
            <asp:Timer ID="Timer1" runat="server" OnTick="Timer1_Tick" Interval="1000"></asp:Timer>
                
+
+
             </ContentTemplate>
             </asp:UpdatePanel>
    
-    
+  
+            
     <div class="col d-flex"style="overflow-x:auto;" >
-         <asp:Gridview ID="GVDCocina" runat="server" >
-
-
-
+          <asp:UpdatePanel  runat="server">
+        <ContentTemplate>
+         <asp:Gridview ID="GVDCocina" runat="server" OnRowDataBound="GVDCocina_RowDataBound" AutoPostBack="true" OnDataBound="GVDCocina_DataBound" >
 
          </asp:Gridview>
 
-
+            </ContentTemplate>
+            </asp:UpdatePanel>
     </div>
 
    
