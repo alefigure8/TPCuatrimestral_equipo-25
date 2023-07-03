@@ -19,7 +19,7 @@
     <div class="col d-flex"style="overflow-x:auto;" >
           <asp:UpdatePanel  runat="server">
         <ContentTemplate>
-         <asp:Gridview ID="GVDCocina" runat="server" OnRowDataBound="GVDCocina_RowDataBound" AutoPostBack="true" OnDataBound="GVDCocina_DataBound" >
+         <asp:Gridview ID="GVDCocina" runat="server" OnRowDataBound="GVDCocina_RowDataBound" AutoPostBack="true" >
 
          </asp:Gridview>
 

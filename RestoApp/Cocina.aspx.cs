@@ -47,7 +47,7 @@ namespace RestoApp
 
             Pedido Pedido = new Pedido();
             Pedido.Productosdeldia = new List<ProductoDelDia>();
-     
+
 
             ProductoDelDia productodelpedido0 = new ProductoDelDia();
 
@@ -255,6 +255,5 @@ namespace RestoApp
 
             }
         }
-
     }
 }
