@@ -96,5 +96,15 @@ namespace Opciones
 			public const string Salida = "Salida";
 			public const string DB = "MeseroPorDia";
 		}
+
+		public struct Servicio
+		{
+			public const string Id = "IdServicio";
+			public const string Apertura= "Apertura";
+			public const string Cierre = "Cierre";
+			public const string Fecha = "Fecha";
+			public const string Cobrado = "Cobrado";
+			public const string DB = "Servicio";
+		}
 	}
 }

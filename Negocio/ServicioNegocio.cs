@@ -1,0 +1,144 @@
+﻿using Dominio;
+using Opciones;
+using System;
+using System.Collections.Generic;
+
+namespace Negocio
+{
+	public class ServicioNegocio
+	{
+		//Listamos todos los servicios Abiertos
+		public List<Servicio> Listar()
+		{
+			List<Servicio> servicios = new List<Servicio>();
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				datos.setQuery($"SELECT {ColumnasDB.Servicio.Id}, {ColumnasDB.MesasPorDia.IdMesa}, S.{ColumnasDB.Servicio.Fecha}, S.{ColumnasDB.Servicio.Apertura}, S.{ColumnasDB.Servicio.Cierre}, {ColumnasDB.Servicio.Cobrado} " +
+					$"FROM {ColumnasDB.Servicio.DB} S " +
+					$"INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD " +
+					$"ON S.{ColumnasDB.MesasPorDia.Id} = MPD.{ColumnasDB.MesasPorDia.Id}");
+
+				datos.executeReader();
+
+				
+				while (datos.Reader.Read())
+				{
+					Servicio auxServicio = new Servicio();
+
+					//ID
+					auxServicio.Id = (Int32)datos.Reader[ColumnasDB.Servicio.Id];
+
+					//Mesa
+					if (datos.Reader[ColumnasDB.MesasPorDia.IdMesa] != null)
+						auxServicio.Mesa = (int)datos.Reader[ColumnasDB.MesasPorDia.IdMesa]; ;
+
+					//Fecha
+					if (datos.Reader[ColumnasDB.Servicio.Fecha] != null)
+						auxServicio.Fecha = (DateTime)datos.Reader[ColumnasDB.Servicio.Fecha];
+
+					//Apertura
+					if (datos.Reader[ColumnasDB.Servicio.Apertura] != null)
+						auxServicio.Apertura = (TimeSpan)datos.Reader[ColumnasDB.Servicio.Apertura];
+					
+					//Cierre
+					object valorCierre = datos.Reader[ColumnasDB.Servicio.Cierre];
+					auxServicio.Cierre = DBNull.Value.Equals(valorCierre) ? (TimeSpan?)null : (TimeSpan?)valorCierre;
+
+					//Cobrado
+					if (datos.Reader[ColumnasDB.Servicio.Cobrado] != null)
+						auxServicio.Cobrado = (bool)datos.Reader[ColumnasDB.Servicio.Cobrado];
+
+					servicios.Add(auxServicio);
+				}
+			}
+			catch(Exception ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+			return servicios;
+		}
+
+		//Abrimos servicio y retornamos el ID del servicio creado
+		public int AbrirServicio(int mesa)
+		{
+			int id = 0;
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				//Buscamos ID de MesaPorDia con el número de Mesa y creamos el servicio
+				datos.setQuery($"DECLARE @IDMESAPORDIA BIGINT " +
+					$"SET @IDMESAPORDIA = ISNULL((SELECT {ColumnasDB.MesasPorDia.Id} FROM {ColumnasDB.MesasPorDia.DB} WHERE {ColumnasDB.MesasPorDia.IdMesa} = {mesa} AND CIERRE IS NULL ), 0); " +
+					$"IF @IDMESAPORDIA  > 0 " +
+					$"BEGIN " +
+					$"INSERT INTO SERVICIO ({ColumnasDB.MesasPorDia.Id}, {ColumnasDB.Servicio.Fecha}, {ColumnasDB.Servicio.Apertura}) " +
+					$"VALUES (@IDMESAPORDIA, {DateTime.Now.ToString("yyyy - MM - dd")}, {DateTime.Now.ToString("HH:mm:ss")}); " +
+					$"SELECT CAST(scope_identity() AS int) " +
+					$"END");
+
+				id = datos.executeScalar();
+			}
+			catch (Exception Ex)
+			{
+				return id = -1;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+			
+			return id;
+		}
+
+		//Cerramos el servicio y retornamos true o false dependiendo la operación
+		public bool CerrarServicio(int idServicio)
+		{
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				datos.setQuery($"UPDATE SERVICIO SET {ColumnasDB.Servicio.Cierre} = '{DateTime.Now.ToString("HH:mm:ss")}' WHERE {ColumnasDB.Servicio.Id} = {idServicio}");
+
+				return datos.executeNonQuery();
+			}
+			catch (Exception Ex)
+			{
+				return false;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+		}
+		
+		//Modificamos Servicio
+		public bool ModificarServicio(int idServicio)
+		{
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				datos.setQuery($"UPDATE SERVICIO SET {ColumnasDB.Servicio.Cobrado} = 1 WHERE {ColumnasDB.Servicio.Id} = {idServicio}");
+
+				return datos.executeNonQuery();
+			}
+			catch (Exception Ex)
+			{
+				return false;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+		}
+	}
+}
