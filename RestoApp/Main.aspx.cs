@@ -70,6 +70,9 @@ namespace RestoApp
 				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
 					meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
 
+				if(Session["NumeroMesaPedido"] != null)
+					lbNumeroMesa.Text = "Numero de Mesa: " + Session["NumeroMesaPedido"].ToString();
+
 				tipoUsuario = Configuracion.Rol.Mesero;
 				CargarMenuDisponible();
 				CargarMeseroPorDia();
@@ -446,6 +449,40 @@ namespace RestoApp
 
 			//Mandamos a script de javascript
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasArray", $"var numeroMesasArray = '{numeroMesasJSON}';", true);
+		}
+		
+		
+		//WEBMETHOD
+		[WebMethod]
+		public static string AbrirServicio(List<Dictionary<string, int>> data)
+		{
+			string response = String.Empty;
+			foreach(var diccionario in data)
+			{
+				var numeroMesa = diccionario["mesa"];
+
+				response = numeroMesa.ToString();
+			}
+
+
+			return response;
+		}
+
+		//Guardamos número de mesa en pedido
+		[WebMethod]
+		public static string AbrirPedido(List<Dictionary<string, int>> data)
+		{
+
+			string response = String.Empty;
+			foreach (var diccionario in data)
+			{
+				var numeroMesa = diccionario["mesa"];
+				HttpContext.Current.Session["NumeroMesaPedido"] = numeroMesa;
+				response = numeroMesa.ToString();
+			}
+
+			return response;
+
 		}
 	}
 }

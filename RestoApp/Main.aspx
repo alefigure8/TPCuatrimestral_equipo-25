@@ -231,6 +231,7 @@
             <%--SECCION MENU RAPIDO--%>
 
             <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 " >
+                <asp:Label ID="lbNumeroMesa" runat="server">No hay ninguna mesa elegida</asp:Label>
                 <div class="col-5 p-2">
                     <h2 class="h3">Platos Disponibles:</h2>
                     <asp:Repeater runat="server" ID="PlatosDelDia">
@@ -454,14 +455,12 @@
 
         return new Promise((resolve) => {
             if (typeof numeroMesasArray !== 'undefined') {
-                console.log(numeroMesasArray)
                 const numeroMesas = JSON.parse(numeroMesasArray)
                 resolve({ numeroMesas });
             } else {
                 const intervalo = setInterval(() => {
                     if (typeof numeroMesasArray !== 'undefined') {
                         clearInterval(intervalo);
-                        console.log(numeroMesasArray)
                         const numeroMesas = JSON.parse(numeroMesasArray)
                         resolve({ numeroMesas });
                     }
@@ -558,7 +557,7 @@
     function renderMesaMesero(numeroMesas) {
 
         for (i = 0; i < numeroMesas.length; i++) {
-            console.log(numeroMesas)
+
             //Mesa
             var mainDiv = document.createElement("div");
             mainDiv.className = "col-6 col-sm-3 d-flex justify-content-center flex-column m-4";
@@ -644,13 +643,13 @@
                 `;
 
                 //Creamos los eventos de los botones
-                eventoBotones(i)
+                eventoBotones(i, numeroDeMesa)
             })
         }
     }
 
     //Evento botones Mesero
-    function eventoBotones(i) {
+    function eventoBotones(i, mesa) {
 
         let btnServicio = document.getElementById(`btnAbrir_${i + 1}`);
         let btnPedido = document.getElementById(`btnPedido_${i + 1}`);
@@ -658,20 +657,34 @@
         let btnTicket = document.getElementById(`btnTicket_${i + 1}`);
 
         btnServicio.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log("Abrir Servicio")
+              console.log("Abrir Servicio")
+            //Mandamos datos a CodeBehind
+            let data = [{mesa: mesa}];
+   
+            mandarDatos('Main', 'AbrirServicio', data, e)
         })
+
         btnPedido.addEventListener('click', (e) => {
-            e.preventDefault();
+            //Mandamos datos a CodeBehind
             console.log("Abrir Pedido")
+            let data = [{ mesa: mesa }];
+            mandarDatos('Main', 'AbrirPedido', data, e)
         })
+
         btnLista.addEventListener('click', (e) => {
             e.preventDefault();
             console.log("Ver listado")
+            //Mandamos datos a CodeBehind
+            //mandarDatos('Main', 'AbrirServicio')
+            //MOSTRAR LISTADO DE PEDIDO. ¿lINK CON QUERY?
         })
+
         btnTicket.addEventListener('click', (e) => {
             e.preventDefault();
             console.log("Ticket")
+            //Mandamos datos a CodeBehind
+            //mandarDatos('Main', 'AbrirServicio')
+            //MOSTRAR TICKET. ¿LINK CON QUERY?
         })
 
     }
@@ -680,6 +693,28 @@
     closeModalBtn.addEventListener("click", function () {
         modal.style.display = "none";
     });
+
+    //Fetch para mandar datos a codebehind
+    async function mandarDatos(pag, metodo, data, event) {
+
+        event.preventDefault();
+
+        fetch(`${pag}.aspx/${metodo}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ data: data })
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result)
+                location.reload();
+            })
+            .catch(error => {
+                console.log(error)
+            });
+    }
 
     //Función para pasar numero de mesero a color
     function convertirAHexadecimal(numero) {
@@ -706,8 +741,7 @@
     }
 </script>
 |<!-- Fin Scripts Mesas -->
-
-
+  
 </asp:Content>
 
 
