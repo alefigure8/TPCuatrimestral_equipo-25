@@ -4,6 +4,16 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     
+        <asp:UpdatePanel runat="server">
+            <ContentTemplate>
+        <asp:Textbox ID="Txtreloj" runat="server" Width="200px"></asp:Textbox>
+           <asp:Timer ID="Timer1" runat="server" OnTick="Timer1_Tick" Interval="1000"></asp:Timer>
+               
+
+
+            </ContentTemplate>
+            </asp:UpdatePanel>
+   
   
             
     <div class="col d-flex"style="overflow-x:auto;" >
