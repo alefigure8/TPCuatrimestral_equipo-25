@@ -138,6 +138,18 @@ namespace RestoApp
             return listaHorarios;
         }
 
+        public void Timer1_Tick(object sender, EventArgs e)
+        {
+            Reloj = (DateTime)Session["Reloj"];
+            Reloj = Reloj.AddSeconds(60);
+            Txtreloj.Text = Reloj.ToString("HH:mm");
+            Session.Add("Reloj", Reloj);
+
+
+
+        }
+
+
         public string[] horariosnoche()
         {
             string[] horariosnoche = {
