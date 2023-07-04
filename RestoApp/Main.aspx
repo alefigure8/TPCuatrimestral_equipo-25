@@ -443,14 +443,18 @@
             if (typeof datosMesasArray !== 'undefined') {
                 const datosMesas = JSON.parse(datosMesasArray)
                 const numeroMesas = JSON.parse(numeroMesasActivasArray)
-                resolve({ datosMesas, numeroMesas });
+                const numeroServicios = JSON.parse(seviciosJSON)
+
+                resolve({ datosMesas, numeroMesas, numeroServicios });
             } else {
                 const intervalo = setInterval(() => {
                     if (typeof datosMesasArray !== 'undefined') {
                         clearInterval(intervalo);
                         const datosMesas = JSON.parse(datosMesasArray)
                         const numeroMesas = JSON.parse(numeroMesasActivasArray)
-                        resolve({ datosMesas, numeroMesas });
+                        const numeroServicios = JSON.parse(seviciosJSON)
+
+                        resolve({ datosMesas, numeroMesas, numeroServicios });
                     }
                 }, 0);
             }
@@ -463,13 +467,16 @@
         return new Promise((resolve) => {
             if (typeof numeroMesasArray !== 'undefined') {
                 const numeroMesas = JSON.parse(numeroMesasArray)
-                resolve({ numeroMesas });
+                const numeroServicios = JSON.parse(seviciosJSON)
+                resolve({ numeroMesas, numeroServicios });
             } else {
                 const intervalo = setInterval(() => {
                     if (typeof numeroMesasArray !== 'undefined') {
                         clearInterval(intervalo);
                         const numeroMesas = JSON.parse(numeroMesasArray)
-                        resolve({ numeroMesas });
+                        const numeroServicios = JSON.parse(seviciosJSON)
+
+                        resolve({ numeroMesas, numeroServicios });
                     }
                 }, 0);
             }
@@ -479,21 +486,21 @@
     //Llamamos datos de las mesas del Gerente
     if (tipoUsuario == "Gerente") {
         obtenerDatosMesasGerente()
-            .then(({ datosMesas, numeroMesas }) => {
-                renderMesaGerente(datosMesas, numeroMesas);
+            .then(({ datosMesas, numeroMesas, numeroServicios }) => {
+                renderMesaGerente(datosMesas, numeroMesas, numeroServicios);
             });
     }
 
     //Llamamos datos de las mesas del Mesero
     if (tipoUsuario == "Mesero") {
         obtenerDatosMesasMesero()
-            .then(({ numeroMesas }) => {
-                renderMesaMesero(numeroMesas);
+            .then(({ numeroMesas, numeroServicios }) => {
+                renderMesaMesero(numeroMesas, numeroServicios);
             });
     }
 
     //Funcion Gerente
-    function renderMesaGerente(datosMesa, numeroMesas) {
+    function renderMesaGerente(datosMesa, numeroMesas, numeroServicios) {
 
         for (let i = 0; i < numeroMesa; i++) {
             //Buscamos mesa
@@ -561,9 +568,12 @@
     }
 
     //Función Mesero
-    function renderMesaMesero(numeroMesas) {
+    function renderMesaMesero(numeroMesas, numeroServicios) {
 
         for (i = 0; i < numeroMesas.length; i++) {
+
+
+            const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-success" : "bg-warning"
 
             //Mesa
             var mainDiv = document.createElement("div");
@@ -572,7 +582,7 @@
             mainDiv.style.width = "150px";
 
             var div1 = document.createElement("div");
-            div1.className = "bg-warning w-100 h-100 border rounded-circle border-dark-subtle p-1 btn";
+            div1.className = `${bgMesa} w-100 h-100 border rounded-circle border-dark-subtle p-1 btn`;
             div1.id = "mesa_" + numeroMesas[i].mesa;
 
             var div2 = document.createElement("div");
@@ -604,6 +614,10 @@
             let numeroDeMesa = numeroMesas[i].mesa;
             let mesaEvento = document.getElementById(`mesa_${numeroMesas[i].mesa}`);
 
+            //Disabled boton
+            let isDisabled = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa)
+            let textoMesaAbrirPedid = isDisabled ? "Cerrar Servicio" : "Abrir Servicio"
+
             mesaEvento.addEventListener('click', () => {
                 modalTitulo.textContent = `Mesa Asignada ${numeroDeMesa}`
                 modal.style.display = "block";
@@ -616,7 +630,7 @@
                                     <i class="fa-solid fa-plus fs-1 text-white"></i>
                                 </div>
                                 <div class="text-white">
-                                    <p class="fw-semibold">Abrir Mesa</p>
+                                    <p class="fw-semibold">${textoMesaAbrirPedid}</p>
                                 </div>
                         </button>
                         <button class="btn btnAbrirPedido botonPedido" style="width: 150px; height: 150px;" id="btnPedido_${i + 1}">
@@ -650,15 +664,17 @@
                 `;
 
                 //Creamos los eventos de los botones
-                eventoBotones(i, numeroDeMesa)
+                eventoBotones(i, numeroDeMesa, isDisabled)
             })
         }
     }
 
     //Evento botones Mesero
-    function eventoBotones(i, mesa) {
+    function eventoBotones(i, mesa, isDisabled) {
 
         let btnServicio = document.getElementById(`btnAbrir_${i + 1}`);
+            btnServicio.disabled = isDisabled;
+
         let btnPedido = document.getElementById(`btnPedido_${i + 1}`);
         let btnLista = document.getElementById(`btnLista_${i + 1}`);
         let btnTicket = document.getElementById(`btnTicket_${i + 1}`);

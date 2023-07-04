@@ -113,6 +113,9 @@ namespace RestoApp
 
 			//Guardamos lista de mesa y servicios en sesión
 			HttpContext.Current.Session["Servicios"] = numerosServicios;
+
+			//Mandamos datos a JS
+			ScriptDataServicios();
 		}
 
 		private void CargarDatosMesas()
@@ -475,6 +478,17 @@ namespace RestoApp
 
 			//Mandamos a script de javascript
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasArray", $"var numeroMesasArray = '{numeroMesasJSON}';", true);
+		}
+		
+		private void ScriptDataServicios()
+		{
+			//Recuperamos datos de session
+			List<Dictionary<string, int>> servicios = (List<Dictionary<string, int>>)Session["Servicios"];
+	
+			string seviciosJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(servicios);
+			
+			//Mandamos a script de javascript
+			ClientScript.RegisterStartupScript(this.GetType(), "seviciosJSON", $"var seviciosJSON = '{seviciosJSON}';", true);
 		}
 		
 		
