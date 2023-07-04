@@ -16,6 +16,7 @@ using System.Data;
 using System.Web.UI.HtmlControls;
 using System.Web.DynamicData;
 
+
 namespace RestoApp
 {
 	public partial class Main1 : System.Web.UI.Page
@@ -53,6 +54,7 @@ namespace RestoApp
 				CargarDatosMesas();
 				CargarEstadoMesas();
 				CargarPedido();
+				CargarServicios();
 			}
 
 			//Si es postback, recargamos funciones de script en Gerente
@@ -79,6 +81,7 @@ namespace RestoApp
 				CargarMenuDisponible();
 				CargarMeseroPorDia();
 				CargarMesasAsignadas();
+				CargarServicios();
 
 			}
 
@@ -89,6 +92,27 @@ namespace RestoApp
 				string script = " obtenerDatosMesasMesero().then(({ numeroMesas }) => {renderMesaMesero(numeroMesas); });";
 				ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
 			}
+		}
+
+		private void CargarServicios()
+		{
+			ServicioNegocio servicioNegocio = new ServicioNegocio();
+
+			//Listamos servicios que no cerrarron ticket
+			List<Servicio> servicios = servicioNegocio.Listar().FindAll( serv => serv.Cobrado == false);
+
+			List<Dictionary<string, int>> numerosServicios = new List<Dictionary<string, int>>();
+
+			foreach(Servicio item in servicios)
+			{
+				Dictionary<string, int> aux = new Dictionary<string, int>();
+				aux.Add("servicio", item.Id);
+				aux.Add("mesa", item.Mesa);
+				numerosServicios.Add(aux);
+			}
+
+			//Guardamos lista de mesa y servicios en sesión
+			HttpContext.Current.Session["Servicios"] = numerosServicios;
 		}
 
 		private void CargarDatosMesas()
@@ -460,11 +484,39 @@ namespace RestoApp
 		[WebMethod]
 		public static string AbrirServicio(List<Dictionary<string, int>> data)
 		{
+			ServicioNegocio servicioNegocio = new ServicioNegocio();
+			
 			string response = String.Empty;
+
 			foreach(var diccionario in data)
 			{
 				var numeroMesa = diccionario["mesa"];
+				
+				int idServicio = servicioNegocio.AbrirServicio(numeroMesa);
 
+				//Guardamos en session el idServicio y idMesa
+				if(idServicio > 0)
+				{
+					if ((List<Dictionary<string, int>>)HttpContext.Current.Session["Servicios"] != null)
+					{
+						List<Dictionary<string, int>> numerosServicios = (List<Dictionary<string, int>>)HttpContext.Current.Session["Servicios"];
+						Dictionary<string, int> aux = new Dictionary<string, int>();
+						aux.Add("servicio", idServicio);
+						aux.Add("mesa", numeroMesa);
+						numerosServicios.Add(aux);
+						HttpContext.Current.Session["Servicios"] = numerosServicios;
+					}
+					else
+					{
+						List<Dictionary<string, int>> numerosServicios = new List<Dictionary<string, int>>();
+						Dictionary<string, int> aux = new Dictionary<string, int>();
+						aux.Add("servicio", idServicio);
+						aux.Add("mesa", numeroMesa);
+						numerosServicios.Add(aux);
+						HttpContext.Current.Session["Servicios"] = numerosServicios;
+					}
+				}
+				
 				response = numeroMesa.ToString();
 			}
 
