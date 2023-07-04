@@ -112,6 +112,7 @@ namespace RestoApp
 			}
 
 			//Guardamos lista de mesa y servicios en sesión
+			//TODO Llevar a helper
 			HttpContext.Current.Session["Servicios"] = numerosServicios;
 
 			//Mandamos datos a JS
@@ -479,7 +480,8 @@ namespace RestoApp
 			//Mandamos a script de javascript
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasArray", $"var numeroMesasArray = '{numeroMesasJSON}';", true);
 		}
-		
+
+		//Enviamos datos a script para recuperar en un postback
 		private void ScriptDataServicios()
 		{
 			//Recuperamos datos de session
@@ -511,13 +513,17 @@ namespace RestoApp
 				//Guardamos en session el idServicio y idMesa
 				if(idServicio > 0)
 				{
+					//TODO Llevar session a helper
 					if ((List<Dictionary<string, int>>)HttpContext.Current.Session["Servicios"] != null)
 					{
+						//TODO Llevar session a helper
 						List<Dictionary<string, int>> numerosServicios = (List<Dictionary<string, int>>)HttpContext.Current.Session["Servicios"];
 						Dictionary<string, int> aux = new Dictionary<string, int>();
 						aux.Add("servicio", idServicio);
 						aux.Add("mesa", numeroMesa);
 						numerosServicios.Add(aux);
+
+						//TODO Llevar a helper
 						HttpContext.Current.Session["Servicios"] = numerosServicios;
 					}
 					else
@@ -527,6 +533,8 @@ namespace RestoApp
 						aux.Add("servicio", idServicio);
 						aux.Add("mesa", numeroMesa);
 						numerosServicios.Add(aux);
+						
+						//TODO Llevar a helper
 						HttpContext.Current.Session["Servicios"] = numerosServicios;
 					}
 				}

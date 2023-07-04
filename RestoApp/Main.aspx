@@ -330,7 +330,6 @@
         .mesaBottom{
             width: 100%;
             height: 15px;
-            background-color: var(--bg-danger);
             position: absolute;
             bottom: 0;
             left: 0;
@@ -503,7 +502,8 @@
     function renderMesaGerente(datosMesa, numeroMesas, numeroServicios) {
 
         for (let i = 0; i < numeroMesa; i++) {
-            //Buscamos mesa
+
+            //Buscamos mesa Asignada
             let mesa = datosMesa.find(item => item.mesa == numeroMesas[i].Numero)
 
             //color del Mesero
@@ -513,6 +513,15 @@
                 colorMesero = convertirAHexadecimal(mesa.mesero)
             } else {
                 colorMesero = "#666"
+            }
+
+            let colorApertura
+
+            //Buscamos mesas con servicios abierto
+            if (numeroServicios[i]?.mesa ==  numeroMesas[i]?.Numero) {
+                colorApertura = "bg-success";
+            } else {
+                colorApertura = "bg-warning"
             }
 
             //Main
@@ -530,7 +539,7 @@
 
             //Bottom -- Background según estado
             let mesaBottom = document.createElement("div");
-            mesaBottom.classList.add("mesaBottom");
+            mesaBottom.classList.add("mesaBottom", colorApertura);
 
             //Numero
             let mesaNumber = document.createElement("div");
@@ -546,6 +555,14 @@
             //Titulo
             modalTitulo.textContent = "Mesero Asignado";
 
+            let estado;
+            //Texto
+            if (numeroServicios[i]?.mesa == numeroMesas[i]?.Numero) {
+                estado = "Abierta"
+            } else {
+                estado = "Cerrada"
+            }
+
             //Evento de la mesa
             let mesaEvento = document.getElementById(idMesa);
             mesaEvento.addEventListener('click', () => {
@@ -559,7 +576,7 @@
                     contenidoModal.innerHTML += `
                     <p class="fw-bold">Nombre: <span class="fw-normal">${mesa.nombre} ${mesa.apellido}</span></p>
                     <p class="fw-bold">Mesa: <span class="fw-normal">${mesa.mesa}</span></p>
-                    <p class="fw-bold">Estado: <span class="fw-normal">Cerrada</span></p>
+                    <p class="fw-bold">Estado: <span class="fw-normal">${estado}</span></p>
                     `;
                 }
 
