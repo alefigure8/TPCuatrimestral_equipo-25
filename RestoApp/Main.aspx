@@ -230,7 +230,7 @@
 
             <%--SECCION MENU RAPIDO--%>
 
-            <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 " >
+            <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 ">
                 <asp:Label ID="lbNumeroMesa" runat="server">No hay ninguna mesa elegida</asp:Label>
                 <div class="col-5 p-2">
                     <h2 class="h3">Platos Disponibles:</h2>
@@ -239,24 +239,18 @@
                             <div class="row">
                                 <div class="col h5"><%#Eval("Nombre")%> </div>
                                 <div class="col h5"><%#Eval("Valor","{0:C}")%> </div>
-                               <asp:Button runat="server" ID="BtnAgregarAPedido" Text="+" CssClass="col-1 btn btn-sm btn-dark" ToolTip="Agregar a pedido" OnClick="BtnAgregarAPedido_Click"/>
-                                    
-                                    <div class="row">
-                                        
-                                        
-                                        <asp:Panel ID="PanelAgregarAPedido" runat="server" CssClass="col" Visible="false">
-                                            <div class="row-2">
-                                                         <asp:TextBox runat="server" CssClass="form col" ID="tbCantidad" Type="Number" min="0"></asp:TextBox>
-                                          <asp:Button runat="server" ID="BtnGuardarEnPedido" Text="Guardar" CssClass="col btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
-                                                <asp:Button runat="server" ID="Button1" Text="Cancelar" CssClass="col btn btn-sm btn-dark" ToolTip="Cancelar" />
-                                  
-                                            </div>
-                                   </asp:Panel>
-                                    
-                                    </div>
-                                   
-                                  
-                                
+                                <asp:Button runat="server" ID="BtnAgregarAPedido" Text="+" CssClass="col-1 btn btn-sm btn-dark" ToolTip="Agregar a pedido" OnClick="BtnAgregarAPedido_Click" />
+                                <div class="row">
+
+                                    <asp:Panel ID="PanelAgregarAPedido" runat="server" CssClass="col" Visible="false">
+                                        <div class="row-2">
+                                            <asp:TextBox runat="server" CssClass="form col" ID="tbCantidad" Type="Number" min="0"></asp:TextBox>
+                                            <asp:Button runat="server" ID="BtnGuardarEnPedido" Text="Guardar" CssClass="col btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
+                                            <asp:Button runat="server" ID="Button1" Text="Cancelar" CssClass="col btn btn-sm btn-dark" ToolTip="Cancelar" />
+                                        </div>
+                                    </asp:Panel>
+
+                                </div>
                             </div>
                         </ItemTemplate>
                     </asp:Repeater>
@@ -280,12 +274,7 @@
             </div>
         </div>
     </div>
-
-
     <% } %>
-    </div>
-
-
 
     <!-- MODAL -->
     <div id="modalMesas" class="modal">
@@ -301,11 +290,8 @@
         </div>
     </div>
 
-
-
-
 <!--************* ESTILOS Y SCRIPTS *************** -->
-|<!-- Styles Mesas -->
+<!-- Styles Mesas -->
     <style>
         :root {
             --bg-danger: #ffc107;
@@ -390,7 +376,9 @@
             cursor: pointer;
             border-radius: 10px;
             display: grid;
-            grid-template-rows: 1fr 30px;
+            grid-template-rows: 70% 30%;
+            justify-content: center;
+            align-items: center;
             border: none;
             outline: none;
         }
@@ -435,9 +423,9 @@
             border-color: #dc3546c4;
         }
     </style>
-|<!-- Fin Styles Mesas -->
+<!-- Fin Styles Mesas -->
 
-|<!-- Scripts Mesas -->
+<!-- Scripts Mesas -->
 <script id="scriptMain">
     let tipoUsuario = "<%: tipoUsuario%>";
     let numeroMesa = <%: MesasActivas %>;
@@ -624,36 +612,36 @@
                 <div class="row d-flex flex-column justify-content-center gap-2 p-3 ms-3">
                     <div class="col d-flex gap-4">
                         <button class="btnAbrirMeasa botonPedido" style="width: 150px; height: 150px;" id="btnAbrir_${i+1}">
-                                <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                                <div class="d-flex align-items-center justify-content-center">
                                     <i class="fa-solid fa-plus fs-1 text-white"></i>
                                 </div>
-                                <div class="row-cols-1 text-white">
+                                <div class="text-white">
                                     <p class="fw-semibold">Abrir Mesa</p>
                                 </div>
                         </button>
                         <button class="btn btnAbrirPedido botonPedido" style="width: 150px; height: 150px;" id="btnPedido_${i + 1}">
-                            <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-utensils fs-1 text-white"></i>
                             </div>
-                            <div class="row-cols-1 text-white">
+                            <div class="text-white">
                                 <p class="fw-semibold">Abrir Pedido</p>
                             </div>
                         </button>
                     </div>
                     <div class="col d-flex gap-4 mt-3">
                         <button class="btn btnPedidos botonPedido" style="width: 150px; height: 150px;" id="btnLista_${i + 1}">
-                            <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-list fs-1 text-white"></i>
                             </div>
-                            <div class="row-cols-1 text-white">
+                            <div class="text-white">
                                 <p class="fw-semibold">Pedidos</p>
                             </div>
                         </button>
                         <button class="btn btnTicket botonPedido" style="width: 150px; height: 150px;" id="btnTicket_${i + 1}">
-                            <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-dollar fs-1 text-white"></i>
                             </div>
-                            <div class="row-cols-1 text-white">
+                            <div class="text-white">
                                 <p class="fw-semibold">Ticket</p>
                             </div>
                         </button>
@@ -759,7 +747,7 @@
         return toDosDigitosHex(opacityDecimal);
     }
 </script>
-|<!-- Fin Scripts Mesas -->
+<!-- Fin Scripts Mesas -->
   
 </asp:Content>
 

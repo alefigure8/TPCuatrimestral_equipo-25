@@ -71,8 +71,9 @@ namespace RestoApp
 				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
 					meseroPorDia = (MeseroPorDia)Session[Configuracion.Session.MeseroPorDia];
 
-				if(Session["NumeroMesaPedido"] != null)
-					lbNumeroMesa.Text = "Numero de Mesa: " + Session["NumeroMesaPedido"].ToString();
+				//Verificamos si hay un número de mesa guardado para hacer pedido
+				if(Helper.Session.GetNumeroMesaPedido() != null)
+					lbNumeroMesa.Text = "Numero de Mesa: " + Helper.Session.GetNumeroMesaPedido().ToString();
 
 				tipoUsuario = Configuracion.Rol.Mesero;
 				CargarMenuDisponible();
@@ -454,6 +455,8 @@ namespace RestoApp
 		
 		
 		//WEBMETHOD
+
+		//Obtenemos número de mesa y le abrimos un servicio
 		[WebMethod]
 		public static string AbrirServicio(List<Dictionary<string, int>> data)
 		{
@@ -464,7 +467,6 @@ namespace RestoApp
 
 				response = numeroMesa.ToString();
 			}
-
 
 			return response;
 		}
@@ -478,12 +480,11 @@ namespace RestoApp
 			foreach (var diccionario in data)
 			{
 				var numeroMesa = diccionario["mesa"];
-				HttpContext.Current.Session["NumeroMesaPedido"] = numeroMesa;
+				Helper.Session.SetNumeroMesaPedido(numeroMesa);
 				response = numeroMesa.ToString();
 			}
 
 			return response;
-
 		}
 
         protected void BtnAgregarAPedido_Click(object sender, EventArgs e)
