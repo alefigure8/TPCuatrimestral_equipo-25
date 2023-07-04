@@ -239,9 +239,24 @@
                             <div class="row">
                                 <div class="col h5"><%#Eval("Nombre")%> </div>
                                 <div class="col h5"><%#Eval("Valor","{0:C}")%> </div>
-                                <div class="col-2">
-                                    <asp:Button runat="server" Text="+" CssClass="btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
-                                </div>
+                               <asp:Button runat="server" ID="BtnAgregarAPedido" Text="+" CssClass="col-1 btn btn-sm btn-dark" ToolTip="Agregar a pedido" OnClick="BtnAgregarAPedido_Click"/>
+                                    
+                                    <div class="row">
+                                        
+                                        
+                                        <asp:Panel ID="PanelAgregarAPedido" runat="server" CssClass="col" Visible="false">
+                                            <div class="row-2">
+                                                         <asp:TextBox runat="server" CssClass="form col" ID="tbCantidad" Type="Number" min="0"></asp:TextBox>
+                                          <asp:Button runat="server" ID="BtnGuardarEnPedido" Text="Guardar" CssClass="col btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
+                                                <asp:Button runat="server" ID="Button1" Text="Cancelar" CssClass="col btn btn-sm btn-dark" ToolTip="Cancelar" />
+                                  
+                                            </div>
+                                   </asp:Panel>
+                                    
+                                    </div>
+                                   
+                                  
+                                
                             </div>
                         </ItemTemplate>
                     </asp:Repeater>
@@ -271,6 +286,7 @@
     </div>
 
 
+
     <!-- MODAL -->
     <div id="modalMesas" class="modal">
         <div class="modal-content">
@@ -284,6 +300,9 @@
             </div>
         </div>
     </div>
+
+
+
 
 <!--************* ESTILOS Y SCRIPTS *************** -->
 |<!-- Styles Mesas -->

@@ -14,6 +14,7 @@ using Opciones;
 using Helper;
 using System.Data;
 using System.Web.UI.HtmlControls;
+using System.Web.DynamicData;
 
 namespace RestoApp
 {
@@ -484,5 +485,11 @@ namespace RestoApp
 			return response;
 
 		}
-	}
+
+        protected void BtnAgregarAPedido_Click(object sender, EventArgs e)
+        {
+            
+          
+        }
+    }
 }
