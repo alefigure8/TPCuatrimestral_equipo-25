@@ -134,7 +134,7 @@ namespace RestoApp
 
         public void ActualizarGV(List<Producto> ListaFiltrada)
         {
-            Session.Add("Lista Filtrada", ListaFiltrada);
+            
             GVProductos.DataSource = ListaFiltrada;
             GVProductos.DataBind();
         }
@@ -143,6 +143,7 @@ namespace RestoApp
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
+                ListarCategoriasProducto();
                 e.Row.Cells[1].Text = ListaCategoriasProducto.Find(x => x.Id == int.Parse(e.Row.Cells[1].Text)).Descripcion;
 
                 string resultado = (bool.Parse(e.Row.Cells[3].Text)) == true ? "✔" : "✖";
@@ -358,7 +359,8 @@ namespace RestoApp
             // check categorias
             if (DDLCategorias.SelectedIndex > 0)
             {
-                ListaFiltrada.RemoveAll(x => x.Categoria != DDLCategorias.SelectedIndex);
+                ListarCategoriasProducto();
+                ListaFiltrada.RemoveAll(x => x.Categoria != ListaCategoriasProducto.Find(y => y.Descripcion == DDLCategorias.SelectedItem.ToString()).Id);
                 SinCamposVacios = true;
             }
             // check rango precios
@@ -455,6 +457,7 @@ namespace RestoApp
 
             if (SinCamposVacios == true)
             {
+                Session.Add("ListaFiltrada", ListaFiltrada);
                 ActualizarGV(ListaFiltrada);
             }
 
@@ -670,7 +673,35 @@ namespace RestoApp
             }
         }
 
+    
+        protected void BtnEliminarLote_Click(object sender, EventArgs e)
+        {
+            if ((List<Producto>)Session["ListaFiltrada"] != null)
+            {
+                List<Producto> ListaFiltrada = ((List<Producto>)Session["ListaFiltrada"]);
+                List<Producto> ProductosActivos = new List<Producto>();
+
+                foreach(Producto Producto in ListaFiltrada)
+                {
+                    if (!ValidarProducto(Producto.Id))
+                    {
+                        ProductoNegocio PNAux = new ProductoNegocio();
+                        PNAux.EliminarProducto(Producto.Id);
+                    }
+                }
+                ListarProductos();
+                    
+
+            }
+            else
+            {
+                string script = "alert('Primero filtre una selección con los controles de filtro');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+
+            }
+
         }
+    }
     }
 
 

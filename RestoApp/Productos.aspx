@@ -366,17 +366,23 @@
 
        <%--Modal Eliminar Lote--%>
         
-        <div class="modal fade" id="modalEliminarLote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="modalEliminarLote"">
             <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="p-3 d-flex justify-content-between">
+                <div class="modal-content p-3">
+                    <div class="d-flex justify-content-between">
                         <h5 class="modal-title">Eliminar los productos filtrados?</h5>
-
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
                     </div>
-                    <div class="p-2">
-                        </div>
+
+                    <div class="row">
+                        <button class="col btn btn-dark m-1"> Cancelar </button>
+                        <asp:Button runat="server" Text="Eliminar Lote" CssClass="col btn btn-dark m-1" ID="BtnEliminarLote" OnClick="BtnEliminarLote_Click"/>
+                    </div>
+                         
+                        
+                    <label style="color:red;"> * Esta acción no podrá ser deshecha </label>
+                        <label style="color:red;"> * Esta acción no se aplicará a los productos que estén en Menú actual</label>
+                     
                 </div>
             </div>
         </div>

@@ -69,7 +69,9 @@ namespace RestoApp
         protected void ListarProductosDelDia()
         {
             ProductoNegocio ProductoNegocio = new ProductoNegocio();
+            Session["ListaProductosDelDia"] = null;
             Session.Add("ListaProductosDelDia", ProductoNegocio.ListarProductosDelDia());
+            List<ProductoDelDia> ListaProductosDelDia = ProductoNegocio.ListarProductosDelDia();
             ProductoDelDiaRepetidor.DataSource = Session["ListaProductosDelDia"];
             ProductoDelDiaRepetidor.DataBind();
         }
@@ -106,7 +108,7 @@ namespace RestoApp
                 ProductoDelDia PDDAux = new ProductoDelDia(Paux);
                 ProductoNegocio PNaux = new ProductoNegocio();
                 PNaux.AgregarProductoDD(PDDAux);
-                ListarProductosDelDia();
+             
             }
             catch (Exception ex)
             {
@@ -213,7 +215,7 @@ namespace RestoApp
         {
 
             
-                Label lbl = e.Item.FindControl("lblCategoria") as Label;
+            Label lbl = e.Item.FindControl("lblCategoria") as Label;
             lbl.Text = ListaCategoriasProducto.Find(x => x.Id == int.Parse(lbl.Text)).Descripcion;
 
             
