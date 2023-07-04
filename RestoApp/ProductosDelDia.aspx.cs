@@ -214,9 +214,10 @@ namespace RestoApp
 
             
                 Label lbl = e.Item.FindControl("lblCategoria") as Label;
-                int variable = int.Parse(lbl.Text);
-                lbl.Text = ListaCategoriasProducto[variable-1].Descripcion;
+            lbl.Text = ListaCategoriasProducto.Find(x => x.Id == int.Parse(lbl.Text)).Descripcion;
+
             
+
         }
 
 

@@ -605,7 +605,7 @@ namespace RestoApp
             else { return false; }
         }
 
-
+        // GUARDAR CATEGORIA MODIFICADA
         protected void btnModificarCategoria_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
@@ -623,11 +623,11 @@ namespace RestoApp
             }
         }
 
-
+        // GUARDAR NUEVA CATEGORIA
         protected void btnGuardarCategoria_Click(object sender, EventArgs e)
         {
 
-            if (tbNuevaCategoria.Text != string.Empty)
+            if ((tbNuevaCategoria.Text != string.Empty) && (tbNuevaCategoria.Text != "Ingresar Descripción"))
             {
                 CategoriaProducto CPAux = new CategoriaProducto();
                 CPAux.Descripcion = tbNuevaCategoria.Text;
@@ -635,6 +635,12 @@ namespace RestoApp
                 CNPAux.AgregarCategoria(CPAux);
                 CargarDDLCategorias();
                 
+            }
+            else
+            {
+                string script = "alert('Ingrese un Valor');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+
             }
         }
 
