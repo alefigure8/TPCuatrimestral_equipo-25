@@ -461,7 +461,7 @@
                         const datosMesas = JSON.parse(datosMesasArray)
                         const numeroMesas = JSON.parse(numeroMesasActivasArray)
                         const numeroServicios = JSON.parse(seviciosJSON)
-
+                        console.log(numeroServicios)
                         resolve({ datosMesas, numeroMesas, numeroServicios });
                     }
                 }, 0);
@@ -527,7 +527,8 @@
             let colorApertura
 
             //Buscamos mesas con servicios abierto
-            if (numeroServicios[i]?.mesa ==  numeroMesas[i]?.Numero) {
+            let servicio = numeroServicios.find(item => item.mesa == numeroMesas[i].Numero)
+            if (servicio) {
                 colorApertura = "bg-success";
             } else {
                 colorApertura = "bg-warning"
@@ -566,7 +567,7 @@
 
             let estado;
             //Texto
-            if (numeroServicios[i]?.mesa == numeroMesas[i]?.Numero) {
+            if (servicio) {
                 estado = "Abierta"
             } else {
                 estado = "Cerrada"

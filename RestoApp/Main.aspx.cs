@@ -13,9 +13,6 @@ using Dominio;
 using Opciones;
 using Helper;
 using System.Data;
-using System.Web.UI.HtmlControls;
-using System.Web.DynamicData;
-
 
 namespace RestoApp
 {
@@ -103,23 +100,90 @@ namespace RestoApp
 		{
 			ServicioNegocio servicioNegocio = new ServicioNegocio();
 
-			//Listamos servicios que no cerrarron ticket
-			List<Servicio> servicios = servicioNegocio.Listar().FindAll( serv => serv.Cobrado == false);
+			List<Servicio> serviciosDB = servicioNegocio.Listar().FindAll( serv => serv.Cobrado == false);
 
-			List<Dictionary<string, int>> numerosServicios = new List<Dictionary<string, int>>();
-
-			foreach(Servicio item in servicios)
+			if ((List<ServicioSession>)Session["Servicios"] != null)
 			{
-				Dictionary<string, int> aux = new Dictionary<string, int>();
-				aux.Add("servicio", item.Id);
-				aux.Add("mesa", item.Mesa);
-				numerosServicios.Add(aux);
-			}
+				List<ServicioSession> serviciosSession =(List<ServicioSession>)Session["Servicios"];
+				
+				foreach(var itemServicioSession in serviciosSession)
+				{
+					foreach(var itemServicioDB in serviciosDB)
+					{
+						if(itemServicioSession.Mesa == itemServicioDB.Mesa)
+						{
+							itemServicioSession.Id = itemServicioDB.Id;
+							itemServicioSession.Mesa = itemServicioDB.Mesa;
+							itemServicioSession.Fecha = itemServicioDB.Fecha;
+							itemServicioSession.Apertura = itemServicioDB.Apertura;
+							itemServicioSession.Cierre = itemServicioDB.Cierre;
+							itemServicioSession.Cobrado = itemServicioDB.Cobrado;
+						}
+					}
+				}
 
-			//Guardamos lista de mesa y servicios en sesión
-			//TODO Llevar a helper MEJORAR!!
-			Session["Servicios"] = numerosServicios;
-			Session["ServiciosDB"] = servicios;
+				if (AutentificacionUsuario.esGerente(usuario))
+				{
+					//Info de la mesa desde session
+					List<object> infoMesas = (List<object>)Session["infoMesas"];
+
+					foreach (ServicioSession itemServicio in serviciosSession)
+					{
+
+						foreach (dynamic itemMesa in infoMesas)
+						{
+
+							if (itemServicio.Mesa == itemMesa.mesa)
+							{
+								itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
+								itemServicio.IdMesero = itemMesa.mesero;
+							}
+						}
+					}
+				}
+
+				Session["Servicios"] = serviciosSession;
+
+			}
+			else
+			{
+				List<ServicioSession> servicio = new List<ServicioSession>();
+
+				foreach (Servicio item in serviciosDB)
+				{
+					ServicioSession auxServicioSession = new ServicioSession();
+
+					auxServicioSession.Id = item.Id;
+					auxServicioSession.Mesa = item.Mesa;
+					auxServicioSession.Fecha = item.Fecha;
+					auxServicioSession.Apertura = item.Apertura;
+					auxServicioSession.Cierre = item.Cierre;
+					auxServicioSession.Cobrado = item.Cobrado;
+					
+					servicio.Add(auxServicioSession);
+				}
+				
+				if (AutentificacionUsuario.esGerente(usuario))
+				{
+					//Info de la mesa desde session
+					List<object> infoMesas = (List<object>)Session["infoMesas"];
+
+					foreach (ServicioSession itemServicio in servicio)
+					{
+						foreach (dynamic itemMesa in infoMesas)
+						{
+							if (itemServicio.Mesa == itemMesa.mesa)
+							{
+
+								itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
+								itemServicio.IdMesero = itemMesa.mesero;
+							}
+						}
+					}
+				}
+
+				Session["Servicios"] = servicio;
+			}
 
 			//Mandamos datos a JS
 			ScriptDataServicios();
@@ -189,46 +253,21 @@ namespace RestoApp
 		private void CargarEstadoMesas()
 		{
 
-			//TODO: LLAMADO A DB PARA OBTENER ESTADO DE MESAS
-			//Tenemos en servicio la mesa y el idDelServicio para saber cuales están abierta
-			//Hay que buscar según la mesa al mesero
-			//List<Dictionary<string, int>> datosServicios = (List<Dictionary<string, int>>)Session["Servicios"];
-
-			//TODO Crear un List<object> donde guardar todos los datos de la mesa
-			List<object> datosMesa = (List<object>)Session["infoMesas"];
-			List<Servicio> serviciosDB = (List<Servicio>)Session["ServiciosDB"];
-
-			List<object> datosMesas = new List<object>();
-			
-			foreach (Servicio itemServicio in serviciosDB)
-			{
-				foreach(object itemMesa in datosMesa)
-				{
-					//Si el id de la mesa es igual al id de la mesa del servicio
-					if ((int)itemMesa.GetType().GetProperty("mesa").GetValue(itemMesa) == itemServicio.Mesa)
-					{
-						//Guardamos datos de la mesa en datosMesas
-						datosMesas.Add(new { mesa = itemServicio.Mesa, servicio = itemServicio.Id, nombre = itemMesa.GetType().GetProperty("nombre").GetValue(itemMesa), apellido = itemMesa.GetType().GetProperty("apellido").GetValue(itemMesa), apertura = itemServicio.Fecha + itemServicio.Apertura, cierre = itemServicio.Fecha + itemServicio.Cierre });
-					}
-				}
-			}
-
-			Console.WriteLine(datosMesas);
+			List<ServicioSession> servicios = (List<ServicioSession>)Session["Servicios"];
 
 			var dataTable = new DataTable();
 			dataTable.Columns.Add("Numero", typeof(int));
 			dataTable.Columns.Add("Mesero", typeof(string));
 			dataTable.Columns.Add("Apertura", typeof(DateTime));
 			dataTable.Columns.Add("Cierre", typeof(DateTime));
-			
-			// Agregar filas al DataTable de forma individual
-			foreach (object item in datosMesas)
+
+			foreach (ServicioSession item in servicios)
 			{
 				dataTable.Rows.Add(
-					(int)item.GetType().GetProperty("mesa").GetValue(item), 
-					(string)item.GetType().GetProperty("nombre").GetValue(item) + " " + (string)item.GetType().GetProperty("apellido").GetValue(item), 
-					(DateTime)item.GetType().GetProperty("apertura").GetValue(item),
-					(DateTime?)item.GetType().GetProperty("cierre").GetValue(item)
+					(int)item.Mesa,
+					(string)item.Mesero,
+					(DateTime)item.Fecha + item.Apertura,
+					(DateTime?)item.Fecha + item.Cierre
 				);
 			}
 
@@ -332,9 +371,7 @@ namespace RestoApp
 			CargarPlatosDelDia();
         }
 
-
-
-
+		
 		private void CargarPlatosDelDia()
 		{
 			ListarCategoriasProducto();
@@ -523,9 +560,20 @@ namespace RestoApp
 		private void ScriptDataServicios()
 		{
 			//Recuperamos datos de session
-			List<Dictionary<string, int>> servicios = (List<Dictionary<string, int>>)Session["Servicios"];
+			List< ServicioSession > servicios = (List<ServicioSession>)Session["Servicios"];
+			List<object> serviciosJS = new List<object>();
+
+			foreach(ServicioSession item in servicios)
+			{
+				serviciosJS.Add(
+					new
+					{
+						mesa = item.Mesa,
+						servicio = item.Id
+					});
+			}
 	
-			string seviciosJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(servicios);
+			string seviciosJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(serviciosJS);
 			
 			//Mandamos a script de javascript
 			ClientScript.RegisterStartupScript(this.GetType(), "seviciosJSON", $"var seviciosJSON = '{seviciosJSON}';", true);
@@ -545,7 +593,6 @@ namespace RestoApp
 			foreach(var diccionario in data)
 			{
 				var numeroMesa = diccionario["mesa"];
-				
 				int idServicio = servicioNegocio.AbrirServicio(numeroMesa);
 
 				//Guardamos en session el idServicio y idMesa
@@ -554,26 +601,34 @@ namespace RestoApp
 					//TODO Llevar session a helper
 					if ((List<Dictionary<string, int>>)HttpContext.Current.Session["Servicios"] != null)
 					{
-						//TODO Llevar session a helper
-						List<Dictionary<string, int>> numerosServicios = (List<Dictionary<string, int>>)HttpContext.Current.Session["Servicios"];
-						Dictionary<string, int> aux = new Dictionary<string, int>();
-						aux.Add("servicio", idServicio);
-						aux.Add("mesa", numeroMesa);
-						numerosServicios.Add(aux);
 
-						//TODO Llevar a helper
-						HttpContext.Current.Session["Servicios"] = numerosServicios;
+						if ((List<object>)HttpContext.Current.Session["Servicios"] != null)
+						{
+
+							List<ServicioSession> servicio = (List<ServicioSession>)HttpContext.Current.Session["Servicios"];
+							ServicioSession auxServicioSession = new ServicioSession();
+
+							auxServicioSession.Id = idServicio;
+							auxServicioSession.Mesa = numeroMesa;
+
+							servicio.Add(auxServicioSession);
+
+							HttpContext.Current.Session["Servicios"] = servicio;
+						}
+						
 					}
 					else
 					{
-						List<Dictionary<string, int>> numerosServicios = new List<Dictionary<string, int>>();
-						Dictionary<string, int> aux = new Dictionary<string, int>();
-						aux.Add("servicio", idServicio);
-						aux.Add("mesa", numeroMesa);
-						numerosServicios.Add(aux);
+
+						List<ServicioSession> servicio = new List<ServicioSession>();
+						ServicioSession auxServicioSession = new ServicioSession();
+
+						auxServicioSession.Id = idServicio;
+						auxServicioSession.Mesa = numeroMesa;
 						
-						//TODO Llevar a helper
-						HttpContext.Current.Session["Servicios"] = numerosServicios;
+						servicio.Add(auxServicioSession);
+
+						HttpContext.Current.Session["Servicios"] = servicio;
 					}
 				}
 				
@@ -640,5 +695,28 @@ namespace RestoApp
             tbCantidad.Visible = false;
             btnCancelar.Visible = false;
         }
+    }
+
+	//Clase para guardar datos de la session de Servicios
+	public class ServicioSession
+	{
+		public int Id { get; set; }
+		public int Mesa { get; set; }
+		public string Mesero { get; set; }
+		public int IdMesero { get; set; }
+		public DateTime Fecha { get; set; }
+		public TimeSpan Apertura { get; set; }
+		public TimeSpan? Cierre { get; set; }
+		public bool Cobrado { get; set; }
+
+        public ServicioSession()
+        {
+			Mesero = string.Empty;
+			IdMesero = 0;
+			Fecha = DateTime.Now;
+			Apertura = TimeSpan.Zero;
+			Cierre = TimeSpan.Zero;
+			Cobrado = false;
+		}
     }
 }
