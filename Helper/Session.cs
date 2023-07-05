@@ -88,5 +88,17 @@ namespace Helper
 		{
 			return (Usuario)HttpContext.Current.Session[Configuracion.Session.Usuario];
 		}
+
+		//SERVICIOS
+		public static List<Servicio> GetServicios()
+		{
+			return (List<Servicio>)HttpContext.Current.Session[Configuracion.Session.Servicios];
+		}
+		
+		public static void SetServicios(List<Servicio> servicio)
+		{
+			HttpContext.Current.Session[Configuracion.Session.Servicios] = servicio;
+		}
+
 	}
 }

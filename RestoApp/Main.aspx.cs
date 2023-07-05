@@ -99,12 +99,12 @@ namespace RestoApp
 		private void CargarServicios()
 		{
 			ServicioNegocio servicioNegocio = new ServicioNegocio();
-
 			List<Servicio> serviciosDB = servicioNegocio.Listar().FindAll( serv => serv.Cobrado == false);
 
-			if ((List<ServicioSession>)Session["Servicios"] != null)
+			//Si la session existe completamos los datos desde la DB
+			if (Helper.Session.GetServicios() != null)
 			{
-				List<ServicioSession> serviciosSession =(List<ServicioSession>)Session["Servicios"];
+				List<Servicio> serviciosSession = Helper.Session.GetServicios();
 				
 				foreach(var itemServicioSession in serviciosSession)
 				{
@@ -127,7 +127,7 @@ namespace RestoApp
 					//Info de la mesa desde session
 					List<object> infoMesas = (List<object>)Session["infoMesas"];
 
-					foreach (ServicioSession itemServicio in serviciosSession)
+					foreach (Servicio itemServicio in serviciosSession)
 					{
 
 						foreach (dynamic itemMesa in infoMesas)
@@ -142,16 +142,16 @@ namespace RestoApp
 					}
 				}
 
-				Session["Servicios"] = serviciosSession;
-
+				//Guardamos en session
+				Helper.Session.SetServicios(serviciosSession);
 			}
 			else
 			{
-				List<ServicioSession> servicio = new List<ServicioSession>();
+				List<Servicio> servicio = new List<Servicio>();
 
 				foreach (Servicio item in serviciosDB)
 				{
-					ServicioSession auxServicioSession = new ServicioSession();
+					Servicio auxServicioSession = new Servicio();
 
 					auxServicioSession.Id = item.Id;
 					auxServicioSession.Mesa = item.Mesa;
@@ -168,13 +168,12 @@ namespace RestoApp
 					//Info de la mesa desde session
 					List<object> infoMesas = (List<object>)Session["infoMesas"];
 
-					foreach (ServicioSession itemServicio in servicio)
+					foreach (Servicio itemServicio in servicio)
 					{
 						foreach (dynamic itemMesa in infoMesas)
 						{
 							if (itemServicio.Mesa == itemMesa.mesa)
 							{
-
 								itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
 								itemServicio.IdMesero = itemMesa.mesero;
 							}
@@ -182,7 +181,8 @@ namespace RestoApp
 					}
 				}
 
-				Session["Servicios"] = servicio;
+				//Guardamos en session
+				Helper.Session.SetServicios(servicio);
 			}
 
 			//Mandamos datos a JS
@@ -214,7 +214,6 @@ namespace RestoApp
 					//Guardamos datos en datosMesas de cuyas mesas el cierre sea Null
 					if(mesa.Cierre == null)
 					{
-
 						datosMesas.Add(new { mesa = mesa.Mesa, mesero = mesa.Mesero, nombre = meserosAsignados.Find(el => el.IdMesero == mesa.Mesero)?.Nombres, apellido = meserosAsignados.Find(el => el.IdMesero == mesa.Mesero)?.Apellidos });
 					}
 				}
@@ -238,22 +237,9 @@ namespace RestoApp
 			}
 		}
 
-		//Metodo que enviado datos del Gerente a script
-		private void ScriptsDataGerente()
-		{
-			//Recuperamos datos por si es postback
-			mesasActivasJSON = (string)Session["mesasActivasJSON"];
-			datosMesasJSON = (string)Session["datosMesasJSON"];
-
-			//Enviamos datos a JS
-			ClientScript.RegisterStartupScript(this.GetType(), "datosMesasArray", $"var datosMesasArray = '{datosMesasJSON}';", true);
-			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasActivasArray", $"var numeroMesasActivasArray = '{mesasActivasJSON}';", true);
-		}
-
 		private void CargarEstadoMesas()
 		{
-
-			List<ServicioSession> servicios = (List<ServicioSession>)Session["Servicios"];
+			List<Servicio> servicios = Helper.Session.GetServicios();
 
 			var dataTable = new DataTable();
 			dataTable.Columns.Add("Numero", typeof(int));
@@ -261,7 +247,7 @@ namespace RestoApp
 			dataTable.Columns.Add("Apertura", typeof(DateTime));
 			dataTable.Columns.Add("Cierre", typeof(DateTime));
 
-			foreach (ServicioSession item in servicios)
+			foreach (Servicio item in servicios)
 			{
 				dataTable.Rows.Add(
 					(int)item.Mesa,
@@ -556,14 +542,27 @@ namespace RestoApp
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasArray", $"var numeroMesasArray = '{numeroMesasJSON}';", true);
 		}
 
+
+		//Metodo que enviado datos del Gerente a script
+		private void ScriptsDataGerente()
+		{
+			//Recuperamos datos por si es postback
+			mesasActivasJSON = (string)Session["mesasActivasJSON"];
+			datosMesasJSON = (string)Session["datosMesasJSON"];
+
+			//Enviamos datos a JS
+			ClientScript.RegisterStartupScript(this.GetType(), "datosMesasArray", $"var datosMesasArray = '{datosMesasJSON}';", true);
+			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasActivasArray", $"var numeroMesasActivasArray = '{mesasActivasJSON}';", true);
+		}
+
 		//Enviamos datos a script para recuperar en un postback
 		private void ScriptDataServicios()
 		{
 			//Recuperamos datos de session
-			List< ServicioSession > servicios = (List<ServicioSession>)Session["Servicios"];
+			List<Servicio> servicios = (List<Servicio>)Session[Configuracion.Session.Servicios];
 			List<object> serviciosJS = new List<object>();
 
-			foreach(ServicioSession item in servicios)
+			foreach(Servicio item in servicios)
 			{
 				serviciosJS.Add(
 					new
@@ -578,10 +577,8 @@ namespace RestoApp
 			//Mandamos a script de javascript
 			ClientScript.RegisterStartupScript(this.GetType(), "seviciosJSON", $"var seviciosJSON = '{seviciosJSON}';", true);
 		}
-		
-		
-		//WEBMETHOD
 
+		//WEBMETHOD
 		//Obtenemos número de mesa y le abrimos un servicio
 		[WebMethod]
 		public static string AbrirServicio(List<Dictionary<string, int>> data)
@@ -595,40 +592,35 @@ namespace RestoApp
 				var numeroMesa = diccionario["mesa"];
 				int idServicio = servicioNegocio.AbrirServicio(numeroMesa);
 
-				//Guardamos en session el idServicio y idMesa
+				//Si se guardó de manera correcta
 				if(idServicio > 0)
 				{
-					//TODO Llevar session a helper
-					if ((List<Dictionary<string, int>>)HttpContext.Current.Session["Servicios"] != null)
+					//Guardamos todo en la session en caso de que exista
+					if (Helper.Session.GetServicios() != null)
 					{
+						List<Servicio> servicio = Helper.Session.GetServicios();
+						Servicio auxServicioSession = new Servicio();
 
-						if ((List<object>)HttpContext.Current.Session["Servicios"] != null)
-						{
+						auxServicioSession.Id = idServicio;
+						auxServicioSession.Mesa = numeroMesa;
 
-							List<ServicioSession> servicio = (List<ServicioSession>)HttpContext.Current.Session["Servicios"];
-							ServicioSession auxServicioSession = new ServicioSession();
+						servicio.Add(auxServicioSession);
 
-							auxServicioSession.Id = idServicio;
-							auxServicioSession.Mesa = numeroMesa;
-
-							servicio.Add(auxServicioSession);
-
-							HttpContext.Current.Session["Servicios"] = servicio;
-						}
-						
+						//Guardamos en Session
+						Helper.Session.SetServicios(servicio);
 					}
 					else
 					{
-
-						List<ServicioSession> servicio = new List<ServicioSession>();
-						ServicioSession auxServicioSession = new ServicioSession();
+						List<Servicio> servicio = new List<Servicio>();
+						Servicio auxServicioSession = new Servicio();
 
 						auxServicioSession.Id = idServicio;
 						auxServicioSession.Mesa = numeroMesa;
 						
 						servicio.Add(auxServicioSession);
 
-						HttpContext.Current.Session["Servicios"] = servicio;
+						//Guardamos en Session
+						Helper.Session.SetServicios(servicio);
 					}
 				}
 				
@@ -698,25 +690,4 @@ namespace RestoApp
     }
 
 	//Clase para guardar datos de la session de Servicios
-	public class ServicioSession
-	{
-		public int Id { get; set; }
-		public int Mesa { get; set; }
-		public string Mesero { get; set; }
-		public int IdMesero { get; set; }
-		public DateTime Fecha { get; set; }
-		public TimeSpan Apertura { get; set; }
-		public TimeSpan? Cierre { get; set; }
-		public bool Cobrado { get; set; }
-
-        public ServicioSession()
-        {
-			Mesero = string.Empty;
-			IdMesero = 0;
-			Fecha = DateTime.Now;
-			Apertura = TimeSpan.Zero;
-			Cierre = TimeSpan.Zero;
-			Cobrado = false;
-		}
-    }
 }
