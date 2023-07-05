@@ -27,7 +27,10 @@ namespace RestoApp
 		public int MesasActivas { get; set; }
         public int MesasAsignadas { get; set; }
         public int MeserosPresentes { get; set; }
+
 		public string tipoUsuario;
+
+		public List<CategoriaProducto> ListaCategoriasProducto;
  
         //Private
         private List<MeseroPorDia> meserosPorDiaNoAsignados = new List<MeseroPorDia>();
@@ -92,6 +95,8 @@ namespace RestoApp
 				string script = " obtenerDatosMesasMesero().then(({ numeroMesas }) => {renderMesaMesero(numeroMesas); });";
 				ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
 			}
+
+			ListarCategoriasProducto();
 		}
 
 		private void CargarServicios()
@@ -328,20 +333,22 @@ namespace RestoApp
         }
 
 
+
+
 		private void CargarPlatosDelDia()
 		{
-			List<ProductoDelDia> ListaProductosDisponibles = ((List<ProductoDelDia>)Session["ListaMenu"])
-				.FindAll(x => x.Activo == true && x.Categoria == 1);
-			
+			ListarCategoriasProducto();
+			List<ProductoDelDia> ListaProductosDisponibles =
+				((List<ProductoDelDia>)Session["ListaMenu"]).FindAll(x => x.Activo == true && x.Categoria == ListaCategoriasProducto.Find(y => y.Descripcion == "Platos").Id); 
             PlatosDelDia.DataSource = ListaProductosDisponibles;
             PlatosDelDia.DataBind();
         }
 
         private void CargarBebidasDelDia()
         {
-            List<ProductoDelDia> ListaProductosDisponibles = ((List<ProductoDelDia>)Session["ListaMenu"])
-				.FindAll(x => x.Activo == true && x.Categoria == 2);
-			
+            ListarCategoriasProducto();
+            List<ProductoDelDia> ListaProductosDisponibles =
+                ((List<ProductoDelDia>)Session["ListaMenu"]).FindAll(x => x.Activo == true && x.Categoria == ListaCategoriasProducto.Find(y => y.Descripcion == "Bebidas").Id);
             BebidasDelDia.DataSource = ListaProductosDisponibles;
             BebidasDelDia.DataBind();
         }
@@ -592,10 +599,46 @@ namespace RestoApp
 			return response;
 		}
 
-        protected void BtnAgregarAPedido_Click(object sender, EventArgs e)
+        protected void ListarCategoriasProducto()
         {
-            
-          
+			CategoriaProductoNegocio CPNAux = new CategoriaProductoNegocio();
+			ListaCategoriasProducto = CPNAux.Listar();
+        }
+
+        protected void AgregarAPedido_Click(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+
+            RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
+            TextBox tbCantidad = repeaterItem.FindControl("tbCantidad") as TextBox;
+            Button btnCancelar = repeaterItem.FindControl("btnCancelarAgregarA") as Button;
+
+
+            if (button.Text.ToLower() == "+")
+            {
+                tbCantidad.Visible = true;
+                button.Text = "✔";
+				btnCancelar.Visible = true;
+            }
+            else
+            {
+                tbCantidad.Visible = false;
+                button.Text = "+";
+                
+                btnCancelar.Visible = false;
+
+            }
+        }
+
+        protected void BtnCancelarAgregarA_Click(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+
+            RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
+            TextBox tbCantidad = repeaterItem.FindControl("tbCantidad") as TextBox;
+            Button btnCancelar = repeaterItem.FindControl("btnCancelarAgregarA") as Button;
+            tbCantidad.Visible = false;
+            btnCancelar.Visible = false;
         }
     }
 }

@@ -193,7 +193,8 @@ namespace RestoApp
                 NuevoProducto.Nombre = NuevoProductoNombre.Text;
                 NuevoProducto.Descripcion = NuevoProductoDescripcion.Text;
                 NuevoProducto.Valor = decimal.Parse(NuevoProductoValor.Text);
-                NuevoProducto.Categoria = modalDDLCategorias.SelectedIndex;
+                ListarCategoriasProducto();
+                NuevoProducto.Categoria = ListaCategoriasProducto.Find(x => x.Descripcion.ToLower() == modalDDLCategorias.SelectedValue.ToLower()).Id;
                 bool estado = modalDDLEstado.SelectedIndex == 2 ? false : true;
                 NuevoProducto.Activo = estado;
 

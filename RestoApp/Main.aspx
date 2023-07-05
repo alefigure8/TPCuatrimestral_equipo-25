@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Main.aspx.cs" Inherits="RestoApp.Main1" EnableEventValidation="true"%>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Main.aspx.cs" Inherits="RestoApp.Main1" EnableEventValidation="true" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
@@ -18,7 +18,7 @@
                     <%} %>
                 </div>
                 <!-- Fin Boton Mesero -->
-                <p class="fw-semibold text-gray-100 text-end col-5"> <%: DateTime.Now %></p>
+                <p class="fw-semibold text-gray-100 text-end col-5"><%: DateTime.Now %></p>
             </div>
         </ContentTemplate>
     </asp:UpdatePanel>
@@ -133,7 +133,7 @@
             </div>
         </div>
         <% } %>
-        
+
         <!-- VISTA MESERO -->
         <%
             if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
@@ -154,8 +154,8 @@
                     <%--<asp:Repeater runat="server" ID="repeaterMesasAsigndas">
                         <ItemTemplate>--%>
 
-                            <!-- MESAS -->
-                            <%--<div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
+                    <!-- MESAS -->
+                    <%--<div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
                                 <div class="bg-warning w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
                                     <div class="background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center">
                                             <i class="fa-solid fa-utensils fs-4"></i>
@@ -167,9 +167,9 @@
                                     </div>
                                 </div>
                             </div>--%>
-                            <!-- FIN MESAS -->
+                    <!-- FIN MESAS -->
 
-                       <%-- </ItemTemplate>
+                    <%-- </ItemTemplate>
                     </asp:Repeater>--%>
 
                     <!-- FIN MESAS ASIGNADAS -->
@@ -190,9 +190,9 @@
                             <p class="card-text">
                                 Mesa ## | Pedido ## | Estado 
                             </p>
-                                <br />
-                                <button class="btn btn-dark">Detalle</button>
-                                <button class="btn btn-dark">Cerrar</button>
+                            <br />
+                            <button class="btn btn-dark">Detalle</button>
+                            <button class="btn btn-dark">Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -203,9 +203,9 @@
                             <p class="card-text">
                                 Mesa ## | Pedido ## | Estado 
                             </p>
-                                <br />
-                                <button class="btn btn-dark">Detalle</button>
-                                <button class="btn btn-dark">Cerrar</button>
+                            <br />
+                            <button class="btn btn-dark">Detalle</button>
+                            <button class="btn btn-dark">Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -216,9 +216,9 @@
                             <p class="card-text">
                                 Mesa ## | Pedido ## | Estado 
                             </p>
-                                <br />
-                                <button class="btn btn-dark">Detalle</button>
-                                <button class="btn btn-dark">Cerrar</button>
+                            <br />
+                            <button class="btn btn-dark">Detalle</button>
+                            <button class="btn btn-dark">Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -232,24 +232,22 @@
 
             <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 ">
                 <asp:Label ID="lbNumeroMesa" runat="server">No hay ninguna mesa elegida</asp:Label>
-                <div class="col-5 p-2">
-                    <h2 class="h3">Platos Disponibles:</h2>
+                <div class="col-6 p-2">
+                    <label class="row h3 bg-dark text-white p-1">Platos Disponibles:</label>
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <div class="col h5"><%#Eval("Nombre")%> </div>
-                                <div class="col h5"><%#Eval("Valor","{0:C}")%> </div>
-                                <asp:Button runat="server" ID="BtnAgregarAPedido" Text="+" CssClass="col-1 btn btn-sm btn-dark" ToolTip="Agregar a pedido" OnClick="BtnAgregarAPedido_Click" />
-                                <div class="row">
-
-                                    <asp:Panel ID="PanelAgregarAPedido" runat="server" CssClass="col" Visible="false">
-                                        <div class="row-2">
-                                            <asp:TextBox runat="server" CssClass="form col" ID="tbCantidad" Type="Number" min="0"></asp:TextBox>
-                                            <asp:Button runat="server" ID="BtnGuardarEnPedido" Text="Guardar" CssClass="col btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
-                                            <asp:Button runat="server" ID="Button1" Text="Cancelar" CssClass="col btn btn-sm btn-dark" ToolTip="Cancelar" />
-                                        </div>
-                                    </asp:Panel>
-
+                                <div class="col-4">
+                                    <%#Eval("Nombre")%>
+                                </div>
+                                <div class="col">
+                                    <asp:UpdatePanel runat="server" ID="PanelAgregarAPedido" CssClass="row">
+                                        <ContentTemplate>
+                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width:100px; display:inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" />
+                                            <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA_Click" />
+                                        </ContentTemplate>
+                                    </asp:UpdatePanel>
                                 </div>
                             </div>
                         </ItemTemplate>
@@ -257,20 +255,31 @@
                 </div>
 
 
-                <div class="col-5 p-2">
-                    <h2 class="h3">Bebidas Disponibles:</h2>
+                <%--Bebidas--%>
+                  <div class="col-6 p-2">
+                    <label class="row h3 bg-dark text-white p-1">Bebidas Disponibles:</label>
                     <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <div class="col h5"><%#Eval("Nombre")%> </div>
-                                <div class="col h5"><%#Eval("Valor","{0:C}")%> </div>
-                                <div class="col-2">
-                                    <asp:Button runat="server" Text="+" CssClass="btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
+                                <div class="col-4">
+                                    <%#Eval("Nombre")%>
+                                </div>
+                                <div class="col">
+                                    <asp:UpdatePanel runat="server" ID="PanelAgregarBebida" CssClass="row">
+                                        <ContentTemplate>
+                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width:100px; display:inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"  Type="Number" min="1" Text="1" ></asp:TextBox>
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+"  />
+                                            <asp:Button runat="server"  CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false"  />
+                                        </ContentTemplate>
+                                    </asp:UpdatePanel>
                                 </div>
                             </div>
                         </ItemTemplate>
                     </asp:Repeater>
                 </div>
+
+
+
             </div>
         </div>
     </div>
@@ -279,7 +288,7 @@
     <!-- MODAL -->
     <div id="modalMesas" class="modal">
         <div class="modal-content">
-            <div class="d-flex justify-content-between align-items-center border-1 border-bottom" >
+            <div class="d-flex justify-content-between align-items-center border-1 border-bottom">
                 <h5 class="modal-title" id="modal-titulo">Mesero Asignado</h5>
                 <span class="close">&times;</span>
             </div>
@@ -290,8 +299,8 @@
         </div>
     </div>
 
-<!--************* ESTILOS Y SCRIPTS *************** -->
-<!-- Styles Mesas -->
+    <!--************* ESTILOS Y SCRIPTS *************** -->
+    <!-- Styles Mesas -->
     <style>
         :root {
             --bg-danger: #ffc107;
@@ -422,10 +431,10 @@
             border-color: #dc3546c4;
         }
     </style>
-<!-- Fin Styles Mesas -->
+    <!-- Fin Styles Mesas -->
 
-<!-- Scripts Mesas -->
-<script id="scriptMain">
+    <!-- Scripts Mesas -->
+    <script id="scriptMain">
     let tipoUsuario = "<%: tipoUsuario%>";
     let numeroMesa = <%: MesasActivas %>;
     let sectionMesa = document.getElementById("section-mesa");
@@ -779,9 +788,9 @@
         let opacityDecimal = Math.floor(opacity * 255);
         return toDosDigitosHex(opacityDecimal);
     }
-</script>
-<!-- Fin Scripts Mesas -->
-  
+    </script>
+    <!-- Fin Scripts Mesas -->
+
 </asp:Content>
 
 
