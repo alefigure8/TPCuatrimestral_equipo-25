@@ -33,9 +33,20 @@ namespace Helper
 			HttpContext.Current.Session[Configuracion.Session.MesasAsignada] = mesasAsignadas;
 		}
 
+		//Número de mesa para realizar pedido
+		public static int? GetNumeroMesaPedido()
+		{
+			return (int?)HttpContext.Current.Session[Configuracion.Session.NumeroMesaPedido];
+		}
+
+		public static void SetNumeroMesaPedido(int numeroMesa)
+		{
+			HttpContext.Current.Session[Configuracion.Session.NumeroMesaPedido] = numeroMesa;
+		}
+
 
 		//MESEROS
-		
+
 		//Mesero
 		public static MeseroPorDia GetMeseroPorDia()
 		{

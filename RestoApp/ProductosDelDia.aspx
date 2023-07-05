@@ -87,7 +87,9 @@
                             <asp:Button runat="server" ID="BtnQuitarStock" Text="-" ToolTip="Restar Stock" OnClick="BtnQuitarStock_Click" CssClass="btn btn-dark rounded-circle" CommandArgument='<%#Eval("Id") %>' />
                         </span>
                     </div>
-                </ItemTemplate>
+ 
+                    </ItemTemplate>
+               
             </asp:Repeater>
         </div>
     </div>

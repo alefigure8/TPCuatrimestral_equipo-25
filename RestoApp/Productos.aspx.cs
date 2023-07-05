@@ -134,7 +134,7 @@ namespace RestoApp
 
         public void ActualizarGV(List<Producto> ListaFiltrada)
         {
-            Session.Add("Lista Filtrada", ListaFiltrada);
+            
             GVProductos.DataSource = ListaFiltrada;
             GVProductos.DataBind();
         }
@@ -143,6 +143,7 @@ namespace RestoApp
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
+                ListarCategoriasProducto();
                 e.Row.Cells[1].Text = ListaCategoriasProducto.Find(x => x.Id == int.Parse(e.Row.Cells[1].Text)).Descripcion;
 
                 string resultado = (bool.Parse(e.Row.Cells[3].Text)) == true ? "✔" : "✖";
@@ -192,7 +193,8 @@ namespace RestoApp
                 NuevoProducto.Nombre = NuevoProductoNombre.Text;
                 NuevoProducto.Descripcion = NuevoProductoDescripcion.Text;
                 NuevoProducto.Valor = decimal.Parse(NuevoProductoValor.Text);
-                NuevoProducto.Categoria = modalDDLCategorias.SelectedIndex;
+                ListarCategoriasProducto();
+                NuevoProducto.Categoria = ListaCategoriasProducto.Find(x => x.Descripcion.ToLower() == modalDDLCategorias.SelectedValue.ToLower()).Id;
                 bool estado = modalDDLEstado.SelectedIndex == 2 ? false : true;
                 NuevoProducto.Activo = estado;
 
@@ -358,7 +360,8 @@ namespace RestoApp
             // check categorias
             if (DDLCategorias.SelectedIndex > 0)
             {
-                ListaFiltrada.RemoveAll(x => x.Categoria != DDLCategorias.SelectedIndex);
+                ListarCategoriasProducto();
+                ListaFiltrada.RemoveAll(x => x.Categoria != ListaCategoriasProducto.Find(y => y.Descripcion == DDLCategorias.SelectedItem.ToString()).Id);
                 SinCamposVacios = true;
             }
             // check rango precios
@@ -455,6 +458,7 @@ namespace RestoApp
 
             if (SinCamposVacios == true)
             {
+                Session.Add("ListaFiltrada", ListaFiltrada);
                 ActualizarGV(ListaFiltrada);
             }
 
@@ -605,7 +609,7 @@ namespace RestoApp
             else { return false; }
         }
 
-
+        // GUARDAR CATEGORIA MODIFICADA
         protected void btnModificarCategoria_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
@@ -623,11 +627,11 @@ namespace RestoApp
             }
         }
 
-
+        // GUARDAR NUEVA CATEGORIA
         protected void btnGuardarCategoria_Click(object sender, EventArgs e)
         {
 
-            if (tbNuevaCategoria.Text != string.Empty)
+            if ((tbNuevaCategoria.Text != string.Empty) && (tbNuevaCategoria.Text != "Ingresar Descripción"))
             {
                 CategoriaProducto CPAux = new CategoriaProducto();
                 CPAux.Descripcion = tbNuevaCategoria.Text;
@@ -635,6 +639,12 @@ namespace RestoApp
                 CNPAux.AgregarCategoria(CPAux);
                 CargarDDLCategorias();
                 
+            }
+            else
+            {
+                string script = "alert('Ingrese un Valor');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+
             }
         }
 
@@ -664,7 +674,35 @@ namespace RestoApp
             }
         }
 
+    
+        protected void BtnEliminarLote_Click(object sender, EventArgs e)
+        {
+            if ((List<Producto>)Session["ListaFiltrada"] != null)
+            {
+                List<Producto> ListaFiltrada = ((List<Producto>)Session["ListaFiltrada"]);
+                List<Producto> ProductosActivos = new List<Producto>();
+
+                foreach(Producto Producto in ListaFiltrada)
+                {
+                    if (!ValidarProducto(Producto.Id))
+                    {
+                        ProductoNegocio PNAux = new ProductoNegocio();
+                        PNAux.EliminarProducto(Producto.Id);
+                    }
+                }
+                ListarProductos();
+                    
+
+            }
+            else
+            {
+                string script = "alert('Primero filtre una selección con los controles de filtro');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+
+            }
+
         }
+    }
     }
 
 

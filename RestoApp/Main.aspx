@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Main.aspx.cs" Inherits="RestoApp.Main1" EnableEventValidation="true"%>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Main.aspx.cs" Inherits="RestoApp.Main1" EnableEventValidation="true" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
@@ -18,7 +18,7 @@
                     <%} %>
                 </div>
                 <!-- Fin Boton Mesero -->
-                <p class="fw-semibold text-gray-100 text-end col-5"> <%: DateTime.Now %></p>
+                <p class="fw-semibold text-gray-100 text-end col-5"><%: DateTime.Now %></p>
             </div>
         </ContentTemplate>
     </asp:UpdatePanel>
@@ -102,7 +102,7 @@
                         <asp:BoundColumn DataField="Cierre" HeaderText="Cierre" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
                         <asp:TemplateColumn HeaderText="Estado">
                             <ItemTemplate>
-                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
+                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" %>
                             </ItemTemplate>
                             <ItemStyle CssClass="bg-light p-2 rounded" />
                             <HeaderStyle CssClass="bg-light p-2 rounded" />
@@ -133,7 +133,7 @@
             </div>
         </div>
         <% } %>
-        
+
         <!-- VISTA MESERO -->
         <%
             if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
@@ -154,8 +154,8 @@
                     <%--<asp:Repeater runat="server" ID="repeaterMesasAsigndas">
                         <ItemTemplate>--%>
 
-                            <!-- MESAS -->
-                            <%--<div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
+                    <!-- MESAS -->
+                    <%--<div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
                                 <div class="bg-warning w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
                                     <div class="background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center">
                                             <i class="fa-solid fa-utensils fs-4"></i>
@@ -167,9 +167,9 @@
                                     </div>
                                 </div>
                             </div>--%>
-                            <!-- FIN MESAS -->
+                    <!-- FIN MESAS -->
 
-                       <%-- </ItemTemplate>
+                    <%-- </ItemTemplate>
                     </asp:Repeater>--%>
 
                     <!-- FIN MESAS ASIGNADAS -->
@@ -190,9 +190,9 @@
                             <p class="card-text">
                                 Mesa ## | Pedido ## | Estado 
                             </p>
-                                <br />
-                                <button class="btn btn-dark">Detalle</button>
-                                <button class="btn btn-dark">Cerrar</button>
+                            <br />
+                            <button class="btn btn-dark">Detalle</button>
+                            <button class="btn btn-dark">Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -203,9 +203,9 @@
                             <p class="card-text">
                                 Mesa ## | Pedido ## | Estado 
                             </p>
-                                <br />
-                                <button class="btn btn-dark">Detalle</button>
-                                <button class="btn btn-dark">Cerrar</button>
+                            <br />
+                            <button class="btn btn-dark">Detalle</button>
+                            <button class="btn btn-dark">Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -216,9 +216,9 @@
                             <p class="card-text">
                                 Mesa ## | Pedido ## | Estado 
                             </p>
-                                <br />
-                                <button class="btn btn-dark">Detalle</button>
-                                <button class="btn btn-dark">Cerrar</button>
+                            <br />
+                            <button class="btn btn-dark">Detalle</button>
+                            <button class="btn btn-dark">Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -230,16 +230,24 @@
 
             <%--SECCION MENU RAPIDO--%>
 
-            <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 " >
-                <div class="col-5 p-2">
-                    <h2 class="h3">Platos Disponibles:</h2>
+            <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 ">
+                <asp:Label ID="lbNumeroMesa" runat="server">No hay ninguna mesa elegida</asp:Label>
+                <div class="col-6 p-2">
+                    <label class="row h3 bg-dark text-white p-1">Platos Disponibles:</label>
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <div class="col h5"><%#Eval("Nombre")%> </div>
-                                <div class="col h5"><%#Eval("Valor","{0:C}")%> </div>
-                                <div class="col-2">
-                                    <asp:Button runat="server" Text="+" CssClass="btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
+                                <div class="col-4">
+                                    <%#Eval("Nombre")%>
+                                </div>
+                                <div class="col">
+                                    <asp:UpdatePanel runat="server" ID="PanelAgregarAPedido" CssClass="row">
+                                        <ContentTemplate>
+                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width:100px; display:inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" />
+                                            <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA_Click" />
+                                        </ContentTemplate>
+                                    </asp:UpdatePanel>
                                 </div>
                             </div>
                         </ItemTemplate>
@@ -247,33 +255,40 @@
                 </div>
 
 
-                <div class="col-5 p-2">
-                    <h2 class="h3">Bebidas Disponibles:</h2>
+                <%--Bebidas--%>
+                  <div class="col-6 p-2">
+                    <label class="row h3 bg-dark text-white p-1">Bebidas Disponibles:</label>
                     <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <div class="col h5"><%#Eval("Nombre")%> </div>
-                                <div class="col h5"><%#Eval("Valor","{0:C}")%> </div>
-                                <div class="col-2">
-                                    <asp:Button runat="server" Text="+" CssClass="btn btn-sm btn-dark" ToolTip="Agregar a pedido" />
+                                <div class="col-4">
+                                    <%#Eval("Nombre")%>
+                                </div>
+                                <div class="col">
+                                    <asp:UpdatePanel runat="server" ID="PanelAgregarBebida" CssClass="row">
+                                        <ContentTemplate>
+                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width:100px; display:inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"  Type="Number" min="1" Text="1" ></asp:TextBox>
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+"  />
+                                            <asp:Button runat="server"  CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false"  />
+                                        </ContentTemplate>
+                                    </asp:UpdatePanel>
                                 </div>
                             </div>
                         </ItemTemplate>
                     </asp:Repeater>
                 </div>
+
+
+
             </div>
         </div>
     </div>
-
-
     <% } %>
-    </div>
-
 
     <!-- MODAL -->
     <div id="modalMesas" class="modal">
         <div class="modal-content">
-            <div class="d-flex justify-content-between align-items-center border-1 border-bottom" >
+            <div class="d-flex justify-content-between align-items-center border-1 border-bottom">
                 <h5 class="modal-title" id="modal-titulo">Mesero Asignado</h5>
                 <span class="close">&times;</span>
             </div>
@@ -284,8 +299,8 @@
         </div>
     </div>
 
-<!--************* ESTILOS Y SCRIPTS *************** -->
-|<!-- Styles Mesas -->
+    <!--************* ESTILOS Y SCRIPTS *************** -->
+    <!-- Styles Mesas -->
     <style>
         :root {
             --bg-danger: #ffc107;
@@ -324,7 +339,6 @@
         .mesaBottom{
             width: 100%;
             height: 15px;
-            background-color: var(--bg-danger);
             position: absolute;
             bottom: 0;
             left: 0;
@@ -370,7 +384,9 @@
             cursor: pointer;
             border-radius: 10px;
             display: grid;
-            grid-template-rows: 1fr 30px;
+            grid-template-rows: 70% 30%;
+            justify-content: center;
+            align-items: center;
             border: none;
             outline: none;
         }
@@ -415,10 +431,10 @@
             border-color: #dc3546c4;
         }
     </style>
-|<!-- Fin Styles Mesas -->
+    <!-- Fin Styles Mesas -->
 
-|<!-- Scripts Mesas -->
-<script id="scriptMain">
+    <!-- Scripts Mesas -->
+    <script id="scriptMain">
     let tipoUsuario = "<%: tipoUsuario%>";
     let numeroMesa = <%: MesasActivas %>;
     let sectionMesa = document.getElementById("section-mesa");
@@ -435,14 +451,18 @@
             if (typeof datosMesasArray !== 'undefined') {
                 const datosMesas = JSON.parse(datosMesasArray)
                 const numeroMesas = JSON.parse(numeroMesasActivasArray)
-                resolve({ datosMesas, numeroMesas });
+                const numeroServicios = JSON.parse(seviciosJSON)
+
+                resolve({ datosMesas, numeroMesas, numeroServicios });
             } else {
                 const intervalo = setInterval(() => {
                     if (typeof datosMesasArray !== 'undefined') {
                         clearInterval(intervalo);
                         const datosMesas = JSON.parse(datosMesasArray)
                         const numeroMesas = JSON.parse(numeroMesasActivasArray)
-                        resolve({ datosMesas, numeroMesas });
+                        const numeroServicios = JSON.parse(seviciosJSON)
+
+                        resolve({ datosMesas, numeroMesas, numeroServicios });
                     }
                 }, 0);
             }
@@ -454,16 +474,17 @@
 
         return new Promise((resolve) => {
             if (typeof numeroMesasArray !== 'undefined') {
-                console.log(numeroMesasArray)
                 const numeroMesas = JSON.parse(numeroMesasArray)
-                resolve({ numeroMesas });
+                const numeroServicios = JSON.parse(seviciosJSON)
+                resolve({ numeroMesas, numeroServicios });
             } else {
                 const intervalo = setInterval(() => {
                     if (typeof numeroMesasArray !== 'undefined') {
                         clearInterval(intervalo);
-                        console.log(numeroMesasArray)
                         const numeroMesas = JSON.parse(numeroMesasArray)
-                        resolve({ numeroMesas });
+                        const numeroServicios = JSON.parse(seviciosJSON)
+
+                        resolve({ numeroMesas, numeroServicios });
                     }
                 }, 0);
             }
@@ -473,24 +494,25 @@
     //Llamamos datos de las mesas del Gerente
     if (tipoUsuario == "Gerente") {
         obtenerDatosMesasGerente()
-            .then(({ datosMesas, numeroMesas }) => {
-                renderMesaGerente(datosMesas, numeroMesas);
+            .then(({ datosMesas, numeroMesas, numeroServicios }) => {
+                renderMesaGerente(datosMesas, numeroMesas, numeroServicios);
             });
     }
 
     //Llamamos datos de las mesas del Mesero
     if (tipoUsuario == "Mesero") {
         obtenerDatosMesasMesero()
-            .then(({ numeroMesas }) => {
-                renderMesaMesero(numeroMesas);
+            .then(({ numeroMesas, numeroServicios }) => {
+                renderMesaMesero(numeroMesas, numeroServicios);
             });
     }
 
     //Funcion Gerente
-    function renderMesaGerente(datosMesa, numeroMesas) {
+    function renderMesaGerente(datosMesa, numeroMesas, numeroServicios) {
 
         for (let i = 0; i < numeroMesa; i++) {
-            //Buscamos mesa
+
+            //Buscamos mesa Asignada
             let mesa = datosMesa.find(item => item.mesa == numeroMesas[i].Numero)
 
             //color del Mesero
@@ -500,6 +522,15 @@
                 colorMesero = convertirAHexadecimal(mesa.mesero)
             } else {
                 colorMesero = "#666"
+            }
+
+            let colorApertura
+
+            //Buscamos mesas con servicios abierto
+            if (numeroServicios[i]?.mesa ==  numeroMesas[i]?.Numero) {
+                colorApertura = "bg-success";
+            } else {
+                colorApertura = "bg-warning"
             }
 
             //Main
@@ -517,7 +548,7 @@
 
             //Bottom -- Background según estado
             let mesaBottom = document.createElement("div");
-            mesaBottom.classList.add("mesaBottom");
+            mesaBottom.classList.add("mesaBottom", colorApertura);
 
             //Numero
             let mesaNumber = document.createElement("div");
@@ -533,6 +564,14 @@
             //Titulo
             modalTitulo.textContent = "Mesero Asignado";
 
+            let estado;
+            //Texto
+            if (numeroServicios[i]?.mesa == numeroMesas[i]?.Numero) {
+                estado = "Abierta"
+            } else {
+                estado = "Cerrada"
+            }
+
             //Evento de la mesa
             let mesaEvento = document.getElementById(idMesa);
             mesaEvento.addEventListener('click', () => {
@@ -546,7 +585,7 @@
                     contenidoModal.innerHTML += `
                     <p class="fw-bold">Nombre: <span class="fw-normal">${mesa.nombre} ${mesa.apellido}</span></p>
                     <p class="fw-bold">Mesa: <span class="fw-normal">${mesa.mesa}</span></p>
-                    <p class="fw-bold">Estado: <span class="fw-normal">Cerrada</span></p>
+                    <p class="fw-bold">Estado: <span class="fw-normal">${estado}</span></p>
                     `;
                 }
 
@@ -555,10 +594,13 @@
     }
 
     //Función Mesero
-    function renderMesaMesero(numeroMesas) {
+    function renderMesaMesero(numeroMesas, numeroServicios) {
 
         for (i = 0; i < numeroMesas.length; i++) {
-            console.log(numeroMesas)
+
+
+            const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-success" : "bg-warning"
+
             //Mesa
             var mainDiv = document.createElement("div");
             mainDiv.className = "col-6 col-sm-3 d-flex justify-content-center flex-column m-4";
@@ -566,7 +608,7 @@
             mainDiv.style.width = "150px";
 
             var div1 = document.createElement("div");
-            div1.className = "bg-warning w-100 h-100 border rounded-circle border-dark-subtle p-1 btn";
+            div1.className = `${bgMesa} w-100 h-100 border rounded-circle border-dark-subtle p-1 btn`;
             div1.id = "mesa_" + numeroMesas[i].mesa;
 
             var div2 = document.createElement("div");
@@ -598,6 +640,10 @@
             let numeroDeMesa = numeroMesas[i].mesa;
             let mesaEvento = document.getElementById(`mesa_${numeroMesas[i].mesa}`);
 
+            //Disabled boton
+            let isDisabled = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa)
+            let textoMesaAbrirPedid = isDisabled ? "Cerrar Servicio" : "Abrir Servicio"
+
             mesaEvento.addEventListener('click', () => {
                 modalTitulo.textContent = `Mesa Asignada ${numeroDeMesa}`
                 modal.style.display = "block";
@@ -606,36 +652,36 @@
                 <div class="row d-flex flex-column justify-content-center gap-2 p-3 ms-3">
                     <div class="col d-flex gap-4">
                         <button class="btnAbrirMeasa botonPedido" style="width: 150px; height: 150px;" id="btnAbrir_${i+1}">
-                                <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                                <div class="d-flex align-items-center justify-content-center">
                                     <i class="fa-solid fa-plus fs-1 text-white"></i>
                                 </div>
-                                <div class="row-cols-1 text-white">
-                                    <p class="fw-semibold">Abrir Mesa</p>
+                                <div class="text-white">
+                                    <p class="fw-semibold">${textoMesaAbrirPedid}</p>
                                 </div>
                         </button>
                         <button class="btn btnAbrirPedido botonPedido" style="width: 150px; height: 150px;" id="btnPedido_${i + 1}">
-                            <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-utensils fs-1 text-white"></i>
                             </div>
-                            <div class="row-cols-1 text-white">
+                            <div class="text-white">
                                 <p class="fw-semibold">Abrir Pedido</p>
                             </div>
                         </button>
                     </div>
                     <div class="col d-flex gap-4 mt-3">
                         <button class="btn btnPedidos botonPedido" style="width: 150px; height: 150px;" id="btnLista_${i + 1}">
-                            <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-list fs-1 text-white"></i>
                             </div>
-                            <div class="row-cols-1 text-white">
+                            <div class="text-white">
                                 <p class="fw-semibold">Pedidos</p>
                             </div>
                         </button>
                         <button class="btn btnTicket botonPedido" style="width: 150px; height: 150px;" id="btnTicket_${i + 1}">
-                            <div class="row-cols-5 d-flex align-items-center justify-content-center">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-dollar fs-1 text-white"></i>
                             </div>
-                            <div class="row-cols-1 text-white">
+                            <div class="text-white">
                                 <p class="fw-semibold">Ticket</p>
                             </div>
                         </button>
@@ -644,34 +690,50 @@
                 `;
 
                 //Creamos los eventos de los botones
-                eventoBotones(i)
+                eventoBotones(i, numeroDeMesa, isDisabled)
             })
         }
     }
 
     //Evento botones Mesero
-    function eventoBotones(i) {
+    function eventoBotones(i, mesa, isDisabled) {
 
         let btnServicio = document.getElementById(`btnAbrir_${i + 1}`);
+            btnServicio.disabled = isDisabled;
+
         let btnPedido = document.getElementById(`btnPedido_${i + 1}`);
         let btnLista = document.getElementById(`btnLista_${i + 1}`);
         let btnTicket = document.getElementById(`btnTicket_${i + 1}`);
 
         btnServicio.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log("Abrir Servicio")
+              console.log("Abrir Servicio")
+            //Mandamos datos a CodeBehind
+            let data = [{mesa: mesa}];
+   
+            mandarDatos('Main', 'AbrirServicio', data, e)
         })
+
         btnPedido.addEventListener('click', (e) => {
-            e.preventDefault();
+            //Mandamos datos a CodeBehind
             console.log("Abrir Pedido")
+            let data = [{ mesa: mesa }];
+            mandarDatos('Main', 'AbrirPedido', data, e)
         })
+
         btnLista.addEventListener('click', (e) => {
             e.preventDefault();
             console.log("Ver listado")
+            //Mandamos datos a CodeBehind
+            //mandarDatos('Main', 'AbrirServicio')
+            //MOSTRAR LISTADO DE PEDIDO. ¿lINK CON QUERY?
         })
+
         btnTicket.addEventListener('click', (e) => {
             e.preventDefault();
             console.log("Ticket")
+            //Mandamos datos a CodeBehind
+            //mandarDatos('Main', 'AbrirServicio')
+            //MOSTRAR TICKET. ¿LINK CON QUERY?
         })
 
     }
@@ -680,6 +742,28 @@
     closeModalBtn.addEventListener("click", function () {
         modal.style.display = "none";
     });
+
+    //Fetch para mandar datos a codebehind
+    async function mandarDatos(pag, metodo, data, event) {
+
+        event.preventDefault();
+
+        fetch(`${pag}.aspx/${metodo}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ data: data })
+        })
+            .then(response => response.json())
+            .then(result => {
+                console.log(result)
+                location.reload();
+            })
+            .catch(error => {
+                console.log(error)
+            });
+    }
 
     //Función para pasar numero de mesero a color
     function convertirAHexadecimal(numero) {
@@ -704,9 +788,8 @@
         let opacityDecimal = Math.floor(opacity * 255);
         return toDosDigitosHex(opacityDecimal);
     }
-</script>
-|<!-- Fin Scripts Mesas -->
-
+    </script>
+    <!-- Fin Scripts Mesas -->
 
 </asp:Content>
 

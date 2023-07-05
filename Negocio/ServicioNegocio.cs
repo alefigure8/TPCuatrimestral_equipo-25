@@ -2,6 +2,7 @@
 using Opciones;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Negocio
 {
@@ -71,41 +72,55 @@ namespace Negocio
 			int id = 0;
 			AccesoDB datos = new AccesoDB();
 
-			try
-			{
-				//Buscamos ID de MesaPorDia con el número de Mesa y creamos el servicio
-				datos.setQuery($"DECLARE @IDMESAPORDIA BIGINT " +
-					$"SET @IDMESAPORDIA = ISNULL((SELECT {ColumnasDB.MesasPorDia.Id} FROM {ColumnasDB.MesasPorDia.DB} WHERE {ColumnasDB.MesasPorDia.IdMesa} = {mesa} AND CIERRE IS NULL ), 0); " +
-					$"IF @IDMESAPORDIA  > 0 " +
-					$"BEGIN " +
-					$"INSERT INTO SERVICIO ({ColumnasDB.MesasPorDia.Id}, {ColumnasDB.Servicio.Fecha}, {ColumnasDB.Servicio.Apertura}) " +
-					$"VALUES (@IDMESAPORDIA, {DateTime.Now.ToString("yyyy - MM - dd")}, {DateTime.Now.ToString("HH:mm:ss")}); " +
-					$"SELECT CAST(scope_identity() AS int) " +
-					$"END");
+			//Validar que no se pueda crear servicios si para la mesa el cobro está como false
+			Servicio servicio = this.Listar().Find(item => item.Cobrado == false && item.Mesa == mesa);
 
-				id = datos.executeScalar();
-			}
-			catch (Exception Ex)
+			//Si no existe servicio con el numero de mesa y el cobro en false, creamos servicio
+			if(servicio == null)
 			{
-				return id = -1;
+				try
+				{
+					//Buscamos ID de MesaPorDia con el número de Mesa y creamos el servicio
+					datos.setQuery($"DECLARE @IDMESAPORDIA BIGINT " +
+						$"SET @IDMESAPORDIA = ISNULL((SELECT {ColumnasDB.MesasPorDia.Id} FROM {ColumnasDB.MesasPorDia.DB} WHERE {ColumnasDB.MesasPorDia.IdMesa} = {mesa} AND CIERRE IS NULL ), 0); " +
+						$"IF @IDMESAPORDIA  > 0 " +
+						$"BEGIN " +
+						$"INSERT INTO SERVICIO ({ColumnasDB.MesasPorDia.Id}, {ColumnasDB.Servicio.Fecha}, {ColumnasDB.Servicio.Apertura}) " +
+						$"VALUES (@IDMESAPORDIA, '{DateTime.Now.ToString("yyyy - MM - dd")}', '{DateTime.Now.ToString("HH:mm:ss")}'); " +
+						$"SELECT CAST(scope_identity() AS int) " +
+						$"END");
+
+					return datos.executeScalar();
+				}
+				catch (Exception Ex)
+				{
+					return -1;
+				}
+				finally
+				{
+					datos.closeConnection();
+				}
 			}
-			finally
+			else
 			{
-				datos.closeConnection();
+				return -1;
 			}
-			
-			return id;
 		}
 
 		//Cerramos el servicio y retornamos true o false dependiendo la operación
-		public bool CerrarServicio(int idServicio)
+		public bool CerrarServicio(int mesa)
 		{
 			AccesoDB datos = new AccesoDB();
 
 			try
 			{
-				datos.setQuery($"UPDATE SERVICIO SET {ColumnasDB.Servicio.Cierre} = '{DateTime.Now.ToString("HH:mm:ss")}' WHERE {ColumnasDB.Servicio.Id} = {idServicio}");
-
+				datos.setQuery($"DECLARE @IDMESAPORDIA BIGINT " +
+					$"SET @IDMESAPORDIA = ISNULL((SELECT {ColumnasDB.MesasPorDia.Id} FROM {ColumnasDB.MesasPorDia.DB} WHERE {ColumnasDB.MesasPorDia.IdMesa} = {mesa} AND CIERRE IS NULL ), 0); " +
+					$"IF @IDMESAPORDIA  > 0 " +
+					$"BEGIN " +
+					$"UPDATE SERVICIO SET {ColumnasDB.Servicio.Cierre} = '{DateTime.Now.ToString("HH:mm:ss")}' WHERE {ColumnasDB.MesasPorDia.Id} = @IDMESAPORDIA AND CIERRE IS NULL " +
+					$"END");
+				
 				return datos.executeNonQuery();
 			}
 			catch (Exception Ex)

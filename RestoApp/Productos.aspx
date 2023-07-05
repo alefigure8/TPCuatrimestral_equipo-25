@@ -198,7 +198,7 @@
                     </div>
                     <div class="p-2">
                         <div class="d-flex justify-content-center ">
-                            <div class="col form-control bg-dark">
+                            <div class="col form-control bg-secondary">
                                 <div class="row text-white h5">
                                     <span class="col-1 align-middle">ID</span>
                                     <span class="col align-middle">Categoría</span>
@@ -221,47 +221,29 @@
 
 
 
-                                            <span class="col-3 bg-white">
-                                                <asp:Button ID="btnModificarCategoria" CommandArgument='<%#Eval("Id") %>' Text="🖍" runat="server" CssClass="col btn btn-dark pl-2" ToolTip="ModificarCategoria" OnClick="btnModificarCategoria_Click" />
-                                                  <asp:Button  ID="btnActivarCategoria" CommandArgument='<%#Eval("Id") %>' Text="X" runat="server" CssClass="col btn btn-dark pl-2" ToolTip="Eliminar"  OnClick="btnActivarCategoria_Click"/>
+                                            <span class="col bg-white">
+                                                <asp:Button ID="btnModificarCategoria" CommandArgument='<%#Eval("Id") %>' Text="Guardar" runat="server" CssClass="col btn btn-dark pl-2" ToolTip="ModificarCategoria" OnClick="btnModificarCategoria_Click" />
+                                                <asp:Button ID="btnActivarCategoria" CommandArgument='<%#Eval("Id") %>' Text="Eliminar" runat="server" CssClass="col btn btn-dark pl-2" ToolTip="Eliminar" OnClick="btnActivarCategoria_Click" />
 
                                             </span>
                                         </div>
                                     </ItemTemplate>
                                 </asp:Repeater>
 
-                                <div class="row bg-dark text-white">
+                                <div class="row secondary text-white">
                                     <span class="row m-2" style="font-size: 12px">NUEVA CATEGORIA:</span>
-
                                     <div class="row d-flex justify-content-between">
-
-
-                                        <div class="col-6">
+                                        <div class="col">
                                             <asp:TextBox ID="tbNuevaCategoria" runat="server" CssClass="form-control" Text="Ingresar Descripción"></asp:TextBox>
                                         </div>
-
-
-                                        <asp:Button ID="btnGuardarCategoria" Text="Guardar" runat="server" CssClass="col-3 btn btn-secondary" ToolTip="Guardar Registro" OnClick="btnGuardarCategoria_Click" />
-
-
-                                        <asp:Button ID="btnCancelarCategoria" Text="Cancelar" runat="server" CssClass="col-3 btn btn-secondary" ToolTip="Cancelar" OnClick="btnCancelarCategoria_Click" />
-
-
-
-
-
+                                        <div class="col-6">
+                                            <asp:Button ID="btnGuardarCategoria" Text="Guardar" runat="server" CssClass="col btn btn-dark" ToolTip="Guardar Registro" OnClick="btnGuardarCategoria_Click" />
+                                            <asp:Button ID="btnCancelarCategoria" Text="Cancelar" runat="server" CssClass="col btn btn-dark" ToolTip="Cancelar" OnClick="btnCancelarCategoria_Click" />
+                                        </div>
                                     </div>
-
-
                                 </div>
-
-
-
-
                             </div>
-
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -272,13 +254,141 @@
         <!-- Modal -->
 
 
+        <%--Modal Editar lote--%>
+
+        <div class="modal fade" id="modalEditarLote" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="p-3 d-flex justify-content-between">
+                        <h5 class="modal-title">Editar lote filtrado</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="p-2">
+
+                        <label style="color: red">Atención: todos los productos de la lista filtrada serán afectados.</label>
+
+                        <div class="form-control bg-secondary p-2">
+                            <div class="row m-2">
+
+                                <div class="col">
+                                    <div class="row">
+                                        <label class="row text-white">Valor Por %</label>
+                                        <asp:TextBox runat="server" ID="tbPorcentaje" CssClass="form col-6" type="number" min="0"></asp:TextBox>
+                                        <asp:Button runat="server" ID="BtnAplicarPorcentaje" Text="+" CssClass="bg-dark text-white col-2" />
+                                        <asp:Button runat="server" ID="Button1" Text="-" CssClass="bg-dark text-white col-2" />
+                                    </div>
+                                </div>
+
+
+                                <div class="col">
+                                    <div class="row">
+                                        <label class="row text-white">Valor Por Monto</label>
+                                        <asp:TextBox runat="server" ID="TextBox1" CssClass="form col" type="number" min="0"></asp:TextBox>
+                                        <asp:Button runat="server" ID="Button2" Text="+" CssClass="bg-dark text-white col-2" />
+                                        <asp:Button runat="server" ID="Button3" Text="-" CssClass="bg-dark text-white col-2" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row m-2">
+                                   
+                                        <label class="text-white">Stock</label>
+                                        <asp:TextBox runat="server" ID="TextBox2" CssClass="form col" type="number" min="0"></asp:TextBox>
+                                        <asp:Button runat="server" ID="Button4" Text="+" CssClass="bg-dark text-white col-1" />
+                                        <asp:Button runat="server" ID="Button5" Text="-" CssClass="bg-dark text-white col-1" />
+                                   
+                                </div>
+
+
+
+                            <div class="row bg-white rounded-bottom m-2">
+
+                                <div class="col small">
+                                    <div class="row bg-dark text-white">
+                                        <div class="col-1">Sí</div>
+                                        <div class="col-3"></div>
+                                        <div class="col-1">No</div>
+                                    </div>
+
+                                    <div class="row  p-1">
+                                        <asp:RadioButton runat="server" CssClass="col-1" />
+                                        <div class="col-3">Apto Vegano</div>
+                                        <asp:RadioButton runat="server" CssClass="col-1" />
+                                        <asp:Button runat="server" Text="Aplicar" CssClass="col bg-dark text-white rounded" />
+                                    </div>
+
+                                    <div class="row p-1">
+                                        <asp:RadioButton runat="server" CssClass="col-1" />
+                                        <div class="col-3">Apto Celiaco</div>
+                                        <asp:RadioButton runat="server" CssClass="col-1" />
+                                        <asp:Button runat="server" Text="Aplicar" CssClass="col bg-dark text-white rounded" />
+                                    </div>
+
+                                     <div class="row  p-1">
+                                        <asp:RadioButton runat="server" CssClass="col-1" />
+                                        <div class="col-3">Cont. Alcohol</div>
+                                        <asp:RadioButton runat="server" CssClass="col-1" />
+                                        <asp:Button runat="server" Text="Aplicar" CssClass="col bg-dark text-white rounded" />
+                                    </div>
+
+                                    <div class="row bg-white m-2 p-2 ">
+                                        <asp:Button runat="server" Text="Marcar todo en selección como Activo" CssClass="btn btn-dark"/>
+                                <asp:Button runat="server" Text="Marcar todo en selección como Inactivo" CssClass="btn btn-dark mt-1"/>
+
+ </div>
+                                </div>
+
+                            </div>
+
+                                <asp:Button runat="server" Text="Cerrar" CssClass="btn btn-dark m-2"/>
+
+                            
+                            
+                           
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+    
+                        
+                        </div>
+
+
+        <%--Fin Modal Editar Lote--%>
 
 
 
 
 
+       <%--Modal Eliminar Lote--%>
+        
+        <div class="modal fade" id="modalEliminarLote"">
+            <div class="modal-dialog">
+                <div class="modal-content p-3">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="modal-title">Eliminar los productos filtrados?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="row">
+                        <button class="col btn btn-dark m-1"> Cancelar </button>
+                        <asp:Button runat="server" Text="Eliminar Lote" CssClass="col btn btn-dark m-1" ID="BtnEliminarLote" OnClick="BtnEliminarLote_Click"/>
+                    </div>
+                         
+                        
+                    <label style="color:red;"> * Esta acción no podrá ser deshecha </label>
+                        <label style="color:red;"> * Esta acción no se aplicará a los productos que estén en Menú actual</label>
+                     
+                </div>
+            </div>
+        </div>
 
 
+       <%-- Fin Modal Eliminar Lote--%>
 
 
 
@@ -427,20 +537,16 @@
 
 
 
-        <div class="col-2 me-2 btn btn-dark" title="Modificar Selección">
+        <div class="col-2 me-2 btn btn-dark" title="Modificar Selección" data-bs-toggle="modal" data-bs-target="#modalEditarLote">
             <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
-            <asp:LinkButton ID="LinkButton1" runat="server"
-                CssClass="h5">
-                        <label>Lote</label>
-            </asp:LinkButton>
+            <p class="h5">Lote</p>
         </div>
 
-        <div class="col-2 me-2 btn btn-dark" title="Eliminar Selección">
+        <div class="col-2 me-2 btn btn-dark" title="Eliminar Selección"  data-bs-toggle="modal" data-bs-target="#modalEliminarLote">
             <i class="row fa fa-trash  align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
-            <asp:LinkButton ID="LinkButton2" runat="server"
-                CssClass="h5">
-                        <label>Lote</label>
-            </asp:LinkButton>
+            
+               <p class="h5">Lote</p>
+         
         </div>
 
 
