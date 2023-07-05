@@ -683,23 +683,21 @@ namespace RestoApp
                 {
                     tbCantidad.Visible = false;
                     button.Text = "+";
-
                     btnCancelar.Visible = false;
 
+
+					if (Session["ProductosPorPedido"] == null)
+					{
+						List <ProductoPorPedido> list = new List<ProductoPorPedido>();	
+						Session.Add("ProductosPorPedido", list);
+					}
 
                     ProductoPorPedido productoPorPedido = new ProductoPorPedido();
                     productoPorPedido.Productodeldia = ((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == int.Parse(button.CommandArgument));
                     productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
-                    List<ProductoPorPedido> ProductosPorPedido = new List<ProductoPorPedido>();
-                    ProductosPorPedido.Add(productoPorPedido);
+					((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
 
                 }
-
-                List<Servicio> ListaServicios = ((List<Servicio>)Session["Servicios"]);
-
-                //int a = ((List<Servicio>)Session["Servicios"]).Find(x => x.Mesa == Helper.Session.GetNumeroMesaPedido()).Id;
-                //PedidoNegocio PNaux = new PedidoNegocio();
-                //PNaux
 
             }
 
@@ -718,6 +716,20 @@ namespace RestoApp
             Button btnCancelar = repeaterItem.FindControl("btnCancelarAgregarA") as Button;
             tbCantidad.Visible = false;
             btnCancelar.Visible = false;
+        }
+
+        protected void btnGuardarPedido_Click(object sender, EventArgs e)
+        {
+			Button btnGuardarPedido = sender as Button;
+
+           
+			Pedido Paux = new Pedido();
+			Paux.IdServicio = ((List<Servicio>)Session["Servicios"]).Find(x => x.Mesa == Helper.Session.GetNumeroMesaPedido()).Id;
+			Paux.Productossolicitados = ((List<ProductoPorPedido>)Session["ProductosPorPedido"]);
+
+
+            PedidoNegocio PNaux = new PedidoNegocio();
+			PNaux.AbrirPedido(Paux);
         }
     }
 

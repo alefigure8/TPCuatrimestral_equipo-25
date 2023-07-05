@@ -239,7 +239,7 @@
 
                 <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
                     <ContentTemplate>
-                        <asp:Button runat="server" ID="btnGuardarPedido" Text="ENVIAR PEDIDO" CssClass="btn btn-dark" Visible="false"/>
+                        <asp:Button runat="server" ID="btnGuardarPedido" Text="ENVIAR PEDIDO" CssClass="btn btn-dark" Visible="false" OnClick="btnGuardarPedido_Click"/>
                     </ContentTemplate>
                 </asp:UpdatePanel>
 
