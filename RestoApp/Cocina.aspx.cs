@@ -1,4 +1,5 @@
 ﻿using Dominio;
+using Negocio;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,7 +15,7 @@ namespace RestoApp
     {
         public DateTime Reloj { get; set; }
 
-        public List<ProductoDelDia> productoDelDias { get; set; }
+        public List<Pedido> Pedidosencocina { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -26,11 +27,15 @@ namespace RestoApp
                 Session.Add("Reloj", Reloj);
 
             }
-            Session.Add("datatable", creardatatable());
-            GVDCocina.DataSource = creardatatable();
-            GVDCocina.DataBind();
+            //Session.Add("datatable", creardatatable());
+            //GVDCocina.DataSource = creardatatable();
+            //GVDCocina.DataBind();
+            PedidoNegocio pedidoNegocio = new PedidoNegocio();
+            List <Pedido> pedidos = pedidoNegocio.ListarPedidos();
+            GVDpedidos.DataSource = pedidos;
+            GVDpedidos.DataBind();
         }
-
+        
         public void Cargarpedidosprueba()
         {
             /*
@@ -44,38 +49,37 @@ namespace RestoApp
             }
             */
 
-
+            Pedidosencocina = new List<Pedido>();
             Pedido Pedido = new Pedido();
-            Pedido.Productosdeldia = new List<ProductoDelDia>();
 
+            for (int x = 0; x <= 10; x++)
+            {
+                /*
+                ProductoDelDia productodelpedido0 = new ProductoDelDia();
+                productodelpedido0.Id = 1;
+                productodelpedido0.TiempoCoccion = TimeSpan.Parse("00:15:00");
 
-            ProductoDelDia productodelpedido0 = new ProductoDelDia();
+                Pedido.Productosdeldia.Add(productodelpedido0);
 
-            productodelpedido0.Id = 1;
-            productodelpedido0.TiempoCoccion = TimeSpan.Parse("00:15:00");
+                ProductoDelDia productodelpedido1 = new ProductoDelDia();
 
-            Pedido.Productosdeldia.Add(productodelpedido0);
+                productodelpedido1.Id = 2;
+                productodelpedido1.TiempoCoccion = TimeSpan.Parse("00:20:00");
+                Pedido.Productosdeldia.Add(productodelpedido1);
+                          
+                Pedido.Estadopedido.Descripcion = "Solicitado";
+                Pedido.Estadopedido.fechaactualizacion = DateTime.Now;
+                */
+            }
 
-            ProductoDelDia productodelpedido1 = new ProductoDelDia();
-
-            productodelpedido1.Id = 2;
-            productodelpedido1.TiempoCoccion = TimeSpan.Parse("00:20:00");
-
-            Pedido.Productosdeldia.Add(productodelpedido1);
-
-            Pedido.Id = 1;
-            Pedido.Estadopedido.Id = 1;
-            Pedido.Estadopedido.Descripcion = "Solicitado";
-            Pedido.Estadopedido.fechaactualizacion = DateTime.Now;
-
-            Session.Add("Pedido", Pedido);
+          //  Session.Add("Pedido", Pedido);
 
 
         }
-
+        /*
         public DataTable creardatatable()
         {
-
+            
             DataTable dataTable = new DataTable();
             dataTable.Columns.Add("Nombre", typeof(string));
 
@@ -87,7 +91,6 @@ namespace RestoApp
 
             Pedido Pedido = new Pedido();
             Pedido.Productosdeldia = new List<ProductoDelDia>();
-            Pedido.Estadopedido = new EstadoPedido();
             Pedido = (Pedido)Session["Pedido"];
 
 
@@ -104,8 +107,9 @@ namespace RestoApp
 
 
             return dataTable;
+            
         }
-
+        */
         public List<string> horariosmañana()
         {
             string[] horariosdia = {
@@ -155,7 +159,7 @@ namespace RestoApp
         {
             string[] horariosnoche = {
              "19:00", "19:05", "19:10", "19:15", "19:20", "19:25", "19:30", "19:35", "19:40", "19:45",
-                "19:50", "19:55", "20:00", "20:05", "20:10", "20:15", "20:20", "20:25", "20:30", "20:35",
+              "19:50", "19:55", "20:00", "20:05", "20:10", "20:15", "20:20", "20:25", "20:30", "20:35",
                  "20:40", "20:45", "20:50", "20:55", "21:00", "21:05", "21:10", "21:15", "21:20", "21:25",
                     "21:30", "21:35", "21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15",
                  "22:20", "22:25", "22:30", "22:35", "22:40", "22:45", "22:50", "22:55", "23:00", "23:05",
@@ -179,13 +183,13 @@ namespace RestoApp
 
             int columnaIndice = dataTable.Columns.IndexOf("Nombre");
             // calculamos cuantos casilleros ocupa el tiempo de coccion de cada producto
-            int casillerospedido1 = (int)Pedido.Productosdeldia[0].TiempoCoccion.TotalMinutes / 5;
-            int casillerospedido2 = (int)Pedido.Productosdeldia[1].TiempoCoccion.TotalMinutes / 5;
+           // int casillerospedido1 = (int)Pedido.Productosdeldia[0].TiempoCoccion.TotalMinutes / 5;
+           // int casillerospedido2 = (int)Pedido.Productosdeldia[1].TiempoCoccion.TotalMinutes / 5;
 
             // creamos variable datetime y variable timespan
             // a Timespan asignamos el horario del pedido
             DateTime datetime = new DateTime();
-            datetime = Pedido.Estadopedido.fechaactualizacion;
+            //datetime = Pedido.Estadopedido.fechaactualizacion;
             TimeSpan TimeSpan = new TimeSpan(datetime.Hour, datetime.Minute, datetime.Second);
 
 
@@ -197,8 +201,8 @@ namespace RestoApp
             // obtenemos el indice de la columna en la que se encuentra el horario del pedido
             int casillero = dataTable.Columns.IndexOf(hora);
             // calculamos la cantidad de casilleros que ocupa el tiempo de coccion del producto
-            casillerospedido1 = casillerospedido1 + casillero;
-            casillerospedido2 = casillerospedido2 + casillero;
+            //casillerospedido1 = casillerospedido1 + casillero;
+            //casillerospedido2 = casillerospedido2 + casillero;
 
             // recuperamos el horario actual simulado y lo asignamos a un timespan
             Reloj = (DateTime)Session["Reloj"];
@@ -216,7 +220,7 @@ namespace RestoApp
 
                 // foreach 
 
-
+                /*
                 if (e.Row.RowIndex == 0)
                 {
                     for (int i = casillero; i <= casillerospedido1; i++)
@@ -251,9 +255,51 @@ namespace RestoApp
                     }
 
                 }
-
+                */
 
             }
         }
+        
+        protected void botonpedido_Click(object sender, EventArgs e)
+        {
+
+            Pedido pedido = new Pedido();
+            pedido.IdServicio = 1;
+            pedido.Productossolicitados = new List<ProductoPorPedido>();
+            ProductoPorPedido productoporpedido = new ProductoPorPedido();
+
+            productoporpedido.Productodeldia.Id = 1;
+            productoporpedido.Cantidad = 2;
+
+            pedido.Productossolicitados.Add(productoporpedido);
+
+            productoporpedido.Productodeldia.Id = 2;
+            productoporpedido.Cantidad = 2;
+
+            pedido.Productossolicitados.Add(productoporpedido);
+
+            productoporpedido.Productodeldia.Id = 1;
+            productoporpedido.Cantidad = 2;
+
+            pedido.Productossolicitados.Add(productoporpedido);
+
+            productoporpedido.Productodeldia.Id = 2;
+            productoporpedido.Cantidad = 2;
+
+            pedido.Productossolicitados.Add(productoporpedido);
+
+            PedidoNegocio pedidoNegocio = new PedidoNegocio();
+
+            pedidoNegocio.AbrirPedido(pedido);
+            
+        }
+           
     }
+
+
+
+
+
+
+
 }

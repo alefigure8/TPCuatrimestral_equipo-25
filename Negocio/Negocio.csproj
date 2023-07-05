@@ -46,6 +46,7 @@
     <Compile Include="AccesoDB.cs" />
     <Compile Include="CategoriaProductoNegocio.cs" />
     <Compile Include="MesaNegocio.cs" />
+    <Compile Include="PedidoNegocio.cs" />
     <Compile Include="ProductoNegocio.cs" />
     <Compile Include="ServicioNegocio.cs" />
     <Compile Include="UsuarioNegocio.cs" />

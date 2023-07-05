@@ -26,4 +26,12 @@
             </ContentTemplate>
             </asp:UpdatePanel>
     </div>
+
+    <asp:Button runat="server" ID="botonpedido" OnClick="botonpedido_Click"/>
+
+    <asp:Gridview ID="GVDpedidos" runat="server">
+        </asp:Gridview>     
+        
+
+
 </asp:Content>

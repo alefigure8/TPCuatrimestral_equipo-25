@@ -10,12 +10,16 @@ namespace Dominio
     {
         public Pedido()
         {
-            Estadopedido = new EstadoPedido();
-            Estadopedido.Id = 1;
+           
         }
         
         public int Id { get; set; }
-        public List<ProductoDelDia> Productosdeldia;
-        public EstadoPedido Estadopedido        {    get; set;        }
+        public int IdServicio { get; set; }
+
+        public List<ProductoPorPedido> Productossolicitados;
+        public int Estado { get; set;}
+        public string EstadoDescripcion { get; set; }
+
+        public DateTime ultimaactualizacion;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -106,5 +107,47 @@ namespace Opciones
 			public const string Cobrado = "Cobrado";
 			public const string DB = "Servicio";
 		}
+        public struct Pedido
+		{
+            public const string DB = "Pedido";
+            public const string Id = "IdPedido";
+            public const string IdServicio = "IdServicio";
+            public const string IdEstado = "IdEstado";
+        }
+
+        public struct ProductoPorPedido
+		{
+            public const string DB = "Producto_X_Pedido";
+            public const string Id = "IdProductoPorPedido";
+            public const string IdPedido = "IdPedido";
+            public const string IdProductoPorDia = "IdProductoPorDia";
+            public const string Fecha = "Fecha";
+            public const string Cantidad = "Cantidad";
+            public const string Valor = "Valor";
+        }
+
+        public struct EstadosxPedido
+        {
+            public const string DB = "ESTADO_X_PEDIDO";
+			public const string IdPedido = "IdPedido";
+			public const string IdEstado = "IdEstado";
+			public const string FechaActualizacion = "FechaActualizacion";
+
+        }
+
+        public struct Estados
+        {
+            public const string DB = "Estadopedido";
+			public const string Id = "IdEstado";
+			public const string Descripcion = "Descripcion";
+			public const int Solicitado = 1;
+			public const int EnPreparacion = 2;
+			public const int DemoradoEnCocina = 3;
+			public const int ListoParaEntregar = 4;
+			public const int Entregado = 5;
+            
+		}
+
+
 	}
 }
