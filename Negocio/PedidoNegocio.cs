@@ -52,9 +52,10 @@ namespace Negocio
                     datos.setQuery(
                        
                         $"INSERT INTO {ColumnasDB.ProductoPorPedido.DB} ({ColumnasDB.ProductoPorPedido.IdPedido}, {ColumnasDB.ProductoPorPedido.IdProductoPorDia}, {ColumnasDB.ProductoPorPedido.Cantidad}, {ColumnasDB.ProductoPorPedido.Fecha}) " +
-                        $"VALUES ({pedido.Id}, {producto.Productodeldia.Id}, {producto.Cantidad},'{DateTime.Now.ToString("G")}')");
+                        $"VALUES ({pedido.Id}, {producto.Productodeldia.Id}, {producto.Cantidad},'{DateTime.Now.ToString("yyyy-MM-dd")}')");
 
                     datos.executeNonQuery();
+                    datos.closeConnection();
                 }
               
             }

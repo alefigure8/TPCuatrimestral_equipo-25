@@ -140,7 +140,7 @@ namespace Negocio
                 //    "WHERE" + $"{ColumnasDB.Producto.Id} = " + ProdAModificar.Id );
 
                 AccesoDB.setQuery("UPDATE PRODUCTOS SET CategoriaProducto = " + ProdAModificar.Categoria + ", Nombre = '" +
-                    ProdAModificar.Nombre + "', Descripcion = '" + ProdAModificar.Descripcion + "', Valor = " + ProdAModificar.Valor +
+                    ProdAModificar.Nombre + "', Descripcion = '" + ProdAModificar.Descripcion + "', Valor = " + ProdAModificar.Valor.ToString().Replace(",", ".") +
                     ", AptoVegano = '" + ProdAModificar.AptoVegano + "', AptoCeliaco = '" + ProdAModificar.AptoCeliaco + "', Alcohol = '" +
                     ProdAModificar.Alcohol + "', Stock = " + ProdAModificar.Stock + ", Activo = '" + ProdAModificar.Activo + "', TiempoCoccion = '" +
                     ProdAModificar.TiempoCoccion + "' WHERE IdProducto = " + ProdAModificar.Id);
@@ -171,7 +171,7 @@ namespace Negocio
                + $"{ColumnasDB.Producto.Descripcion}, {ColumnasDB.Producto.Valor}, {ColumnasDB.Producto.AptoVegano},"
                + $"{ColumnasDB.Producto.AptoCeliaco}, {ColumnasDB.Producto.Alcohol}, {ColumnasDB.Producto.Stock},"
                + $"{ColumnasDB.Producto.Activo}, {ColumnasDB.Producto.TiempoCoccion}, {ColumnasDB.ProductoDD.Fecha}, {ColumnasDB.ProductoDD.StockInicial}, {ColumnasDB.ProductoDD.StockCierre}  "
-               + $" FROM {ColumnasDB.ProductoDD.DB} WHERE {ColumnasDB.ProductoDD.Fecha} = '" + DateTime.Now +"'");
+               + $" FROM {ColumnasDB.ProductoDD.DB} WHERE {ColumnasDB.ProductoDD.Fecha} = '" + DateTime.Now.ToString("yyyy-MM-dd") +"'");
                 AccesoDB.executeReader();
                 while (AccesoDB.Reader.Read())
                 {
@@ -232,8 +232,8 @@ namespace Negocio
                     $"'{ProductoDelDia.Categoria}'," +
                     $"'{ProductoDelDia.Nombre}'," +
                     $"'{ProductoDelDia.Descripcion}'," +
-                    //$" {ProductoDelDia.Valor.ToString().Replace(",", ".")}," +
-                    $" {ProductoDelDia.Valor}," +
+                    $" {ProductoDelDia.Valor.ToString().Replace(",", ".")}," +
+                    //$" {ProductoDelDia.Valor}," +
                     $"'{ProductoDelDia.AptoVegano}'," +
                     $"'{ProductoDelDia.AptoCeliaco}'," +
                     $"'{ProductoDelDia.Alcohol}'," +
@@ -281,12 +281,12 @@ namespace Negocio
                 //    " AND " + $"{ColumnasDB.ProductoDD.Fecha} = '" + ProdAModificar.Fecha + "' ");
 
                 AccesoDB.setQuery("UPDATE ProductosPorDia_Menu SET CategoriaProducto = " + ProdAModificar.Categoria + ", Nombre = '" +
-                    ProdAModificar.Nombre + "', Descripcion = '" + ProdAModificar.Descripcion + "', Valor = " + ProdAModificar.Valor +
+                    ProdAModificar.Nombre + "', Descripcion = '" + ProdAModificar.Descripcion + "', Valor = " + ProdAModificar.Valor.ToString().Replace(",", ".") +
                     ", AptoVegano = '" + ProdAModificar.AptoVegano + "', AptoCeliaco = '" + ProdAModificar.AptoCeliaco + "', Alcohol = '" +
                     ProdAModificar.Alcohol + "', Stock = " + ProdAModificar.Stock + ", Activo = '" + ProdAModificar.Activo + "', TiempoCoccion = '" +
-                    ProdAModificar.TiempoCoccion + "', Fecha = '" + ProdAModificar.Fecha + "', StockInicial = " + ProdAModificar.StockInicio +
-                    ", StockCierre = " + ProdAModificar.StockCierre + " WHERE IdProducto = " + ProdAModificar.Id + " AND " + "Fecha = '" + ProdAModificar.Fecha + "'");
-
+                    ProdAModificar.TiempoCoccion + "', Fecha = '" + $"{ProdAModificar.Fecha.ToString("yyyy-MM-dd")}" + "', StockInicial = " + ProdAModificar.StockInicio +
+                    ", StockCierre = " + ProdAModificar.StockCierre + " WHERE IdProducto = " + ProdAModificar.Id + " AND " + "Fecha = '" + $"{ProdAModificar.Fecha.ToString("yyyy-MM-dd")}" + "'");
+              
                 return AccesoDB.executeScalar();
             }
             catch (Exception Ex)
