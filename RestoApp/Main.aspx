@@ -231,23 +231,38 @@
             <%--SECCION MENU RAPIDO--%>
 
             <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 ">
+                <%--  Label muestra sobre qué mesa estoy haciendo pedido--%>
+
+                <div class="row bg-dark ">
+
+                     <div class="col-6 bg-dark text-white p-2 ">
+                         <asp:UpdatePanel runat="server">
+                             <ContentTemplate>
+                                   <asp:Label ID="lbNumeroMesa" runat="server" CssClass="h4">SIN MESA SELECCIONADA</asp:Label>
+
+                             </ContentTemplate>
+                         </asp:UpdatePanel>
+                  
+                         </div>
+
+                <div class="col-6 d-flex justify-content-end p-2">
+
+
+                    <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
+                        <ContentTemplate>
+                            <asp:Button runat="server" ID="btnGuardarPedido" Text="ENVIAR PEDIDO" Visible="false" CssClass="btn  btn-secondary" OnClick="btnGuardarPedido_Click" />
+                            <asp:Button runat="server" ID="btnTerminarPedido" Text="Cancelar" Visible="false" CssClass="btn btn-secondary" OnClick="btnTerminarPedido_Click" />
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+
+                </div>
+                </div>
                 
-              <%--  Label muestra sobre qué mesa estoy haciendo pedido--%>
-                <asp:Label ID="lbNumeroMesa" runat="server">No hay ninguna mesa elegida</asp:Label>
-
-<%--                Boton guardar pedido--%>
-
-                <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
-                    <ContentTemplate>
-                        <asp:Button runat="server" ID="btnGuardarPedido" Text="ENVIAR PEDIDO" CssClass="btn btn-dark" Visible="false" OnClick="btnGuardarPedido_Click"/>
-                    </ContentTemplate>
-                </asp:UpdatePanel>
-
 
 
 
                 <div class="col-6 p-2">
-                    <label class="row h3 bg-dark text-white p-1">Platos Disponibles:</label>
+                    <label class="row h3 p-1">Platos Disponibles:</label>
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
                             <div class="row">
@@ -257,9 +272,9 @@
                                 <div class="col">
                                     <asp:UpdatePanel runat="server" ID="PanelAgregarAPedido" CssClass="row">
                                         <ContentTemplate>
-                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width:100px; display:inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
-                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' />
-                                            <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA_Click" />
+                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" ToolTip="Ingrese Cantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
+                                            <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA_Click" ToolTip="Cancelar" />
                                         </ContentTemplate>
                                     </asp:UpdatePanel>
                                 </div>
@@ -270,8 +285,8 @@
 
 
                 <%--Bebidas--%>
-                  <div class="col-6 p-2">
-                    <label class="row h3 bg-dark text-white p-1">Bebidas Disponibles:</label>
+                <div class="col-6 p-2">
+                    <label class="row h3  p-1">Bebidas Disponibles:</label>
                     <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
                             <div class="row">
@@ -281,9 +296,9 @@
                                 <div class="col">
                                     <asp:UpdatePanel runat="server" ID="PanelAgregarBebida" CssClass="row">
                                         <ContentTemplate>
-                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width:100px; display:inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);"  Type="Number" min="1" Text="1" ></asp:TextBox>
-                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+"  />
-                                            <asp:Button runat="server"  CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false"  />
+                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" Type="Number" min="1" Text="1"></asp:TextBox>
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+" />
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" />
                                         </ContentTemplate>
                                     </asp:UpdatePanel>
                                 </div>
@@ -294,8 +309,16 @@
 
 
 
+
+
+
             </div>
         </div>
+
+
+
+
+
     </div>
     <% } %>
 
@@ -332,17 +355,16 @@
             align-items: center;
             position: relative;
             overflow: hidden;
-          cursor: pointer;
-
+            cursor: pointer;
         }
 
-        .mesa p {
-            font-size: 15px;
-            font-weight: bold;
-            margin: 0;
-        }
+            .mesa p {
+                font-size: 15px;
+                font-weight: bold;
+                margin: 0;
+            }
 
-        .mesaTop{
+        .mesaTop {
             width: 100%;
             height: 15px;
             position: absolute;
@@ -350,7 +372,7 @@
             left: 0;
         }
 
-        .mesaBottom{
+        .mesaBottom {
             width: 100%;
             height: 15px;
             position: absolute;
@@ -387,14 +409,14 @@
             cursor: pointer;
         }
 
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
 
-        .botonPedido{
+        .botonPedido {
             cursor: pointer;
             border-radius: 10px;
             display: grid;
@@ -405,268 +427,268 @@
             outline: none;
         }
 
-        .btnAbrirMeasa{
+        .btnAbrirMeasa {
             background-color: #FFC107;
             border-color: #FFC107;
         }
 
-        .btnAbrirMeasa:hover{
-            background-color: #ffc107c4;
-            border-color: #ffc107c4;
-        }
+            .btnAbrirMeasa:hover {
+                background-color: #ffc107c4;
+                border-color: #ffc107c4;
+            }
 
-        .btnAbrirPedido{
+        .btnAbrirPedido {
             background-color: #0d6efd;
             border-color: #0d6efd;
         }
 
-        .btnAbrirPedido:hover{
-            background-color: #0d6dfdc4;
-            border-color: #0d6dfdc4;
-        }
+            .btnAbrirPedido:hover {
+                background-color: #0d6dfdc4;
+                border-color: #0d6dfdc4;
+            }
 
-        .btnPedidos{
+        .btnPedidos {
             background-color: #198754;
             border-color: #198754;
         }
 
-        .btnPedidos:hover{
-            background-color: #198754c2;
-            border-color: #198754c2;
-        }
+            .btnPedidos:hover {
+                background-color: #198754c2;
+                border-color: #198754c2;
+            }
 
-        .btnTicket{
+        .btnTicket {
             background-color: #dc3545;
             border-color: #dc3545;
         }
 
-        .btnTicket:hover{
-            background-color: #dc3546c4;
-            border-color: #dc3546c4;
-        }
+            .btnTicket:hover {
+                background-color: #dc3546c4;
+                border-color: #dc3546c4;
+            }
     </style>
     <!-- Fin Styles Mesas -->
 
     <!-- Scripts Mesas -->
     <script id="scriptMain">
-    let tipoUsuario = "<%: tipoUsuario%>";
-    let numeroMesa = <%: MesasActivas %>;
-    let sectionMesa = document.getElementById("section-mesa");
-    let sectionMesaMesero = document.getElementById("section-mesa-mesero")
-    const modal = document.getElementById("modalMesas");
-    const closeModalBtn = document.getElementsByClassName("close")[0];
-    const modalTitulo = document.getElementById("modal-titulo");
-    let contenidoModal = document.getElementById("modal-content");
+        let tipoUsuario = "<%: tipoUsuario%>";
+        let numeroMesa = <%: MesasActivas %>;
+        let sectionMesa = document.getElementById("section-mesa");
+        let sectionMesaMesero = document.getElementById("section-mesa-mesero")
+        const modal = document.getElementById("modalMesas");
+        const closeModalBtn = document.getElementsByClassName("close")[0];
+        const modalTitulo = document.getElementById("modal-titulo");
+        let contenidoModal = document.getElementById("modal-content");
 
-    //Traemos datos de mesas desde codebehind del Gerente
-    function obtenerDatosMesasGerente() {
+        //Traemos datos de mesas desde codebehind del Gerente
+        function obtenerDatosMesasGerente() {
 
-        return new Promise((resolve) => {
-            if (typeof datosMesasArray !== 'undefined') {
-                const datosMesas = JSON.parse(datosMesasArray)
-                const numeroMesas = JSON.parse(numeroMesasActivasArray)
-                const numeroServicios = JSON.parse(seviciosJSON)
+            return new Promise((resolve) => {
+                if (typeof datosMesasArray !== 'undefined') {
+                    const datosMesas = JSON.parse(datosMesasArray)
+                    const numeroMesas = JSON.parse(numeroMesasActivasArray)
+                    const numeroServicios = JSON.parse(seviciosJSON)
 
-                resolve({ datosMesas, numeroMesas, numeroServicios });
-            } else {
-                const intervalo = setInterval(() => {
-                    if (typeof datosMesasArray !== 'undefined') {
-                        clearInterval(intervalo);
-                        const datosMesas = JSON.parse(datosMesasArray)
-                        const numeroMesas = JSON.parse(numeroMesasActivasArray)
-                        const numeroServicios = JSON.parse(seviciosJSON)
-                        console.log(numeroServicios)
-                        resolve({ datosMesas, numeroMesas, numeroServicios });
-                    }
-                }, 0);
-            }
-        });
-    }
-
-    //Traemos datos de mesas desde codebehind del Mesero
-    function obtenerDatosMesasMesero() {
-
-        return new Promise((resolve) => {
-            if (typeof numeroMesasArray !== 'undefined') {
-                const numeroMesas = JSON.parse(numeroMesasArray)
-                const numeroServicios = JSON.parse(seviciosJSON)
-                resolve({ numeroMesas, numeroServicios });
-            } else {
-                const intervalo = setInterval(() => {
-                    if (typeof numeroMesasArray !== 'undefined') {
-                        clearInterval(intervalo);
-                        const numeroMesas = JSON.parse(numeroMesasArray)
-                        const numeroServicios = JSON.parse(seviciosJSON)
-
-                        resolve({ numeroMesas, numeroServicios });
-                    }
-                }, 0);
-            }
-        });
-    }
-
-    //Llamamos datos de las mesas del Gerente
-    if (tipoUsuario == "Gerente") {
-        obtenerDatosMesasGerente()
-            .then(({ datosMesas, numeroMesas, numeroServicios }) => {
-                renderMesaGerente(datosMesas, numeroMesas, numeroServicios);
+                    resolve({ datosMesas, numeroMesas, numeroServicios });
+                } else {
+                    const intervalo = setInterval(() => {
+                        if (typeof datosMesasArray !== 'undefined') {
+                            clearInterval(intervalo);
+                            const datosMesas = JSON.parse(datosMesasArray)
+                            const numeroMesas = JSON.parse(numeroMesasActivasArray)
+                            const numeroServicios = JSON.parse(seviciosJSON)
+                            console.log(numeroServicios)
+                            resolve({ datosMesas, numeroMesas, numeroServicios });
+                        }
+                    }, 0);
+                }
             });
-    }
+        }
 
-    //Llamamos datos de las mesas del Mesero
-    if (tipoUsuario == "Mesero") {
-        obtenerDatosMesasMesero()
-            .then(({ numeroMesas, numeroServicios }) => {
-                renderMesaMesero(numeroMesas, numeroServicios);
+        //Traemos datos de mesas desde codebehind del Mesero
+        function obtenerDatosMesasMesero() {
+
+            return new Promise((resolve) => {
+                if (typeof numeroMesasArray !== 'undefined') {
+                    const numeroMesas = JSON.parse(numeroMesasArray)
+                    const numeroServicios = JSON.parse(seviciosJSON)
+                    resolve({ numeroMesas, numeroServicios });
+                } else {
+                    const intervalo = setInterval(() => {
+                        if (typeof numeroMesasArray !== 'undefined') {
+                            clearInterval(intervalo);
+                            const numeroMesas = JSON.parse(numeroMesasArray)
+                            const numeroServicios = JSON.parse(seviciosJSON)
+
+                            resolve({ numeroMesas, numeroServicios });
+                        }
+                    }, 0);
+                }
             });
-    }
+        }
 
-    //Funcion Gerente
-    function renderMesaGerente(datosMesa, numeroMesas, numeroServicios) {
+        //Llamamos datos de las mesas del Gerente
+        if (tipoUsuario == "Gerente") {
+            obtenerDatosMesasGerente()
+                .then(({ datosMesas, numeroMesas, numeroServicios }) => {
+                    renderMesaGerente(datosMesas, numeroMesas, numeroServicios);
+                });
+        }
 
-        for (let i = 0; i < numeroMesa; i++) {
+        //Llamamos datos de las mesas del Mesero
+        if (tipoUsuario == "Mesero") {
+            obtenerDatosMesasMesero()
+                .then(({ numeroMesas, numeroServicios }) => {
+                    renderMesaMesero(numeroMesas, numeroServicios);
+                });
+        }
 
-            //Buscamos mesa Asignada
-            let mesa = datosMesa.find(item => item.mesa == numeroMesas[i].Numero)
+        //Funcion Gerente
+        function renderMesaGerente(datosMesa, numeroMesas, numeroServicios) {
 
-            //color del Mesero
-            let colorMesero;
+            for (let i = 0; i < numeroMesa; i++) {
 
-            if (mesa) {
-                colorMesero = convertirAHexadecimal(mesa.mesero)
-            } else {
-                colorMesero = "#666"
-            }
+                //Buscamos mesa Asignada
+                let mesa = datosMesa.find(item => item.mesa == numeroMesas[i].Numero)
 
-            let colorApertura
+                //color del Mesero
+                let colorMesero;
 
-            //Buscamos mesas con servicios abierto
-            let servicio = numeroServicios.find(item => item.mesa == numeroMesas[i].Numero)
-            if (servicio) {
-                colorApertura = "bg-success";
-            } else {
-                colorApertura = "bg-warning"
-            }
+                if (mesa) {
+                    colorMesero = convertirAHexadecimal(mesa.mesero)
+                } else {
+                    colorMesero = "#666"
+                }
 
-            //Main
-            let mainDiv = document.createElement("div");
-            mainDiv.classList.add("d-flex", "mesa", "bg-body-secondary");
-            let idMesa = mesa ? 'mesa_'+mesa.mesa : 'mesa'
-            mainDiv.setAttribute("id", idMesa);
-            let meseroNoAsignado = "No Asignado";
-            mainDiv.setAttribute("title", `Mesero: ${mesa ? mesa.nombre + ' ' + mesa.apellido : meseroNoAsignado}`);
+                let colorApertura
 
-            //Top -- Background según mesero
-            let mesaTop = document.createElement("div");
-            mesaTop.classList.add("mesaTop");
-            mesaTop.style.background = colorMesero
+                //Buscamos mesas con servicios abierto
+                let servicio = numeroServicios.find(item => item.mesa == numeroMesas[i].Numero)
+                if (servicio) {
+                    colorApertura = "bg-success";
+                } else {
+                    colorApertura = "bg-warning"
+                }
 
-            //Bottom -- Background según estado
-            let mesaBottom = document.createElement("div");
-            mesaBottom.classList.add("mesaBottom", colorApertura);
+                //Main
+                let mainDiv = document.createElement("div");
+                mainDiv.classList.add("d-flex", "mesa", "bg-body-secondary");
+                let idMesa = mesa ? 'mesa_' + mesa.mesa : 'mesa'
+                mainDiv.setAttribute("id", idMesa);
+                let meseroNoAsignado = "No Asignado";
+                mainDiv.setAttribute("title", `Mesero: ${mesa ? mesa.nombre + ' ' + mesa.apellido : meseroNoAsignado}`);
 
-            //Numero
-            let mesaNumber = document.createElement("div");
-            //TODO poner numero de mesa
-            mesaNumber.innerHTML = `<p>${numeroMesas[i].Numero}</p>`;
+                //Top -- Background según mesero
+                let mesaTop = document.createElement("div");
+                mesaTop.classList.add("mesaTop");
+                mesaTop.style.background = colorMesero
 
-            //Appends
-            mainDiv.appendChild(mesaTop);
-            mainDiv.appendChild(mesaNumber);
-            mainDiv.appendChild(mesaBottom);
-            sectionMesa.appendChild(mainDiv);
+                //Bottom -- Background según estado
+                let mesaBottom = document.createElement("div");
+                mesaBottom.classList.add("mesaBottom", colorApertura);
 
-            //Titulo
-            modalTitulo.textContent = "Mesero Asignado";
+                //Numero
+                let mesaNumber = document.createElement("div");
+                //TODO poner numero de mesa
+                mesaNumber.innerHTML = `<p>${numeroMesas[i].Numero}</p>`;
 
-            let estado;
-            //Texto
-            if (servicio) {
-                estado = "Abierta"
-            } else {
-                estado = "Cerrada"
-            }
+                //Appends
+                mainDiv.appendChild(mesaTop);
+                mainDiv.appendChild(mesaNumber);
+                mainDiv.appendChild(mesaBottom);
+                sectionMesa.appendChild(mainDiv);
 
-            //Evento de la mesa
-            let mesaEvento = document.getElementById(idMesa);
-            mesaEvento.addEventListener('click', () => {
+                //Titulo
+                modalTitulo.textContent = "Mesero Asignado";
 
-                //Buscar ids con numeros
-                let contieneNumero = /\d/.test(idMesa)
+                let estado;
+                //Texto
+                if (servicio) {
+                    estado = "Abierta"
+                } else {
+                    estado = "Cerrada"
+                }
 
-                if (contieneNumero) {
-                    modal.style.display = "block";
-                    contenidoModal.innerHTML = "";
-                    contenidoModal.innerHTML += `
+                //Evento de la mesa
+                let mesaEvento = document.getElementById(idMesa);
+                mesaEvento.addEventListener('click', () => {
+
+                    //Buscar ids con numeros
+                    let contieneNumero = /\d/.test(idMesa)
+
+                    if (contieneNumero) {
+                        modal.style.display = "block";
+                        contenidoModal.innerHTML = "";
+                        contenidoModal.innerHTML += `
                     <p class="fw-bold">Nombre: <span class="fw-normal">${mesa.nombre} ${mesa.apellido}</span></p>
                     <p class="fw-bold">Mesa: <span class="fw-normal">${mesa.mesa}</span></p>
                     <p class="fw-bold">Estado: <span class="fw-normal">${estado}</span></p>
                     `;
-                }
+                    }
 
-            })
+                })
+            }
         }
-    }
 
-    //Función Mesero
-    function renderMesaMesero(numeroMesas, numeroServicios) {
+        //Función Mesero
+        function renderMesaMesero(numeroMesas, numeroServicios) {
 
-        for (i = 0; i < numeroMesas.length; i++) {
+            for (i = 0; i < numeroMesas.length; i++) {
 
 
-            const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-success" : "bg-warning"
+                const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-success" : "bg-warning"
 
-            //Mesa
-            var mainDiv = document.createElement("div");
-            mainDiv.className = "col-6 col-sm-3 d-flex justify-content-center flex-column m-4";
-            mainDiv.style.height = "150px";
-            mainDiv.style.width = "150px";
+                //Mesa
+                var mainDiv = document.createElement("div");
+                mainDiv.className = "col-6 col-sm-3 d-flex justify-content-center flex-column m-4";
+                mainDiv.style.height = "150px";
+                mainDiv.style.width = "150px";
 
-            var div1 = document.createElement("div");
-            div1.className = `${bgMesa} w-100 h-100 border rounded-circle border-dark-subtle p-1 btn`;
-            div1.id = "mesa_" + numeroMesas[i].mesa;
+                var div1 = document.createElement("div");
+                div1.className = `${bgMesa} w-100 h-100 border rounded-circle border-dark-subtle p-1 btn`;
+                div1.id = "mesa_" + numeroMesas[i].mesa;
 
-            var div2 = document.createElement("div");
-            div2.className = "background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center";
+                var div2 = document.createElement("div");
+                div2.className = "background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center";
 
-            var icon = document.createElement("i");
-            icon.className = "fa-solid fa-utensils fs-4";
+                var icon = document.createElement("i");
+                icon.className = "fa-solid fa-utensils fs-4";
 
-            div2.appendChild(icon);
-            div1.appendChild(div2);
-            mainDiv.appendChild(div1);
+                div2.appendChild(icon);
+                div1.appendChild(div2);
+                mainDiv.appendChild(div1);
 
-            var div3 = document.createElement("div");
-            div3.className = "w-100 text-light d-flex justify-content-center";
+                var div3 = document.createElement("div");
+                div3.className = "w-100 text-light d-flex justify-content-center";
 
-            var div4 = document.createElement("div");
-            div4.className = "w-50 bg-black rounded-4 text-center";
+                var div4 = document.createElement("div");
+                div4.className = "w-50 bg-black rounded-4 text-center";
 
-            var small = document.createElement("small");
-            small.className = "fw-bold";
-            small.innerText = numeroMesas[i].mesa;
+                var small = document.createElement("small");
+                small.className = "fw-bold";
+                small.innerText = numeroMesas[i].mesa;
 
-            div4.appendChild(small);
-            div3.appendChild(div4);
-            mainDiv.appendChild(div3);
-            sectionMesaMesero.appendChild(mainDiv);
+                div4.appendChild(small);
+                div3.appendChild(div4);
+                mainDiv.appendChild(div3);
+                sectionMesaMesero.appendChild(mainDiv);
 
-            //Evento y Modal
-            let numeroDeMesa = numeroMesas[i].mesa;
-            let mesaEvento = document.getElementById(`mesa_${numeroMesas[i].mesa}`);
+                //Evento y Modal
+                let numeroDeMesa = numeroMesas[i].mesa;
+                let mesaEvento = document.getElementById(`mesa_${numeroMesas[i].mesa}`);
 
-            //Disabled boton
-            let isDisabled = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa)
-            let textoMesaAbrirPedid = isDisabled ? "Cerrar Servicio" : "Abrir Servicio"
+                //Disabled boton
+                let isDisabled = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa)
+                let textoMesaAbrirPedid = isDisabled ? "Cerrar Servicio" : "Abrir Servicio"
 
-            mesaEvento.addEventListener('click', () => {
-                modalTitulo.textContent = `Mesa Asignada ${numeroDeMesa}`
-                modal.style.display = "block";
-                contenidoModal.innerHTML = "";
-                contenidoModal.innerHTML += `
+                mesaEvento.addEventListener('click', () => {
+                    modalTitulo.textContent = `Mesa Asignada ${numeroDeMesa}`
+                    modal.style.display = "block";
+                    contenidoModal.innerHTML = "";
+                    contenidoModal.innerHTML += `
                 <div class="row d-flex flex-column justify-content-center gap-2 p-3 ms-3">
                     <div class="col d-flex gap-4">
-                        <button class="btnAbrirMeasa botonPedido" style="width: 150px; height: 150px;" id="btnAbrir_${i+1}">
+                        <button class="btnAbrirMeasa botonPedido" style="width: 150px; height: 150px;" id="btnAbrir_${i + 1}">
                                 <div class="d-flex align-items-center justify-content-center">
                                     <i class="fa-solid fa-plus fs-1 text-white"></i>
                                 </div>
@@ -704,105 +726,105 @@
                 </div>
                 `;
 
-                //Creamos los eventos de los botones
-                eventoBotones(i, numeroDeMesa, isDisabled)
-            })
+                    //Creamos los eventos de los botones
+                    eventoBotones(i, numeroDeMesa, isDisabled)
+                })
+            }
         }
-    }
 
-    //Evento botones Mesero
-    function eventoBotones(i, mesa, isDisabled) {
+        //Evento botones Mesero
+        function eventoBotones(i, mesa, isDisabled) {
 
-        let btnServicio = document.getElementById(`btnAbrir_${i + 1}`);
+            let btnServicio = document.getElementById(`btnAbrir_${i + 1}`);
             btnServicio.disabled = isDisabled;
 
-        let btnPedido = document.getElementById(`btnPedido_${i + 1}`);
-        let btnLista = document.getElementById(`btnLista_${i + 1}`);
-        let btnTicket = document.getElementById(`btnTicket_${i + 1}`);
+            let btnPedido = document.getElementById(`btnPedido_${i + 1}`);
+            let btnLista = document.getElementById(`btnLista_${i + 1}`);
+            let btnTicket = document.getElementById(`btnTicket_${i + 1}`);
 
-        btnServicio.addEventListener('click', (e) => {
-              console.log("Abrir Servicio")
-            //Mandamos datos a CodeBehind
-            let data = [{mesa: mesa}];
-   
-            mandarDatos('Main', 'AbrirServicio', data, e)
-        })
+            btnServicio.addEventListener('click', (e) => {
+                console.log("Abrir Servicio")
+                //Mandamos datos a CodeBehind
+                let data = [{ mesa: mesa }];
 
-        btnPedido.addEventListener('click', (e) => {
-            //Mandamos datos a CodeBehind
-            console.log("Abrir Pedido")
-            let data = [{ mesa: mesa }];
-            mandarDatos('Main', 'AbrirPedido', data, e)
-        })
-
-        btnLista.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log("Ver listado")
-            //Mandamos datos a CodeBehind
-            //mandarDatos('Main', 'AbrirServicio')
-            //MOSTRAR LISTADO DE PEDIDO. ¿lINK CON QUERY?
-        })
-
-        btnTicket.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log("Ticket")
-            //Mandamos datos a CodeBehind
-            //mandarDatos('Main', 'AbrirServicio')
-            //MOSTRAR TICKET. ¿LINK CON QUERY?
-        })
-
-    }
-
-    //Boton modal para cerrar
-    closeModalBtn.addEventListener("click", function () {
-        modal.style.display = "none";
-    });
-
-    //Fetch para mandar datos a codebehind
-    async function mandarDatos(pag, metodo, data, event) {
-
-        event.preventDefault();
-
-        fetch(`${pag}.aspx/${metodo}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ data: data })
-        })
-            .then(response => response.json())
-            .then(result => {
-                console.log(result)
-                location.reload();
+                mandarDatos('Main', 'AbrirServicio', data, e)
             })
-            .catch(error => {
-                console.log(error)
-            });
-    }
 
-    //Función para pasar numero de mesero a color
-    function convertirAHexadecimal(numero) {
-        let r = (numero * 4321) % 256; // rojo
-        let g = (numero * 1234) % 256; // verde
-        let b = (numero * 9876) % 256; // azul
-        let opacity = 0.9; // Valor de opacidad deseado (por ejemplo, 0.5 para 50%)
+            btnPedido.addEventListener('click', (e) => {
+                //Mandamos datos a CodeBehind
+                console.log("Abrir Pedido")
+                let data = [{ mesa: mesa }];
+                mandarDatos('Main', 'AbrirPedido', data, e)
+            })
 
-        let colorHexadecimal = '#' + toDosDigitosHex(r) + toDosDigitosHex(g) + toDosDigitosHex(b);
+            btnLista.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log("Ver listado")
+                //Mandamos datos a CodeBehind
+                //mandarDatos('Main', 'AbrirServicio')
+                //MOSTRAR LISTADO DE PEDIDO. ¿lINK CON QUERY?
+            })
 
-        return colorHexadecimal + toOpacityHex(opacity);
-    }
+            btnTicket.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log("Ticket")
+                //Mandamos datos a CodeBehind
+                //mandarDatos('Main', 'AbrirServicio')
+                //MOSTRAR TICKET. ¿LINK CON QUERY?
+            })
 
-    //Armamos digitos hexadecimal
-    function toDosDigitosHex(numero) {
-        let hex = numero.toString(16);
-        return hex.length === 1 ? '0' + hex : hex;
-    }
+        }
 
-    //armamos opacidad
-    function toOpacityHex(opacity) {
-        let opacityDecimal = Math.floor(opacity * 255);
-        return toDosDigitosHex(opacityDecimal);
-    }
+        //Boton modal para cerrar
+        closeModalBtn.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+
+        //Fetch para mandar datos a codebehind
+        async function mandarDatos(pag, metodo, data, event) {
+
+            event.preventDefault();
+
+            fetch(`${pag}.aspx/${metodo}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ data: data })
+            })
+                .then(response => response.json())
+                .then(result => {
+                    console.log(result)
+                    location.reload();
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+        }
+
+        //Función para pasar numero de mesero a color
+        function convertirAHexadecimal(numero) {
+            let r = (numero * 4321) % 256; // rojo
+            let g = (numero * 1234) % 256; // verde
+            let b = (numero * 9876) % 256; // azul
+            let opacity = 0.9; // Valor de opacidad deseado (por ejemplo, 0.5 para 50%)
+
+            let colorHexadecimal = '#' + toDosDigitosHex(r) + toDosDigitosHex(g) + toDosDigitosHex(b);
+
+            return colorHexadecimal + toOpacityHex(opacity);
+        }
+
+        //Armamos digitos hexadecimal
+        function toDosDigitosHex(numero) {
+            let hex = numero.toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }
+
+        //armamos opacidad
+        function toOpacityHex(opacity) {
+            let opacityDecimal = Math.floor(opacity * 255);
+            return toDosDigitosHex(opacityDecimal);
+        }
     </script>
     <!-- Fin Scripts Mesas -->
 

@@ -69,6 +69,7 @@ namespace RestoApp
 
 			//CONTENIDO MESERO
 			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
+
 			{
 				//Verificamos que si ya está en memoria el meseropordia
 				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
@@ -76,14 +77,19 @@ namespace RestoApp
 
 				//Verificamos si hay un número de mesa guardado para hacer pedido
 				if(Helper.Session.GetNumeroMesaPedido() != null)
-					lbNumeroMesa.Text = "Numero de Mesa: " + Helper.Session.GetNumeroMesaPedido().ToString();
+				{
+                    lbNumeroMesa.Text = "CREANDO PEDIDO PARA MESA  #" + Helper.Session.GetNumeroMesaPedido().ToString();
+                    ActivarBtnCancelarPedido();
+
+                }
+                
 
 				tipoUsuario = Configuracion.Rol.Mesero;
 				CargarMenuDisponible();
 				CargarMeseroPorDia();
 				CargarMesasAsignadas();
 				CargarServicios();
-
+				
 			}
 
 			//Si es postback, recargamos funciones de script en Mesero
@@ -96,6 +102,12 @@ namespace RestoApp
 
 			ListarCategoriasProducto();
 		}
+
+		protected void ActivarBtnCancelarPedido()
+		{
+			btnTerminarPedido.Visible = true;
+
+        }
 
 		private void CargarServicios()
 		{
@@ -655,16 +667,18 @@ namespace RestoApp
 
         protected void AgregarAPedido_Click(object sender, EventArgs e)
         {
-			if (Session["Servicios"] == null) {
+            if (Session["Servicios"] == null)
+            {
                 string script = "alert('Primero abra un servicio');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
             }
-			else if(Helper.Session.GetNumeroMesaPedido() == null) {
+            else if (Helper.Session.GetNumeroMesaPedido() == null)
+            {
                 string script = "alert('Primero abra un Pedido');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
             }
-			else
-			{
+            else
+            {
                 Button button = sender as Button;
 
                 RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
@@ -673,7 +687,7 @@ namespace RestoApp
                 Button btnGuardarPedido = UPGuardarPedido.FindControl("BtnGuardarPedido") as Button;
                 btnGuardarPedido.Visible = true;
 
-                if (button.Text.ToLower() == "+")
+                if (button.Text.ToLower() == "✚")
                 {
                     tbCantidad.Visible = true;
                     button.Text = "✔";
@@ -682,20 +696,20 @@ namespace RestoApp
                 else
                 {
                     tbCantidad.Visible = false;
-                    button.Text = "+";
+                    button.Text = "✚";
                     btnCancelar.Visible = false;
 
 
-					if (Session["ProductosPorPedido"] == null)
-					{
-						List <ProductoPorPedido> list = new List<ProductoPorPedido>();	
-						Session.Add("ProductosPorPedido", list);
-					}
+                    if (Session["ProductosPorPedido"] == null)
+                    {
+                        List<ProductoPorPedido> list = new List<ProductoPorPedido>();
+                        Session.Add("ProductosPorPedido", list);
+                    }
 
                     ProductoPorPedido productoPorPedido = new ProductoPorPedido();
                     productoPorPedido.Productodeldia = ((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == int.Parse(button.CommandArgument));
                     productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
-					((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
+                    ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
 
                 }
 
@@ -703,35 +717,64 @@ namespace RestoApp
 
         }
 
-           
-        
 
-     
+
+
+
         protected void BtnCancelarAgregarA_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
-
             RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
             TextBox tbCantidad = repeaterItem.FindControl("tbCantidad") as TextBox;
             Button btnCancelar = repeaterItem.FindControl("btnCancelarAgregarA") as Button;
+            Button BtnAgregarAPedido = repeaterItem.FindControl("AgregarAPedido") as Button;
+            BtnAgregarAPedido.Text = "✚";
             tbCantidad.Visible = false;
             btnCancelar.Visible = false;
         }
 
         protected void btnGuardarPedido_Click(object sender, EventArgs e)
         {
-			Button btnGuardarPedido = sender as Button;
+            Button btnGuardarPedido = sender as Button;
 
-           
-			Pedido Paux = new Pedido();
-			Paux.IdServicio = ((List<Servicio>)Session["Servicios"]).Find(x => x.Mesa == Helper.Session.GetNumeroMesaPedido()).Id;
-			Paux.Productossolicitados = ((List<ProductoPorPedido>)Session["ProductosPorPedido"]);
+            if ((Session["ProductosPorPedido"] != null) && ((List<ProductoPorPedido>)(Session["ProductosPorPedido"])).Count > 0)
+            {
+                Pedido Paux = new Pedido();
+                Paux.IdServicio = ((List<Servicio>)Session["Servicios"]).Find(x => x.Mesa == Helper.Session.GetNumeroMesaPedido()).Id;
+                Paux.Productossolicitados = ((List<ProductoPorPedido>)Session["ProductosPorPedido"]);
 
 
-            PedidoNegocio PNaux = new PedidoNegocio();
-			PNaux.AbrirPedido(Paux);
+                PedidoNegocio PNaux = new PedidoNegocio();
+                PNaux.AbrirPedido(Paux);
+                Session["ProductosPorPedido"] = null;
+                btnGuardarPedido.Visible = false;
+            }
+            else
+            {
+                string script = "alert('Para enviar un pedido primero agregue un producto');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+            }
+
+
+
+
+
+        }
+
+        protected void btnTerminarPedido_Click(object sender, EventArgs e)
+        {
+			Button btnTerminarPedido = sender as Button;
+			if(btnTerminarPedido.Text.ToLower() == "cancelar")
+			{
+				Session["NumeroMesaPedido"] = null;
+                Session["ProductosPorPedido"] = null;
+				btnGuardarPedido.Visible = false;
+				btnTerminarPedido.Visible = false;
+                lbNumeroMesa.Text = "SIN MESA SELECCIONADA";
+            }
+
         }
     }
 
-	//Clase para guardar datos de la session de Servicios
+    //Clase para guardar datos de la session de Servicios
 }
