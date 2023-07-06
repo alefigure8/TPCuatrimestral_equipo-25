@@ -748,6 +748,7 @@ namespace RestoApp
                 PNaux.AbrirPedido(Paux);
                 Session["ProductosPorPedido"] = null;
                 btnGuardarPedido.Visible = false;
+				btnTerminarPedido.Text = "Terminar Pedido";
             }
             else
             {
@@ -764,16 +765,17 @@ namespace RestoApp
         protected void btnTerminarPedido_Click(object sender, EventArgs e)
         {
 			Button btnTerminarPedido = sender as Button;
-			if(btnTerminarPedido.Text.ToLower() == "cancelar")
-			{
+			
 				Session["NumeroMesaPedido"] = null;
-                Session["ProductosPorPedido"] = null;
+				Session["ProductosPorPedido"] = null;
 				btnGuardarPedido.Visible = false;
 				btnTerminarPedido.Visible = false;
-                lbNumeroMesa.Text = "SIN MESA SELECCIONADA";
-            }
+				lbNumeroMesa.Text = "SIN MESA SELECCIONADA";
 
-        }
+		
+		
+
+		}
     }
 
     //Clase para guardar datos de la session de Servicios

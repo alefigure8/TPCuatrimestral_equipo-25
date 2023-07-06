@@ -235,29 +235,29 @@
 
                 <div class="row bg-dark ">
 
-                     <div class="col-6 bg-dark text-white p-2 ">
-                         <asp:UpdatePanel runat="server">
-                             <ContentTemplate>
-                                   <asp:Label ID="lbNumeroMesa" runat="server" CssClass="h4">SIN MESA SELECCIONADA</asp:Label>
+                    <div class="col-6 bg-dark text-white p-2 ">
+                        <asp:UpdatePanel runat="server">
+                            <ContentTemplate>
+                                <asp:Label ID="lbNumeroMesa" runat="server" CssClass="h4">SIN MESA SELECCIONADA</asp:Label>
 
-                             </ContentTemplate>
-                         </asp:UpdatePanel>
-                  
-                         </div>
+                            </ContentTemplate>
+                        </asp:UpdatePanel>
 
-                <div class="col-6 d-flex justify-content-end p-2">
+                    </div>
+
+                    <div class="col-6 d-flex justify-content-end p-2">
 
 
-                    <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
-                        <ContentTemplate>
-                            <asp:Button runat="server" ID="btnGuardarPedido" Text="ENVIAR PEDIDO" Visible="false" CssClass="btn  btn-secondary" OnClick="btnGuardarPedido_Click" />
-                            <asp:Button runat="server" ID="btnTerminarPedido" Text="Cancelar" Visible="false" CssClass="btn btn-secondary" OnClick="btnTerminarPedido_Click" />
-                        </ContentTemplate>
-                    </asp:UpdatePanel>
+                        <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
+                            <ContentTemplate>
+                                <asp:Button runat="server" ID="btnGuardarPedido" Text="Enviar Pedido" Visible="false" CssClass="btn  btn-secondary" OnClick="btnGuardarPedido_Click" />
+                                <asp:Button runat="server" ID="btnTerminarPedido" Text="Cancelar" Visible="false" CssClass="btn btn-secondary" OnClick="btnTerminarPedido_Click" />
+                            </ContentTemplate>
+                        </asp:UpdatePanel>
 
+                    </div>
                 </div>
-                </div>
-                
+
 
 
 
