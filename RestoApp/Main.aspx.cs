@@ -659,9 +659,20 @@ namespace RestoApp
 
 				if(servicioNegocio.CerrarServicio(numeroMesa))
                 {
-					//Sacamos la mesa de Session en caso de que se haya cerrado el servicio
-					List<Servicio> servicio = Helper.Session.GetServicios().FindAll(x => x.Mesa != numeroMesa);
-                    response = true;
+					//Modificamos la sessión agregándole la hora de cierre al servicio, pero sigue abierto hasta que cobrado no sea true
+					List<Servicio> servicio = Helper.Session.GetServicios();
+
+                    foreach (var item in servicio)
+                    {
+                        if(item.Mesa == numeroMesa)
+                        {
+                            item.Cierre = DateTime.Now.TimeOfDay;
+                        }
+                    }
+
+                    Helper.Session.SetServicios(servicio);
+
+					response = true;
 				}
                 else
                 {
@@ -880,8 +891,11 @@ namespace RestoApp
             PedidoNegocio PNAux = new PedidoNegocio();
                 List<Pedido> Pedidos = PNAux.ListarPedidos();
 
-            // busco servicios abiertos 
+            //busco servicios abiertos
             ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
+
+            //Aca ya están los servicios guardados
+            //List<Servicio> ListaServicios = Helper.Session.GetServicios();
 
             foreach (Pedido Pedido in Pedidos)
             {

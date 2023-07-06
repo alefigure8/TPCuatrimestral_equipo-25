@@ -113,43 +113,56 @@ namespace Negocio
 			AccesoDB datos = new AccesoDB();
 
 			string estadoPedido = "Entregado";
+			int cantidadPedidosAbiertos = 0;
+			
 
 			string queryCantidadPedidosAbiertos = $"DECLARE @IDSERVICIO BIGINT = (" +
-				$" SELECT S.{ColumnasDB.Servicio.Id}" +
-				$" FROM {ColumnasDB.Servicio.DB} S" +
-				$" INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD" +
-				$" ON MPD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.MesasPorDia.Id}" +
-				$" WHERE MPD.IDMESA = {mesa}" +
-				$" AND MPD.{ColumnasDB.MesasPorDia.Cierre} IS NULL" +
-			$" )" +
-			$" DECLARE @PEDIDOSABIERTOS INT = (" +
-				$"SELECT COUNT(*) AS CANTIDAD" +
-				$" FROM {ColumnasDB.Servicio.DB} S" +
-				$" INNER JOIN {ColumnasDB.Pedido.DB} P" +
-				$" ON S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
-				$" INNER JOIN {ColumnasDB.EstadosxPedido.DB} EXP" +
-				$" ON EXP.{ColumnasDB.EstadosxPedido.IdPedido}= P.{ColumnasDB.Pedido.Id}" +
-				$" INNER JOIN {ColumnasDB.Estados.DB} EP" +
-				$" ON EP.{ColumnasDB.Estados.Id} = EXP.{ColumnasDB.EstadosxPedido.IdEstado}" +
-				$" WHERE S.{ColumnasDB.Servicio.Id} = @IDSERVICIO" +
-				$" AND EP.{ColumnasDB.Estados.Descripcion} <> '{estadoPedido}'" +
-				$")";
+					$" SELECT S.{ColumnasDB.Servicio.Id}" +
+					$" FROM {ColumnasDB.Servicio.DB} S" +
+					$" INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD" +
+					$" ON MPD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.MesasPorDia.Id}" +
+					$" WHERE MPD.{ColumnasDB.MesasPorDia.IdMesa} = {mesa}" +
+					$" AND MPD.{ColumnasDB.MesasPorDia.Cierre} IS NULL" +
+				$" )" +
+				$" DECLARE @PEDIDOSABIERTOS INT = (" +
+					$"SELECT COUNT(*) AS CANTIDAD" +
+					$" FROM {ColumnasDB.Servicio.DB} S" +
+					$" INNER JOIN {ColumnasDB.Pedido.DB} P" +
+					$" ON S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
+					$" INNER JOIN {ColumnasDB.EstadosxPedido.DB} EXP" +
+					$" ON EXP.{ColumnasDB.EstadosxPedido.IdPedido}= P.{ColumnasDB.Pedido.Id}" +
+					$" INNER JOIN {ColumnasDB.Estados.DB} EP" +
+					$" ON EP.{ColumnasDB.Estados.Id} = EXP.{ColumnasDB.EstadosxPedido.IdEstado}" +
+					$" WHERE S.{ColumnasDB.Servicio.Id} = @IDSERVICIO" +
+					$" AND EP.{ColumnasDB.Estados.Descripcion} <> '{estadoPedido}'" +
+					$")";
 
 
-			//Buscamos cantidad de pedidos abiertos para el sistema que contiene la mesa que nos entregan por parámetro
-			datos.setQuery(queryCantidadPedidosAbiertos);
+			try
+			{
+				//Buscamos cantidad de pedidos abiertos para el sistema que contiene la mesa que nos entregan por parámetro
+				datos.setQuery(queryCantidadPedidosAbiertos);
 
-			datos.executeReader();
+				datos.executeReader();
 
-			int cantidadPedidosAbiertos = 0;
+				while (datos.Reader.Read())
+				{
+					cantidadPedidosAbiertos = (int)datos.Reader["CANTIDAD"];
+				}
 
-			while (datos.Reader.Read()) { 
-				cantidadPedidosAbiertos = (int)datos.Reader["CANTIDAD"];
 			}
-
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+		
 
 			//Valida que el servicio no se pueda cerrar si hay pedidos abiertos
-			if(cantidadPedidosAbiertos > 0)
+			if(cantidadPedidosAbiertos == 0)
 			{
 				try
 				{
