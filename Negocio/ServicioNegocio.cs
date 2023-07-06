@@ -113,53 +113,67 @@ namespace Negocio
 			AccesoDB datos = new AccesoDB();
 
 			string estadoPedido = "Entregado";
-			
+
+			string queryCantidadPedidosAbiertos = $"DECLARE @IDSERVICIO BIGINT = (" +
+				$" SELECT S.{ColumnasDB.Servicio.Id}" +
+				$" FROM {ColumnasDB.Servicio.DB} S" +
+				$" INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD" +
+				$" ON MPD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.MesasPorDia.Id}" +
+				$" WHERE MPD.IDMESA = {mesa}" +
+				$" AND MPD.{ColumnasDB.MesasPorDia.Cierre} IS NULL" +
+			$" )" +
+			$" DECLARE @PEDIDOSABIERTOS INT = (" +
+				$"SELECT COUNT(*) AS CANTIDAD" +
+				$" FROM {ColumnasDB.Servicio.DB} S" +
+				$" INNER JOIN {ColumnasDB.Pedido.DB} P" +
+				$" ON S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
+				$" INNER JOIN {ColumnasDB.EstadosxPedido.DB} EXP" +
+				$" ON EXP.{ColumnasDB.EstadosxPedido.IdPedido}= P.{ColumnasDB.Pedido.Id}" +
+				$" INNER JOIN {ColumnasDB.Estados.DB} EP" +
+				$" ON EP.{ColumnasDB.Estados.Id} = EXP.{ColumnasDB.EstadosxPedido.IdEstado}" +
+				$" WHERE S.{ColumnasDB.Servicio.Id} = @IDSERVICIO" +
+				$" AND EP.{ColumnasDB.Estados.Descripcion} <> '{estadoPedido}'" +
+				$")";
+
+
+			//Buscamos cantidad de pedidos abiertos para el sistema que contiene la mesa que nos entregan por parámetro
+			datos.setQuery(queryCantidadPedidosAbiertos);
+
+			datos.executeReader();
+
+			int cantidadPedidosAbiertos = 0;
+
+			while (datos.Reader.Read()) { 
+				cantidadPedidosAbiertos = (int)datos.Reader["CANTIDAD"];
+			}
+
+
 			//Valida que el servicio no se pueda cerrar si hay pedidos abiertos
-			string query = $"DECLARE @IDSERVICIO BIGINT = (" +
-					$" SELECT S.{ColumnasDB.Servicio.Id}" +
-					$" FROM {ColumnasDB.Servicio.DB} S" +
-					$" INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD" +
-					$" ON MPD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.MesasPorDia.Id}" +
-					$" WHERE MPD.IDMESA = {mesa}" +
-					$" AND MPD.{ColumnasDB.MesasPorDia.Cierre} IS NULL" +
-				$" )" +
-				$" DECLARE @PEDIDOSABIERTOS INT = (" +
-					$"SELECT COUNT(*)" +
-					$" FROM {ColumnasDB.Servicio.DB} S" +
-					$" INNER JOIN {ColumnasDB.Pedido.DB} P" +
-					$" ON S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
-					$" INNER JOIN {ColumnasDB.EstadosxPedido.DB} EXP" +
-					$" ON EXP.{ColumnasDB.EstadosxPedido.IdPedido}= P.{ColumnasDB.Pedido.Id}" +
-					$" INNER JOIN {ColumnasDB.Estados.DB} EP" +
-					$" ON EP.{ColumnasDB.Estados.Id} = EXP.{ColumnasDB.EstadosxPedido.IdEstado}" +
-					$" WHERE S.{ColumnasDB.Servicio.Id} = @IDSERVICIO" +
-					$" AND EP.{ColumnasDB.Estados.Descripcion} <> '{estadoPedido}'" +
-					$")" +
-				$" IF(@PEDIDOSABIERTOS = 0)" +
-					$" BEGIN" +
-					$" DECLARE @IDMESAPORDIA BIGINT" +
-					$" SET @IDMESAPORDIA = ISNULL((SELECT {ColumnasDB.MesasPorDia.Id} FROM {ColumnasDB.MesasPorDia.DB} WHERE {ColumnasDB.MesasPorDia.IdMesa} = {mesa} AND CIERRE IS NULL ), 0);" +
-					$" IF @IDMESAPORDIA  > 0" +
+			if(cantidadPedidosAbiertos > 0)
+			{
+				try
+				{
+					datos.setQuery(
+						$" DECLARE @IDMESAPORDIA BIGINT" +
+						$" SET @IDMESAPORDIA = ISNULL((SELECT {ColumnasDB.MesasPorDia.Id} FROM {ColumnasDB.MesasPorDia.DB} WHERE {ColumnasDB.MesasPorDia.IdMesa} = {mesa} AND CIERRE IS NULL ), 0);" +
+						$" IF @IDMESAPORDIA  > 0" +
 						$" BEGIN" +
 							$" UPDATE SERVICIO SET {ColumnasDB.Servicio.Cierre} = '{DateTime.Now.ToString("HH:mm:ss")}' WHERE {ColumnasDB.MesasPorDia.Id} = @IDMESAPORDIA AND CIERRE IS NULL" +
-						$" END"+ 
-					$" END";
+						$" END");
 
-			try
-			{
-				datos.setQuery(query);
-				
-				return datos.executeNonQuery();
-			}
-			catch (Exception Ex)
-			{
-				return false;
-			}
-			finally
-			{
-				datos.closeConnection();
+					return datos.executeNonQuery();
+				}
+				catch (Exception Ex)
+				{
+					return false;
+				}
+				finally
+				{
+					datos.closeConnection();
+				}
 			}
 
+			return false;
 		}
 		
 		//Cobrar servicio. Modificamos cobrado  a true

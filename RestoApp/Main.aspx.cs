@@ -597,11 +597,11 @@ namespace RestoApp
         //WEBMETHOD
         //Obtenemos número de mesa y le abrimos un servicio
         [WebMethod]
-        public static string AbrirServicio(List<Dictionary<string, int>> data)
+        public static bool AbrirServicio(List<Dictionary<string, int>> data)
         {
             ServicioNegocio servicioNegocio = new ServicioNegocio();
 
-            string response = String.Empty;
+            bool response = false;
 
             foreach (var diccionario in data)
             {
@@ -638,20 +638,20 @@ namespace RestoApp
                         //Guardamos en Session
                         Helper.Session.SetServicios(servicio);
                     }
-                }
 
-                response = numeroMesa.ToString();
+                    response = true;
+                };
             }
 
             return response;
         }
 
 		[WebMethod]
-		public static string CerrarServicio(List<Dictionary<string, int>> data)
+		public static bool CerrarServicio(List<Dictionary<string, int>> data)
 		{
 			ServicioNegocio servicioNegocio = new ServicioNegocio();
 
-			string response = String.Empty;
+			bool response = false;
 
 			foreach (var diccionario in data)
 			{
@@ -661,12 +661,12 @@ namespace RestoApp
                 {
 					//Sacamos la mesa de Session en caso de que se haya cerrado el servicio
 					List<Servicio> servicio = Helper.Session.GetServicios().FindAll(x => x.Mesa != numeroMesa);
-                    response = "Se cerro el servicio";
+                    response = true;
 				}
                 else
                 {
 					//Si no se guardó de manera correcta
-                    response = "No se cerro el servicio";
+                    response = false;
 				}
 			}
 

@@ -557,7 +557,6 @@
                             clearInterval(intervalo);
                             const numeroMesas = JSON.parse(numeroMesasArray)
                             const numeroServicios = JSON.parse(seviciosJSON)
-                            console.log(numeroServicios)
                             resolve({ numeroMesas, numeroServicios });
                         }
                     }, 0);
@@ -671,6 +670,9 @@
         //Función Mesero
         function renderMesaMesero(numeroMesas, numeroServicios) {
 
+            //Borramos lo que haya previamente
+            sectionMesaMesero.innerHTML = "";
+
             for (i = 0; i < numeroMesas.length; i++) {
 
 
@@ -770,6 +772,20 @@
             }
         }
 
+        function modalAlerta(result) {
+
+            let msg;
+
+            if (result) {
+                msg = "Se generó con éxito"
+            } else {
+                msg = "No pudo guardarse"
+            }
+
+            contenidoModal.innerHTML = "";
+            contenidoModal.innerHTML = `<p>${msg}</p>` 
+        }
+
         //Evento botones Mesero
         function eventoBotones(i, mesa, isDisabled) {
 
@@ -794,10 +810,10 @@
 
             //Evento para abrir pedidos (se cierra desde lista de pedido)
             btnPedido.addEventListener('click', (e) => {
-                //Mandamos datos a CodeBehind
-                console.log("Abrir Pedido")
-                let data = [{ mesa: mesa }];
+
+                 let data = [{ mesa: mesa }];
                 mandarDatos('Main', 'AbrirPedido', data, e)
+
             })
 
             //Evento para ver todos los pedidos que tiene la mesa
@@ -839,11 +855,14 @@
             })
                 .then(response => response.json())
                 .then(result => {
-                    console.log(result)
-                    location.reload();
+                    const { d } = result
+                    modalAlerta(d)
                 })
                 .catch(error => {
                     console.log(error)
+                })
+                .finally(() => {
+                    location.reload();
                 });
         }
 
