@@ -10,7 +10,9 @@ namespace Dominio
 	{
         public int Id { get; set; }
         public int Mesa { get; set; }
-        public DateTime Fecha { get; set; }
+		public string Mesero { get; set; }
+		public int IdMesero { get; set; }
+		public DateTime Fecha { get; set; }
         public TimeSpan Apertura { get; set; }
         public TimeSpan? Cierre { get; set; }
         public bool Cobrado { get; set; }
@@ -19,6 +21,7 @@ namespace Dominio
         {
             Cierre = null;
 			Cobrado = false;
+            Mesero = string.Empty;
 		}
     }
 }

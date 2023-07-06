@@ -231,20 +231,34 @@
             <%--SECCION MENU RAPIDO--%>
 
             <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 ">
+                
+              <%--  Label muestra sobre qué mesa estoy haciendo pedido--%>
                 <asp:Label ID="lbNumeroMesa" runat="server">No hay ninguna mesa elegida</asp:Label>
+
+<%--                Boton guardar pedido--%>
+
+                <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
+                    <ContentTemplate>
+                        <asp:Button runat="server" ID="btnGuardarPedido" Text="ENVIAR PEDIDO" CssClass="btn btn-dark" Visible="false" OnClick="btnGuardarPedido_Click"/>
+                    </ContentTemplate>
+                </asp:UpdatePanel>
+
+
+
+
                 <div class="col-6 p-2">
                     <label class="row h3 bg-dark text-white p-1">Platos Disponibles:</label>
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <div class="col-4">
+                                <asp:Label runat="server" CssClass="col-4">
                                     <%#Eval("Nombre")%>
-                                </div>
+                                </asp:Label>
                                 <div class="col">
                                     <asp:UpdatePanel runat="server" ID="PanelAgregarAPedido" CssClass="row">
                                         <ContentTemplate>
                                             <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width:100px; display:inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
-                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" />
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' />
                                             <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA_Click" />
                                         </ContentTemplate>
                                     </asp:UpdatePanel>
@@ -461,7 +475,7 @@
                         const datosMesas = JSON.parse(datosMesasArray)
                         const numeroMesas = JSON.parse(numeroMesasActivasArray)
                         const numeroServicios = JSON.parse(seviciosJSON)
-
+                        console.log(numeroServicios)
                         resolve({ datosMesas, numeroMesas, numeroServicios });
                     }
                 }, 0);
@@ -527,7 +541,8 @@
             let colorApertura
 
             //Buscamos mesas con servicios abierto
-            if (numeroServicios[i]?.mesa ==  numeroMesas[i]?.Numero) {
+            let servicio = numeroServicios.find(item => item.mesa == numeroMesas[i].Numero)
+            if (servicio) {
                 colorApertura = "bg-success";
             } else {
                 colorApertura = "bg-warning"
@@ -566,7 +581,7 @@
 
             let estado;
             //Texto
-            if (numeroServicios[i]?.mesa == numeroMesas[i]?.Numero) {
+            if (servicio) {
                 estado = "Abierta"
             } else {
                 estado = "Cerrada"
