@@ -62,7 +62,8 @@ namespace RestoApp
             if (IsPostBack && AutentificacionUsuario.esGerente(usuario))
             {
                 ScriptsDataGerente();
-                string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas }) => {renderMesaGerente(datosMesas, numeroMesas); })";
+                ScriptDataServicios();
+				string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); })";
                 ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
             }
 
@@ -97,11 +98,12 @@ namespace RestoApp
             if (IsPostBack && AutentificacionUsuario.esMesero(usuario))
             {
                 ScriptsDataMesero();
-                string script = " obtenerDatosMesasMesero().then(({ numeroMesas }) => {renderMesaMesero(numeroMesas); });";
+                ScriptDataServicios();
+                string script = " obtenerDatosMesasMesero().then(({ numeroMesas, numeroServicios }) => {renderMesaMesero(numeroMesas, numeroServicios); });";
                 ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
             }
 
-            ListarCategoriasProducto();
+			ListarCategoriasProducto();
         }
 
         protected void ActivarBtnCancelarPedido()
@@ -573,7 +575,7 @@ namespace RestoApp
         private void ScriptDataServicios()
         {
             //Recuperamos datos de session
-            List<Servicio> servicios = (List<Servicio>)Session[Configuracion.Session.Servicios];
+            List<Servicio> servicios = Helper.Session.GetServicios();
             List<object> serviciosJS = new List<object>();
 
             foreach (Servicio item in servicios)
@@ -644,8 +646,35 @@ namespace RestoApp
             return response;
         }
 
-        //Guardamos número de mesa en pedido
-        [WebMethod]
+		[WebMethod]
+		public static string CerrarServicio(List<Dictionary<string, int>> data)
+		{
+			ServicioNegocio servicioNegocio = new ServicioNegocio();
+
+			string response = String.Empty;
+
+			foreach (var diccionario in data)
+			{
+				var numeroMesa = diccionario["mesa"];
+
+				if(servicioNegocio.CerrarServicio(numeroMesa))
+                {
+					//Sacamos la mesa de Session en caso de que se haya cerrado el servicio
+					List<Servicio> servicio = Helper.Session.GetServicios().FindAll(x => x.Mesa != numeroMesa);
+                    response = "Se cerro el servicio";
+				}
+                else
+                {
+					//Si no se guardó de manera correcta
+                    response = "No se cerro el servicio";
+				}
+			}
+
+			return response;
+		}
+
+		//Guardamos número de mesa en pedido
+		[WebMethod]
         public static string AbrirPedido(List<Dictionary<string, int>> data)
         {
 

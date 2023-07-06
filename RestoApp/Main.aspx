@@ -557,7 +557,7 @@
                             clearInterval(intervalo);
                             const numeroMesas = JSON.parse(numeroMesasArray)
                             const numeroServicios = JSON.parse(seviciosJSON)
-
+                            console.log(numeroServicios)
                             resolve({ numeroMesas, numeroServicios });
                         }
                     }, 0);
@@ -717,7 +717,7 @@
 
                 //Disabled boton
                 let isDisabled = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa)
-                let textoMesaAbrirPedid = isDisabled ? "Cerrar Servicio" : "Abrir Servicio"
+                let textoMesaAbrirServicio = isDisabled ? "Cerrar Servicio" : "Abrir Servicio"
 
                 mesaEvento.addEventListener('click', () => {
                     modalTitulo.textContent = `Mesa Asignada ${numeroDeMesa}`
@@ -731,7 +731,7 @@
                                     <i class="fa-solid fa-plus fs-1 text-white"></i>
                                 </div>
                                 <div class="text-white">
-                                    <p class="fw-semibold">${textoMesaAbrirPedid}</p>
+                                    <p class="fw-semibold">${textoMesaAbrirServicio}</p>
                                 </div>
                         </button>
                         <button class="btn btnAbrirPedido botonPedido" style="width: 150px; height: 150px;" id="btnPedido_${i + 1}">
@@ -774,20 +774,25 @@
         function eventoBotones(i, mesa, isDisabled) {
 
             let btnServicio = document.getElementById(`btnAbrir_${i + 1}`);
-            btnServicio.disabled = isDisabled;
+            //btnServicio.disabled = isDisabled;
 
             let btnPedido = document.getElementById(`btnPedido_${i + 1}`);
             let btnLista = document.getElementById(`btnLista_${i + 1}`);
             let btnTicket = document.getElementById(`btnTicket_${i + 1}`);
 
+            //Evento para abrir y cerrar servicios
             btnServicio.addEventListener('click', (e) => {
-                console.log("Abrir Servicio")
-                //Mandamos datos a CodeBehind
-                let data = [{ mesa: mesa }];
-
-                mandarDatos('Main', 'AbrirServicio', data, e)
+                
+                if (isDisabled) {
+                    let data = [{ mesa: mesa }];
+                    mandarDatos('Main', 'CerrarServicio', data, e)
+                } else {
+                    let data = [{ mesa: mesa }];
+                    mandarDatos('Main', 'AbrirServicio', data, e)
+                }
             })
 
+            //Evento para abrir pedidos (se cierra desde lista de pedido)
             btnPedido.addEventListener('click', (e) => {
                 //Mandamos datos a CodeBehind
                 console.log("Abrir Pedido")
@@ -795,6 +800,7 @@
                 mandarDatos('Main', 'AbrirPedido', data, e)
             })
 
+            //Evento para ver todos los pedidos que tiene la mesa
             btnLista.addEventListener('click', (e) => {
                 e.preventDefault();
                 console.log("Ver listado")
@@ -803,6 +809,7 @@
                 //MOSTRAR LISTADO DE PEDIDO. ¿lINK CON QUERY?
             })
 
+            //Evento para mostrar ticket
             btnTicket.addEventListener('click', (e) => {
                 e.preventDefault();
                 console.log("Ticket")
