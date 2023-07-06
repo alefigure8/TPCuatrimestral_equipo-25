@@ -105,6 +105,15 @@ namespace RestoApp
         protected global::System.Web.UI.WebControls.Button btnGuardarPedido;
 
         /// <summary>
+        /// btnTerminarPedido control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnTerminarPedido;
+
+        /// <summary>
         /// PlatosDelDia control.
         /// </summary>
         /// <remarks>

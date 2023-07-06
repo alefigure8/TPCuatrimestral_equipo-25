@@ -69,6 +69,7 @@ namespace RestoApp
 
 			//CONTENIDO MESERO
 			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
+
 			{
 				//Verificamos que si ya está en memoria el meseropordia
 				if ((MeseroPorDia)Session[Configuracion.Session.MeseroPorDia] != null)
@@ -76,14 +77,19 @@ namespace RestoApp
 
 				//Verificamos si hay un número de mesa guardado para hacer pedido
 				if(Helper.Session.GetNumeroMesaPedido() != null)
-					lbNumeroMesa.Text = "Numero de Mesa: " + Helper.Session.GetNumeroMesaPedido().ToString();
+				{
+                    lbNumeroMesa.Text = "CREANDO PEDIDO PARA MESA  #" + Helper.Session.GetNumeroMesaPedido().ToString();
+                    ActivarBtnCancelarPedido();
+
+                }
+                
 
 				tipoUsuario = Configuracion.Rol.Mesero;
 				CargarMenuDisponible();
 				CargarMeseroPorDia();
 				CargarMesasAsignadas();
 				CargarServicios();
-
+				
 			}
 
 			//Si es postback, recargamos funciones de script en Mesero
@@ -96,6 +102,12 @@ namespace RestoApp
 
 			ListarCategoriasProducto();
 		}
+
+		protected void ActivarBtnCancelarPedido()
+		{
+			btnTerminarPedido.Visible = true;
+
+        }
 
 		private void CargarServicios()
 		{
@@ -746,6 +758,20 @@ namespace RestoApp
 
 
 
+
+        }
+
+        protected void btnTerminarPedido_Click(object sender, EventArgs e)
+        {
+			Button btnTerminarPedido = sender as Button;
+			if(btnTerminarPedido.Text.ToLower() == "cancelar")
+			{
+				Session["NumeroMesaPedido"] = null;
+                Session["ProductosPorPedido"] = null;
+				btnGuardarPedido.Visible = false;
+				btnTerminarPedido.Visible = false;
+                lbNumeroMesa.Text = "SIN MESA SELECCIONADA";
+            }
 
         }
     }
