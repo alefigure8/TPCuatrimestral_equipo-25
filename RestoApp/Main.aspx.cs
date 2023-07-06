@@ -673,7 +673,7 @@ namespace RestoApp
                 Button btnGuardarPedido = UPGuardarPedido.FindControl("BtnGuardarPedido") as Button;
                 btnGuardarPedido.Visible = true;
 
-                if (button.Text.ToLower() == "+")
+                if (button.Text.ToLower() == "✚")
                 {
                     tbCantidad.Visible = true;
                     button.Text = "✔";
@@ -682,7 +682,7 @@ namespace RestoApp
                 else
                 {
                     tbCantidad.Visible = false;
-                    button.Text = "+";
+                    button.Text = "✚";
                     btnCancelar.Visible = false;
 
 
@@ -710,10 +710,11 @@ namespace RestoApp
         protected void BtnCancelarAgregarA_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
-
             RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
             TextBox tbCantidad = repeaterItem.FindControl("tbCantidad") as TextBox;
             Button btnCancelar = repeaterItem.FindControl("btnCancelarAgregarA") as Button;
+			Button BtnAgregarAPedido = repeaterItem.FindControl("AgregarAPedido") as Button;
+			BtnAgregarAPedido.Text = "✚";
             tbCantidad.Visible = false;
             btnCancelar.Visible = false;
         }
@@ -722,14 +723,28 @@ namespace RestoApp
         {
 			Button btnGuardarPedido = sender as Button;
 
+			if ((Session["ProductosPorPedido"] != null) && ((List<ProductoPorPedido>)(Session["ProductosPorPedido"])).Count > 0)
+			{
+                Pedido Paux = new Pedido();
+                Paux.IdServicio = ((List<Servicio>)Session["Servicios"]).Find(x => x.Mesa == Helper.Session.GetNumeroMesaPedido()).Id;
+                Paux.Productossolicitados = ((List<ProductoPorPedido>)Session["ProductosPorPedido"]);
+
+
+                PedidoNegocio PNaux = new PedidoNegocio();
+                PNaux.AbrirPedido(Paux);
+                Session["ProductosPorPedido"] = null;
+                btnGuardarPedido.Visible = false;
+            }
+			else
+			{
+                string script = "alert('Para enviar un pedido primero agregue un producto');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+            }
            
-			Pedido Paux = new Pedido();
-			Paux.IdServicio = ((List<Servicio>)Session["Servicios"]).Find(x => x.Mesa == Helper.Session.GetNumeroMesaPedido()).Id;
-			Paux.Productossolicitados = ((List<ProductoPorPedido>)Session["ProductosPorPedido"]);
+			
 
+			
 
-            PedidoNegocio PNaux = new PedidoNegocio();
-			PNaux.AbrirPedido(Paux);
         }
     }
 

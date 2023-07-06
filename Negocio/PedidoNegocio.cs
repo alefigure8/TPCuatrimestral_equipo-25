@@ -53,8 +53,9 @@ namespace Negocio
                        
                         $"INSERT INTO {ColumnasDB.ProductoPorPedido.DB} ({ColumnasDB.ProductoPorPedido.IdPedido}, {ColumnasDB.ProductoPorPedido.IdProductoPorDia}, {ColumnasDB.ProductoPorPedido.Cantidad}, {ColumnasDB.ProductoPorPedido.Fecha}) " +
                         $"VALUES ({pedido.Id}, {producto.Productodeldia.Id}, {producto.Cantidad},'{DateTime.Now.ToString("G")}')");
-
                     datos.executeNonQuery();
+                    datos.closeConnection();
+                   
                 }
               
             }
