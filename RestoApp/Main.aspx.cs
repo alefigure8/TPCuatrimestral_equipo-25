@@ -584,8 +584,12 @@ namespace RestoApp
                     new
                     {
                         mesa = item.Mesa,
-                        servicio = item.Id
-                    });
+                        servicio = item.Id,
+                        cobrado = item.Cobrado,
+						apertura = (item.Fecha + item.Apertura).ToString("HH:mm:ss"),
+						cierre = item.Cierre.HasValue ? (item.Fecha + item.Apertura).ToString("HH:mm:ss") : String.Empty,
+						mesero = item.Mesero
+					});
             }
 
             string seviciosJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(serviciosJS);

@@ -133,7 +133,9 @@ namespace Negocio
 					$" INNER JOIN {ColumnasDB.Estados.DB} EP" +
 					$" ON EP.{ColumnasDB.Estados.Id} = EXP.{ColumnasDB.EstadosxPedido.IdEstado}" +
 					$" WHERE S.{ColumnasDB.Servicio.Id} = @IDSERVICIO" +
-					$" AND EP.{ColumnasDB.Estados.Descripcion} <> '{estadoPedido}'";
+					$" AND (EP.{ColumnasDB.Estados.Descripcion} <> '{estadoPedido}'" +
+					$" OR (EP.{ColumnasDB.Estados.Descripcion} = '{estadoPedido}' AND S.{ColumnasDB.Servicio.Cierre} IS NOT NULL))"
+					;
 
 			try
 			{

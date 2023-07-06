@@ -102,7 +102,7 @@
                         <asp:BoundColumn DataField="Cierre" HeaderText="Cierre" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
                         <asp:TemplateColumn HeaderText="Estado">
                             <ItemTemplate>
-                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" %>
+                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-success\" title=\"Mesa Abierta\"></i>" : "<i class=\"fa-sharp fa-solid fa-dollar text-danger\" title=\"Cobrar\"></i>" %>
                             </ItemTemplate>
                             <ItemStyle CssClass="bg-light p-2 rounded" />
                             <HeaderStyle CssClass="bg-light p-2 rounded" />
@@ -655,6 +655,8 @@
                     estado = "Cerrada"
                 }
 
+                console.log(servicio)
+
                 //Evento de la mesa
                 let mesaEvento = document.getElementById(idMesa);
                 mesaEvento.addEventListener('click', () => {
@@ -666,9 +668,12 @@
                         modal.style.display = "block";
                         contenidoModal.innerHTML = "";
                         contenidoModal.innerHTML += `
-                    <p class="fw-bold">Nombre: <span class="fw-normal">${mesa.nombre} ${mesa.apellido}</span></p>
-                    <p class="fw-bold">Mesa: <span class="fw-normal">${mesa.mesa}</span></p>
+                    <p class="fw-bold">Mesa: <span class="fw-normal">${servicio.mesa}</span></p>
                     <p class="fw-bold">Estado: <span class="fw-normal">${estado}</span></p>
+                    <p class="fw-bold">Nombre: <span class="fw-normal">${servicio.mesero}</span></p>
+                    <p class="fw-bold">Apertura: <span class="fw-normal">${servicio.apertura}</span></p>
+                    <p class="fw-bold">Cierre: <span class="fw-normal">${servicio.cierre}</span></p>
+                    <p class="fw-bold">Cobrado: <span class="fw-normal">${servicio.cobrado ? 'Cobrado' : 'No cobrado'}</span></p>
                     `;
                     }
 
