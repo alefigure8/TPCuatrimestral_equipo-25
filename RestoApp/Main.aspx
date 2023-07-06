@@ -144,7 +144,9 @@
 
             <!-- SECCION MESAS ASIGNDAS -->
             <section class="col-10 bg-white rounded p-3 justify-content-around m-1">
-                <div class="h3">Mis Mesas </div>
+                <div class="row bg-dark text-white p-2 h4">
+                    MIS MESAS   
+                </div>
                 <div class="row justify-content-around justify-items-start p-3" id="section-mesa-mesero">
 
                     <!-- Mensaje de Mesas asignadas -->
@@ -182,9 +184,43 @@
             <%--SECCION PEDIDOS EN CURSO--%>
             <div class="col-10 bg-white rounded p-3 justify-content-around m-1 mt-2 content-fluid">
 
-                <div class="h3">Mis pedidos en curso </div>
+                <div class="row bg-dark text-white p-2 h4">
+                    MIS PEDIDOS EN CURSO   
+                </div>
 
-                <div class="col d-inline-flex p-2 justify-content-around">
+
+                <div class="row">
+                    <asp:UpdatePanel runat="server">
+                        <ContentTemplate>
+                            <asp:Repeater runat="server" ID="RepeaterPedidosEnCurso">
+                                <ItemTemplate>
+
+                                    <div class="card p-4 m-1" style="display: inline-table; max-width:200px;">
+
+                                      <label class="row card-title">
+                                          Pedido #<%#Eval("Id")%>
+                                          </label>
+
+
+                                        <div class="row justify-content-between">
+                                            <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="btn btn-sm btn-dark" Text="Ver" ToolTip="Ver Detalle"/>
+                                         
+                                        </div>
+
+                                </div>
+                                </ItemTemplate>
+                                
+                            </asp:Repeater>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+
+                </div>
+
+
+
+
+
+<%--                <div class="col d-inline-flex p-2 justify-content-around">
                     <div class="card">
                         <div class="card-body">
                             <p class="card-text">
@@ -221,7 +257,7 @@
                             <button class="btn btn-dark">Cerrar</button>
                         </div>
                     </div>
-                </div>
+                </div>--%>
 
 
             </div>
@@ -235,29 +271,29 @@
 
                 <div class="row bg-dark ">
 
-                     <div class="col-6 bg-dark text-white p-2 ">
-                         <asp:UpdatePanel runat="server">
-                             <ContentTemplate>
-                                   <asp:Label ID="lbNumeroMesa" runat="server" CssClass="h4">SIN MESA SELECCIONADA</asp:Label>
+                    <div class="col-6 bg-dark text-white p-2">
+                        <asp:UpdatePanel runat="server">
+                            <ContentTemplate>
+                                <asp:Label ID="lbNumeroMesa" runat="server" CssClass="h4">SIN MESA SELECCIONADA</asp:Label>
 
-                             </ContentTemplate>
-                         </asp:UpdatePanel>
-                  
-                         </div>
+                            </ContentTemplate>
+                        </asp:UpdatePanel>
 
-                <div class="col-6 d-flex justify-content-end p-2">
+                    </div>
+
+                    <div class="col-6 d-flex justify-content-end p-2">
 
 
-                    <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
-                        <ContentTemplate>
-                            <asp:Button runat="server" ID="btnGuardarPedido" Text="ENVIAR PEDIDO" Visible="false" CssClass="btn  btn-secondary" OnClick="btnGuardarPedido_Click" />
-                            <asp:Button runat="server" ID="btnTerminarPedido" Text="Cancelar" Visible="false" CssClass="btn btn-secondary" OnClick="btnTerminarPedido_Click" />
-                        </ContentTemplate>
-                    </asp:UpdatePanel>
+                        <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
+                            <ContentTemplate>
+                                <asp:Button runat="server" ID="btnGuardarPedido" Text="Enviar Pedido" Visible="false" CssClass="btn  btn-secondary" OnClick="btnGuardarPedido_Click" />
+                                <asp:Button runat="server" ID="btnTerminarPedido" Text="Cancelar" Visible="false" CssClass="btn btn-secondary" OnClick="btnTerminarPedido_Click" />
+                            </ContentTemplate>
+                        </asp:UpdatePanel>
 
+                    </div>
                 </div>
-                </div>
-                
+
 
 
 
@@ -270,7 +306,7 @@
                                     <%#Eval("Nombre")%>
                                 </asp:Label>
                                 <div class="col">
-                                    <asp:UpdatePanel runat="server" ID="PanelAgregarAPedido" CssClass="row">
+                                    <asp:UpdatePanel runat="server" CssClass="row">
                                         <ContentTemplate>
                                             <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" ToolTip="Ingrese Cantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
                                             <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
@@ -285,20 +321,23 @@
 
 
                 <%--Bebidas--%>
+
+
                 <div class="col-6 p-2">
-                    <label class="row h3  p-1">Bebidas Disponibles:</label>
+                    <label class="row h3 p-1">Bebidas Disponibles:</label>
                     <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <div class="col-4">
-                                    <%#Eval("Nombre")%>
-                                </div>
+                                <asp:Label runat="server" CssClass="col-4">
+                                      <%#Eval("Nombre")%>
+                                </asp:Label>
+
                                 <div class="col">
-                                    <asp:UpdatePanel runat="server" ID="PanelAgregarBebida" CssClass="row">
+                                    <asp:UpdatePanel runat="server" CssClass="row">
                                         <ContentTemplate>
-                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" Type="Number" min="1" Text="1"></asp:TextBox>
-                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+" />
-                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" />
+                                            <asp:TextBox runat="server" ID="tbCantidad2" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ToolTip="Ingrese Cantidad" Type="Number" min="1" Visible="false" Text="1"></asp:TextBox>
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido2" OnClick="AgregarAPedido2_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
+                                            <asp:Button runat="server" ID="BtnCancelarAgregarA2" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA2_Click" ToolTip="Cancelar" />
                                         </ContentTemplate>
                                     </asp:UpdatePanel>
                                 </div>
@@ -306,7 +345,6 @@
                         </ItemTemplate>
                     </asp:Repeater>
                 </div>
-
 
 
 

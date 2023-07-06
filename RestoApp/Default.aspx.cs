@@ -42,6 +42,9 @@ namespace RestoApp
 					Session[Configuracion.Session.Usuario] = usuario;
 					//Redirigimos a Panel
 					Response.Redirect(Configuracion.Pagina.Main, false);
+
+					Session.Add("IdUsuario", usuario.Id);
+				
 				}
 				else
 				{

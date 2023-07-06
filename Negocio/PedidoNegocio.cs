@@ -187,6 +187,8 @@ namespace Negocio
             
 
         }
+
+
         public void CambiarEstadoPedido(int idpedido, int nuevoestado)
         {
             AccesoDB datos = new AccesoDB();
