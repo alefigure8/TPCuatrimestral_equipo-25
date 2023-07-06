@@ -246,7 +246,7 @@
 
 
 
-                <div class="col-6 p-2">
+                 <div class="col-6 p-2">
                     <label class="row h3 bg-dark text-white p-1">Platos Disponibles:</label>
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
@@ -258,7 +258,7 @@
                                     <asp:UpdatePanel runat="server" ID="PanelAgregarAPedido" CssClass="row">
                                         <ContentTemplate>
                                             <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width:100px; display:inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
-                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' />
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' />
                                             <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA_Click" />
                                         </ContentTemplate>
                                     </asp:UpdatePanel>

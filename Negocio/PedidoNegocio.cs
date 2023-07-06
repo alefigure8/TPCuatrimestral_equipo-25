@@ -55,6 +55,7 @@ namespace Negocio
                         $"VALUES ({pedido.Id}, {producto.Productodeldia.Id}, {producto.Cantidad},'{DateTime.Now.ToString("G")}')");
 
                     datos.executeNonQuery();
+                    datos.closeConnection();
                 }
               
             }
