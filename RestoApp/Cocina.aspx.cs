@@ -30,9 +30,10 @@ namespace RestoApp
                 Reloj = DateTime.Now;
                 //Session.Add("Reloj", Reloj);
                 creardatatable();
-
+                CargarPedidosaDataTable();
             }
-            CargarPedidosaDataTable();
+
+          
 
             GVDCocina.DataSource = (DataTable)Session["datatable"];
             GVDCocina.DataBind();
@@ -164,7 +165,7 @@ namespace RestoApp
             foreach (var pedido in pedidos)
             {
 
-                string fecha = pedido.ultimaactualizacion.Month.ToString("00") + "/" + pedido.ultimaactualizacion.Day.ToString("00") + "/" + pedido.ultimaactualizacion.Year.ToString("0000");
+                string fecha = pedido.ultimaactualizacion.Day.ToString("00") + "/" + pedido.ultimaactualizacion.Month.ToString("00") + "/" + pedido.ultimaactualizacion.Year.ToString("0000");
 
 
                 if (pedido.Estado == Estados.Solicitado && fecha == DateTime.Today.ToString("d"))
@@ -184,11 +185,12 @@ namespace RestoApp
                             dataTable.Rows.Add(filaNueva);
                         }
 
-
+                        
 
                     }
+                    pedidoNegocio.CambiarEstadoPedido(pedido.Id, Estados.EnPreparacion);
                 }
-
+                
             }
             GVDCocina.DataSource = dataTable;
             Session.Add("datatable", dataTable);

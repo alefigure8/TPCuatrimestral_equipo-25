@@ -184,8 +184,32 @@ namespace Negocio
             }
 
 
+            
 
         }
-        
+        public void CambiarEstadoPedido(int idpedido, int nuevoestado)
+        {
+            AccesoDB datos = new AccesoDB();
+            try
+            {
+                          
+                datos.setQuery(
+                 $"INSERT INTO {ColumnasDB.EstadosxPedido.DB} ({ColumnasDB.EstadosxPedido.IdPedido}, {ColumnasDB.EstadosxPedido.IdEstado}, {ColumnasDB.EstadosxPedido.FechaActualizacion}) " +
+                 $"VALUES ({idpedido}, {nuevoestado} , '{DateTime.Now.ToString("G")}')");
+                datos.executeNonQuery();
+                datos.closeConnection();
+            }
+
+            catch (Exception Ex)
+            {
+              
+            }
+            finally
+            {
+                datos.closeConnection();
+            }
+             
+
+        }
     }
 }
