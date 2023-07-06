@@ -124,7 +124,6 @@ namespace Negocio
 					$" WHERE MPD.{ColumnasDB.MesasPorDia.IdMesa} = {mesa}" +
 					$" AND MPD.{ColumnasDB.MesasPorDia.Cierre} IS NULL" +
 				$" )" +
-				$" DECLARE @PEDIDOSABIERTOS INT = (" +
 					$"SELECT COUNT(*) AS CANTIDAD" +
 					$" FROM {ColumnasDB.Servicio.DB} S" +
 					$" INNER JOIN {ColumnasDB.Pedido.DB} P" +
@@ -134,9 +133,7 @@ namespace Negocio
 					$" INNER JOIN {ColumnasDB.Estados.DB} EP" +
 					$" ON EP.{ColumnasDB.Estados.Id} = EXP.{ColumnasDB.EstadosxPedido.IdEstado}" +
 					$" WHERE S.{ColumnasDB.Servicio.Id} = @IDSERVICIO" +
-					$" AND EP.{ColumnasDB.Estados.Descripcion} <> '{estadoPedido}'" +
-					$")";
-
+					$" AND EP.{ColumnasDB.Estados.Descripcion} <> '{estadoPedido}'";
 
 			try
 			{
@@ -147,7 +144,7 @@ namespace Negocio
 
 				while (datos.Reader.Read())
 				{
-					cantidadPedidosAbiertos = (int)datos.Reader["CANTIDAD"];
+					cantidadPedidosAbiertos = Convert.ToInt32(datos.Reader["CANTIDAD"]);
 				}
 
 			}
