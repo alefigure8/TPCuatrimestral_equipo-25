@@ -108,7 +108,7 @@ namespace Negocio
             {
                 AccesoDB.setQuery($"SELECT  PxP.{ColumnasDB.ProductoPorPedido.IdProductoPorDia} "+
                 $", PxP.{ColumnasDB.ProductoPorPedido.Cantidad} " +   
-                $", P.{ColumnasDB.Producto.Descripcion}, P.{ColumnasDB.Producto.TiempoCoccion} " +
+                $", P.{ColumnasDB.Producto.Nombre}, P.{ColumnasDB.Producto.TiempoCoccion} " +
                 $", P.{ColumnasDB.Producto.Categoria} " +
                 $" FROM {ColumnasDB.ProductoPorPedido.DB} PxP " +
                 $" JOIN {ColumnasDB.Producto.DB} P ON PxP.{ColumnasDB.ProductoPorPedido.IdProductoPorDia} = P.{ColumnasDB.Producto.Id}" +
@@ -118,7 +118,7 @@ namespace Negocio
                 while (AccesoDB.Reader.Read())
                 {
                     ProductoPorPedido aux = new ProductoPorPedido();
-                    aux.Productodeldia.Descripcion = (string)AccesoDB.Reader[ColumnasDB.Producto.Descripcion];
+                    aux.Productodeldia.Nombre = (string)AccesoDB.Reader[ColumnasDB.Producto.Nombre];
                     aux.Productodeldia.TiempoCoccion = (TimeSpan?)AccesoDB.Reader[ColumnasDB.Producto.TiempoCoccion];
                     aux.Productodeldia.Categoria = (int)AccesoDB.Reader[ColumnasDB.Producto.Categoria];
                     aux.Productodeldia.Id = (Int32)AccesoDB.Reader[ColumnasDB.ProductoPorPedido.IdProductoPorDia];

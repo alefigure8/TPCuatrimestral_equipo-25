@@ -12,7 +12,7 @@ using System.Web.UI.WebControls;
 using Opciones;
 using System.Web.DynamicData;
 using System.Globalization;
-
+using Helper;
 namespace RestoApp
 {
     public partial class Cocina : System.Web.UI.Page
@@ -20,6 +20,9 @@ namespace RestoApp
         public DateTime Reloj { get; set; }
 
         public List<Pedido> Pedidosencocina { get; set; }
+
+        public List<FilasxColumnasxTiempoCoccion> ListaFxCxT { get; set; }
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -129,9 +132,11 @@ namespace RestoApp
 
             return horariosMadrugada;
         }
-
-
-
+        /*
+        public string convertidorfechaahora(DateTime ahora)
+        {
+        }
+        */
         public string HoraIngresoPedido(DateTime fechaactualizacion)
         {
             TimeSpan TimeSpan = new TimeSpan(fechaactualizacion.Hour, fechaactualizacion.Minute, fechaactualizacion.Second);
@@ -149,10 +154,13 @@ namespace RestoApp
             return indice;
         }
 
-        public int CantidadCasilleros(TimeSpan TiempoCoccion)
+        public int CantidadCasilleros(TimeSpan? TiempoCoccion)
         {
+           
+            TimeSpan timeSpan = (TimeSpan)TiempoCoccion;
+                        
             int casilleros = 0;
-            casilleros = (int)TiempoCoccion.TotalMinutes / 5;
+            casilleros = timeSpan.Minutes / 5;
             return casilleros;
         }
 
@@ -178,11 +186,37 @@ namespace RestoApp
                         {
                             DataRow filaNueva = dataTable.NewRow();
 
-                            filaNueva[IndiceColumna(HoraIngresoPedido(pedido.ultimaactualizacion)) - 2] = producto.Productodeldia.Descripcion;
-                            filaNueva[IndiceColumna(HoraIngresoPedido(pedido.ultimaactualizacion)) - 1] = producto.Cantidad;
-                            //filaNueva[IndiceColumna(HoraIngresoPedido(pedido.ultimaactualizacion))]
-
+                            filaNueva[IndiceColumna(HoraIngresoPedido(pedido.ultimaactualizacion))] = pedido.Id;
+                            filaNueva[IndiceColumna(HoraIngresoPedido(pedido.ultimaactualizacion))+1] = producto.Productodeldia.Nombre;
+                            filaNueva[IndiceColumna(HoraIngresoPedido(pedido.ultimaactualizacion))+2] = producto.Cantidad;
                             dataTable.Rows.Add(filaNueva);
+                            FilasxColumnasxTiempoCoccion filasxColumnasxTiempoCoccion = new FilasxColumnasxTiempoCoccion();
+                            filasxColumnasxTiempoCoccion.Fila = dataTable.Rows.IndexOf(filaNueva);
+                            filasxColumnasxTiempoCoccion.Columna = IndiceColumna(HoraIngresoPedido(pedido.ultimaactualizacion));
+                            filasxColumnasxTiempoCoccion.TiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
+
+
+                            if (Session["ListaFxCxT"] == null)
+                            {
+
+                                List<FilasxColumnasxTiempoCoccion> ListaFxCxT = new List<FilasxColumnasxTiempoCoccion>();
+                                    ListaFxCxT.Add(filasxColumnasxTiempoCoccion);
+                                    Session.Add("ListaFxCxT", ListaFxCxT);
+                                
+                            }
+                            else
+                            {
+                                ListaFxCxT = Session["ListaFxCxT"] as List<FilasxColumnasxTiempoCoccion>;
+                                ListaFxCxT.Add(filasxColumnasxTiempoCoccion);
+                                Session.Add("ListaFxCxT", ListaFxCxT);
+
+                            }
+                           
+                          
+
+                            //filaNueva[IndiceColumna(HoraIngresoPedido(pedido.ultimaactualizacion))]                            
+                        
+                            int numeroFila = dataTable.Rows.IndexOf(filaNueva);
                         }
 
                         
@@ -202,15 +236,53 @@ namespace RestoApp
 
         protected void GVDCocina_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-           // DataTable dataTable = (DataTable)Session["datatable"];
+            // DataTable dataTable = (DataTable)Session["datatable"];
             //PedidoNegocio pedidoNegocio = new PedidoNegocio();
             //List<Pedido> pedidos = pedidoNegocio.ListarPedidos();
 
+
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-              
+                foreach (TableCell cell in e.Row.Cells)
+                {
+                    cell.Style["border-right"] = "1px solid #565d63";
+                }
             }
 
+
+
+
+
+
+
+
+
+
+
+            ListaFxCxT = Session["ListaFxCxT"] as List<FilasxColumnasxTiempoCoccion>;
+            if (Session["ListaFxCxT"] != null)
+            {
+                foreach (var item in ListaFxCxT)
+                {
+                    if (e.Row.RowIndex == item.Fila)
+                    {
+                        for (int i = item.Columna; i <= item.Columna + item.TiempoCoccion; i++)
+                        {
+                            e.Row.Cells[i].BackColor = Color.LightBlue;
+                            e.Row.Cells[i].Style["text-align"] = "center";
+                            e.Row.Cells[i].Style["border-right"] = "none";
+                        }
+
+                     //   if (DateTime.Now.)
+                       // {
+
+                        //} ()
+
+                    }
+                }
+            }
+
+           
             //Session.Add("datatable", dataTable);
         }
 

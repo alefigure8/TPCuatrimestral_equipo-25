@@ -14,24 +14,24 @@
             </ContentTemplate>
             </asp:UpdatePanel>
    
-  
+      <asp:Button runat="server" ID="botonpedido" OnClick="botonpedido_Click"/>
             
+
+
     <div class="col d-flex"style="overflow-x:auto;" >
           <asp:UpdatePanel  runat="server">
         <ContentTemplate>
-         <asp:Gridview ID="GVDCocina" runat="server" OnRowDataBound="GVDCocina_RowDataBound" AutoPostBack="true" >
-
-         </asp:Gridview>
-
+         <asp:Gridview ID="GVDCocina" runat="server" OnRowDataBound="GVDCocina_RowDataBound" AutoPostBack="true" CssClass="gridview-style">
+                      <HeaderStyle HorizontalAlign="right" VerticalAlign="Middle" CssClass="small" />
+                  
+             </asp:Gridview>
             </ContentTemplate>
             </asp:UpdatePanel>
     </div>
 
-    <asp:Button runat="server" ID="botonpedido" OnClick="botonpedido_Click"/>
 
-    <asp:Gridview ID="GVDpedidos" runat="server">
-        </asp:Gridview>     
-        
+
+ 
 
 
 </asp:Content>
