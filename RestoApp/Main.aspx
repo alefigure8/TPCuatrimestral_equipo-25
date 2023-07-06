@@ -504,6 +504,15 @@
                 background-color: #dc3546c4;
                 border-color: #dc3546c4;
             }
+
+            .bg-abierto{
+                background-color: #51cf66;
+                border-color: #51cf66;
+            }
+
+            .cursor-pointer{
+                cursor: pointer;
+            }
     </style>
     <!-- Fin Styles Mesas -->
 
@@ -602,7 +611,7 @@
                 //Buscamos mesas con servicios abierto
                 let servicio = numeroServicios.find(item => item.mesa == numeroMesas[i].Numero)
                 if (servicio) {
-                    colorApertura = "bg-success";
+                    colorApertura = "bg-abierto";
                 } else {
                     colorApertura = "bg-warning"
                 }
@@ -676,7 +685,7 @@
             for (i = 0; i < numeroMesas.length; i++) {
 
 
-                const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-success" : "bg-warning"
+                const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-abierto" : "bg-warning"
 
                 //Mesa
                 var mainDiv = document.createElement("div");
@@ -685,7 +694,7 @@
                 mainDiv.style.width = "150px";
 
                 var div1 = document.createElement("div");
-                div1.className = `${bgMesa} w-100 h-100 border rounded-circle border-dark-subtle p-1 btn`;
+                div1.className = `${bgMesa} w-100 h-100 border rounded-circle border-dark-subtle p-1 cursor-pointer`;
                 div1.id = "mesa_" + numeroMesas[i].mesa;
 
                 var div2 = document.createElement("div");
