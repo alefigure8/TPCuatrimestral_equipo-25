@@ -384,7 +384,7 @@ namespace RestoApp
         {
             ListarCategoriasProducto();
             List<ProductoDelDia> ListaProductosDisponibles =
-                ((List<ProductoDelDia>)Session["ListaMenu"]).FindAll(x => x.Activo == true && x.Categoria == ListaCategoriasProducto.Find(y => y.Descripcion == "Bebidas").Id);
+            ((List<ProductoDelDia>)Session["ListaMenu"]).FindAll(x => x.Activo == true && x.Categoria == ListaCategoriasProducto.Find(y => y.Descripcion == "Bebidas").Id);
             BebidasDelDia.DataSource = ListaProductosDisponibles;
             BebidasDelDia.DataBind();
         }
@@ -776,6 +776,69 @@ namespace RestoApp
 		
 
 		}
+
+        protected void AgregarAPedido2_Click(object sender, EventArgs e)
+        {
+            if (Session["Servicios"] == null)
+            {
+                string script = "alert('Primero abra un servicio');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+            }
+            else if (Helper.Session.GetNumeroMesaPedido() == null)
+            {
+                string script = "alert('Primero abra un Pedido');";
+                ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+            }
+            else
+            {
+                Button button = sender as Button;
+
+                RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
+                TextBox tbCantidad = repeaterItem.FindControl("tbCantidad2") as TextBox;
+                Button btnCancelar = repeaterItem.FindControl("btnCancelarAgregarA2") as Button;
+                Button btnGuardarPedido = UPGuardarPedido.FindControl("BtnGuardarPedido") as Button;
+                btnGuardarPedido.Visible = true;
+
+                if (button.Text.ToLower() == "✚")
+                {
+                    tbCantidad.Visible = true;
+                    button.Text = "✔";
+                    btnCancelar.Visible = true;
+                }
+                else
+                {
+                    tbCantidad.Visible = false;
+                    button.Text = "✚";
+                    btnCancelar.Visible = false;
+
+
+                    if (Session["ProductosPorPedido"] == null)
+                    {
+                        List<ProductoPorPedido> list = new List<ProductoPorPedido>();
+                        Session.Add("ProductosPorPedido", list);
+                    }
+
+                    ProductoPorPedido productoPorPedido = new ProductoPorPedido();
+                    productoPorPedido.Productodeldia = ((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+                    productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
+                    ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
+
+                }
+
+            }
+        }
+
+        protected void BtnCancelarAgregarA2_Click(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+            RepeaterItem repeaterItem = button.NamingContainer as RepeaterItem;
+            TextBox tbCantidad = repeaterItem.FindControl("tbCantidad2") as TextBox;
+            Button btnCancelar = repeaterItem.FindControl("btnCancelarAgregarA2") as Button;
+            Button BtnAgregarAPedido = repeaterItem.FindControl("AgregarAPedido2") as Button;
+            BtnAgregarAPedido.Text = "✚";
+            tbCantidad.Visible = false;
+            btnCancelar.Visible = false;
+        }
     }
 
     //Clase para guardar datos de la session de Servicios

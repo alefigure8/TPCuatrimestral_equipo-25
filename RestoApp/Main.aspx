@@ -144,7 +144,9 @@
 
             <!-- SECCION MESAS ASIGNDAS -->
             <section class="col-10 bg-white rounded p-3 justify-content-around m-1">
-                <div class="h3">Mis Mesas </div>
+                <div class="row bg-dark text-white p-2 h4">
+                    MIS MESAS   
+                </div>
                 <div class="row justify-content-around justify-items-start p-3" id="section-mesa-mesero">
 
                     <!-- Mensaje de Mesas asignadas -->
@@ -182,8 +184,10 @@
             <%--SECCION PEDIDOS EN CURSO--%>
             <div class="col-10 bg-white rounded p-3 justify-content-around m-1 mt-2 content-fluid">
 
-                <div class="h3">Mis pedidos en curso </div>
-
+                <div class="row bg-dark text-white p-2 h4">
+                    MIS PEDIDOS EN CURSO   
+                   
+                </div>
                 <div class="col d-inline-flex p-2 justify-content-around">
                     <div class="card">
                         <div class="card-body">
@@ -235,7 +239,7 @@
 
                 <div class="row bg-dark ">
 
-                    <div class="col-6 bg-dark text-white p-2 ">
+                    <div class="col-6 bg-dark text-white p-2">
                         <asp:UpdatePanel runat="server">
                             <ContentTemplate>
                                 <asp:Label ID="lbNumeroMesa" runat="server" CssClass="h4">SIN MESA SELECCIONADA</asp:Label>
@@ -270,7 +274,7 @@
                                     <%#Eval("Nombre")%>
                                 </asp:Label>
                                 <div class="col">
-                                    <asp:UpdatePanel runat="server" ID="PanelAgregarAPedido" CssClass="row">
+                                    <asp:UpdatePanel runat="server" CssClass="row">
                                         <ContentTemplate>
                                             <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" ToolTip="Ingrese Cantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
                                             <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
@@ -285,20 +289,23 @@
 
 
                 <%--Bebidas--%>
+
+
                 <div class="col-6 p-2">
-                    <label class="row h3  p-1">Bebidas Disponibles:</label>
+                    <label class="row h3 p-1">Bebidas Disponibles:</label>
                     <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <div class="col-4">
-                                    <%#Eval("Nombre")%>
-                                </div>
+                                <asp:Label runat="server" CssClass="col-4">
+                                      <%#Eval("Nombre")%>
+                                </asp:Label>
+
                                 <div class="col">
-                                    <asp:UpdatePanel runat="server" ID="PanelAgregarBebida" CssClass="row">
+                                    <asp:UpdatePanel runat="server" CssClass="row">
                                         <ContentTemplate>
-                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" Type="Number" min="1" Text="1"></asp:TextBox>
-                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="+" />
-                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" />
+                                            <asp:TextBox runat="server" ID="tbCantidad2" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ToolTip="Ingrese Cantidad" Type="Number" min="1" Visible="false" Text="1"></asp:TextBox>
+                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido2" OnClick="AgregarAPedido2_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
+                                            <asp:Button runat="server" ID="BtnCancelarAgregarA2" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA2_Click" ToolTip="Cancelar" />
                                         </ContentTemplate>
                                     </asp:UpdatePanel>
                                 </div>
@@ -306,7 +313,6 @@
                         </ItemTemplate>
                     </asp:Repeater>
                 </div>
-
 
 
 
