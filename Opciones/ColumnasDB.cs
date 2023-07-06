@@ -140,11 +140,7 @@ namespace Opciones
             public const string DB = "Estadopedido";
 			public const string Id = "IdEstado";
 			public const string Descripcion = "Descripcion";
-			public const int Solicitado = 1;
-			public const int EnPreparacion = 2;
-			public const int DemoradoEnCocina = 3;
-			public const int ListoParaEntregar = 4;
-			public const int Entregado = 5;
+		
             
 		}
 

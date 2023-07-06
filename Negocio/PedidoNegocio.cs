@@ -105,15 +105,21 @@ namespace Negocio
 
             try
             {
-                AccesoDB.setQuery($"SELECT  {ColumnasDB.ProductoPorPedido.IdProductoPorDia}, "+
-                $" {ColumnasDB.ProductoPorPedido.Cantidad} " +   
-                $" FROM {ColumnasDB.ProductoPorPedido.DB} " +
+                AccesoDB.setQuery($"SELECT  PxP.{ColumnasDB.ProductoPorPedido.IdProductoPorDia} "+
+                $", PxP.{ColumnasDB.ProductoPorPedido.Cantidad} " +   
+                $", P.{ColumnasDB.Producto.Descripcion}, P.{ColumnasDB.Producto.TiempoCoccion} " +
+                $", P.{ColumnasDB.Producto.Categoria} " +
+                $" FROM {ColumnasDB.ProductoPorPedido.DB} PxP " +
+                $" JOIN {ColumnasDB.Producto.DB} P ON PxP.{ColumnasDB.ProductoPorPedido.IdProductoPorDia} = P.{ColumnasDB.Producto.Id}" +
                 $" WHERE {ColumnasDB.ProductoPorPedido.IdPedido} = {IdPedido} ");
                 AccesoDB.executeReader();
                 
                 while (AccesoDB.Reader.Read())
                 {
                     ProductoPorPedido aux = new ProductoPorPedido();
+                    aux.Productodeldia.Descripcion = (string)AccesoDB.Reader[ColumnasDB.Producto.Descripcion];
+                    aux.Productodeldia.TiempoCoccion = (TimeSpan?)AccesoDB.Reader[ColumnasDB.Producto.TiempoCoccion];
+                    aux.Productodeldia.Categoria = (int)AccesoDB.Reader[ColumnasDB.Producto.Categoria];
                     aux.Productodeldia.Id = (Int32)AccesoDB.Reader[ColumnasDB.ProductoPorPedido.IdProductoPorDia];
                     aux.Cantidad = (Int32)AccesoDB.Reader[ColumnasDB.ProductoPorPedido.Cantidad];
                     listaproductoporpedidos.Add(aux);
@@ -140,11 +146,11 @@ namespace Negocio
 
             try
             {
-                AccesoDB.setQuery($"SELECT P.{ColumnasDB.Pedido.Id}, "+
-                    $" P.{ColumnasDB.Pedido.IdServicio}, " +                                                    
-                    $" E.{ColumnasDB.Estados.Id}, " +
-                    $" E.{ColumnasDB.Estados.Descripcion}, " +  
-                    $" ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}" +
+                AccesoDB.setQuery($"SELECT P.{ColumnasDB.Pedido.Id} "+
+                    $", P.{ColumnasDB.Pedido.IdServicio} " +                                                    
+                    $", E.{ColumnasDB.Estados.Id} " +
+                    $", E.{ColumnasDB.Estados.Descripcion} " +  
+                    $", ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} " +
                     $" FROM {ColumnasDB.Pedido.DB} P " +
                     $" JOIN {ColumnasDB.EstadosxPedido.DB} ExP ON P.{ColumnasDB.Pedido.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido} " +
                     $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +

@@ -27,9 +27,7 @@ namespace RestoApp
                 Session.Add("Reloj", Reloj);
 
             }
-            //Session.Add("datatable", creardatatable());
-            //GVDCocina.DataSource = creardatatable();
-            //GVDCocina.DataBind();
+       
             PedidoNegocio pedidoNegocio = new PedidoNegocio();
             List <Pedido> pedidos = pedidoNegocio.ListarPedidos();
             GVDpedidos.DataSource = pedidos;
@@ -38,17 +36,6 @@ namespace RestoApp
         
         public void Cargarpedidosprueba()
         {
-            /*
-            ProductoNegocio productoNegocio = new ProductoNegocio();
-            productoDelDias = productoNegocio.ListarProductosDelDia();
-            productoDelDias = productoDelDias.FindAll(x => x.Categoria == 1).ToList();
-            foreach (ProductoDelDia aux in productoDelDias)
-            {
-             aux.Stock = 2;
-
-            }
-            */
-
             Pedidosencocina = new List<Pedido>();
             Pedido Pedido = new Pedido();
 
@@ -268,22 +255,22 @@ namespace RestoApp
             pedido.Productossolicitados = new List<ProductoPorPedido>();
             ProductoPorPedido productoporpedido = new ProductoPorPedido();
 
-            productoporpedido.Productodeldia.Id = 1;
+            productoporpedido.Productodeldia.Id = 38;
             productoporpedido.Cantidad = 2;
 
             pedido.Productossolicitados.Add(productoporpedido);
 
-            productoporpedido.Productodeldia.Id = 2;
+            productoporpedido.Productodeldia.Id = 38;
             productoporpedido.Cantidad = 2;
 
             pedido.Productossolicitados.Add(productoporpedido);
 
-            productoporpedido.Productodeldia.Id = 1;
+            productoporpedido.Productodeldia.Id = 41;
             productoporpedido.Cantidad = 2;
 
             pedido.Productossolicitados.Add(productoporpedido);
 
-            productoporpedido.Productodeldia.Id = 2;
+            productoporpedido.Productodeldia.Id = 44;
             productoporpedido.Cantidad = 2;
 
             pedido.Productossolicitados.Add(productoporpedido);

@@ -18,7 +18,7 @@ namespace Dominio
         public bool Alcohol { get; set; }
         public int Stock { get; set; }
         public bool Activo { get; set; }
-        public TimeSpan TiempoCoccion { get; set; }
+        public TimeSpan? TiempoCoccion { get; set; }
 
         public Producto()
         { }

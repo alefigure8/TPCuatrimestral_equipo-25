@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColumnasDB.cs" />
+    <Compile Include="Estados.cs" />
     <Compile Include="Mensajes.cs" />
     <Compile Include="Configuracion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
