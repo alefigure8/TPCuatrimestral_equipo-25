@@ -186,9 +186,41 @@
 
                 <div class="row bg-dark text-white p-2 h4">
                     MIS PEDIDOS EN CURSO   
-                   
                 </div>
-                <div class="col d-inline-flex p-2 justify-content-around">
+
+
+                <div class="row">
+                    <asp:UpdatePanel runat="server">
+                        <ContentTemplate>
+                            <asp:Repeater runat="server" ID="RepeaterPedidosEnCurso">
+                                <ItemTemplate>
+
+                                    <div class="card p-4 m-1" style="display: inline-table; max-width:200px;">
+
+                                      <label class="row card-title">
+                                          Pedido #<%#Eval("Id")%>
+                                          </label>
+
+
+                                        <div class="row justify-content-between">
+                                            <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="btn btn-sm btn-dark" Text="Ver" ToolTip="Ver Detalle"/>
+                                         
+                                        </div>
+
+                                </div>
+                                </ItemTemplate>
+                                
+                            </asp:Repeater>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
+
+                </div>
+
+
+
+
+
+<%--                <div class="col d-inline-flex p-2 justify-content-around">
                     <div class="card">
                         <div class="card-body">
                             <p class="card-text">
@@ -225,7 +257,7 @@
                             <button class="btn btn-dark">Cerrar</button>
                         </div>
                     </div>
-                </div>
+                </div>--%>
 
 
             </div>
