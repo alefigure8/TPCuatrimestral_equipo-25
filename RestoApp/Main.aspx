@@ -515,8 +515,13 @@
             }
 
             .bg-abierto{
-                background-color: #51cf66;
-                border-color: #51cf66;
+                background-color: #74b816;
+                border-color: #74b816;
+            }
+
+            .bg-cobrar{
+                background-color: #8fbcbb;
+                border-color: #8fbcbb;
             }
 
             .cursor-pointer{
@@ -715,8 +720,10 @@
             //Borramos lo que haya previamente
             sectionMesaMesero.innerHTML = "";
 
+
             for (i = 0; i < numeroMesas.length; i++) {
 
+                let servicio = numeroServicios.find(item => item.mesa == numeroMesas[i].mesa)
 
                 const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-abierto" : "bg-warning"
 
@@ -727,14 +734,18 @@
                 mainDiv.style.width = "150px";
 
                 var div1 = document.createElement("div");
-                div1.className = `${bgMesa} w-100 h-100 border rounded-circle border-dark-subtle p-1 cursor-pointer`;
+                div1.className = `${!servicio.cierre && !servicio.cobrado ? bgMesa : 'bg-cobrar'} w-100 h-100 border rounded-circle border-dark-subtle p-1 cursor-pointer`;
                 div1.id = "mesa_" + numeroMesas[i].mesa;
 
                 var div2 = document.createElement("div");
                 div2.className = "background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center";
 
                 var icon = document.createElement("i");
-                icon.className = "fa-solid fa-utensils fs-4";
+                if(!servicio.cierre && !servicio.cobrado)
+                    icon.className = "fa-solid fa-utensils fs-4";
+                else
+                    icon.className = "fa-solid fa-dollar fs-4";
+
 
                 div2.appendChild(icon);
                 div1.appendChild(div2);
@@ -770,7 +781,7 @@
                     contenidoModal.innerHTML += `
                 <div class="row d-flex flex-column justify-content-center gap-2 p-3 ms-3">
                     <div class="col d-flex gap-4">
-                        <button class="btnAbrirMeasa botonPedido" style="width: 150px; height: 150px;" id="btnAbrir_${i + 1}">
+                        <button class="${!servicio.cierre && !servicio.cobrado ? 'btnAbrirMeasa' : 'bg-muted'} botonPedido" style="width: 150px; height: 150px;" id="btnAbrir_${i + 1}">
                                 <div class="d-flex align-items-center justify-content-center">
                                     <i class="fa-solid fa-plus fs-1 text-white"></i>
                                 </div>
@@ -778,7 +789,7 @@
                                     <p class="fw-semibold">${textoMesaAbrirServicio}</p>
                                 </div>
                         </button>
-                        <button class="btn btnAbrirPedido botonPedido" style="width: 150px; height: 150px;" id="btnPedido_${i + 1}">
+                        <button class="${!servicio.cierre && !servicio.cobrado ? 'btnAbrirPedido' : 'bg-muted'} botonPedido" style="width: 150px; height: 150px;" id="btnPedido_${i + 1}">
                             <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-utensils fs-1 text-white"></i>
                             </div>
@@ -788,7 +799,7 @@
                         </button>
                     </div>
                     <div class="col d-flex gap-4 mt-3">
-                        <button class="btn btnPedidos botonPedido" style="width: 150px; height: 150px;" id="btnLista_${i + 1}">
+                        <button class="${!servicio.cierre && !servicio.cobrado ? 'btnPedidos' : 'bg-muted'} botonPedido" style="width: 150px; height: 150px;" id="btnLista_${i + 1}">
                             <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-list fs-1 text-white"></i>
                             </div>
@@ -796,7 +807,7 @@
                                 <p class="fw-semibold">Pedidos</p>
                             </div>
                         </button>
-                        <button class="btn btnTicket botonPedido" style="width: 150px; height: 150px;" id="btnTicket_${i + 1}">
+                        <button class="${!servicio.cierre && !servicio.cobrado ? 'bg-muted' : 'btnTicket'}  botonPedido " style="width: 150px; height: 150px;" id="btnTicket_${i + 1}">
                             <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-dollar fs-1 text-white"></i>
                             </div>
