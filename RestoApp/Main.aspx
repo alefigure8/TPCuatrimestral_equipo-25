@@ -17,11 +17,11 @@
                     <asp:Button CssClass="btn btn-sm" Text="Darse de Alta" runat="server" ID="btnMeseroAlta" OnClick="btnMeseroAlta_Click" />
                     <%} %>
                 </div>
-                <!-- Fin Boton Mesero -->
-                <p class="fw-semibold text-gray-100 text-end col-5"><%: DateTime.Now %></p>
             </div>
         </ContentTemplate>
     </asp:UpdatePanel>
+
+     <!-- Fin Boton Mesero -->
     <!-- Fin Updatea Panel Botón Mesero -->
 
     <!-- Agregar Mesas habilitadas, mozos habilitados, productos, -->
@@ -192,15 +192,24 @@
                 <div class="row">
                     <asp:UpdatePanel runat="server">
                         <ContentTemplate>
-                            <asp:Repeater runat="server" ID="RepeaterPedidosEnCurso">
+                            <asp:Repeater runat="server" ID="RepeaterPedidosEnCurso" OnItemDataBound="RepeaterPedidosEnCurso_ItemDataBound">
                                 <ItemTemplate>
 
-                                    <div class="card p-4 m-1" style="display: inline-table; max-width:200px;">
+                                    <div class="card p-3 m-1" style="display: inline-table; width:150px; height: 150px">
 
-                                      <label class="row card-title">
-                                          Pedido #<%#Eval("Id")%>
+                                      
+                                        <div class="row">
+                                           <label class="col small">
+                                          #<%#Eval("Id")%>
                                           </label>
+                                          <asp:Label runat="server" ID="lbNroMesaPedido" CssClass="col small"></asp:Label>
 
+                                        </div>
+                                
+
+                                        <asp:Label runat="server" class="row small card-footer" style="height: 50px; text-align: center; " ID="lbEstadoPedido" ToolTip='<%#Eval("EstadoDescripcion") %>'></asp:Label>
+                                     
+                                        <asp:Label runat="server" ID="lbCantItemsPedido" CssClass="col small"></asp:Label>
 
                                         <div class="row justify-content-between">
                                             <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="btn btn-sm btn-dark" Text="Ver" ToolTip="Ver Detalle"/>
@@ -544,7 +553,6 @@
                             const datosMesas = JSON.parse(datosMesasArray)
                             const numeroMesas = JSON.parse(numeroMesasActivasArray)
                             const numeroServicios = JSON.parse(seviciosJSON)
-                            console.log(numeroServicios)
                             resolve({ datosMesas, numeroMesas, numeroServicios });
                         }
                     }, 0);
@@ -650,33 +658,53 @@
                 let estado;
                 //Texto
                 if (servicio) {
-                    estado = "Abierta"
+                    estado = "Servicio Abierto"
                 } else {
-                    estado = "Cerrada"
+                    estado = "Sin Servicio"
                 }
-
-                console.log(servicio)
 
                 //Evento de la mesa
                 let mesaEvento = document.getElementById(idMesa);
+
+
                 mesaEvento.addEventListener('click', () => {
+                    if(servicio){
 
-                    //Buscar ids con numeros
-                    let contieneNumero = /\d/.test(idMesa)
+                        //En caso de que la mesa estén con un servicio abierto
+                        let contieneNumero = /\d/.test(idMesa)
 
-                    if (contieneNumero) {
-                        modal.style.display = "block";
-                        contenidoModal.innerHTML = "";
-                        contenidoModal.innerHTML += `
-                    <p class="fw-bold">Mesa: <span class="fw-normal">${servicio.mesa}</span></p>
-                    <p class="fw-bold">Estado: <span class="fw-normal">${estado}</span></p>
-                    <p class="fw-bold">Nombre: <span class="fw-normal">${servicio.mesero}</span></p>
-                    <p class="fw-bold">Apertura: <span class="fw-normal">${servicio.apertura}</span></p>
-                    <p class="fw-bold">Cierre: <span class="fw-normal">${servicio.cierre}</span></p>
-                    <p class="fw-bold">Cobrado: <span class="fw-normal">${servicio.cobrado ? 'Cobrado' : 'No cobrado'}</span></p>
-                    `;
+                        if (contieneNumero) {
+
+                            modal.style.display = "block";
+                            contenidoModal.innerHTML = "";
+                            contenidoModal.innerHTML += `
+                        <p class="fw-bold">Mesa: <span class="fw-normal">${servicio.mesa}</span></p>
+                        <p class="fw-bold">Estado: <span class="fw-normal">${estado}</span></p>
+                        <p class="fw-bold">Mesero Asignado: <span class="fw-normal">${servicio.mesero}</span></p>
+                        <p class="fw-bold">Apertura: <span class="fw-normal">${servicio.apertura}</span></p>
+                        <p class="fw-bold">Cierre: <span class="fw-normal">${servicio.cierre}</span></p>
+                        <p class="fw-bold">Cobrado: <span class="fw-normal">${servicio.cobrado ? 'Cobrado' : 'No cobrado'}</span></p>
+                        `;
+                        }
+
+                    } else {
+
+                        //En caso de que la mesa no esté con un servicio abierto
+                        let contieneNumero = /\d/.test(idMesa)
+
+                        if (contieneNumero) {
+                            modal.style.display = "block";
+                            contenidoModal.innerHTML = "";
+                            contenidoModal.innerHTML += `
+                        <p class="fw-bold">Mesa: <span class="fw-normal">${mesa.mesa}</span></p>
+                        <p class="fw-bold">Estado: <span class="fw-normal">${estado}</span></p>
+                        <p class="fw-bold">Mesero Asignado: <span class="fw-normal">${mesa.nombre} ${mesa.apellido}</span></p>
+                        <p class="fw-bold">Apertura: <span class="fw-normal"> - </span></p>
+                        <p class="fw-bold">Cierre: <span class="fw-normal"> - </span></p>
+                        <p class="fw-bold">Cobrado: <span class="fw-normal"> - </span></p>
+                        `;
+                        }
                     }
-
                 })
             }
         }
