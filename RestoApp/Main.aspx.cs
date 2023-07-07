@@ -890,21 +890,26 @@ namespace RestoApp
         protected void ActualizarPedidos()
         {
             ServicioNegocio SNAux = new ServicioNegocio();
-            List<Servicio> ListaServicios = SNAux.Listar();
+            List<Servicio> ListaServicios = (Helper.Session.GetServicios());
 
             PedidoNegocio PNAux = new PedidoNegocio();
                 List<Pedido> Pedidos = PNAux.ListarPedidos();
 
+            List<Pedido> PedidosAux = new List<Pedido>();
+
             //busco servicios abiertos
-            ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
+            if (ListaServicios.Count > 0) {
+            ListaServicios = ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
 
             //Aca ya están los servicios guardados
-            //List<Servicio> ListaServicios = Helper.Session.GetServicios();
+            //
+
+            
 
             foreach (Pedido Pedido in Pedidos)
             {
                 bool esPedidoEnCurso = false;
-
+                
                 foreach (Servicio Servicio in ListaServicios)
                 {
                     if (Servicio.Id == Pedido.IdServicio)
@@ -914,13 +919,14 @@ namespace RestoApp
 
                 }
 
-                if(!esPedidoEnCurso) { 
-                    Pedidos.Remove(Pedido); 
+                if(esPedidoEnCurso!=false) { 
+                    PedidosAux.Add(Pedido);
                 }
 
             }
+            }
 
-            RepeaterPedidosEnCurso.DataSource = Pedidos;
+            RepeaterPedidosEnCurso.DataSource = PedidosAux;
             RepeaterPedidosEnCurso.DataBind();
         }
     }
