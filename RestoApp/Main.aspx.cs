@@ -43,8 +43,10 @@ namespace RestoApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            //Verificar que sea usuario
-            if (AutentificacionUsuario.esUser(Helper.Session.GetUsuario()))
+                      
+
+			//Verificar que sea usuario
+			if (AutentificacionUsuario.esUser(Helper.Session.GetUsuario()))
                 usuario = Helper.Session.GetUsuario();
 
             // CONTENIDO GERENTE
@@ -106,7 +108,12 @@ namespace RestoApp
 			ListarCategoriasProducto();
         }
 
-        protected void ActivarBtnCancelarPedido()
+		private void Tr_reloj_Tick(object sender, EventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected void ActivarBtnCancelarPedido()
         {
             btnTerminarPedido.Visible = true;
 
@@ -948,7 +955,5 @@ namespace RestoApp
             }
 
         }
-    }
-
-    //Clase para guardar datos de la session de Servicios
+	}
 }
