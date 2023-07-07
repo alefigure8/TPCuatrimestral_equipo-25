@@ -11,5 +11,6 @@ namespace Helper
         public int Fila { get; set; }
         public int Columna { get; set; }
         public int TiempoCoccion { get; set; }
+        public int idPedido { get; set; }
     }
 }

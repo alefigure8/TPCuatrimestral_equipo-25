@@ -14,8 +14,7 @@
             </ContentTemplate>
             </asp:UpdatePanel>
    
-      <asp:Button runat="server" ID="botonpedido" OnClick="botonpedido_Click"/>
-            
+              
 
 
     <div class="col d-flex"style="overflow-x:auto;" >
