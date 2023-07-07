@@ -219,6 +219,11 @@ namespace Negocio
 			{
                 id = 1;
             }
+			else if (tipo == ColumnasDB.TipoUsuario.Cocinero)
+			{
+				id = 4;
+
+			}
             return id;
         }
 
@@ -244,7 +249,7 @@ namespace Negocio
                     $"'{nuevousuario.Apellidos}', " +
                     $"'{nuevousuario.Mail}', " +
                     $"'{nuevousuario.Password}', " +
-                    $"GETDATE(), " +
+      //              $"GETDATE(), " +
                     $"1 ," +
                     $"'{tipo}')");
 

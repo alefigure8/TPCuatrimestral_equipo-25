@@ -37,5 +37,12 @@ namespace Helper
 
 			return false;
 		}
-	}
+        static public bool esCocinero(Usuario user)
+        {
+            if (user?.Tipo == ColumnasDB.TipoUsuario.Cocinero)
+                return true;
+
+            return false;
+        }
+    }
 }

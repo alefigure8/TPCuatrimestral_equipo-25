@@ -17,8 +17,8 @@ namespace Opciones
 			public const string Admin = "Admin";
 			public const string Gerente = "Gerente";
 			public const string Mesero = "Mesero";
-
-		}
+            public const string Cocinero = "Cocinero";
+        }
 
 		public struct Usuario
 		{

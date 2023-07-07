@@ -230,7 +230,7 @@ namespace RestoApp
         {
 
             DdlTipo.Items.Add(ColumnasDB.TipoUsuario.Mesero);
-
+            DdlTipo.Items.Add(ColumnasDB.TipoUsuario.Cocinero);
             if (AutentificacionUsuario.esAdmin(usuario))
             {
                 DdlTipo.Items.Add(ColumnasDB.TipoUsuario.Gerente);

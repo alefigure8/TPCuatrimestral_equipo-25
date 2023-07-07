@@ -11,8 +11,17 @@
         <hr />
         <ul class="list-unstyled ps-0">
             <li class="align-items-center rounded collapsed text-light btn">
+               
+            <% if (usuario?.Tipo != Opciones.ColumnasDB.TipoUsuario.Cocinero)
+                { %>    
                 <a href="Main.aspx" class="nav-link active" aria-current="page">Inicio
                 </a>
+                <%}
+                    else
+                    {  %>
+                  <a href="Cocina.aspx" class="nav-link active" aria-current="page">Inicio
+                </a>
+                <%} %>
             </li>
             <!-- Si el usuario es Gerente o Admin pueden ver las mesas-->
             <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
@@ -30,6 +39,7 @@
             </li>
             <%}%>
             <li class="mb-1">
+                <%if (usuario?.Tipo != Opciones.ColumnasDB.TipoUsuario.Cocinero) {  %>
                 <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#productos-collapse" aria-bs-expanded="true">
                    <%--Si es gerente o admin la solapa se llama productos, si no, se llama menu--%>
                           <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
@@ -61,6 +71,7 @@
                     </ul>
                 </div>
             </li>
+            <%}%>
           <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
                 { %>
             <li class="mb-1">
