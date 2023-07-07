@@ -102,7 +102,7 @@
                         <asp:BoundColumn DataField="Cierre" HeaderText="Cierre" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
                         <asp:TemplateColumn HeaderText="Estado">
                             <ItemTemplate>
-                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" %>
+                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-success\" title=\"Mesa Abierta\"></i>" : "<i class=\"fa-sharp fa-solid fa-dollar text-danger\" title=\"Cobrar\"></i>" %>
                             </ItemTemplate>
                             <ItemStyle CssClass="bg-light p-2 rounded" />
                             <HeaderStyle CssClass="bg-light p-2 rounded" />
@@ -504,6 +504,15 @@
                 background-color: #dc3546c4;
                 border-color: #dc3546c4;
             }
+
+            .bg-abierto{
+                background-color: #51cf66;
+                border-color: #51cf66;
+            }
+
+            .cursor-pointer{
+                cursor: pointer;
+            }
     </style>
     <!-- Fin Styles Mesas -->
 
@@ -557,7 +566,6 @@
                             clearInterval(intervalo);
                             const numeroMesas = JSON.parse(numeroMesasArray)
                             const numeroServicios = JSON.parse(seviciosJSON)
-
                             resolve({ numeroMesas, numeroServicios });
                         }
                     }, 0);
@@ -603,7 +611,7 @@
                 //Buscamos mesas con servicios abierto
                 let servicio = numeroServicios.find(item => item.mesa == numeroMesas[i].Numero)
                 if (servicio) {
-                    colorApertura = "bg-success";
+                    colorApertura = "bg-abierto";
                 } else {
                     colorApertura = "bg-warning"
                 }
@@ -647,6 +655,8 @@
                     estado = "Cerrada"
                 }
 
+                console.log(servicio)
+
                 //Evento de la mesa
                 let mesaEvento = document.getElementById(idMesa);
                 mesaEvento.addEventListener('click', () => {
@@ -658,9 +668,12 @@
                         modal.style.display = "block";
                         contenidoModal.innerHTML = "";
                         contenidoModal.innerHTML += `
-                    <p class="fw-bold">Nombre: <span class="fw-normal">${mesa.nombre} ${mesa.apellido}</span></p>
-                    <p class="fw-bold">Mesa: <span class="fw-normal">${mesa.mesa}</span></p>
+                    <p class="fw-bold">Mesa: <span class="fw-normal">${servicio.mesa}</span></p>
                     <p class="fw-bold">Estado: <span class="fw-normal">${estado}</span></p>
+                    <p class="fw-bold">Nombre: <span class="fw-normal">${servicio.mesero}</span></p>
+                    <p class="fw-bold">Apertura: <span class="fw-normal">${servicio.apertura}</span></p>
+                    <p class="fw-bold">Cierre: <span class="fw-normal">${servicio.cierre}</span></p>
+                    <p class="fw-bold">Cobrado: <span class="fw-normal">${servicio.cobrado ? 'Cobrado' : 'No cobrado'}</span></p>
                     `;
                     }
 
@@ -671,10 +684,13 @@
         //Función Mesero
         function renderMesaMesero(numeroMesas, numeroServicios) {
 
+            //Borramos lo que haya previamente
+            sectionMesaMesero.innerHTML = "";
+
             for (i = 0; i < numeroMesas.length; i++) {
 
 
-                const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-success" : "bg-warning"
+                const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-abierto" : "bg-warning"
 
                 //Mesa
                 var mainDiv = document.createElement("div");
@@ -683,7 +699,7 @@
                 mainDiv.style.width = "150px";
 
                 var div1 = document.createElement("div");
-                div1.className = `${bgMesa} w-100 h-100 border rounded-circle border-dark-subtle p-1 btn`;
+                div1.className = `${bgMesa} w-100 h-100 border rounded-circle border-dark-subtle p-1 cursor-pointer`;
                 div1.id = "mesa_" + numeroMesas[i].mesa;
 
                 var div2 = document.createElement("div");
@@ -717,7 +733,7 @@
 
                 //Disabled boton
                 let isDisabled = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa)
-                let textoMesaAbrirPedid = isDisabled ? "Cerrar Servicio" : "Abrir Servicio"
+                let textoMesaAbrirServicio = isDisabled ? "Cerrar Servicio" : "Abrir Servicio"
 
                 mesaEvento.addEventListener('click', () => {
                     modalTitulo.textContent = `Mesa Asignada ${numeroDeMesa}`
@@ -731,7 +747,7 @@
                                     <i class="fa-solid fa-plus fs-1 text-white"></i>
                                 </div>
                                 <div class="text-white">
-                                    <p class="fw-semibold">${textoMesaAbrirPedid}</p>
+                                    <p class="fw-semibold">${textoMesaAbrirServicio}</p>
                                 </div>
                         </button>
                         <button class="btn btnAbrirPedido botonPedido" style="width: 150px; height: 150px;" id="btnPedido_${i + 1}">
@@ -770,31 +786,51 @@
             }
         }
 
+        function modalAlerta(result) {
+
+            let msg;
+
+            if (result) {
+                msg = "Se generó con éxito"
+            } else {
+                msg = "No pudo guardarse"
+            }
+
+            contenidoModal.innerHTML = "";
+            contenidoModal.innerHTML = `<p>${msg}</p>` 
+        }
+
         //Evento botones Mesero
         function eventoBotones(i, mesa, isDisabled) {
 
             let btnServicio = document.getElementById(`btnAbrir_${i + 1}`);
-            btnServicio.disabled = isDisabled;
+            //btnServicio.disabled = isDisabled;
 
             let btnPedido = document.getElementById(`btnPedido_${i + 1}`);
             let btnLista = document.getElementById(`btnLista_${i + 1}`);
             let btnTicket = document.getElementById(`btnTicket_${i + 1}`);
 
+            //Evento para abrir y cerrar servicios
             btnServicio.addEventListener('click', (e) => {
-                console.log("Abrir Servicio")
-                //Mandamos datos a CodeBehind
-                let data = [{ mesa: mesa }];
-
-                mandarDatos('Main', 'AbrirServicio', data, e)
+                
+                if (isDisabled) {
+                    let data = [{ mesa: mesa }];
+                    mandarDatos('Main', 'CerrarServicio', data, e)
+                } else {
+                    let data = [{ mesa: mesa }];
+                    mandarDatos('Main', 'AbrirServicio', data, e)
+                }
             })
 
+            //Evento para abrir pedidos (se cierra desde lista de pedido)
             btnPedido.addEventListener('click', (e) => {
-                //Mandamos datos a CodeBehind
-                console.log("Abrir Pedido")
-                let data = [{ mesa: mesa }];
+
+                 let data = [{ mesa: mesa }];
                 mandarDatos('Main', 'AbrirPedido', data, e)
+
             })
 
+            //Evento para ver todos los pedidos que tiene la mesa
             btnLista.addEventListener('click', (e) => {
                 e.preventDefault();
                 console.log("Ver listado")
@@ -803,6 +839,7 @@
                 //MOSTRAR LISTADO DE PEDIDO. ¿lINK CON QUERY?
             })
 
+            //Evento para mostrar ticket
             btnTicket.addEventListener('click', (e) => {
                 e.preventDefault();
                 console.log("Ticket")
@@ -832,11 +869,14 @@
             })
                 .then(response => response.json())
                 .then(result => {
-                    console.log(result)
-                    location.reload();
+                    const { d } = result
+                    modalAlerta(d)
                 })
                 .catch(error => {
                     console.log(error)
+                })
+                .finally(() => {
+                    location.reload();
                 });
         }
 

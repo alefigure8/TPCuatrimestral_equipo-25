@@ -62,7 +62,8 @@ namespace RestoApp
             if (IsPostBack && AutentificacionUsuario.esGerente(usuario))
             {
                 ScriptsDataGerente();
-                string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas }) => {renderMesaGerente(datosMesas, numeroMesas); })";
+                ScriptDataServicios();
+				string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); })";
                 ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
             }
 
@@ -97,11 +98,12 @@ namespace RestoApp
             if (IsPostBack && AutentificacionUsuario.esMesero(usuario))
             {
                 ScriptsDataMesero();
-                string script = " obtenerDatosMesasMesero().then(({ numeroMesas }) => {renderMesaMesero(numeroMesas); });";
+                ScriptDataServicios();
+                string script = " obtenerDatosMesasMesero().then(({ numeroMesas, numeroServicios }) => {renderMesaMesero(numeroMesas, numeroServicios); });";
                 ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
             }
 
-            ListarCategoriasProducto();
+			ListarCategoriasProducto();
         }
 
         protected void ActivarBtnCancelarPedido()
@@ -573,7 +575,7 @@ namespace RestoApp
         private void ScriptDataServicios()
         {
             //Recuperamos datos de session
-            List<Servicio> servicios = (List<Servicio>)Session[Configuracion.Session.Servicios];
+            List<Servicio> servicios = Helper.Session.GetServicios();
             List<object> serviciosJS = new List<object>();
 
             foreach (Servicio item in servicios)
@@ -582,8 +584,12 @@ namespace RestoApp
                     new
                     {
                         mesa = item.Mesa,
-                        servicio = item.Id
-                    });
+                        servicio = item.Id,
+                        cobrado = item.Cobrado,
+						apertura = (item.Fecha + item.Apertura).ToString("HH:mm:ss"),
+						cierre = item.Cierre.HasValue ? (item.Fecha + item.Apertura).ToString("HH:mm:ss") : String.Empty,
+						mesero = item.Mesero
+					});
             }
 
             string seviciosJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(serviciosJS);
@@ -595,11 +601,11 @@ namespace RestoApp
         //WEBMETHOD
         //Obtenemos número de mesa y le abrimos un servicio
         [WebMethod]
-        public static string AbrirServicio(List<Dictionary<string, int>> data)
+        public static bool AbrirServicio(List<Dictionary<string, int>> data)
         {
             ServicioNegocio servicioNegocio = new ServicioNegocio();
 
-            string response = String.Empty;
+            bool response = false;
 
             foreach (var diccionario in data)
             {
@@ -636,16 +642,54 @@ namespace RestoApp
                         //Guardamos en Session
                         Helper.Session.SetServicios(servicio);
                     }
-                }
 
-                response = numeroMesa.ToString();
+                    response = true;
+                };
             }
 
             return response;
         }
 
-        //Guardamos número de mesa en pedido
-        [WebMethod]
+		[WebMethod]
+		public static bool CerrarServicio(List<Dictionary<string, int>> data)
+		{
+			ServicioNegocio servicioNegocio = new ServicioNegocio();
+
+			bool response = false;
+
+			foreach (var diccionario in data)
+			{
+				var numeroMesa = diccionario["mesa"];
+
+				if(servicioNegocio.CerrarServicio(numeroMesa))
+                {
+					//Modificamos la sessión agregándole la hora de cierre al servicio, pero sigue abierto hasta que cobrado no sea true
+					List<Servicio> servicio = Helper.Session.GetServicios();
+
+                    foreach (var item in servicio)
+                    {
+                        if(item.Mesa == numeroMesa)
+                        {
+                            item.Cierre = DateTime.Now.TimeOfDay;
+                        }
+                    }
+
+                    Helper.Session.SetServicios(servicio);
+
+					response = true;
+				}
+                else
+                {
+					//Si no se guardó de manera correcta
+                    response = false;
+				}
+			}
+
+			return response;
+		}
+
+		//Guardamos número de mesa en pedido
+		[WebMethod]
         public static string AbrirPedido(List<Dictionary<string, int>> data)
         {
 
@@ -846,18 +890,26 @@ namespace RestoApp
         protected void ActualizarPedidos()
         {
             ServicioNegocio SNAux = new ServicioNegocio();
-            List<Servicio> ListaServicios = SNAux.Listar();
+            List<Servicio> ListaServicios = (Helper.Session.GetServicios());
 
             PedidoNegocio PNAux = new PedidoNegocio();
                 List<Pedido> Pedidos = PNAux.ListarPedidos();
 
-            // busco servicios abiertos 
-            ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
+            List<Pedido> PedidosAux = new List<Pedido>();
+
+            //busco servicios abiertos
+            if (ListaServicios.Count > 0) {
+            ListaServicios = ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
+
+            //Aca ya están los servicios guardados
+            //
+
+            
 
             foreach (Pedido Pedido in Pedidos)
             {
                 bool esPedidoEnCurso = false;
-
+                
                 foreach (Servicio Servicio in ListaServicios)
                 {
                     if (Servicio.Id == Pedido.IdServicio)
@@ -867,13 +919,14 @@ namespace RestoApp
 
                 }
 
-                if(!esPedidoEnCurso) { 
-                    Pedidos.Remove(Pedido); 
+                if(esPedidoEnCurso!=false) { 
+                    PedidosAux.Add(Pedido);
                 }
 
             }
+            }
 
-            RepeaterPedidosEnCurso.DataSource = Pedidos;
+            RepeaterPedidosEnCurso.DataSource = PedidosAux;
             RepeaterPedidosEnCurso.DataBind();
         }
     }
