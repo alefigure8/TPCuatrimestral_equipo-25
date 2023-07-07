@@ -723,9 +723,9 @@
 
             for (i = 0; i < numeroMesas.length; i++) {
 
-                let servicio = numeroServicios.find(item => item.mesa == numeroMesas[i].mesa)
+                let servicio = numeroServicios.find(item => item?.mesa == numeroMesas[i].mesa)
 
-                const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-abierto" : "bg-warning"
+                const bgMesa = numeroServicios.some(item => item?.mesa == numeroMesas[i].mesa) ? "bg-abierto" : "bg-warning"
 
                 //Mesa
                 var mainDiv = document.createElement("div");
@@ -820,7 +820,7 @@
                 `;
 
                     //Creamos los eventos de los botones
-                    eventoBotones(i, numeroDeMesa, isDisabled)
+                    eventoBotones(i, numeroDeMesa, isDisabled, servicio)
                 })
             }
         }
@@ -840,14 +840,22 @@
         }
 
         //Evento botones Mesero
-        function eventoBotones(i, mesa, isDisabled) {
+        function eventoBotones(i, mesa, isDisabled, servicio) {
 
             let btnServicio = document.getElementById(`btnAbrir_${i + 1}`);
-            //btnServicio.disabled = isDisabled;
-
             let btnPedido = document.getElementById(`btnPedido_${i + 1}`);
             let btnLista = document.getElementById(`btnLista_${i + 1}`);
             let btnTicket = document.getElementById(`btnTicket_${i + 1}`);
+
+            if(servicio.cierre != ''){
+                 btnServicio.disabled = true;
+                btnServicio.title = 'Servicio deshabilitado'
+                btnPedido.disabled = true;
+                btnPedido.title = 'Pedido deshabilitado'
+            } else {
+                btnTicket.disabled = true;
+                btnTicket.title = 'Ticket deshabilitado'
+            }
 
             //Evento para abrir y cerrar servicios
             btnServicio.addEventListener('click', (e) => {
