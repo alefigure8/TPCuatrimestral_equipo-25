@@ -192,15 +192,24 @@
                 <div class="row">
                     <asp:UpdatePanel runat="server">
                         <ContentTemplate>
-                            <asp:Repeater runat="server" ID="RepeaterPedidosEnCurso">
+                            <asp:Repeater runat="server" ID="RepeaterPedidosEnCurso" OnItemDataBound="RepeaterPedidosEnCurso_ItemDataBound">
                                 <ItemTemplate>
 
-                                    <div class="card p-4 m-1" style="display: inline-table; max-width:200px;">
+                                    <div class="card p-3 m-1" style="display: inline-table; width:150px; height: 150px">
 
-                                      <label class="row card-title">
-                                          Pedido #<%#Eval("Id")%>
+                                      
+                                        <div class="row">
+                                           <label class="col small">
+                                          #<%#Eval("Id")%>
                                           </label>
+                                          <asp:Label runat="server" ID="lbNroMesaPedido" CssClass="col small"></asp:Label>
 
+                                        </div>
+                                
+
+                                        <asp:Label runat="server" class="row small card-footer" style="height: 50px; text-align: center; " ID="lbEstadoPedido" ToolTip='<%#Eval("EstadoDescripcion") %>'></asp:Label>
+                                     
+                                        <asp:Label runat="server" ID="lbCantItemsPedido" CssClass="col small"></asp:Label>
 
                                         <div class="row justify-content-between">
                                             <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="btn btn-sm btn-dark" Text="Ver" ToolTip="Ver Detalle"/>

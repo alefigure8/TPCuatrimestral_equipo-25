@@ -899,7 +899,8 @@ namespace RestoApp
 
             //busco servicios abiertos
             if (ListaServicios.Count > 0) {
-            ListaServicios = ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
+                // Comento validacion para trabajar en front
+                //   ListaServicios = ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
 
             //Aca ya están los servicios guardados
             //
@@ -928,6 +929,24 @@ namespace RestoApp
 
             RepeaterPedidosEnCurso.DataSource = PedidosAux;
             RepeaterPedidosEnCurso.DataBind();
+        }
+
+        protected void RepeaterPedidosEnCurso_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+            Pedido pedido = e.Item.DataItem as Pedido;
+            Label lbl = e.Item.FindControl("lbNroMesaPedido") as Label;
+            
+            lbl.Text = "Mesa " + ((List<Servicio>)Session["Servicios"]).Find(x => x.Id == pedido.IdServicio).Mesa.ToString();
+
+            lbl = e.Item.FindControl("lbCantItemsPedido") as Label;
+            lbl.Text = pedido.Productossolicitados.Count().ToString() + " Items Pedidos";
+
+            lbl = e.Item.FindControl("lbEstadoPedido") as Label;
+            if(pedido.Estado == 1)
+            {
+                lbl.Text = "🔴";
+            }
+
         }
     }
 
