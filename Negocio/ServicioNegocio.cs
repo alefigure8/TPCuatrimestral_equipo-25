@@ -206,7 +206,7 @@ namespace Negocio
 		}
 		
 		//Cobrar servicio. Modificamos cobrado  a true
-		public bool ModificarServicio(int idServicio)
+		public bool CobrarServicio(int idServicio)
 		{
 			AccesoDB datos = new AccesoDB();
 
@@ -217,7 +217,7 @@ namespace Negocio
 				datos.setQuery($"UPDATE SERVICIO SET {ColumnasDB.Servicio.Cobrado} = 1 " +
 					$"WHERE {ColumnasDB.Servicio.Id} = {idServicio} " +
 					$"AND {ColumnasDB.Servicio.Cierre} IS NOT NULL " +
-					$"AND {ColumnasDB.Servicio.Cobrado} = FALSE");
+					$"AND {ColumnasDB.Servicio.Cobrado} = 0 ");
 
 				return datos.executeNonQuery();
 			}

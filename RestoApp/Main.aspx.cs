@@ -697,21 +697,52 @@ namespace RestoApp
 
 		//Guardamos número de mesa en pedido
 		[WebMethod]
-        public static string AbrirPedido(List<Dictionary<string, int>> data)
+        public static bool AbrirPedido(List<Dictionary<string, int>> data)
         {
 
-            string response = String.Empty;
+            bool response = false;
             foreach (var diccionario in data)
             {
                 var numeroMesa = diccionario["mesa"];
-                Helper.Session.SetNumeroMesaPedido(numeroMesa);
-                response = numeroMesa.ToString();
+
+                if (numeroMesa > 0)
+                {
+					Helper.Session.SetNumeroMesaPedido(numeroMesa);
+					response = true;
+				}
             }
 
             return response;
         }
 
-        protected void ListarCategoriasProducto()
+        //Cobramos el pedido
+        [WebMethod]
+        public static bool EmitirTicket(List<Dictionary<string, int>> data)
+        {
+            bool response = false;
+
+			ServicioNegocio servicioNegocio = new ServicioNegocio();
+
+			foreach (var diccionario in data)
+			{
+				var numeroMesa = diccionario["mesa"];
+				var numeroServicio = diccionario["servicio"];
+
+                 if(numeroServicio > 0)
+					if (servicioNegocio.CobrarServicio(numeroServicio))
+                    {
+                        List<Servicio> servicio = Helper.Session.GetServicios().FindAll(item => item.Id != numeroServicio);
+                        Helper.Session.SetServicios(servicio);
+
+						response = true;
+					}
+			}
+			
+			return response;
+		}
+
+
+		protected void ListarCategoriasProducto()
         {
             CategoriaProductoNegocio CPNAux = new CategoriaProductoNegocio();
             ListaCategoriasProducto = CPNAux.Listar();
