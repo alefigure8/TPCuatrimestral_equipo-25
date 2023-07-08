@@ -97,7 +97,42 @@ namespace Negocio
             return idpedido;
         }
 
-      
+        public List<ProductoPorPedido> Listarproductosenpreparacion()
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            List<ProductoPorPedido> listaproductosenpreparacion = new List<ProductoPorPedido>();
+
+            try
+            {
+                AccesoDB.setQuery(
+                    $"select P.Nombre, sum(PxP.Cantidad) as Cantidad from PRODUCTO_X_PEDIDO PxP join ESTADO_X_PEDIDO ExP on PxP.IdPedido = ExP.IdPedido " +
+                    $"join PRODUCTOS P on P.IdProducto = PxP.IdProductopordia group by P.Nombre, ExP.IdEstado having ExP.IdEstado = 2");
+
+                AccesoDB.executeReader();
+
+                while (AccesoDB.Reader.Read())
+                {
+                    ProductoPorPedido aux = new ProductoPorPedido();
+                    aux.Productodeldia.Nombre = (string)AccesoDB.Reader[ColumnasDB.Producto.Nombre];
+                    aux.Cantidad = (Int32)AccesoDB.Reader[ColumnasDB.ProductoPorPedido.Cantidad];
+                    listaproductosenpreparacion.Add(aux);
+                }
+
+                return listaproductosenpreparacion;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+
+
+        }
+
+
 
             public List<ProductoPorPedido> ListarProductosPorPedido(int IdPedido)
         {
