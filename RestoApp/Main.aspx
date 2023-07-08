@@ -839,6 +839,20 @@
             contenidoModal.innerHTML = `<p>${msg}</p>` 
         }
 
+        function alertaModal(msg, mode) {
+            console.log(msg, mode)
+            modalTitulo.textContent = "Mensaje";
+            modal.style.display = "block";
+            contenidoModal.innerHTML = "";
+
+            if (mode == "error") {
+                contenidoModal.innerHTML = `<p class="text-danger">${msg}</p>`
+            } else {
+                contenidoModal.innerHTML = `<p class="text-success">${msg}</p>`
+            }
+
+        }
+
         //Evento botones Mesero
         function eventoBotones(i, mesa, isDisabled, servicio) {
 
@@ -876,7 +890,7 @@
 
             //Evento para abrir y cerrar servicios
             btnServicio.addEventListener('click', (e) => {
-                console.log(isDisabled)
+
                 if (isDisabled) {
                     let data = [{ mesa: mesa }];
                     mandarDatos('Main', 'CerrarServicio', data, e)
@@ -884,6 +898,7 @@
                     let data = [{ mesa: mesa }];
                     mandarDatos('Main', 'AbrirServicio', data, e)
                 }
+
             })
 
             //Evento para abrir pedidos (se cierra desde lista de pedido)
@@ -933,8 +948,9 @@
             })
                 .then(response => response.json())
                 .then(result => {
-                    const { d } = result
-                    modalAlerta(d)
+                    //console.log(result)
+                    //const { d } = result
+                    //modalAlerta(d)
                 })
                 .catch(error => {
                     console.log(error)
