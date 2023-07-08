@@ -27,6 +27,7 @@ namespace Opciones
 			public const string MesasAsignada = "MesasAsignadas";
 			public const string NumeroMesaPedido = "NumeroMesaPedido";
 			public const string Servicios = "Servicios";
+			public const string Mensajes = "Mensajes";
 		}
 
 		public struct Rol

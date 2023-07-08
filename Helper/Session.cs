@@ -99,6 +99,16 @@ namespace Helper
 		{
 			HttpContext.Current.Session[Configuracion.Session.Servicios] = servicio;
 		}
+		
+		//MENSAJES
+		public static object  GetMensajeModal()
+		{
+			return (object)HttpContext.Current.Session[Configuracion.Session.Mensajes];
+		}
 
+		public static void SetMensajeModal(object mensaje)
+		{
+			HttpContext.Current.Session[Configuracion.Session.Mensajes] = mensaje;
+		}
 	}
 }

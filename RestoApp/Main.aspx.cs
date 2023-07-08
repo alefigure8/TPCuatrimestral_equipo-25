@@ -52,7 +52,18 @@ namespace RestoApp
             // CONTENIDO GERENTE
             if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
             {
-                tipoUsuario = Configuracion.Rol.Gerente;
+                //Acciona mensajes de alerta en caso de que haya mensajes guardados
+				if (Helper.Session.GetMensajeModal() != null)
+				{
+					dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
+					string msg = msgModal.msg;
+					string tipo = msgModal.tipo;
+					string scriptModal = $"alertaModal(\"{msg}\", \"{tipo}\");";
+					ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
+					Helper.Session.SetMensajeModal(null);
+				}
+
+				tipoUsuario = Configuracion.Rol.Gerente;
                 CargarMeseros();
                 CargarDatosMesas();
                 CargarServicios();
@@ -65,9 +76,9 @@ namespace RestoApp
             {
                 ScriptsDataGerente();
                 ScriptDataServicios();
-				string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); })";
+				string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); });";
                 ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
-            }
+			}
 
 
             //CONTENIDO MESERO
@@ -83,18 +94,27 @@ namespace RestoApp
                 {
                     lbNumeroMesa.Text = "CREANDO PEDIDO PARA MESA  #" + Helper.Session.GetNumeroMesaPedido().ToString();
                     ActivarBtnCancelarPedido();
-
                 }
 
+                //Accionamos Modal de mensaje si hay mensajes guardados
+				if (Helper.Session.GetMensajeModal() != null)
+				{
+					dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
+					string msg = msgModal.msg;
+					string tipo = msgModal.tipo;
+					string scriptModal = $"alertaModal(\"{msg}\", \"{tipo}\");";
+					ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
+					Helper.Session.SetMensajeModal(null);
+				}
 
-                tipoUsuario = Configuracion.Rol.Mesero;
+				tipoUsuario = Configuracion.Rol.Mesero;
                 CargarMenuDisponible();
                 CargarMeseroPorDia();
                 CargarMesasAsignadas();
                 CargarServicios();
                 ActualizarPedidos();
 
-            }
+			}
 
             //Si es postback, recargamos funciones de script en Mesero
             if (IsPostBack && AutentificacionUsuario.esMesero(usuario))
@@ -103,7 +123,7 @@ namespace RestoApp
                 ScriptDataServicios();
                 string script = " obtenerDatosMesasMesero().then(({ numeroMesas, numeroServicios }) => {renderMesaMesero(numeroMesas, numeroServicios); });";
                 ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
-            }
+			}
 
 			ListarCategoriasProducto();
         }
@@ -613,8 +633,9 @@ namespace RestoApp
             ServicioNegocio servicioNegocio = new ServicioNegocio();
 
             bool response = false;
+			object msg = new { msg = "El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a que la mesa ya se encuentra abierta.", tipo = "error" };
 
-            foreach (var diccionario in data)
+			foreach (var diccionario in data)
             {
                 var numeroMesa = diccionario["mesa"];
                 int idServicio = servicioNegocio.AbrirServicio(numeroMesa);
@@ -651,10 +672,14 @@ namespace RestoApp
                     }
 
                     response = true;
+                    msg = new { msg = $"El servicio de la mesa {numeroMesa} fue abierto con éxito", tipo = "success" };
                 };
             }
 
-            return response;
+			//Guardamos mensaje para modal de front
+			Helper.Session.SetMensajeModal(msg);
+            
+			return response;
         }
 
 		[WebMethod]
@@ -662,7 +687,9 @@ namespace RestoApp
 		{
 			ServicioNegocio servicioNegocio = new ServicioNegocio();
 
+            //Iniciamos respuestas
 			bool response = false;
+			object msg = new { msg = $"El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a pedidos que aún permanecen abiertos.", tipo = "error" };
 
 			foreach (var diccionario in data)
 			{
@@ -681,17 +708,25 @@ namespace RestoApp
                         }
                     }
 
+                    //Guardamos servicio
                     Helper.Session.SetServicios(servicio);
 
+                    //Generamos respuestas
 					response = true;
+					msg = new { msg = $"El servicio de la mesa {numeroMesa} fue cerrado con éxito", tipo = "success" };
 				}
                 else
                 {
-					//Si no se guardó de manera correcta
+					//Generamos respuestas
                     response = false;
+					msg = new { msg = $"El servicio de la mesa {numeroMesa} no pudo cerrarse. Esto puede deberse a un error de conexión o a pedidos que aún permanecen abiertos", tipo = "error" };
 				}
 			}
 
+			//Guardamos mensaje para modal de front
+			Helper.Session.SetMensajeModal(msg);
+
+            //Enviamos respuesta al fron
 			return response;
 		}
 
@@ -699,19 +734,22 @@ namespace RestoApp
 		[WebMethod]
         public static bool AbrirPedido(List<Dictionary<string, int>> data)
         {
-
+            //Iniciamos respuesta
             bool response = false;
+
             foreach (var diccionario in data)
             {
                 var numeroMesa = diccionario["mesa"];
 
                 if (numeroMesa > 0)
                 {
+                    //Guardamos numero de mesa que se seleccionó para iniciar pedido
 					Helper.Session.SetNumeroMesaPedido(numeroMesa);
 					response = true;
 				}
             }
 
+            //Enviamos resupuesta al fron
             return response;
         }
 
@@ -719,7 +757,9 @@ namespace RestoApp
         [WebMethod]
         public static bool EmitirTicket(List<Dictionary<string, int>> data)
         {
+            //Inicamos respuestas
             bool response = false;
+            object msg = new { msg = $"El ticket no pudo emitirse. Esto puede deberse a un error de conexión o a que la mesa no se encuentra abierta.", tipo = "error" };
 
 			ServicioNegocio servicioNegocio = new ServicioNegocio();
 
@@ -731,13 +771,20 @@ namespace RestoApp
                  if(numeroServicio > 0)
 					if (servicioNegocio.CobrarServicio(numeroServicio))
                     {
+                        //Si se cobró correctamente, sacamos el sercisio de la sessión de Servicios
                         List<Servicio> servicio = Helper.Session.GetServicios().FindAll(item => item.Id != numeroServicio);
                         Helper.Session.SetServicios(servicio);
-
+						
+                        //Generamores respuestas
 						response = true;
+						msg = new { msg = $"El ticket de la mesa {numeroMesa} fue emitido con éxito", tipo = "success"};
 					}
 			}
-			
+
+			//Guardamos mensaje para modal de front
+			Helper.Session.SetMensajeModal(msg);
+
+            //Enviamos respuestaal fron
 			return response;
 		}
 
