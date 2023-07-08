@@ -71,7 +71,9 @@ namespace Opciones
 			public const string Fecha = "Fecha";
 			public const string StockInicial = "StockInicial";
 			public const string StockCierre = "StockCierre";
-            public const string DB = "ProductosPorDia_Menu";
+			public const string Valor = "Valor";
+			public const string Nombre = "Nombre";
+			public const string DB = "ProductosPorDia_Menu";
         }
 
 		public struct MesasPorDia
@@ -143,7 +145,6 @@ namespace Opciones
 		
             
 		}
-
 
 	}
 }
