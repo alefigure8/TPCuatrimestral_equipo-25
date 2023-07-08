@@ -68,11 +68,12 @@ namespace RestoApp
                 CargarDatosMesas();
                 CargarServicios();
                 CargarEstadoMesas();
+                ActualizarPedidos();
                 CargarPedido();
-            }
+			}
 
-            //Si es postback, recargamos funciones de script en Gerente
-            if (IsPostBack && AutentificacionUsuario.esGerente(usuario))
+			//Si es postback, recargamos funciones de script en Gerente
+			if (IsPostBack && AutentificacionUsuario.esGerente(usuario))
             {
                 ScriptsDataGerente();
                 ScriptDataServicios();
@@ -296,8 +297,7 @@ namespace RestoApp
                     (int)item.Mesa,
                     (string)item.Mesero,
                     (DateTime)item.Fecha + item.Apertura,
-                    (DateTime?)item.Fecha + item.Cierre
-                );
+                    (DateTime?)item.Fecha + item.Cierre);
             }
 
             foreach (DataRow row in dataTable.Rows)
@@ -316,27 +316,43 @@ namespace RestoApp
         private void CargarPedido()
         {
             //TODO: LLAMADO A DB PARA OBTENER ESTADO DE PEDIDOS
+            List<Pedido> pedidos = (List<Pedido>)Session["Pedidos"];
 
-            var dataTable = new DataTable();
-            dataTable.Columns.Add("Mesa", typeof(int));
-            dataTable.Columns.Add("PedidoComida", typeof(string));
-            dataTable.Columns.Add("Apertura", typeof(DateTime));
-            dataTable.Columns.Add("Cierre", typeof(DateTime));
+            //Ordenar los pedidos por mesa para que aparezcan en orden en el listado
+            List<Servicio> servicios = (List<Servicio>)Helper.Session.GetServicios();
 
-            // Agregar filas al DataTable de forma individual
-            dataTable.Rows.Add(1, "Hamburguesa", DateTime.Now, DateTime.Now);
-            dataTable.Rows.Add(1, "Pizza", DateTime.Now, DateTime.Now);
-            dataTable.Rows.Add(2, "Sushi", DateTime.Now, System.DBNull.Value);
-            dataTable.Rows.Add(3, "Ensalada", DateTime.Now, DateTime.Now);
-            dataTable.Rows.Add(5, "Pasta", DateTime.Now, DateTime.Now);
-            dataTable.Rows.Add(6, "Tacos", DateTime.Now, System.DBNull.Value);
+			var dataTable = new DataTable();
+
+			dataTable.Columns.Add("Mesa", typeof(int));
+			dataTable.Columns.Add("PedidoComida", typeof(string));
+			dataTable.Columns.Add("Actualización", typeof(DateTime));
+			dataTable.Columns.Add("Estado", typeof(string));
+
+
+			foreach (Servicio itemServicio in servicios)
+            {
+                foreach(Pedido itemPedido in pedidos)
+                {
+                    if(itemServicio.Id == itemPedido.IdServicio)
+                    {
+                        foreach(ProductoPorPedido itemProducto in itemPedido.Productossolicitados)
+                        {
+                            dataTable.Rows.Add((int)itemServicio.Mesa, (string)itemProducto.Productodeldia.Nombre, (DateTime)itemPedido.ultimaactualizacion, (string)itemPedido.EstadoDescripcion);
+
+                        }
+                    }
+                }
+            }
+
+			//Tener en cuenta todos los distintos estados.
+			//Pensar hasta qué punto ponerlos. Entregado no iría... pero debería haber un historial del día para saber qué pasó con el pedido
 
             foreach (DataRow row in dataTable.Rows)
             {
-                int numero = (int)row["Mesa"];
-                string mesero = (string)row["PedidoComida"];
-                DateTime apertura = (DateTime)row["Apertura"];
-                DateTime? cierre = row["Cierre"] == System.DBNull.Value ? null : (DateTime?)row["Cierre"];
+                int mesa = (int)row["Mesa"];
+                string pedidocomida = (string)row["PedidoComida"];
+				DateTime actualizacion = (DateTime)row["Actualización"];
+				string estado = (string)row["Estado"];
             }
 
             // Enlazar el DataTable al DataGrid
@@ -978,7 +994,7 @@ namespace RestoApp
             List<Servicio> ListaServicios = (Helper.Session.GetServicios());
 
             PedidoNegocio PNAux = new PedidoNegocio();
-                List<Pedido> Pedidos = PNAux.ListarPedidos();
+            List<Pedido> Pedidos = PNAux.ListarPedidos();
 
             List<Pedido> PedidosAux = new List<Pedido>();
 
@@ -986,35 +1002,33 @@ namespace RestoApp
             if (ListaServicios.Count > 0) {
                 // Comento validacion para trabajar en front
                 //   ListaServicios = ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
-
-            //Aca ya están los servicios guardados
-            //
-
-            
-
-            foreach (Pedido Pedido in Pedidos)
-            {
-                bool esPedidoEnCurso = false;
-                
-                foreach (Servicio Servicio in ListaServicios)
+      
+                foreach (Pedido Pedido in Pedidos)
                 {
-                    if (Servicio.Id == Pedido.IdServicio)
+                    bool esPedidoEnCurso = false;
+                
+                    foreach (Servicio Servicio in ListaServicios)
                     {
-                        esPedidoEnCurso = true;
+                        if (Servicio.Id == Pedido.IdServicio)
+                        {
+                            esPedidoEnCurso = true;
+                        }
+
+                    }
+
+                    if(esPedidoEnCurso!=false) { 
+                        PedidosAux.Add(Pedido);
                     }
 
                 }
-
-                if(esPedidoEnCurso!=false) { 
-                    PedidosAux.Add(Pedido);
-                }
-
-            }
             }
 
             RepeaterPedidosEnCurso.DataSource = PedidosAux;
             RepeaterPedidosEnCurso.DataBind();
-        }
+
+			//Guardo Session de PedidosAux para vista de Gerente
+			Session["Pedidos"] = PedidosAux;
+		}
 
         protected void RepeaterPedidosEnCurso_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
