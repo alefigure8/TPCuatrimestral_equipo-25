@@ -41,15 +41,10 @@ namespace RestoApp
 					//Guardamos usuario en session
 					Session[Configuracion.Session.Usuario] = usuario;
 					//Redirigimos a Panel
-					if (usuario.Tipo == ColumnasDB.TipoUsuario.Cocinero)
-					{
-						Response.Redirect(Configuracion.Pagina.Cocina, false);
 
-					}
-					else
-					{
+					
 						Response.Redirect(Configuracion.Pagina.Main, false);
-					}
+					
 
 
 					Session.Add("IdUsuario", usuario.Id);

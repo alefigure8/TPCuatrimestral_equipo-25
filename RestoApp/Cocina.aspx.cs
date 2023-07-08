@@ -16,19 +16,24 @@ using Helper;
 using System.Diagnostics.Eventing.Reader;
 
 
+
 namespace RestoApp
 {
     public partial class Cocina : System.Web.UI.Page
     {
         public DateTime Reloj { get; set; }
-
+        public Usuario usuario { get; set; }
         public List<Pedido> Pedidossolicitados{ get; set; }
         public List<Pedido> Pedidosenpreparacion { get; set; }
         public List<FilasxColumnasxTiempoCoccion> ListaFxCxT { get; set; }
-
+        
+        public List<ProductoPorPedido> Productosenpreparacion { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
+                usuario = (Usuario)Session[Configuracion.Session.Usuario];
+
 
             if (!IsPostBack)
             {
@@ -36,25 +41,21 @@ namespace RestoApp
                 Reloj = DateTime.Now;
                 Session.Add("Reloj", Reloj);
                 creardatatable();
+                CrearDataTableProductosEnPreparacion();
 
             }
-            ActualizarPedidosEnCocina();
+            ActualizarSolicitadosenDB();
             Listarpedidosenpreparacion();
-            if (IsPostBack) { 
-            CargarPedidosaDataTable();
-            }
+            ActualizarDGVCocina();
+            ActualizarDGVProductosenPreparacion();
+
+
         }
 
 
-         public string InvertirFecha(DateTime fechaactualizacion)
-            {
-            string fecha = fechaactualizacion.Month.ToString("00") + "/" + fechaactualizacion.Day.ToString("00") + "/" + fechaactualizacion.Year.ToString("0000"); 
-                    
-               return fecha;
-          }
 
 
-        public void ActualizarPedidosEnCocina()
+        public void ActualizarSolicitadosenDB()
         {
 
             Pedidosenpreparacion = new List<Pedido>();
@@ -101,12 +102,14 @@ namespace RestoApp
         }
 
 
-        public int Listarpedidosenpreparacion()
+
+        public void Listarpedidosenpreparacion()
         {
 
             Pedidosenpreparacion = new List<Pedido>();
             PedidoNegocio pedidoNegocio = new PedidoNegocio();
             Pedidosenpreparacion = pedidoNegocio.ListarPedidos();
+            Productosenpreparacion = new List<ProductoPorPedido>();
 
             // VALIDAR QUE SEAN DE HOY Y ESTEN EN ESTADO SOLICITADO
             foreach (Pedido pedido in Pedidosenpreparacion.ToList())
@@ -133,23 +136,73 @@ namespace RestoApp
                     {
                         Pedidosenpreparacion.Remove(pedido);
                     }
-
+                    
                 }
 
             }
-
-            int cantidad = Pedidosenpreparacion.Count();
+         
             Session.Add("Pedidosenpreparacion", Pedidosenpreparacion);
-            Session.Add("Cantidad", Pedidossolicitados.Count());
+        
+                      
+        }
 
-            return cantidad;
-            // AGREGAR LISTA A SESION
-          
+        public DataTable CrearDataTableProductosEnPreparacion()
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Producto", typeof(string));
+            dataTable.Columns.Add("EnPreparacion", typeof(int));
+            Session.Add("DTProductosenpreparacion", dataTable);
+            return dataTable;
+
+        }
+
+        public DataTable CrearDataTableEstadoPedidos()
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Pedido", typeof(string));
+            dataTable.Columns.Add("Estado", typeof(int));
+            dataTable.Columns.Add("HoraFin", typeof(string));
+            Session.Add("DTEstadoPedidos", dataTable);
+            return dataTable;
         }
 
 
 
 
+        public void ActualizarDGVProductosenPreparacion()
+        {
+            // RECUPERA DATATABLE CREADA
+            DataTable dataTable = (DataTable)Session["DTProductosenpreparacion"];
+            
+            //CARGAMOS ALGO EN SESSION PARA QUE NO SE NULO LA LISTA EN EL PRIMER LOAD
+            if (Session["Productosenpreparacion"] == null)
+            {
+               Productosenpreparacion = new List<ProductoPorPedido>();
+               Session.Add("Productosenpreparacion", Productosenpreparacion);
+            }
+
+            PedidoNegocio pedidoNegocio = new PedidoNegocio();
+            Productosenpreparacion = pedidoNegocio.Listarproductosenpreparacion();
+
+            // SI LA LISTA DE LA DB ES DISTINA DE LA LISTA DE SESSION SE ACTUALIZA DATATABLE Y LA LISTA DE SESSION
+             if (Productosenpreparacion.ToList() != ((List<ProductoPorPedido>)Session["Productosenpreparacion"]).ToList())
+                {
+                    dataTable.Rows.Clear();
+                    foreach (ProductoPorPedido pxp in Productosenpreparacion)
+                    {
+                        DataRow filaNueva = dataTable.NewRow();
+                        filaNueva[0] = pxp.Productodeldia.Nombre;
+                        filaNueva[1] = pxp.Cantidad;
+                        dataTable.Rows.Add(filaNueva);
+                    }
+                    Session.Add("Productosenpreparacion", Productosenpreparacion);
+                }
+
+                Session.Add("DTProductosenpreparacion", dataTable);
+                GVDProductosenprep.DataSource = dataTable;
+                GVDProductosenprep.DataBind();
+            
+        }
 
 
         public DataTable creardatatable()
@@ -164,6 +217,114 @@ namespace RestoApp
 
         }
 
+
+
+
+
+        public void ActualizarDGVCocina()
+        {
+            // RECUPERA DATATABLE CREADA DE SESION
+            DataTable dataTable = (DataTable)Session["datatable"];
+            // RECUPERA LISTA DE PEDIDOS EN PREPARACION
+            Pedidosenpreparacion = Session["Pedidosenpreparacion"] as List<Pedido>;
+
+            // RECUPERA LISTA DE FILAS POR COLUMNA POR TIEMPO DE COCCION
+            List<FilasxColumnasxTiempoCoccion> filasxColumnasxTiempoCoccions = Session["ListaFxCxT"] as List<FilasxColumnasxTiempoCoccion>;
+
+            PedidoNegocio pedidoNegocio = new PedidoNegocio();
+
+
+            // RECORRE LISTA DE PEDIDOS EN PREPARACION
+            foreach (var pedido in Pedidosenpreparacion.ToList())
+            {
+               // VALIDA QUE SE ENCUENTRE EN EL HORARIO ACTUAL
+                if (horarios().Contains(HoraToString(pedido.ultimaactualizacion)))
+                {
+                    // VALIDA QUE NO HAYA SIDO PROCESADO Y QUE ESTE EN PREPARACION
+                    if (pedido.Estado == Estados.EnPreparacion && !PedidoYaProcesado(pedido.Id))
+                    {
+                        // BUSCA EL PRODUCTO DENTRO DEL PEDIDO QUE TENGA MAYOR TIEMPO DE COCCION
+                        int CasillerosMaxTiempoCoccion = 0;
+                        foreach (ProductoPorPedido producto in pedido.Productossolicitados)
+                        {
+                            if (CasillerosMaxTiempoCoccion < CantidadCasilleros(producto.Productodeldia.TiempoCoccion))
+                            {
+                                CasillerosMaxTiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
+                            }
+                        }
+                        
+                        foreach (ProductoPorPedido producto in pedido.Productossolicitados)
+                        {
+                            // CALCULA EL AJUSTE DE COLUMNA SEGUN EL TIEMPO DE COCCION DEL PRODUCTO
+                            int TiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
+                            int Ajuste = ajusteportiempomaximopedido(TiempoCoccion, CasillerosMaxTiempoCoccion);
+                        
+                            // AGREGA FILA POR CADA PRODUCTO DEL PEDIDO
+                            DataRow filaNueva = dataTable.NewRow();
+                            filaNueva[Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion))] = "#" + pedido.Id;
+                            filaNueva[Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion)) + 1] = producto.Productodeldia.Nombre;
+                            filaNueva[Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion)) + 2] = "C:" + producto.Cantidad;
+                            dataTable.Rows.Add(filaNueva);
+
+
+                            // GUARDA EN DATOS LA FILA POR COLUMNA POR TIEMPO DE COCCION PARA LUEGO PINTARLA
+                            FilasxColumnasxTiempoCoccion filasxColumnasxTiempoCoccion = new FilasxColumnasxTiempoCoccion();
+                            filasxColumnasxTiempoCoccion.Fila = dataTable.Rows.IndexOf(filaNueva);
+                            filasxColumnasxTiempoCoccion.Columna = Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion));
+                            filasxColumnasxTiempoCoccion.TiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
+                            filasxColumnasxTiempoCoccion.idPedido = pedido.Id;
+
+                            // GUARDA EN SESION LA FILA POR COLUMNA POR TIEMPO DE COCCION
+                            if (Session["ListaFxCxT"] == null)
+                            {
+                                List<FilasxColumnasxTiempoCoccion> ListaFxCxT = new List<FilasxColumnasxTiempoCoccion>();
+                                ListaFxCxT.Add(filasxColumnasxTiempoCoccion);
+                                Session.Add("ListaFxCxT", ListaFxCxT);
+                            }
+                            else
+                            {
+                                ListaFxCxT = Session["ListaFxCxT"] as List<FilasxColumnasxTiempoCoccion>;
+                                ListaFxCxT.Add(filasxColumnasxTiempoCoccion);
+                                Session.Add("ListaFxCxT", ListaFxCxT);
+                            }
+                        }
+                    }
+                }
+            }
+            // ACTUALIZA DATAGRIDVIEW COCINA
+            Session.Add("datatable", dataTable);
+            GVDCocina.DataSource = dataTable;
+            GVDCocina.DataBind();
+        }
+
+
+
+        public string InvertirFecha(DateTime fechaactualizacion)
+        {
+            string fecha = fechaactualizacion.Month.ToString("00") + "/" + fechaactualizacion.Day.ToString("00") + "/" + fechaactualizacion.Year.ToString("0000");
+
+            return fecha;
+        }
+
+        private bool PedidoYaProcesado(int pedidoId)
+        {
+            List<FilasxColumnasxTiempoCoccion> ListaFxCxT = Session["ListaFxCxT"] as List<FilasxColumnasxTiempoCoccion>;
+            if (ListaFxCxT == null)
+            {
+                return false;
+            }
+
+            foreach (var item in ListaFxCxT)
+            {
+                if (item.idPedido == pedidoId)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public List<String> horarios()
         {
 
@@ -175,8 +336,10 @@ namespace RestoApp
             {
                 return horarios11a16();
             }
-
-
+            else if (DateTime.Now.Hour >= 16 && DateTime.Now.Hour < 19)
+            {
+                return horarios16a19();
+            }
             else if (DateTime.Now.Hour >= 19 && DateTime.Now.Hour < 24)
             {
                 return horarios19a00();
@@ -196,7 +359,73 @@ namespace RestoApp
             Txtreloj.Text = Reloj.ToString("HH:mm");
             Session.Add("Reloj", Reloj);
         }
+        protected void GVDCocina_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            Reloj= (DateTime)Session["Reloj"];
+            int Indicecolumnahora = IndiceColumna(HoraToString(Reloj));
+            // AGREGO BORDE DERECHO A CADA CELDA PARA GENERA LINEAS VERTICALES
+            if (e.Row.RowType == DataControlRowType.DataRow)
+        {
+            foreach (TableCell cell in e.Row.Cells)
+            {
+                cell.Style["border-right"] = "1px solid #565d63";
+            }
+        }
 
+
+        // PINTO DE COLOR AZUL LAS CELDAS QUE CORRESPONDEN A UN PEDIDO
+        ListaFxCxT = Session["ListaFxCxT"] as List<FilasxColumnasxTiempoCoccion>;
+            if (Session["ListaFxCxT"] != null)
+            {
+                foreach (var item in ListaFxCxT)
+                {
+                    if (e.Row.RowIndex == item.Fila)
+                    {
+                        for (int i = item.Columna; i < item.Columna + item.TiempoCoccion; i++)
+                        {
+                            if (i > Indicecolumnahora) {
+                                if (i == item.Columna + 1)
+                                {
+
+                                    e.Row.Cells[i].Style["font-size"] = "10px"; // Cambiar el tamaño del texto a 14 píxeles
+
+
+                                }
+                                e.Row.Cells[i].BackColor = Color.LightBlue;
+                            e.Row.Cells[i].Style["text-align"] = "center";
+                            e.Row.Cells[i].Style["border-right"] = "none";
+                                e.Row.Cells[i].Style["padding"] = "0px";
+                              }
+                              else if (i <= Indicecolumnahora)
+                           {
+
+                            e.Row.Cells[i].BackColor = Color.LightPink;
+
+                            }
+                        }
+                        
+                                            
+
+                    }
+                }
+            }
+                      
+           
+        }
+
+    
+        public List<string> horarios16a19()
+        {
+            string[] horariosdia = {
+                "16:00", "16:05", "16:10", "16:15", "16:20", "16:25", "16:30", "16:35", "16:40", "16:45",
+                "16:50", "16:55", "17:00", "17:05", "17:10", "17:15", "17:20", "17:25", "17:30", "17:35",
+                "17:40", "17:45", "17:50", "17:55", "18:00", "18:05", "18:10", "18:15", "18:20", "18:25",
+                "18:30", "18:35", "18:40", "18:45", "18:50", "18:55", "19:00", "19:05", "19:10", "19:15",
+            };
+
+            List<string> listaHorarios = new List<string>(horariosdia);
+            return listaHorarios;
+        }
         public List<string> horarios7a12()
         {
             string[] horariosdia = {
@@ -275,9 +504,6 @@ namespace RestoApp
             return indice;
         }
 
-
-
-
         public int CantidadCasilleros(TimeSpan? TiempoCoccion)
         {
 
@@ -292,9 +518,9 @@ namespace RestoApp
             return casilleros;
         }
 
-       public int ajusteportiempomaximopedido(int Tiempococcion, int Tiempomaximo)
+        public int ajusteportiempomaximopedido(int Tiempococcion, int Tiempomaximo)
         {
-            if(Tiempococcion == Tiempomaximo)
+            if (Tiempococcion == Tiempomaximo)
             {
                 return 0;
             }
@@ -309,141 +535,10 @@ namespace RestoApp
 
         }
 
-        public void CargarPedidosaDataTable()
+        protected void GVDEstadopedidos_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            DataTable dataTable = (DataTable)Session["datatable"];
-            Pedidosenpreparacion = Session["Pedidosenpreparacion"] as List<Pedido>;
-            List<FilasxColumnasxTiempoCoccion> filasxColumnasxTiempoCoccions = Session["ListaFxCxT"] as List<FilasxColumnasxTiempoCoccion>;
 
-            PedidoNegocio pedidoNegocio = new PedidoNegocio();
-
-            foreach (var pedido in Pedidosenpreparacion.ToList())
-            {
-                if (horarios().Contains(HoraToString(pedido.ultimaactualizacion)))
-                {
-                    if (pedido.Estado == Estados.EnPreparacion && !PedidoYaProcesado(pedido.Id))
-                    {
-                        int CasillerosMaxTiempoCoccion = 0;
-                        foreach (ProductoPorPedido producto in pedido.Productossolicitados)
-                        {
-                            if (CasillerosMaxTiempoCoccion < CantidadCasilleros(producto.Productodeldia.TiempoCoccion))
-                            {
-                                CasillerosMaxTiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
-                            }
-                        }
-
-                        foreach (ProductoPorPedido producto in pedido.Productossolicitados)
-                        {
-                            int TiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
-                            int Ajuste = ajusteportiempomaximopedido(TiempoCoccion, CasillerosMaxTiempoCoccion);
-                            DataRow filaNueva = dataTable.NewRow();
-                            filaNueva[Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion))] = "#" + pedido.Id;
-                            filaNueva[Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion)) + 1] = producto.Productodeldia.Nombre;
-                            filaNueva[Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion)) + 2] = "C:" + producto.Cantidad;
-                            dataTable.Rows.Add(filaNueva);
-
-                            FilasxColumnasxTiempoCoccion filasxColumnasxTiempoCoccion = new FilasxColumnasxTiempoCoccion();
-                            filasxColumnasxTiempoCoccion.Fila = dataTable.Rows.IndexOf(filaNueva);
-                            filasxColumnasxTiempoCoccion.Columna = Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion));
-                            filasxColumnasxTiempoCoccion.TiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
-                            filasxColumnasxTiempoCoccion.idPedido = pedido.Id;
-
-                            if (Session["ListaFxCxT"] == null)
-                            {
-                                List<FilasxColumnasxTiempoCoccion> ListaFxCxT = new List<FilasxColumnasxTiempoCoccion>();
-                                ListaFxCxT.Add(filasxColumnasxTiempoCoccion);
-                                Session.Add("ListaFxCxT", ListaFxCxT);
-                            }
-                            else
-                            {
-                                ListaFxCxT = Session["ListaFxCxT"] as List<FilasxColumnasxTiempoCoccion>;
-                                ListaFxCxT.Add(filasxColumnasxTiempoCoccion);
-                                Session.Add("ListaFxCxT", ListaFxCxT);
-                            }
-                        }
-                    }
-                }
-            }
-
-            Session.Add("datatable", dataTable);
-            GVDCocina.DataSource = dataTable;
-            GVDCocina.DataBind();
         }
-
-        private bool PedidoYaProcesado(int pedidoId)
-        {
-            List<FilasxColumnasxTiempoCoccion> ListaFxCxT = Session["ListaFxCxT"] as List<FilasxColumnasxTiempoCoccion>;
-            if (ListaFxCxT == null)
-            {
-                return false;
-            }
-
-            foreach (var item in ListaFxCxT)
-            {
-                if (item.idPedido == pedidoId)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-
-
-
-
-
-
-        protected void GVDCocina_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            Reloj= (DateTime)Session["Reloj"];
-            int Indicecolumnahora = IndiceColumna(HoraToString(Reloj));
-            // AGREGO BORDE DERECHO A CADA CELDA PARA GENERA LINEAS VERTICALES
-            if (e.Row.RowType == DataControlRowType.DataRow)
-        {
-            foreach (TableCell cell in e.Row.Cells)
-            {
-                cell.Style["border-right"] = "1px solid #565d63";
-            }
-        }
-
-
-        // PINTO DE COLOR AZUL LAS CELDAS QUE CORRESPONDEN A UN PEDIDO
-        ListaFxCxT = Session["ListaFxCxT"] as List<FilasxColumnasxTiempoCoccion>;
-            if (Session["ListaFxCxT"] != null)
-            {
-                foreach (var item in ListaFxCxT)
-                {
-                    if (e.Row.RowIndex == item.Fila)
-                    {
-                        for (int i = item.Columna; i < item.Columna + item.TiempoCoccion; i++)
-                        {
-                            if (i > Indicecolumnahora) { 
-                                e.Row.Cells[i].BackColor = Color.LightBlue;
-                            e.Row.Cells[i].Style["text-align"] = "center";
-                            e.Row.Cells[i].Style["border-right"] = "none"; 
-                              }
-                              else if (i <= Indicecolumnahora)
-                           {
-
-                            e.Row.Cells[i].BackColor = Color.LightPink;
-
-                            }
-                        }
-                        
-                                            
-
-                    }
-                }
-            }
-                      
-           
-        }
-              
-
-    
-
     }
 }
 

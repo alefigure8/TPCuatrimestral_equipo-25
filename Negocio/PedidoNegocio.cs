@@ -97,7 +97,42 @@ namespace Negocio
             return idpedido;
         }
 
-      
+        public List<ProductoPorPedido> Listarproductosenpreparacion()
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            List<ProductoPorPedido> listaproductosenpreparacion = new List<ProductoPorPedido>();
+
+            try
+            {
+                AccesoDB.setQuery(
+                    $"select P.Nombre, sum(PxP.Cantidad) as Cantidad from PRODUCTO_X_PEDIDO PxP join ESTADO_X_PEDIDO ExP on PxP.IdPedido = ExP.IdPedido " +
+                    $"join PRODUCTOS P on P.IdProducto = PxP.IdProductopordia group by P.Nombre, ExP.IdEstado having ExP.IdEstado = 2");
+
+                AccesoDB.executeReader();
+
+                while (AccesoDB.Reader.Read())
+                {
+                    ProductoPorPedido aux = new ProductoPorPedido();
+                    aux.Productodeldia.Nombre = (string)AccesoDB.Reader[ColumnasDB.Producto.Nombre];
+                    aux.Cantidad = (Int32)AccesoDB.Reader[ColumnasDB.ProductoPorPedido.Cantidad];
+                    listaproductosenpreparacion.Add(aux);
+                }
+
+                return listaproductosenpreparacion;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+
+
+        }
+
+
 
             public List<ProductoPorPedido> ListarProductosPorPedido(int IdPedido)
         {
@@ -188,6 +223,99 @@ namespace Negocio
 
         }
 
+
+
+        public List<Pedido> ListarPedidos(int estado1,int estado2)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            List<Pedido> listapedidos = new List<Pedido>();
+               
+
+            try
+            {
+                AccesoDB.setQuery($"SELECT P.{ColumnasDB.Pedido.Id} "+
+                $", P.{ColumnasDB.Pedido.IdServicio} " +                                                    
+                $", E.{ColumnasDB.Estados.Id} " +
+                $", E.{ColumnasDB.Estados.Descripcion} " +  
+               $", ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} " +
+                 $" FROM {ColumnasDB.Pedido.DB} P " +
+                 $" JOIN {ColumnasDB.EstadosxPedido.DB} ExP ON P.{ColumnasDB.Pedido.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido} " +
+                $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +                              
+                $" WHERE ExP.{ColumnasDB.EstadosxPedido.IdEstado} in (  {estado1}, {estado2})"
+                                                                                                                                                                                               );
+
+                AccesoDB.executeReader();
+                
+                while (AccesoDB.Reader.Read())
+                {
+                    Pedido aux = new Pedido();
+                    aux.Id = (Int32)AccesoDB.Reader[ColumnasDB.Pedido.Id];
+                    aux.IdServicio = (Int32)AccesoDB.Reader[ColumnasDB.Pedido.IdServicio];
+                    aux.Estado = (Int32)AccesoDB.Reader[ColumnasDB.Estados.Id];
+                    aux.EstadoDescripcion = (string)AccesoDB.Reader[ColumnasDB.Estados.Descripcion];
+                    aux.ultimaactualizacion = (DateTime)AccesoDB.Reader[ColumnasDB.EstadosxPedido.FechaActualizacion];
+                    aux.Productossolicitados = ListarProductosPorPedido(aux.Id);
+                    listapedidos.Add(aux);
+                }
+
+                return listapedidos;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+        }
+
+
+        public List<Pedido> ListarPedidos(int estado1)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            List<Pedido> listapedidos = new List<Pedido>();
+
+
+            try
+            {
+                AccesoDB.setQuery($"SELECT P.{ColumnasDB.Pedido.Id} " +
+                $", P.{ColumnasDB.Pedido.IdServicio} " +
+                $", E.{ColumnasDB.Estados.Id} " +
+                $", E.{ColumnasDB.Estados.Descripcion} " +
+               $", ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} " +
+                 $" FROM {ColumnasDB.Pedido.DB} P " +
+                 $" JOIN {ColumnasDB.EstadosxPedido.DB} ExP ON P.{ColumnasDB.Pedido.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido} " +
+                $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
+
+                $" WHERE ExP.{ColumnasDB.EstadosxPedido.IdEstado} =  {estado1} "
+                                                                                                                                                                                               );
+
+                AccesoDB.executeReader();
+
+                while (AccesoDB.Reader.Read())
+                {
+                    Pedido aux = new Pedido();
+                    aux.Id = (Int32)AccesoDB.Reader[ColumnasDB.Pedido.Id];
+                    aux.IdServicio = (Int32)AccesoDB.Reader[ColumnasDB.Pedido.IdServicio];
+                    aux.Estado = (Int32)AccesoDB.Reader[ColumnasDB.Estados.Id];
+                    aux.EstadoDescripcion = (string)AccesoDB.Reader[ColumnasDB.Estados.Descripcion];
+                    aux.ultimaactualizacion = (DateTime)AccesoDB.Reader[ColumnasDB.EstadosxPedido.FechaActualizacion];
+                    aux.Productossolicitados = ListarProductosPorPedido(aux.Id);
+                    listapedidos.Add(aux);
+                }
+
+                return listapedidos;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+        }
 
         public void CambiarEstadoPedido(int idpedido, int nuevoestado)
         {

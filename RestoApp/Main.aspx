@@ -91,6 +91,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Tabla servicios abiertos-->
         <div class="col-5 mt-3">
             <div class="bg-gray-100 p-5 rounded border-1">
                 <h4>Mesas Estado</h4>
@@ -111,18 +113,22 @@
                 </asp:DataGrid>
             </div>
         </div>
+        <!-- Fin Tabla servicios abiertos-->
+        <!-- Tabla Pedidos abiertos-->
         <div class="col-5 mt-3">
             <div class="bg-gray-100 p-5 rounded border-1">
                 <h4>Pedidos Estado</h4>
+
                 <asp:DataGrid ID="datagridPedidos" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
                     <Columns>
                         <asp:BoundColumn DataField="Mesa" HeaderText="Mesa" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
                         <asp:BoundColumn DataField="PedidoComida" HeaderText="Pedido de Comida" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-                        <asp:BoundColumn DataField="Apertura" HeaderText="Apertura" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-                        <asp:BoundColumn DataField="Cierre" HeaderText="Cierre" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                        <asp:BoundColumn DataField="Actualización" HeaderText="Actualizacion" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                        <asp:BoundColumn DataField="Estado" HeaderText="Estado" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+
                         <asp:TemplateColumn HeaderText="Estado">
                             <ItemTemplate>
-                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
+                                <%# (string)Eval("Estado") != "Listo para entregar"  ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
                             </ItemTemplate>
                             <ItemStyle CssClass="bg-light p-2 rounded" />
                             <HeaderStyle CssClass="bg-light p-2 rounded" />
@@ -132,6 +138,7 @@
 
             </div>
         </div>
+        <!-- Fin Tabla Pedidos abiertos-->
         <% } %>
 
         <!-- VISTA MESERO -->
@@ -838,6 +845,20 @@
             contenidoModal.innerHTML = `<p>${msg}</p>` 
         }
 
+        function alertaModal(msg, mode) {
+            console.log(msg, mode)
+            modalTitulo.textContent = "Mensaje";
+            modal.style.display = "block";
+            contenidoModal.innerHTML = "";
+
+            if (mode == "error") {
+                contenidoModal.innerHTML = `<p class="text-danger">${msg}</p>`
+            } else {
+                contenidoModal.innerHTML = `<p class="text-success">${msg}</p>`
+            }
+
+        }
+
         //Evento botones Mesero
         function eventoBotones(i, mesa, isDisabled, servicio) {
 
@@ -875,7 +896,7 @@
 
             //Evento para abrir y cerrar servicios
             btnServicio.addEventListener('click', (e) => {
-                console.log(isDisabled)
+
                 if (isDisabled) {
                     let data = [{ mesa: mesa }];
                     mandarDatos('Main', 'CerrarServicio', data, e)
@@ -883,6 +904,7 @@
                     let data = [{ mesa: mesa }];
                     mandarDatos('Main', 'AbrirServicio', data, e)
                 }
+
             })
 
             //Evento para abrir pedidos (se cierra desde lista de pedido)
@@ -932,8 +954,9 @@
             })
                 .then(response => response.json())
                 .then(result => {
-                    const { d } = result
-                    modalAlerta(d)
+                    //console.log(result)
+                    //const { d } = result
+                    //modalAlerta(d)
                 })
                 .catch(error => {
                     console.log(error)
