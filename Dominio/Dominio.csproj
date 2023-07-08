@@ -51,6 +51,7 @@
     <Compile Include="ProductoPorPedido.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servicio.cs" />
+    <Compile Include="Ticket.cs" />
     <Compile Include="TipoUsuarios.cs" />
     <Compile Include="Usuario.cs" />
   </ItemGroup>

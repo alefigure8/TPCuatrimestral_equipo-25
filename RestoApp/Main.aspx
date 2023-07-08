@@ -91,6 +91,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Tabla servicios abiertos-->
         <div class="col-5 mt-3">
             <div class="bg-gray-100 p-5 rounded border-1">
                 <h4>Mesas Estado</h4>
@@ -111,28 +113,32 @@
                 </asp:DataGrid>
             </div>
         </div>
+        <!-- Fin Tabla servicios abiertos-->
+        <!-- Tabla Pedidos abiertos-->
         <div class="col-5 mt-3">
             <div class="bg-gray-100 p-5 rounded border-1">
                 <h4>Pedidos Estado</h4>
+
                 <asp:DataGrid ID="datagridPedidos" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
                     <Columns>
                         <asp:BoundColumn DataField="Mesa" HeaderText="Mesa" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
                         <asp:BoundColumn DataField="PedidoComida" HeaderText="Pedido de Comida" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
                         <asp:BoundColumn DataField="Actualización" HeaderText="Actualizacion" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-                        <asp:BoundColumn DataField="Estado" HeaderText="Pedido de Comida" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                        <asp:BoundColumn DataField="Estado" HeaderText="Estado" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
 
-                      <%--  <asp:TemplateColumn HeaderText="Estado">
+                        <asp:TemplateColumn HeaderText="Estado">
                             <ItemTemplate>
-                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
+                                <%# (string)Eval("Estado") != "Listo para entregar"  ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
                             </ItemTemplate>
                             <ItemStyle CssClass="bg-light p-2 rounded" />
                             <HeaderStyle CssClass="bg-light p-2 rounded" />
-                        </asp:TemplateColumn>--%>
+                        </asp:TemplateColumn>
                     </Columns>
                 </asp:DataGrid>
 
             </div>
         </div>
+        <!-- Fin Tabla Pedidos abiertos-->
         <% } %>
 
         <!-- VISTA MESERO -->
@@ -196,27 +202,26 @@
                             <asp:Repeater runat="server" ID="RepeaterPedidosEnCurso" OnItemDataBound="RepeaterPedidosEnCurso_ItemDataBound">
                                 <ItemTemplate>
 
-                                    <div class="card p-3 m-1" style="display: inline-table; width:150px; height: 150px">
+                                    <div class="px-3 py-1 m-1" style="display: inline-table; width:150px; height: 80px">
 
                                       
-                                        <div class="row">
-                                           <label class="col small">
-                                          #<%#Eval("Id")%>
-                                          </label>
+                                        <asp:Panel runat="server" ID="PanelEstadoPedido" CssClass="row rounded-top align-items-center" style="height: 40px; font-weight: bold; font-size: .9rem;" title='<%#Eval("EstadoDescripcion")%>'>
+                                           <asp:Label runat="server" CssClass="col small" ID="lbNroPedido">#<%#Eval("Id")%></asp:Label>
                                           <asp:Label runat="server" ID="lbNroMesaPedido" CssClass="col small"></asp:Label>
-
-                                        </div>
+                                        </asp:Panel>
                                 
 
-                                        <asp:Label runat="server" class="row small card-footer" style="height: 50px; text-align: center; " ID="lbEstadoPedido" ToolTip='<%#Eval("EstadoDescripcion") %>'></asp:Label>
                                      
-                                        <asp:Label runat="server" ID="lbCantItemsPedido" CssClass="col small"></asp:Label>
+                                    <%--    <asp:Label runat="server" ID="lbCantItemsPedido" CssClass="col small"></asp:Label>--%>
+                    
 
-                                        <div class="row justify-content-between">
-                                            <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="btn btn-sm btn-dark" Text="Ver" ToolTip="Ver Detalle"/>
-                                         
+                                        <div class="row justify-content-between bg-dark rounded-bottom" >
+                                            <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="col btn btn-small btn-dark" style="font-size: .9rem" Text="Ver" ToolTip="Ver Detalle"/>
+                                         <asp:Button ID="Button1" runat="server" Text="Cerrar" CssClass="col btn btn-small btn-dark" style="font-size: .9rem" ToolTip="Marcar como entregado"/>
                                         </div>
 
+                                        
+                                      
                                 </div>
                                 </ItemTemplate>
                                 

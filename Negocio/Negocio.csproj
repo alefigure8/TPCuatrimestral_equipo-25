@@ -49,6 +49,7 @@
     <Compile Include="PedidoNegocio.cs" />
     <Compile Include="ProductoNegocio.cs" />
     <Compile Include="ServicioNegocio.cs" />
+    <Compile Include="TicketNegocio.cs" />
     <Compile Include="UsuarioNegocio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TipoUsuariosNegocio.cs" />
