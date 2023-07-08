@@ -16,12 +16,13 @@ using Helper;
 using System.Diagnostics.Eventing.Reader;
 
 
+
 namespace RestoApp
 {
     public partial class Cocina : System.Web.UI.Page
     {
         public DateTime Reloj { get; set; }
-
+        public Usuario usuario { get; set; }
         public List<Pedido> Pedidossolicitados{ get; set; }
         public List<Pedido> Pedidosenpreparacion { get; set; }
         public List<FilasxColumnasxTiempoCoccion> ListaFxCxT { get; set; }
@@ -30,6 +31,9 @@ namespace RestoApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
+                usuario = (Usuario)Session[Configuracion.Session.Usuario];
+
 
             if (!IsPostBack)
             {

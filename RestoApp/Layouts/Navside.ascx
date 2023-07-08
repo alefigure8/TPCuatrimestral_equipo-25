@@ -19,7 +19,7 @@
                 <%}
                     else
                     {  %>
-                  <a href="Cocina.aspx" class="nav-link active" aria-current="page">Inicio
+                  <a href="Cocina.aspx" class="nav-link active" aria-current="page">Cocina
                 </a>
                 <%} %>
             </li>
