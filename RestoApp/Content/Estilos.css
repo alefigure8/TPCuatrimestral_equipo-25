@@ -101,6 +101,14 @@ body {
     border: none !important;
 }
 
+.btn-rb-right{
+    border-bottom-right-radius: 5px !important;
+}
+
+.btn-rb-left{
+background-color: #000 !important;
+} 
+
 .gridview-style {
     border-collapse: collapse;
 }

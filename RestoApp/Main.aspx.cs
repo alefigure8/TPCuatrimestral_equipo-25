@@ -88,6 +88,8 @@ namespace RestoApp
 
 
                 tipoUsuario = Configuracion.Rol.Mesero;
+                CargarMeseros();
+                CargarDatosMesas();
                 CargarMenuDisponible();
                 CargarMeseroPorDia();
                 CargarMesasAsignadas();
@@ -104,6 +106,8 @@ namespace RestoApp
                 string script = " obtenerDatosMesasMesero().then(({ numeroMesas, numeroServicios }) => {renderMesaMesero(numeroMesas, numeroServicios); });";
                 ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
             }
+
+
 
 			ListarCategoriasProducto();
         }
@@ -145,8 +149,8 @@ namespace RestoApp
                     }
                 }
 
-                if (AutentificacionUsuario.esGerente(usuario))
-                {
+                //if (AutentificacionUsuario.esGerente(usuario))
+                //{
                     //Info de la mesa desde session
                     List<object> infoMesas = (List<object>)Session["infoMesas"];
 
@@ -163,7 +167,7 @@ namespace RestoApp
                             }
                         }
                     }
-                }
+                //}
 
                 //Guardamos en session
                 Helper.Session.SetServicios(serviciosSession);
@@ -186,9 +190,9 @@ namespace RestoApp
                     servicio.Add(auxServicioSession);
                 }
 
-                if (AutentificacionUsuario.esGerente(usuario))
-                {
-                    //Info de la mesa desde session
+                //if (AutentificacionUsuario.esGerente(usuario))
+                //{
+                //    //Info de la mesa desde session
                     List<object> infoMesas = (List<object>)Session["infoMesas"];
 
                     foreach (Servicio itemServicio in servicio)
@@ -202,7 +206,7 @@ namespace RestoApp
                             }
                         }
                     }
-                }
+                //}
 
                 //Guardamos en session
                 Helper.Session.SetServicios(servicio);
@@ -796,7 +800,6 @@ namespace RestoApp
 
                 }
 
-                ActualizarPedidos();
             }
 
         }
@@ -826,8 +829,6 @@ namespace RestoApp
                 Pedido Paux = new Pedido();
                 Paux.IdServicio = ((List<Servicio>)Session["Servicios"]).Find(x => x.Mesa == Helper.Session.GetNumeroMesaPedido()).Id;
                 Paux.Productossolicitados = ((List<ProductoPorPedido>)Session["ProductosPorPedido"]);
-
-
                 PedidoNegocio PNaux = new PedidoNegocio();
                 PNaux.AbrirPedido(Paux);
                 Session["ProductosPorPedido"] = null;
@@ -839,11 +840,6 @@ namespace RestoApp
                 string script = "alert('Para enviar un pedido primero agregue un producto');";
                 ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
             }
-            ActualizarPedidos();
-
-
-
-
         }
 
         protected void btnTerminarPedido_Click(object sender, EventArgs e)
@@ -856,8 +852,6 @@ namespace RestoApp
             btnTerminarPedido.Visible = false;
             lbNumeroMesa.Text = "SIN MESA SELECCIONADA";
             ActualizarPedidos();
-
-
 
         }
 
@@ -908,7 +902,7 @@ namespace RestoApp
                     ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
 
                 }
-                ActualizarPedidos();
+               
             }
         }
 
@@ -938,7 +932,7 @@ namespace RestoApp
             //busco servicios abiertos
             if (ListaServicios.Count > 0) {
                 // Comento validacion para trabajar en front
-                //   ListaServicios = ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
+                ListaServicios = ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
 
             //Aca ya están los servicios guardados
             //
@@ -951,7 +945,7 @@ namespace RestoApp
                 
                 foreach (Servicio Servicio in ListaServicios)
                 {
-                    if (Servicio.Id == Pedido.IdServicio)
+                    if (Servicio.Id == Pedido.IdServicio && Pedido.Estado != 5)
                     {
                         esPedidoEnCurso = true;
                     }
@@ -976,14 +970,15 @@ namespace RestoApp
             
             lbl.Text = "Mesa " + ((List<Servicio>)Session["Servicios"]).Find(x => x.Id == pedido.IdServicio).Mesa.ToString();
 
-            lbl = e.Item.FindControl("lbCantItemsPedido") as Label;
-            lbl.Text = pedido.Productossolicitados.Count().ToString() + " Items Pedidos";
+     //       lbl = e.Item.FindControl("lbCantItemsPedido") as Label;
+         // lbl.Text = pedido.Productossolicitados.Count().ToString() + " Items Pedidos";
 
-            lbl = e.Item.FindControl("lbEstadoPedido") as Label;
-            if(pedido.Estado == 1)
-            {
-                lbl.Text = "🔴";
-            }
+            Estados s = new Estados();
+
+
+            Panel panel = e.Item.FindControl("PanelEstadoPedido") as Panel;
+            panel.Style.Add("background", s.getColorEstado(pedido.Estado));
+            panel.Style.Add("cursor", "pointer");
 
         }
 	}

@@ -195,27 +195,26 @@
                             <asp:Repeater runat="server" ID="RepeaterPedidosEnCurso" OnItemDataBound="RepeaterPedidosEnCurso_ItemDataBound">
                                 <ItemTemplate>
 
-                                    <div class="card p-3 m-1" style="display: inline-table; width:150px; height: 150px">
+                                    <div class="px-3 py-1 m-1" style="display: inline-table; width:150px; height: 80px">
 
                                       
-                                        <div class="row">
-                                           <label class="col small">
-                                          #<%#Eval("Id")%>
-                                          </label>
+                                        <asp:Panel runat="server" ID="PanelEstadoPedido" CssClass="row rounded-top align-items-center" style="height: 40px; font-weight: bold; font-size: .9rem;" title='<%#Eval("EstadoDescripcion")%>'>
+                                           <asp:Label runat="server" CssClass="col small" ID="lbNroPedido">#<%#Eval("Id")%></asp:Label>
                                           <asp:Label runat="server" ID="lbNroMesaPedido" CssClass="col small"></asp:Label>
-
-                                        </div>
+                                        </asp:Panel>
                                 
 
-                                        <asp:Label runat="server" class="row small card-footer" style="height: 50px; text-align: center; " ID="lbEstadoPedido" ToolTip='<%#Eval("EstadoDescripcion") %>'></asp:Label>
                                      
-                                        <asp:Label runat="server" ID="lbCantItemsPedido" CssClass="col small"></asp:Label>
+                                    <%--    <asp:Label runat="server" ID="lbCantItemsPedido" CssClass="col small"></asp:Label>--%>
+                    
 
-                                        <div class="row justify-content-between">
-                                            <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="btn btn-sm btn-dark" Text="Ver" ToolTip="Ver Detalle"/>
-                                         
+                                        <div class="row justify-content-between bg-dark rounded-bottom" >
+                                            <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="col btn btn-small btn-dark" style="font-size: .9rem" Text="Ver" ToolTip="Ver Detalle"/>
+                                         <asp:Button ID="Button1" runat="server" Text="Cerrar" CssClass="col btn btn-small btn-dark" style="font-size: .9rem" ToolTip="Marcar como entregado"/>
                                         </div>
 
+                                        
+                                      
                                 </div>
                                 </ItemTemplate>
                                 
