@@ -240,9 +240,8 @@ namespace Negocio
                $", ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} " +
                  $" FROM {ColumnasDB.Pedido.DB} P " +
                  $" JOIN {ColumnasDB.EstadosxPedido.DB} ExP ON P.{ColumnasDB.Pedido.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido} " +
-                $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
-                              
-                $" WHERE ExP.{ColumnasDB.EstadosxPedido.IdEstado} =  {estado1} or {estado2}"
+                $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +                              
+                $" WHERE ExP.{ColumnasDB.EstadosxPedido.IdEstado} in (  {estado1}, {estado2})"
                                                                                                                                                                                                );
 
                 AccesoDB.executeReader();
