@@ -1,5 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Cocina.aspx.cs" Inherits="RestoApp.Cocina" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+
+
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
       
@@ -30,23 +32,29 @@
                     <RowStyle HorizontalAlign="Left" VerticalAlign="Middle" CssClass="small" />
     
      </asp:GridView>
-                 <asp:GridView ID="GVDEstadopedidos" runat="server" OnRowDataBound="GVDEstadopedidos_RowDataBound">
-
+    
+                 <asp:GridView ID="GVDEstadopedidos" runat="server"  OnRowCommand="GVDEstadopedidos_RowCommand">
+                                 
                            <HeaderStyle HorizontalAlign="Center" VerticalAlign="Middle" CssClass="small" />
                     <RowStyle HorizontalAlign="Left" VerticalAlign="Middle" CssClass="small" />
-           
+
              <Columns>
                               <asp:TemplateField>
+                                     <HeaderStyle HorizontalAlign="Right" />
+                                      <ItemStyle HorizontalAlign="Right" />
                             <ItemTemplate>
                                 <asp:LinkButton ID="InformarDemora" runat="server" class="btn btn-dark"  CommandName="InformarDemora" CommandArgument='<%# Container.DataItemIndex %>'><i class="fa-solid fa-clock-rotate-left fa-flip-horizontal"></i></i></asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
                  <asp:TemplateField>
+                        <HeaderStyle HorizontalAlign="Right" />
+            <ItemStyle HorizontalAlign="Right" />
                             <ItemTemplate>
                                 <asp:LinkButton ID="ListoparaEntregar" runat="server" class="btn btn-dark"  CommandName="ListoparaEntregar" CommandArgument='<%# Container.DataItemIndex %>' ><i class="fa-solid fa-check"></i></asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
+
      </asp:GridView>
 
 
