@@ -223,7 +223,7 @@ namespace Negocio
 
         }
 
-
+        /*
 
         public List<Pedido> ListarPedidos(int estado1,int estado2)
         {
@@ -269,7 +269,7 @@ namespace Negocio
                 AccesoDB.closeConnection();
             }
         }
-
+        */
 
         public List<Pedido> ListarPedidos(int estado1)
         {
@@ -287,8 +287,8 @@ namespace Negocio
                  $" FROM {ColumnasDB.Pedido.DB} P " +
                  $" JOIN {ColumnasDB.EstadosxPedido.DB} ExP ON P.{ColumnasDB.Pedido.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido} " +
                 $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
-
-                $" WHERE ExP.{ColumnasDB.EstadosxPedido.IdEstado} =  {estado1} "
+                $" WHERE ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id})"+
+                $" AND ExP.{ColumnasDB.EstadosxPedido.IdEstado} =  {estado1} "
                                                                                                                                                                                                );
 
                 AccesoDB.executeReader();
