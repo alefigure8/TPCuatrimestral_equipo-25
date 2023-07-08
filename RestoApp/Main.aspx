@@ -515,8 +515,13 @@
             }
 
             .bg-abierto{
-                background-color: #51cf66;
-                border-color: #51cf66;
+                background-color: #74b816;
+                border-color: #74b816;
+            }
+
+            .bg-cobrar{
+                background-color: #8fbcbb;
+                border-color: #8fbcbb;
             }
 
             .cursor-pointer{
@@ -715,10 +720,12 @@
             //Borramos lo que haya previamente
             sectionMesaMesero.innerHTML = "";
 
+
             for (i = 0; i < numeroMesas.length; i++) {
 
+                let servicio = numeroServicios.find(item => item?.mesa == numeroMesas[i].mesa)
 
-                const bgMesa = numeroServicios.some(item => item.mesa == numeroMesas[i].mesa) ? "bg-abierto" : "bg-warning"
+                const bgMesa = numeroServicios.some(item => item?.mesa == numeroMesas[i].mesa) ? "bg-abierto" : "bg-warning"
 
                 //Mesa
                 var mainDiv = document.createElement("div");
@@ -727,14 +734,18 @@
                 mainDiv.style.width = "150px";
 
                 var div1 = document.createElement("div");
-                div1.className = `${bgMesa} w-100 h-100 border rounded-circle border-dark-subtle p-1 cursor-pointer`;
+                div1.className = `${!servicio?.cierre && !servicio?.cobrado ? bgMesa : 'bg-cobrar'} w-100 h-100 border rounded-circle border-dark-subtle p-1 cursor-pointer`;
                 div1.id = "mesa_" + numeroMesas[i].mesa;
 
                 var div2 = document.createElement("div");
                 div2.className = "background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center";
 
                 var icon = document.createElement("i");
-                icon.className = "fa-solid fa-utensils fs-4";
+                if(!servicio?.cierre && !servicio?.cobrado)
+                    icon.className = "fa-solid fa-utensils fs-4";
+                else
+                    icon.className = "fa-solid fa-dollar fs-4";
+
 
                 div2.appendChild(icon);
                 div1.appendChild(div2);
@@ -770,7 +781,7 @@
                     contenidoModal.innerHTML += `
                 <div class="row d-flex flex-column justify-content-center gap-2 p-3 ms-3">
                     <div class="col d-flex gap-4">
-                        <button class="btnAbrirMeasa botonPedido" style="width: 150px; height: 150px;" id="btnAbrir_${i + 1}">
+                        <button class="${!servicio?.cierre && !servicio?.cobrado ? 'btnAbrirMeasa' : 'bg-muted'} botonPedido" style="width: 150px; height: 150px;" id="btnAbrir_${i + 1}">
                                 <div class="d-flex align-items-center justify-content-center">
                                     <i class="fa-solid fa-plus fs-1 text-white"></i>
                                 </div>
@@ -778,7 +789,7 @@
                                     <p class="fw-semibold">${textoMesaAbrirServicio}</p>
                                 </div>
                         </button>
-                        <button class="btn btnAbrirPedido botonPedido" style="width: 150px; height: 150px;" id="btnPedido_${i + 1}">
+                        <button class="${!servicio?.cierre && !servicio?.cobrado && servicio != null ? 'btnAbrirPedido' : 'bg-muted'} botonPedido" style="width: 150px; height: 150px;" id="btnPedido_${i + 1}">
                             <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-utensils fs-1 text-white"></i>
                             </div>
@@ -788,7 +799,7 @@
                         </button>
                     </div>
                     <div class="col d-flex gap-4 mt-3">
-                        <button class="btn btnPedidos botonPedido" style="width: 150px; height: 150px;" id="btnLista_${i + 1}">
+                        <button class="btnPedidos botonPedido" style="width: 150px; height: 150px;" id="btnLista_${i + 1}">
                             <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-list fs-1 text-white"></i>
                             </div>
@@ -796,7 +807,7 @@
                                 <p class="fw-semibold">Pedidos</p>
                             </div>
                         </button>
-                        <button class="btn btnTicket botonPedido" style="width: 150px; height: 150px;" id="btnTicket_${i + 1}">
+                        <button class="${!servicio?.cierre && !servicio?.cobrado && servicio != null ? 'bg-muted' : 'btnTicket'}  botonPedido " style="width: 150px; height: 150px;" id="btnTicket_${i + 1}">
                             <div class="d-flex align-items-center justify-content-center">
                                 <i class="fa-solid fa-dollar fs-1 text-white"></i>
                             </div>
@@ -809,7 +820,7 @@
                 `;
 
                     //Creamos los eventos de los botones
-                    eventoBotones(i, numeroDeMesa, isDisabled)
+                    eventoBotones(i, numeroDeMesa, isDisabled, servicio)
                 })
             }
         }
@@ -829,18 +840,43 @@
         }
 
         //Evento botones Mesero
-        function eventoBotones(i, mesa, isDisabled) {
+        function eventoBotones(i, mesa, isDisabled, servicio) {
 
             let btnServicio = document.getElementById(`btnAbrir_${i + 1}`);
-            //btnServicio.disabled = isDisabled;
-
             let btnPedido = document.getElementById(`btnPedido_${i + 1}`);
             let btnLista = document.getElementById(`btnLista_${i + 1}`);
             let btnTicket = document.getElementById(`btnTicket_${i + 1}`);
 
+            //Deshabilitamos botones según el caso
+            if(!servicio){
+                btnPedido.title = 'Pedido deshabilitado'
+                btnPedido.disabled = true;
+                btnPedido.classList.remove("btnAbrirPedido")
+                btnPedido.classList.add("bg-muted")
+                btnLista.title = 'Pedido deshabilitado'
+                btnLista.disabled = true;
+                btnLista.classList.remove("btnPedidos")
+                btnLista.classList.add("bg-muted")
+                btnTicket.title = 'Ticket deshabilitado'
+                btnTicket.disabled = true;
+                btnTicket.classList.remove("btnTicket")
+                btnTicket.classList.add("bg-muted")
+            } else {
+
+                if(servicio?.cierre != '' && servicio != null){
+                    btnServicio.disabled = true;
+                    btnServicio.title = 'Servicio deshabilitado'
+                    btnPedido.disabled = true;
+                    btnPedido.title = 'Pedido deshabilitado'
+                } else {
+                    btnTicket.disabled = true;
+                    btnTicket.title = 'Ticket deshabilitado'
+                }
+            }
+
             //Evento para abrir y cerrar servicios
             btnServicio.addEventListener('click', (e) => {
-                
+                console.log(isDisabled)
                 if (isDisabled) {
                     let data = [{ mesa: mesa }];
                     mandarDatos('Main', 'CerrarServicio', data, e)
@@ -870,9 +906,9 @@
             //Evento para mostrar ticket
             btnTicket.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log("Ticket")
                 //Mandamos datos a CodeBehind
-                //mandarDatos('Main', 'AbrirServicio')
+                 let data = [{ mesa: servicio?.mesa, servicio: servicio?.servicio }];
+                mandarDatos('Main', 'EmitirTicket', data, e)
                 //MOSTRAR TICKET. ¿LINK CON QUERY?
             })
 

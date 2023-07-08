@@ -81,13 +81,30 @@ namespace Negocio
 				try
 				{
 					//Buscamos ID de MesaPorDia con el número de Mesa y creamos el servicio
-					datos.setQuery($"DECLARE @IDMESAPORDIA BIGINT " +
-						$"SET @IDMESAPORDIA = ISNULL((SELECT {ColumnasDB.MesasPorDia.Id} FROM {ColumnasDB.MesasPorDia.DB} WHERE {ColumnasDB.MesasPorDia.IdMesa} = {mesa} AND CIERRE IS NULL ), 0); " +
-						$"IF @IDMESAPORDIA  > 0 " +
+					datos.setQuery(
+						//Buscamos si tiene servicio abierto
+						$"DECLARE @TIENESERVICIO INT = ( " +
+							$"SELECT count(*) " +
+							$"FROM {ColumnasDB.Servicio.DB} S " +
+							$"INNER JOIN {ColumnasDB.MesasPorDia.DB} M " +
+							$"ON S.{ColumnasDB.MesasPorDia.Id} = M.{ColumnasDB.MesasPorDia.Id} " +
+							$"WHERE S.{ColumnasDB.Servicio.Cierre} is null " +
+							$"And M.{ColumnasDB.Mesa.Numero} = {mesa} " +
+						$") " +
+
+						//Buscamos que la mesa tenga mesa por dia
+						$"DECLARE @IDMESAPORDIA BIGINT " +
+						$"SET @IDMESAPORDIA = ISNULL((SELECT {ColumnasDB.MesasPorDia.Id} " +
+						$"FROM {ColumnasDB.MesasPorDia.DB} " +
+						$"WHERE {ColumnasDB.MesasPorDia.IdMesa} = {mesa} " +
+						$"AND CIERRE IS NULL ), 0); " +
+
+						//Si tiene idmesapordia y la cantidad de servicios es 0, abrimos servicio
+						$"IF @IDMESAPORDIA  > 0 AND @TIENESERVICIO = 0" +
 						$"BEGIN " +
-						$"INSERT INTO SERVICIO ({ColumnasDB.MesasPorDia.Id}, {ColumnasDB.Servicio.Fecha}, {ColumnasDB.Servicio.Apertura}) " +
-						$"VALUES (@IDMESAPORDIA, '{DateTime.Now.ToString("yyyy - MM - dd")}', '{DateTime.Now.ToString("HH:mm:ss")}'); " +
-						$"SELECT CAST(scope_identity() AS int) " +
+							$"INSERT INTO SERVICIO ({ColumnasDB.MesasPorDia.Id}, {ColumnasDB.Servicio.Fecha}, {ColumnasDB.Servicio.Apertura}) " +
+							$"VALUES (@IDMESAPORDIA, '{DateTime.Now.ToString("yyyy - MM - dd")}', '{DateTime.Now.ToString("HH:mm:ss")}'); " +
+							$"SELECT CAST(scope_identity() AS int) " +
 						$"END");
 
 					return datos.executeScalar();
@@ -122,8 +139,8 @@ namespace Negocio
 					$" INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD" +
 					$" ON MPD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.MesasPorDia.Id}" +
 					$" WHERE MPD.{ColumnasDB.MesasPorDia.IdMesa} = {mesa}" +
-					$" AND MPD.{ColumnasDB.MesasPorDia.Cierre} IS NULL" +
-				$" )" +
+					$" AND S.{ColumnasDB.MesasPorDia.Cierre} IS NULL" +
+					$" )" +
 					$"SELECT COUNT(*) AS CANTIDAD" +
 					$" FROM {ColumnasDB.Servicio.DB} S" +
 					$" INNER JOIN {ColumnasDB.Pedido.DB} P" +
@@ -189,13 +206,18 @@ namespace Negocio
 		}
 		
 		//Cobrar servicio. Modificamos cobrado  a true
-		public bool ModificarServicio(int idServicio)
+		public bool CobrarServicio(int idServicio)
 		{
 			AccesoDB datos = new AccesoDB();
 
+			//Validar que el servicio esté cerrado con la fecha de cierre.
+			//Validar que cobrado esté en false
 			try
 			{
-				datos.setQuery($"UPDATE SERVICIO SET {ColumnasDB.Servicio.Cobrado} = 1 WHERE {ColumnasDB.Servicio.Id} = {idServicio}");
+				datos.setQuery($"UPDATE SERVICIO SET {ColumnasDB.Servicio.Cobrado} = 1 " +
+					$"WHERE {ColumnasDB.Servicio.Id} = {idServicio} " +
+					$"AND {ColumnasDB.Servicio.Cierre} IS NOT NULL " +
+					$"AND {ColumnasDB.Servicio.Cobrado} = 0 ");
 
 				return datos.executeNonQuery();
 			}
