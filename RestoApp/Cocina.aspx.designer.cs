@@ -15,6 +15,15 @@ namespace RestoApp
     {
 
         /// <summary>
+        /// GVDCocina control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView GVDCocina;
+
+        /// <summary>
         /// Txtreloj control.
         /// </summary>
         /// <remarks>
@@ -33,12 +42,21 @@ namespace RestoApp
         protected global::System.Web.UI.Timer Timer1;
 
         /// <summary>
-        /// GVDCocina control.
+        /// GVDProductosenprep control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GVDCocina;
+        protected global::System.Web.UI.WebControls.GridView GVDProductosenprep;
+
+        /// <summary>
+        /// GVDEstadopedidos control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView GVDEstadopedidos;
     }
 }
