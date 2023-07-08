@@ -91,6 +91,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Tabla servicios abiertos-->
         <div class="col-5 mt-3">
             <div class="bg-gray-100 p-5 rounded border-1">
                 <h4>Mesas Estado</h4>
@@ -111,28 +113,32 @@
                 </asp:DataGrid>
             </div>
         </div>
+        <!-- Fin Tabla servicios abiertos-->
+        <!-- Tabla Pedidos abiertos-->
         <div class="col-5 mt-3">
             <div class="bg-gray-100 p-5 rounded border-1">
                 <h4>Pedidos Estado</h4>
+
                 <asp:DataGrid ID="datagridPedidos" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
                     <Columns>
                         <asp:BoundColumn DataField="Mesa" HeaderText="Mesa" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
                         <asp:BoundColumn DataField="PedidoComida" HeaderText="Pedido de Comida" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
                         <asp:BoundColumn DataField="Actualización" HeaderText="Actualizacion" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-                        <asp:BoundColumn DataField="Estado" HeaderText="Pedido de Comida" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                        <asp:BoundColumn DataField="Estado" HeaderText="Estado" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
 
-                      <%--  <asp:TemplateColumn HeaderText="Estado">
+                        <asp:TemplateColumn HeaderText="Estado">
                             <ItemTemplate>
-                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
+                                <%# (string)Eval("Estado") != "Listo para entregar"  ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
                             </ItemTemplate>
                             <ItemStyle CssClass="bg-light p-2 rounded" />
                             <HeaderStyle CssClass="bg-light p-2 rounded" />
-                        </asp:TemplateColumn>--%>
+                        </asp:TemplateColumn>
                     </Columns>
                 </asp:DataGrid>
 
             </div>
         </div>
+        <!-- Fin Tabla Pedidos abiertos-->
         <% } %>
 
         <!-- VISTA MESERO -->

@@ -353,7 +353,7 @@ namespace RestoApp
                 string pedidocomida = (string)row["PedidoComida"];
 				DateTime actualizacion = (DateTime)row["Actualización"];
 				string estado = (string)row["Estado"];
-            }
+            }          
 
             // Enlazar el DataTable al DataGrid
             datagridPedidos.DataSource = dataTable;
