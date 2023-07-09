@@ -16,7 +16,6 @@ using Helper;
 using System.Diagnostics.Eventing.Reader;
 
 
-
 namespace RestoApp
 {
     public partial class Cocina : System.Web.UI.Page
@@ -26,7 +25,6 @@ namespace RestoApp
         public List<Pedido> Pedidossolicitados { get; set; }
         public List<Pedido> Pedidosenpreparacion { get; set; }
         public List<Pedido> Estadopedidos { get; set; }
-        public List<Pedido> Estadopedidosprevia { get; set; }
         public List<HelperCocina> Helpercocina { get; set; }
 
 
@@ -138,7 +136,7 @@ namespace RestoApp
         {
             DataTable dataTable = new DataTable();
             dataTable.Columns.Add("Producto", typeof(string));
-            dataTable.Columns.Add("EnPreparacion", typeof(int));
+            dataTable.Columns.Add("Cantidad", typeof(int));
             Session.Add("DTProductosenpreparacion", dataTable);
             return dataTable;
 
@@ -146,10 +144,10 @@ namespace RestoApp
 
         public DataTable CrearDataTableEstadoPedidos()
         {
-            DataTable DTEstadopedidos = new DataTable();
+            DataTable DTEstadopedidos = new DataTable();       
             DTEstadopedidos.Columns.Add("Pedido", typeof(string));
             DTEstadopedidos.Columns.Add("Estado", typeof(string));
-            DTEstadopedidos.Columns.Add("HoraFin", typeof(string));
+            DTEstadopedidos.Columns.Add("Listo", typeof(string));
             Session.Add("DTEstadoPedidos", DTEstadopedidos);
             return DTEstadopedidos;
         }
@@ -163,8 +161,7 @@ namespace RestoApp
             Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
             DataTable DTEstadopedidos = (DataTable)Session["DTEstadoPedidos"];
             Estadopedidos = Session["Pedidosenpreparacion"] as List<Pedido>;
-       
-           
+                 
            
                 TimeSpan? Tiempomax = TimeSpan.Zero;
                 DTEstadopedidos.Rows.Clear();
@@ -182,9 +179,9 @@ namespace RestoApp
                     DataRow row = DTEstadopedidos.NewRow();
                     row["Pedido"] = "#" + pedido.Id;
                     row["Estado"] = pedido.EstadoDescripcion;
-                    row["HoraFin"] = pedido.ultimaactualizacion.Add((TimeSpan)Tiempomax).ToString("HH:mm");
+                    row["Listo"] = pedido.ultimaactualizacion.Add((TimeSpan)Tiempomax).ToString("HH:mm");
                     DTEstadopedidos.Rows.Add(row);
-                    
+                
                     if(Helpercocina != null) { 
                     Helpercocina.Find(x => x.idPedido == pedido.Id).horafin = pedido.ultimaactualizacion.Add((TimeSpan)Tiempomax).ToString("HH:mm");
                 }
@@ -204,18 +201,7 @@ namespace RestoApp
 
         public void ActualizacionAutomatica ()
         {
-            Reloj = (DateTime)Session["Reloj"];
-            TimeSpan diferencia = DateTime.Now - Reloj;
-            if (diferencia.Seconds >= 10)
-            {
-                ActualizarSolicitadosenDB();
-                Listarpedidosenpreparacion();
-                ActualizarDGVCocina();
-                ActualizarDGVEstadoPedidos();
-                ActualizarDGVProductosenPreparacion();
-                Reloj = DateTime.Now;
-                Session.Add("Reloj", Reloj);
-            }
+           
         }
 
 
@@ -224,28 +210,58 @@ namespace RestoApp
         {
             // RECUPERA DATATABLE CREADA
             DataTable dataTable = (DataTable)Session["DTProductosenpreparacion"];
+            Pedidosenpreparacion = Session["Pedidosenpreparacion"] as List<Pedido>;
+            List <ProductoPorPedido> Productosenpreparacion = new List<ProductoPorPedido>();
 
-            //CARGAMOS ALGO EN SESSION PARA QUE NO SE NULO LA LISTA EN EL PRIMER LOAD
-            if (Session["Productosenpreparacion"] == null)
+            dataTable.Rows.Clear();
+            foreach (Pedido p in Pedidosenpreparacion)
             {
-                Productosenpreparacion = new List<ProductoPorPedido>();
-                Session.Add("Productosenpreparacion", Productosenpreparacion);
+
+                foreach (ProductoPorPedido pxp in p.Productossolicitados)
+                {
+
+                    Productosenpreparacion.Add(pxp);
+
+
+                }
+
+
+            }
+            Dictionary<string, int> productosAgrupados = new Dictionary<string, int>();
+
+            // Recorrer la lista productosenpreparacion
+            foreach (ProductoPorPedido pxp in Productosenpreparacion)
+            {
+                string nombreProducto = pxp.Productodeldia.Nombre;
+
+                // Verificar si el producto ya existe en el diccionario
+                if (productosAgrupados.ContainsKey(nombreProducto))
+                {
+                    // Si existe, incrementar la cantidad
+                    productosAgrupados[nombreProducto] += pxp.Cantidad;
+                }
+                else
+                {
+                    // Si no existe, agregar el producto al diccionario con la cantidad inicial
+                    productosAgrupados.Add(nombreProducto, pxp.Cantidad);
+                }
             }
 
-            PedidoNegocio pedidoNegocio = new PedidoNegocio();
-            Productosenpreparacion = pedidoNegocio.Listarproductosenpreparacion();
+            foreach (KeyValuePair<string, int> producto in productosAgrupados)
+            {
+                string nombreProducto = producto.Key;
+                int cantidad = producto.Value;
 
-         
-                dataTable.Rows.Clear();
-                foreach (ProductoPorPedido pxp in Productosenpreparacion)
-                {
+               
                     DataRow filaNueva = dataTable.NewRow();
-                    filaNueva[0] = pxp.Productodeldia.Nombre;
-                    filaNueva[1] = pxp.Cantidad;
+                    filaNueva[0] = nombreProducto;
+                    filaNueva[1] = cantidad;
                     dataTable.Rows.Add(filaNueva);
                 }
-                Session.Add("Productosenpreparacion", Productosenpreparacion);
-         
+                
+
+
+           
 
             Session.Add("DTProductosenpreparacion", dataTable);
             GVDProductosenprep.DataSource = dataTable;
@@ -383,8 +399,11 @@ namespace RestoApp
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 foreach (TableCell cell in e.Row.Cells)
+
                 {
-                    cell.Style["font-size"] = "10px";
+                 
+                    cell.Style["font-color"] = "white";
+                    cell.Style["font-size"] = "12px";
                     cell.Style["text-align"] = "center";
                     cell.Style["border-right"] = "none";
                     cell.Style["border-right"] = "1px solid #565d63";
@@ -405,11 +424,22 @@ namespace RestoApp
                             if (i > Indicecolumnahora)
                             {
 
-                                e.Row.Cells[i].BackColor = Color.LightBlue;
+                                int seed = item.idPedido.GetHashCode();
+                                Random random = new Random(seed);
+                                Color randomColor = Color.FromArgb(50,random.Next(256), random.Next(256), random.Next(256));
+                                double factor = 0.5; // Ajusta el factor de oscurecimiento según tus preferencias
+
+                                int red = (int)(randomColor.R * factor);
+                                int green = (int)(randomColor.G * factor);
+                                int blue = (int)(randomColor.B * factor);
+
+                                Color darkColor = Color.FromArgb(red, green, blue);
+
+                                e.Row.Cells[i].BackColor = darkColor                                    ;                      
                             }
                             else if (i <= Indicecolumnahora)
                             {
-                                e.Row.Cells[i].BackColor = Color.LightPink;
+                                e.Row.Cells[i].BackColor = Color.Gray;
 
 
                             }
@@ -591,9 +621,34 @@ namespace RestoApp
 
         }
 
-      
 
-        
+
+
+        protected void GVDEstadopedidos_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+
+                foreach (TableCell cell in e.Row.Cells)
+                {
+                    cell.Style["font-size"] = "12px";
+                    cell.Style["text-align"] = "center";
+
+                }
+            }
+        }
+        protected void GVDProductosenprep_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                foreach (TableCell cell in e.Row.Cells)
+                {
+                    cell.Style["font-size"] = "14px";
+                    cell.Style["text-align"] = "center";
+
+                }
+            }
+        }
     }
 }
 
