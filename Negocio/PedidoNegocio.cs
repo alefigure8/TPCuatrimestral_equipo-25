@@ -96,15 +96,9 @@ namespace Negocio
             }
             return idpedido;
         }
+       
 
-      
-
-
-        
-
-
-
-            public List<ProductoPorPedido> ListarProductosPorPedido(int IdPedido)
+        public List<ProductoPorPedido> ListarProductosPorPedido(int IdPedido)
         {
             AccesoDB AccesoDB = new AccesoDB();
             List<ProductoPorPedido> listaproductoporpedidos = new List<ProductoPorPedido>();
@@ -193,53 +187,7 @@ namespace Negocio
 
         }
 
-        /*
-
-        public List<Pedido> ListarPedidos(int estado1,int estado2)
-        {
-            AccesoDB AccesoDB = new AccesoDB();
-            List<Pedido> listapedidos = new List<Pedido>();
-               
-
-            try
-            {
-                AccesoDB.setQuery($"SELECT P.{ColumnasDB.Pedido.Id} "+
-                $", P.{ColumnasDB.Pedido.IdServicio} " +                                                    
-                $", E.{ColumnasDB.Estados.Id} " +
-                $", E.{ColumnasDB.Estados.Descripcion} " +  
-               $", ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} " +
-                 $" FROM {ColumnasDB.Pedido.DB} P " +
-                 $" JOIN {ColumnasDB.EstadosxPedido.DB} ExP ON P.{ColumnasDB.Pedido.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido} " +
-                $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +                              
-                $" WHERE ExP.{ColumnasDB.EstadosxPedido.IdEstado} in (  {estado1}, {estado2})"
-                                                                                                                                                                                               );
-
-                AccesoDB.executeReader();
-                
-                while (AccesoDB.Reader.Read())
-                {
-                    Pedido aux = new Pedido();
-                    aux.Id = (Int32)AccesoDB.Reader[ColumnasDB.Pedido.Id];
-                    aux.IdServicio = (Int32)AccesoDB.Reader[ColumnasDB.Pedido.IdServicio];
-                    aux.Estado = (Int32)AccesoDB.Reader[ColumnasDB.Estados.Id];
-                    aux.EstadoDescripcion = (string)AccesoDB.Reader[ColumnasDB.Estados.Descripcion];
-                    aux.ultimaactualizacion = (DateTime)AccesoDB.Reader[ColumnasDB.EstadosxPedido.FechaActualizacion];
-                    aux.Productossolicitados = ListarProductosPorPedido(aux.Id);
-                    listapedidos.Add(aux);
-                }
-
-                return listapedidos;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                AccesoDB.closeConnection();
-            }
-        }
-        */
+       
 
         public List<Pedido> ListarPedidos(int estado1)
         {
@@ -257,7 +205,8 @@ namespace Negocio
                  $" FROM {ColumnasDB.Pedido.DB} P " +
                  $" JOIN {ColumnasDB.EstadosxPedido.DB} ExP ON P.{ColumnasDB.Pedido.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido} " +
                 $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
-                $" WHERE ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id})"+
+                $" WHERE ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) " +
+                $"FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id})"+
                 $" AND ExP.{ColumnasDB.EstadosxPedido.IdEstado} =  {estado1} "
                                                                                                                                                                                                );
 
@@ -309,6 +258,31 @@ namespace Negocio
                 datos.closeConnection();
             }
              
+
+        }
+
+        public void CambiarEstadoPedido(int idpedido, int nuevoestado, DateTime Fechahora)
+        {
+            AccesoDB datos = new AccesoDB();
+            try
+            {
+
+                datos.setQuery(
+                 $"INSERT INTO {ColumnasDB.EstadosxPedido.DB} ({ColumnasDB.EstadosxPedido.IdPedido}, {ColumnasDB.EstadosxPedido.IdEstado}, {ColumnasDB.EstadosxPedido.FechaActualizacion}) " +
+                 $"VALUES ({idpedido}, {nuevoestado} , '{Fechahora}')");
+                datos.executeNonQuery();
+                datos.closeConnection();
+            }
+
+            catch (Exception Ex)
+            {
+
+            }
+            finally
+            {
+                datos.closeConnection();
+            }
+
 
         }
     }
