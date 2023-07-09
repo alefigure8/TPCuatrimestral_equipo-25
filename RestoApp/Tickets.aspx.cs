@@ -127,14 +127,16 @@ namespace RestoApp
 
 		protected string RenderDetalles(object detallesObj)
 		{
+			precio = 0;
+
 			if (detallesObj is List<TicketDetalle> detalles)
 			{
-				precio = 0;
+
 				StringBuilder sb = new StringBuilder();
 
 				foreach (TicketDetalle item in detalles)
 				{
-					precio += item.Precio;
+					precio += item.Precio * item.Cantidad;
 
 					sb.AppendFormat(
 						@"<tr>
@@ -153,6 +155,11 @@ namespace RestoApp
 			}
 
 			return string.Empty;
+		}
+
+		protected decimal CalcularPrecio()
+		{
+			return precio;
 		}
 
 	}

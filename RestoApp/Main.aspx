@@ -927,9 +927,10 @@
             //Evento para mostrar ticket
             btnTicket.addEventListener('click', (e) => {
                 e.preventDefault();
+                window.location.href = `Tickets.aspx?servicio=${servicio?.servicio}`;
                 //Mandamos datos a CodeBehind
-                 let data = [{ mesa: servicio?.mesa, servicio: servicio?.servicio }];
-                mandarDatos('Main', 'EmitirTicket', data, e)
+                 //let data = [{ mesa: servicio?.mesa, servicio: servicio?.servicio }];
+                //mandarDatos('Main', 'EmitirTicket', data, e)
                 //MOSTRAR TICKET. ¿LINK CON QUERY?
             })
 

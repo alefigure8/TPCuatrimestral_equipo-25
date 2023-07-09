@@ -43,7 +43,7 @@
                     </table>
 
                     <div class="border-top w-100 pt-3">
-                        <p><span class="fw-semibold">Total: $</span> <%= precio %></p>
+                        <p><span class="fw-semibold">Total: $</span> <%# CalcularPrecio() %> </p>
                         <button class="btn btn-dark w-100">Cobrar</button>
                     </div>
                 </section>

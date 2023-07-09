@@ -89,7 +89,7 @@ namespace Negocio
 				$" INNER JOIN {ColumnasDB.ProductoPorPedido.DB} PXP" +
 				$" ON P.{ColumnasDB.Pedido.Id} = PXP.{ColumnasDB.Pedido.Id}" +
 				$" INNER JOIN {ColumnasDB.ProductoDD.DB} PM" +
-				$" ON PXP.{ColumnasDB.ProductoPorPedido.Id}= PM.{ColumnasDB.Producto.Id}" +
+				$" ON PXP.{ColumnasDB.ProductoPorPedido.IdProductoPorDia}= PM.{ColumnasDB.Producto.Id}" +
 				$" AND PXP.{ColumnasDB.ProductoPorPedido.Fecha} = PM.{ColumnasDB.ProductoDD.Fecha}" +
 				$" WHERE P.{ColumnasDB.Pedido.IdServicio} = {servicio}";
 
@@ -157,7 +157,7 @@ namespace Negocio
 				while (datos.Reader.Read())
 				{
 					//ID
-					ticket.Id = (Int32)datos.Reader[ColumnasDB.Mesa.Numero];
+					ticket.Id = (Int32)datos.Reader[ColumnasDB.Servicio.Id];
 
 					//FECHA
 					if (datos.Reader[ColumnasDB.Servicio.Fecha] != null)
