@@ -78,6 +78,7 @@
     <Content Include="Perfil.aspx" />
     <Content Include="ProductosDelDia.aspx" />
     <Content Include="MesaHabilitar.aspx" />
+    <Content Include="Tickets.aspx" />
     <Content Include="Usuarios.aspx" />
     <Content Include="Mesas.aspx" />
     <Content Include="Productos.aspx" />
@@ -165,6 +166,13 @@
       <DependentUpon>Productos.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tickets.aspx.cs">
+      <DependentUpon>Tickets.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Tickets.aspx.designer.cs">
+      <DependentUpon>Tickets.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Usuarios.aspx.cs">
       <DependentUpon>Usuarios.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
