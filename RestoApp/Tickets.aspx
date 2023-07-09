@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Tickets.aspx.cs" Inherits="RestoApp.Tickets" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Masters/Main.Master" AutoEventWireup="true" CodeBehind="Tickets.aspx.cs" Inherits="RestoApp.Tickets" enableEventValidation="false"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
@@ -44,7 +44,7 @@
 
                     <div class="border-top w-100 pt-3">
                         <p><span class="fw-semibold">Total: $</span> <%# CalcularPrecio() %> </p>
-                        <button class="btn btn-dark w-100">Cobrar</button>
+                        <asp:Button ID="btnTicket" runat="server" OnClick="btnCobrar_Click" class="btn btn-dark w-100" Text="Cobrar" CommandArgument='<%# Eval("Id") %>'/>
                     </div>
                 </section>
 

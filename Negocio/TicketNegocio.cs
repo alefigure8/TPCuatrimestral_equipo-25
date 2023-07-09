@@ -143,8 +143,6 @@ namespace Negocio
 				$" FROM {ColumnasDB.Servicio.DB} S" +
 				$" INNER JOIN {ColumnasDB.MesasPorDia.DB} M" +
 				$" ON S.{ColumnasDB.MesasPorDia.Id} = M.{ColumnasDB.MesasPorDia.Id}" +
-				$" INNER JOIN {ColumnasDB.Pedido.DB} P" +
-				$" ON S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Servicio.Id}" +
 				$" WHERE S.{ColumnasDB.Servicio.Cobrado} = 0" +
 				$" AND S.{ColumnasDB.Servicio.Cierre} IS NOT NULL " +
 				$" AND S.{ColumnasDB.Servicio.Id} = {servicio}";
