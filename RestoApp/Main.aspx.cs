@@ -323,6 +323,7 @@ namespace RestoApp
         {
             //TODO: LLAMADO A DB PARA OBTENER ESTADO DE PEDIDOS
             List<Pedido> pedidos = (List<Pedido>)Session["Pedidos"];
+            pedidos = pedidos.FindAll(pedido => pedido.EstadoDescripcion != "Entregado");
 
             //Ordenar los pedidos por mesa para que aparezcan en orden en el listado
             List<Servicio> servicios = (List<Servicio>)Helper.Session.GetServicios();
