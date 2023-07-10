@@ -34,7 +34,8 @@ namespace RestoApp
 
             if (!IsPostBack)
             {
-
+                bool sinproductos = true;
+                Session.Add("sinproductos", sinproductos);
                 Reloj = DateTime.Now;
                 Session.Add("Reloj", Reloj);
                 CrearDatatableCocina();
@@ -185,8 +186,9 @@ namespace RestoApp
 
                 DTEstadopedidos.Rows.Add(row);
 
-                if (Helpercocina != null && pedido.Estado == Estados.EnPreparacion)
+                if (Helpercocina != null && Helpercocina.Count > 0 && pedido.Estado == Estados.EnPreparacion)
                 {
+                    
                     Helpercocina.Find(x => x.idPedido == pedido.Id).horafin = pedido.ultimaactualizacion.Add((TimeSpan)Tiempomax);
 
 
@@ -244,6 +246,7 @@ namespace RestoApp
 
         public void ActualizarDGVProductosenPreparacion()
         {
+          
             // RECUPERA DATATABLE CREADA
             DataTable dataTable = (DataTable)Session["DTProductosenpreparacion"];
             Pedidosenpreparacion = Session["Pedidosenpreparacion"] as List<Pedido>;
@@ -761,6 +764,9 @@ namespace RestoApp
         }
         protected void GVDProductosenprep_RowDataBound(object sender, GridViewRowEventArgs e)
         {
+            bool sinproductos = false;
+            Session.Add("sinproductos", sinproductos);
+
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 foreach (TableCell cell in e.Row.Cells)
