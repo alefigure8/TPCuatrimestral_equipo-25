@@ -34,11 +34,11 @@
                                     <asp:Label ID="LblProdenPrep" runat="server" Text="Productos en Preparacion"></asp:Label> 
                        </div>
                    
-                      <div style="margin-top:10px; height:150px;overflow-y:auto;background-color:white; border-radius:5px; display:flex; align-items:center;">
+                      <div style="margin-top:10px; height:150px;overflow-y:auto;background-color:white; border-radius:5px; display:flex; align-items:flex-start;">
 
 
                 <asp:GridView ID="GVDProductosenprep" runat="server" OnRowDataBound="GVDProductosenprep_RowDataBound" BorderColor="Transparent">
-                  
+                   <HeaderStyle HorizontalAlign="Center" />
                               
                  </asp:GridView>
                    
@@ -46,13 +46,13 @@
                       <div style="margin-top:10px">
                                     <asp:Label ID="LblEstadopedidos" runat="server" Text="Estado Pedidos"></asp:Label> 
                        </div>
-     </div>                    <div style="margin-top:10px;height:150px;overflow-y:auto; background-color:white; border-radius:5px;display:flex; align-items:center;">
+     </div>                    <div style="margin-top:10px;height:150px;overflow-y:auto; background-color:white; border-radius:5px;display:flex; align-items:flex-start;">
                  <asp:GridView ID="GVDEstadopedidos" runat="server"  OnRowCommand="GVDEstadopedidos_RowCommand" OnRowDataBound="GVDEstadopedidos_RowDataBound" BorderColor="Transparent">
-                                 
+                   <HeaderStyle HorizontalAlign="Center" />              
                                 <Columns>
                               <asp:TemplateField>
                                   <ItemTemplate>
-                                <asp:LinkButton ID="InformarDemora" Height="80%" runat="server" class="btn btn-dark" CommandName="InformarDemora" CommandArgument='<%# Container.DataItemIndex %>'><i class="fa-solid fa-clock-rotate-left fa-flip-horizontal"></i></i></asp:LinkButton>
+                                <asp:LinkButton ID="InformarDemora" Height="80%" runat="server" class="btn btn-dark" CommandName="InformarDemora" CommandArgument='<%# Container.DataItemIndex %>' Visible="false" Enabled="false" ><i class="fa-solid fa-clock-rotate-left fa-flip-horizontal"></i></i></asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
                         

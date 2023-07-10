@@ -138,6 +138,7 @@ namespace Negocio
         }
 
 
+
         public List<Pedido> ListarPedidos()
         {
             AccesoDB AccesoDB = new AccesoDB();
@@ -247,11 +248,13 @@ namespace Negocio
                  $"VALUES ({idpedido}, {nuevoestado} , '{DateTime.Now.ToString("G")}')");
                 datos.executeNonQuery();
                 datos.closeConnection();
+
             }
 
             catch (Exception Ex)
             {
               
+
             }
             finally
             {
@@ -260,6 +263,39 @@ namespace Negocio
              
 
         }
+
+        public DateTime HorarioEnPrepPedido (int Pedido)
+        {
+             AccesoDB dB = new AccesoDB();
+            DateTime horario = new DateTime();
+
+            try
+            {
+                dB.setQuery($"Select FechaActualizacion from Estado_x_Pedido where IdPedido = {Pedido} and IdEstado = 2");
+               dB.executeReader();
+                while (dB.Reader.Read())
+                {
+
+                    horario = (DateTime)dB.Reader[ColumnasDB.EstadosxPedido.FechaActualizacion];
+                  
+                }
+                dB.closeConnection();
+            }
+            catch
+            {
+
+
+            }
+            finally
+            {
+                dB.closeConnection();
+
+            }
+
+            return horario;
+        }
+
+
 
         public void CambiarEstadoPedido(int idpedido, int nuevoestado, DateTime Fechahora)
         {

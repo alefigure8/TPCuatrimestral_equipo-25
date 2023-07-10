@@ -12,6 +12,6 @@ namespace Helper
         public int Columna { get; set; }
         public int TiempoCoccion { get; set; }
         public int idPedido { get; set; }
-        public TimeSpan horafin { get; set; }
+        public DateTime horafin { get; set; }
     }
 }
