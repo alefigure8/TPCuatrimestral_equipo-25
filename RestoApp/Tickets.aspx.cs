@@ -162,5 +162,25 @@ namespace RestoApp
 			return precio;
 		}
 
+		protected void btnCobrar_Click(object sender, EventArgs args)
+		{
+			//Recuperamos argumetno del botón
+			Button btn = (Button)sender;
+			int numeroServicio = Convert.ToInt32(btn.CommandArgument);
+
+			//Iniciamos negocio de Servicio
+			ServicioNegocio servicioNegocio = new ServicioNegocio();
+
+			//Si se cierra el servicio, sacamos del Session el servicio
+			if (servicioNegocio.CobrarServicio(numeroServicio))
+			{
+				//Si se cobró correctamente, sacamos el sercisio de la sessión de Servicios
+				List<Servicio> servicio = Helper.Session.GetServicios().FindAll(item => item.Id != numeroServicio);
+				Helper.Session.SetServicios(servicio);
+
+				//Redirigir a Main
+				Response.Redirect("Main.aspx");
+			}
+		}
 	}
 }

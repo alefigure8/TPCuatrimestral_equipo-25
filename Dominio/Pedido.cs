@@ -21,5 +21,7 @@ namespace Dominio
         public string EstadoDescripcion { get; set; }
 
         public DateTime ultimaactualizacion;
+
+
     }
 }
