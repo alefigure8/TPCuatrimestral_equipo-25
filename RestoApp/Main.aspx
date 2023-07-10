@@ -205,7 +205,7 @@
                                         </asp:Panel>
                                         <div class="row justify-content-between bg-dark rounded-bottom">
                                             <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="col btn btn-small btn-dark verDetallePedido" Style="font-size: .9rem" Text="Ver" ToolTip="Ver Detalle" data-order-details='<%# getDetallePedido(Container.DataItem) %>' />
-                                            <asp:Button ID="Button1" runat="server" Text="Cerrar" CssClass="col btn btn-small btn-dark" Style="font-size: .9rem" ToolTip="Marcar como entregado" />
+                                            <asp:Button ID="BtnCerrarPedido" runat="server" Text="Cerrar" CssClass="col btn btn-small btn-dark" Style="font-size: .9rem" ToolTip="Marcar como entregado" OnClick="BtnCerrarPedido_Click" CommandArgument= '<%#Eval("Id")%>' />
                                         </div>
                                     </div>
                                 </ItemTemplate>
@@ -244,13 +244,13 @@
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <asp:Label runat="server" CssClass="col-4"><%#Eval("Nombre")%> </asp:Label>
+                                <asp:Label runat="server" CssClass="col"><%#Eval("Nombre")%> </asp:Label>
                                 <div class="col">
                                     <asp:UpdatePanel runat="server" CssClass="row">
                                         <ContentTemplate>
                                             <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" ToolTip="Ingrese Cantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
                                             <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
-                                            <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA_Click" ToolTip="Cancelar" />
+                                            <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖"  OnClick="BtnCancelarAgregarA_Click" ToolTip="Cancelar" Visible="false"/>
                                         </ContentTemplate>
                                     </asp:UpdatePanel>
                                 </div>
@@ -266,7 +266,7 @@
                     <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <asp:Label runat="server" CssClass="col-4"><%#Eval("Nombre")%></asp:Label>
+                                <asp:Label runat="server" CssClass="col"><%#Eval("Nombre")%></asp:Label>
                                 <div class="col">
                                     <asp:UpdatePanel runat="server" CssClass="row">
                                         <ContentTemplate>

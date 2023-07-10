@@ -983,14 +983,22 @@ namespace RestoApp
             btnCancelar.Visible = false;
         }
 
+        protected void ListarPedidos()
+        {
+            Session["Pedidos"] = null;
+            PedidoNegocio PNAux = new PedidoNegocio();
+            Session.Add("Pedidos", PNAux.ListarPedidos());
+
+        }
 
         protected void ActualizarPedidos()
         {
             ServicioNegocio SNAux = new ServicioNegocio();
             List<Servicio> ListaServicios = (Helper.Session.GetServicios());
 
-            PedidoNegocio PNAux = new PedidoNegocio();
-            List<Pedido> Pedidos = PNAux.ListarPedidos();
+            ListarPedidos();
+
+            List<Pedido>Pedidos = ((List<Pedido>)Session["Pedidos"]);
 
             List<Pedido> PedidosAux = new List<Pedido>();
 
@@ -1021,7 +1029,10 @@ namespace RestoApp
             RepeaterPedidosEnCurso.DataBind();
 
             //Guardo Session de PedidosAux para vista de Gerente
-            Session["Pedidos"] = PedidosAux;
+          // Session["Pedidos"] = PedidosAux;
+
+            // consultar con ale. Esta lista esta filtrada por estado y idmesero. Pedidos en session no deberia mantener la lista original?
+            // agrego funcion a parte
         }
 
         protected void RepeaterPedidosEnCurso_ItemDataBound(object sender, RepeaterItemEventArgs e)
@@ -1061,6 +1072,15 @@ namespace RestoApp
             return json;
         }
 
+        protected void BtnCerrarPedido_Click(object sender, EventArgs e)
+        {
+            Button BtnCerrarPedido = sender as Button;
+            PedidoNegocio PNaux = new PedidoNegocio();
+            PNaux.CambiarEstadoPedido(int.Parse(BtnCerrarPedido.CommandArgument), 5);
+
+            ActualizarPedidos();
+
+        }
     }
 }
 
