@@ -14,6 +14,7 @@ using Opciones;
 using Helper;
 using System.Data;
 using System.Web.UI.WebControls.WebParts;
+using System.Web.Script.Serialization;
 
 namespace RestoApp
 {
@@ -43,43 +44,43 @@ namespace RestoApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
-                      
 
-			//Verificar que sea usuario
-			if (AutentificacionUsuario.esUser(Helper.Session.GetUsuario()))
+
+            //Verificar que sea usuario
+            if (AutentificacionUsuario.esUser(Helper.Session.GetUsuario()))
                 usuario = Helper.Session.GetUsuario();
 
             // CONTENIDO GERENTE
             if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
             {
                 //Acciona mensajes de alerta en caso de que haya mensajes guardados
-				if (Helper.Session.GetMensajeModal() != null)
-				{
-					dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
-					string msg = msgModal.msg;
-					string tipo = msgModal.tipo;
-					string scriptModal = $"alertaModal(\"{msg}\", \"{tipo}\");";
-					ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
-					Helper.Session.SetMensajeModal(null);
-				}
+                if (Helper.Session.GetMensajeModal() != null)
+                {
+                    dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
+                    string msg = msgModal.msg;
+                    string tipo = msgModal.tipo;
+                    string scriptModal = $"alertaModal(\"{msg}\", \"{tipo}\");";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
+                    Helper.Session.SetMensajeModal(null);
+                }
 
-				tipoUsuario = Configuracion.Rol.Gerente;
+                tipoUsuario = Configuracion.Rol.Gerente;
                 CargarMeseros();
                 CargarDatosMesas();
                 CargarServicios();
                 CargarEstadoMesas();
                 ActualizarPedidos();
                 CargarPedido();
-			}
+            }
 
-			//Si es postback, recargamos funciones de script en Gerente
-			if (IsPostBack && AutentificacionUsuario.esGerente(usuario))
+            //Si es postback, recargamos funciones de script en Gerente
+            if (IsPostBack && AutentificacionUsuario.esGerente(usuario))
             {
                 ScriptsDataGerente();
                 ScriptDataServicios();
-				string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); });";
+                string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); });";
                 ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
-			}
+            }
 
 
             //CONTENIDO MESERO
@@ -98,15 +99,15 @@ namespace RestoApp
                 }
 
                 //Accionamos Modal de mensaje si hay mensajes guardados
-				if (Helper.Session.GetMensajeModal() != null)
-				{
-					dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
-					string msg = msgModal.msg;
-					string tipo = msgModal.tipo;
-					string scriptModal = $"alertaModal(\"{msg}\", \"{tipo}\");";
-					ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
-					Helper.Session.SetMensajeModal(null);
-				}
+                if (Helper.Session.GetMensajeModal() != null)
+                {
+                    dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
+                    string msg = msgModal.msg;
+                    string tipo = msgModal.tipo;
+                    string scriptModal = $"alertaModal(\"{msg}\", \"{tipo}\");";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
+                    Helper.Session.SetMensajeModal(null);
+                }
 
 
                 tipoUsuario = Configuracion.Rol.Mesero;
@@ -118,7 +119,7 @@ namespace RestoApp
                 CargarServicios();
                 ActualizarPedidos();
 
-			}
+            }
 
             //Si es postback, recargamos funciones de script en Mesero
             if (IsPostBack && AutentificacionUsuario.esMesero(usuario))
@@ -127,19 +128,19 @@ namespace RestoApp
                 ScriptDataServicios();
                 string script = " obtenerDatosMesasMesero().then(({ numeroMesas, numeroServicios }) => {renderMesaMesero(numeroMesas, numeroServicios); });";
                 ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
-			}
+            }
 
 
 
-			ListarCategoriasProducto();
+            ListarCategoriasProducto();
         }
 
-		private void Tr_reloj_Tick(object sender, EventArgs e)
-		{
-			throw new NotImplementedException();
-		}
+        private void Tr_reloj_Tick(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
-		protected void ActivarBtnCancelarPedido()
+        protected void ActivarBtnCancelarPedido()
         {
             btnTerminarPedido.Visible = true;
 
@@ -173,22 +174,22 @@ namespace RestoApp
 
                 //if (AutentificacionUsuario.esGerente(usuario))
                 //{
-                    //Info de la mesa desde session
-                    List<object> infoMesas = (List<object>)Session["infoMesas"];
+                //Info de la mesa desde session
+                List<object> infoMesas = (List<object>)Session["infoMesas"];
 
-                    foreach (Servicio itemServicio in serviciosSession)
+                foreach (Servicio itemServicio in serviciosSession)
+                {
+
+                    foreach (dynamic itemMesa in infoMesas)
                     {
 
-                        foreach (dynamic itemMesa in infoMesas)
+                        if (itemServicio.Mesa == itemMesa.mesa)
                         {
-
-                            if (itemServicio.Mesa == itemMesa.mesa)
-                            {
-                                itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
-                                itemServicio.IdMesero = itemMesa.mesero;
-                            }
+                            itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
+                            itemServicio.IdMesero = itemMesa.mesero;
                         }
                     }
+                }
                 //}
 
                 //Guardamos en session
@@ -215,19 +216,19 @@ namespace RestoApp
                 //if (AutentificacionUsuario.esGerente(usuario))
                 //{
                 //    //Info de la mesa desde session
-                    List<object> infoMesas = (List<object>)Session["infoMesas"];
+                List<object> infoMesas = (List<object>)Session["infoMesas"];
 
-                    foreach (Servicio itemServicio in servicio)
+                foreach (Servicio itemServicio in servicio)
+                {
+                    foreach (dynamic itemMesa in infoMesas)
                     {
-                        foreach (dynamic itemMesa in infoMesas)
+                        if (itemServicio.Mesa == itemMesa.mesa)
                         {
-                            if (itemServicio.Mesa == itemMesa.mesa)
-                            {
-                                itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
-                                itemServicio.IdMesero = itemMesa.mesero;
-                            }
+                            itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
+                            itemServicio.IdMesero = itemMesa.mesero;
                         }
                     }
+                }
                 //}
 
                 //Guardamos en session
@@ -326,21 +327,21 @@ namespace RestoApp
             //Ordenar los pedidos por mesa para que aparezcan en orden en el listado
             List<Servicio> servicios = (List<Servicio>)Helper.Session.GetServicios();
 
-			var dataTable = new DataTable();
+            var dataTable = new DataTable();
 
-			dataTable.Columns.Add("Mesa", typeof(int));
-			dataTable.Columns.Add("PedidoComida", typeof(string));
-			dataTable.Columns.Add("Actualización", typeof(DateTime));
-			dataTable.Columns.Add("Estado", typeof(string));
+            dataTable.Columns.Add("Mesa", typeof(int));
+            dataTable.Columns.Add("PedidoComida", typeof(string));
+            dataTable.Columns.Add("Actualización", typeof(DateTime));
+            dataTable.Columns.Add("Estado", typeof(string));
 
 
-			foreach (Servicio itemServicio in servicios)
+            foreach (Servicio itemServicio in servicios)
             {
-                foreach(Pedido itemPedido in pedidos)
+                foreach (Pedido itemPedido in pedidos)
                 {
-                    if(itemServicio.Id == itemPedido.IdServicio)
+                    if (itemServicio.Id == itemPedido.IdServicio)
                     {
-                        foreach(ProductoPorPedido itemProducto in itemPedido.Productossolicitados)
+                        foreach (ProductoPorPedido itemProducto in itemPedido.Productossolicitados)
                         {
                             dataTable.Rows.Add((int)itemServicio.Mesa, (string)itemProducto.Productodeldia.Nombre, (DateTime)itemPedido.ultimaactualizacion, (string)itemPedido.EstadoDescripcion);
 
@@ -349,16 +350,16 @@ namespace RestoApp
                 }
             }
 
-			//Tener en cuenta todos los distintos estados.
-			//Pensar hasta qué punto ponerlos. Entregado no iría... pero debería haber un historial del día para saber qué pasó con el pedido
+            //Tener en cuenta todos los distintos estados.
+            //Pensar hasta qué punto ponerlos. Entregado no iría... pero debería haber un historial del día para saber qué pasó con el pedido
 
             foreach (DataRow row in dataTable.Rows)
             {
                 int mesa = (int)row["Mesa"];
                 string pedidocomida = (string)row["PedidoComida"];
-				DateTime actualizacion = (DateTime)row["Actualización"];
-				string estado = (string)row["Estado"];
-            }          
+                DateTime actualizacion = (DateTime)row["Actualización"];
+                string estado = (string)row["Estado"];
+            }
 
             // Enlazar el DataTable al DataGrid
             datagridPedidos.DataSource = dataTable;
@@ -634,10 +635,10 @@ namespace RestoApp
                         mesa = item.Mesa,
                         servicio = item.Id,
                         cobrado = item.Cobrado,
-						apertura = (item.Fecha + item.Apertura).ToString("HH:mm:ss"),
-						cierre = item.Cierre.HasValue ? (item.Fecha + item.Apertura).ToString("HH:mm:ss") : String.Empty,
-						mesero = item.Mesero
-					});
+                        apertura = (item.Fecha + item.Apertura).ToString("HH:mm:ss"),
+                        cierre = item.Cierre.HasValue ? (item.Fecha + item.Apertura).ToString("HH:mm:ss") : String.Empty,
+                        mesero = item.Mesero
+                    });
             }
 
             string seviciosJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(serviciosJS);
@@ -654,9 +655,9 @@ namespace RestoApp
             ServicioNegocio servicioNegocio = new ServicioNegocio();
 
             bool response = false;
-			object msg = new { msg = "El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a que la mesa ya se encuentra abierta.", tipo = "error" };
+            object msg = new { msg = "El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a que la mesa ya se encuentra abierta.", tipo = "error" };
 
-			foreach (var diccionario in data)
+            foreach (var diccionario in data)
             {
                 var numeroMesa = diccionario["mesa"];
                 int idServicio = servicioNegocio.AbrirServicio(numeroMesa);
@@ -697,33 +698,33 @@ namespace RestoApp
                 };
             }
 
-			//Guardamos mensaje para modal de front
-			Helper.Session.SetMensajeModal(msg);
-            
-			return response;
+            //Guardamos mensaje para modal de front
+            Helper.Session.SetMensajeModal(msg);
+
+            return response;
         }
 
-		[WebMethod]
-		public static bool CerrarServicio(List<Dictionary<string, int>> data)
-		{
-			ServicioNegocio servicioNegocio = new ServicioNegocio();
+        [WebMethod]
+        public static bool CerrarServicio(List<Dictionary<string, int>> data)
+        {
+            ServicioNegocio servicioNegocio = new ServicioNegocio();
 
             //Iniciamos respuestas
-			bool response = false;
-			object msg = new { msg = $"El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a pedidos que aún permanecen abiertos.", tipo = "error" };
+            bool response = false;
+            object msg = new { msg = $"El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a pedidos que aún permanecen abiertos.", tipo = "error" };
 
-			foreach (var diccionario in data)
-			{
-				var numeroMesa = diccionario["mesa"];
+            foreach (var diccionario in data)
+            {
+                var numeroMesa = diccionario["mesa"];
 
-				if(servicioNegocio.CerrarServicio(numeroMesa))
+                if (servicioNegocio.CerrarServicio(numeroMesa))
                 {
-					//Modificamos la sessión agregándole la hora de cierre al servicio, pero sigue abierto hasta que cobrado no sea true
-					List<Servicio> servicio = Helper.Session.GetServicios();
+                    //Modificamos la sessión agregándole la hora de cierre al servicio, pero sigue abierto hasta que cobrado no sea true
+                    List<Servicio> servicio = Helper.Session.GetServicios();
 
                     foreach (var item in servicio)
                     {
-                        if(item.Mesa == numeroMesa)
+                        if (item.Mesa == numeroMesa)
                         {
                             item.Cierre = DateTime.Now.TimeOfDay;
                         }
@@ -733,26 +734,26 @@ namespace RestoApp
                     Helper.Session.SetServicios(servicio);
 
                     //Generamos respuestas
-					response = true;
-					msg = new { msg = $"El servicio de la mesa {numeroMesa} fue cerrado con éxito", tipo = "success" };
-				}
+                    response = true;
+                    msg = new { msg = $"El servicio de la mesa {numeroMesa} fue cerrado con éxito", tipo = "success" };
+                }
                 else
                 {
-					//Generamos respuestas
+                    //Generamos respuestas
                     response = false;
-					msg = new { msg = $"El servicio de la mesa {numeroMesa} no pudo cerrarse. Esto puede deberse a un error de conexión o a pedidos que aún permanecen abiertos", tipo = "error" };
-				}
-			}
+                    msg = new { msg = $"El servicio de la mesa {numeroMesa} no pudo cerrarse. Esto puede deberse a un error de conexión o a pedidos que aún permanecen abiertos", tipo = "error" };
+                }
+            }
 
-			//Guardamos mensaje para modal de front
-			Helper.Session.SetMensajeModal(msg);
+            //Guardamos mensaje para modal de front
+            Helper.Session.SetMensajeModal(msg);
 
             //Enviamos respuesta al fron
-			return response;
-		}
+            return response;
+        }
 
-		//Guardamos número de mesa en pedido
-		[WebMethod]
+        //Guardamos número de mesa en pedido
+        [WebMethod]
         public static bool AbrirPedido(List<Dictionary<string, int>> data)
         {
             //Iniciamos respuesta
@@ -765,9 +766,9 @@ namespace RestoApp
                 if (numeroMesa > 0)
                 {
                     //Guardamos numero de mesa que se seleccionó para iniciar pedido
-					Helper.Session.SetNumeroMesaPedido(numeroMesa);
-					response = true;
-				}
+                    Helper.Session.SetNumeroMesaPedido(numeroMesa);
+                    response = true;
+                }
             }
 
             //Enviamos resupuesta al fron
@@ -782,35 +783,35 @@ namespace RestoApp
             bool response = false;
             object msg = new { msg = $"El ticket no pudo emitirse. Esto puede deberse a un error de conexión o a que la mesa no se encuentra abierta.", tipo = "error" };
 
-			ServicioNegocio servicioNegocio = new ServicioNegocio();
+            ServicioNegocio servicioNegocio = new ServicioNegocio();
 
-			foreach (var diccionario in data)
-			{
-				var numeroMesa = diccionario["mesa"];
-				var numeroServicio = diccionario["servicio"];
+            foreach (var diccionario in data)
+            {
+                var numeroMesa = diccionario["mesa"];
+                var numeroServicio = diccionario["servicio"];
 
-                 if(numeroServicio > 0)
-					if (servicioNegocio.CobrarServicio(numeroServicio))
+                if (numeroServicio > 0)
+                    if (servicioNegocio.CobrarServicio(numeroServicio))
                     {
                         //Si se cobró correctamente, sacamos el sercisio de la sessión de Servicios
                         List<Servicio> servicio = Helper.Session.GetServicios().FindAll(item => item.Id != numeroServicio);
                         Helper.Session.SetServicios(servicio);
-						
-                        //Generamores respuestas
-						response = true;
-						msg = new { msg = $"El ticket de la mesa {numeroMesa} fue emitido con éxito", tipo = "success"};
-					}
-			}
 
-			//Guardamos mensaje para modal de front
-			Helper.Session.SetMensajeModal(msg);
+                        //Generamores respuestas
+                        response = true;
+                        msg = new { msg = $"El ticket de la mesa {numeroMesa} fue emitido con éxito", tipo = "success" };
+                    }
+            }
+
+            //Guardamos mensaje para modal de front
+            Helper.Session.SetMensajeModal(msg);
 
             //Enviamos respuestaal fron
-			return response;
-		}
+            return response;
+        }
 
 
-		protected void ListarCategoriasProducto()
+        protected void ListarCategoriasProducto()
         {
             CategoriaProductoNegocio CPNAux = new CategoriaProductoNegocio();
             ListaCategoriasProducto = CPNAux.Listar();
@@ -966,7 +967,7 @@ namespace RestoApp
                     ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
 
                 }
-               
+
             }
         }
 
@@ -994,59 +995,88 @@ namespace RestoApp
             List<Pedido> PedidosAux = new List<Pedido>();
 
             //busco servicios abiertos
-            if (ListaServicios.Count > 0) {
+            if (ListaServicios.Count > 0)
+            {
                 // Comento validacion para trabajar en front
                 ListaServicios = ListaServicios.FindAll(x => x.Cobrado != true && x.IdMesero == (int)Session["IdUsuario"]);
-
-            //Aca ya están los servicios guardados
-            //
-
-            
-
-            foreach (Pedido Pedido in Pedidos)
-            {
-                bool esPedidoEnCurso = false;
-                
-                foreach (Servicio Servicio in ListaServicios)
+                foreach (Pedido Pedido in Pedidos)
                 {
-                    if (Servicio.Id == Pedido.IdServicio && Pedido.Estado != 5)
+                    bool esPedidoEnCurso = false;
+                    foreach (Servicio Servicio in ListaServicios)
                     {
-                        esPedidoEnCurso = true;
+                        if (Servicio.Id == Pedido.IdServicio && Pedido.Estado != 5)
+                        {
+                            esPedidoEnCurso = true;
+                        }
                     }
 
-                    }
-
-                    if(esPedidoEnCurso!=false) { 
+                    if (esPedidoEnCurso != false)
+                    {
                         PedidosAux.Add(Pedido);
                     }
-
                 }
             }
 
             RepeaterPedidosEnCurso.DataSource = PedidosAux;
             RepeaterPedidosEnCurso.DataBind();
 
-			//Guardo Session de PedidosAux para vista de Gerente
-			Session["Pedidos"] = PedidosAux;
-		}
+            //Guardo Session de PedidosAux para vista de Gerente
+            Session["Pedidos"] = PedidosAux;
+        }
 
         protected void RepeaterPedidosEnCurso_ItemDataBound(object sender, RepeaterItemEventArgs e)
         {
             Pedido pedido = e.Item.DataItem as Pedido;
             Label lbl = e.Item.FindControl("lbNroMesaPedido") as Label;
-            
             lbl.Text = "Mesa " + ((List<Servicio>)Session["Servicios"]).Find(x => x.Id == pedido.IdServicio).Mesa.ToString();
-
-     //       lbl = e.Item.FindControl("lbCantItemsPedido") as Label;
-         // lbl.Text = pedido.Productossolicitados.Count().ToString() + " Items Pedidos";
-
             Estados s = new Estados();
-
-
             Panel panel = e.Item.FindControl("PanelEstadoPedido") as Panel;
             panel.Style.Add("background", s.getColorEstado(pedido.Estado));
             panel.Style.Add("cursor", "pointer");
 
         }
-	}
+
+        protected string getDetallePedido(object dataItem)
+        {
+            var pedido = (Pedido)dataItem;
+
+            var DetallesPedido = new Dictionary<string, object>();
+            DetallesPedido.Add("PedidoId", pedido.Id);
+            DetallesPedido.Add("Estado", pedido.EstadoDescripcion);
+
+            var productos = new List<Dictionary<string, object>>();
+            foreach (ProductoPorPedido productoPorPedido in pedido.Productossolicitados)
+            {
+                var producto = new Dictionary<string, object>();
+                producto.Add("Nombre", productoPorPedido.Productodeldia.Nombre);
+                producto.Add("Cantidad", productoPorPedido.Cantidad);
+                productos.Add(producto);
+            }
+            DetallesPedido.Add("Productos", productos);
+            DetallesPedido.Add("UltimaActualizacion", pedido.ultimaactualizacion);
+
+            var jsonSerializer = new JavaScriptSerializer();
+            var json = jsonSerializer.Serialize(DetallesPedido);
+
+            return json;
+        }
+
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
