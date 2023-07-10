@@ -112,7 +112,6 @@ namespace RestoApp
 
                 tipoUsuario = Configuracion.Rol.Mesero;
                 CargarMeseros();
-                CargarDatosMesas();
                 CargarMenuDisponible();
                 CargarMeseroPorDia();
                 CargarMesasAsignadas();
@@ -164,7 +163,9 @@ namespace RestoApp
                         {
                             itemServicioSession.Id = itemServicioDB.Id;
                             itemServicioSession.Mesa = itemServicioDB.Mesa;
-                            itemServicioSession.Fecha = itemServicioDB.Fecha;
+							itemServicioSession.Mesero = itemServicioDB.Mesero;
+                            itemServicioSession.IdMesero = itemServicioDB.IdMesero;
+							itemServicioSession.Fecha = itemServicioDB.Fecha;
                             itemServicioSession.Apertura = itemServicioDB.Apertura;
                             itemServicioSession.Cierre = itemServicioDB.Cierre;
                             itemServicioSession.Cobrado = itemServicioDB.Cobrado;
@@ -175,21 +176,21 @@ namespace RestoApp
                 //if (AutentificacionUsuario.esGerente(usuario))
                 //{
                 //Info de la mesa desde session
-                List<object> infoMesas = (List<object>)Session["infoMesas"];
+                //List<object> infoMesas = (List<object>)Session["infoMesas"];
 
-                foreach (Servicio itemServicio in serviciosSession)
-                {
+                //foreach (Servicio itemServicio in serviciosSession)
+                //{
 
-                    foreach (dynamic itemMesa in infoMesas)
-                    {
+                //    foreach (dynamic itemMesa in infoMesas)
+                //    {
 
-                        if (itemServicio.Mesa == itemMesa.mesa)
-                        {
-                            itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
-                            itemServicio.IdMesero = itemMesa.mesero;
-                        }
-                    }
-                }
+                //        if (itemServicio.Mesa == itemMesa.mesa)
+                //        {
+                //            itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
+                //            itemServicio.IdMesero = itemMesa.mesero;
+                //        }
+                //    }
+                //}
                 //}
 
                 //Guardamos en session
@@ -205,7 +206,9 @@ namespace RestoApp
 
                     auxServicioSession.Id = item.Id;
                     auxServicioSession.Mesa = item.Mesa;
-                    auxServicioSession.Fecha = item.Fecha;
+					auxServicioSession.Mesero = item.Mesero;
+					auxServicioSession.IdMesero = item.IdMesero;
+					auxServicioSession.Fecha = item.Fecha;
                     auxServicioSession.Apertura = item.Apertura;
                     auxServicioSession.Cierre = item.Cierre;
                     auxServicioSession.Cobrado = item.Cobrado;
@@ -216,19 +219,19 @@ namespace RestoApp
                 //if (AutentificacionUsuario.esGerente(usuario))
                 //{
                 //    //Info de la mesa desde session
-                List<object> infoMesas = (List<object>)Session["infoMesas"];
+                //List<object> infoMesas = (List<object>)Session["infoMesas"];
 
-                foreach (Servicio itemServicio in servicio)
-                {
-                    foreach (dynamic itemMesa in infoMesas)
-                    {
-                        if (itemServicio.Mesa == itemMesa.mesa)
-                        {
-                            itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
-                            itemServicio.IdMesero = itemMesa.mesero;
-                        }
-                    }
-                }
+                //foreach (Servicio itemServicio in servicio)
+                //{
+                //    foreach (dynamic itemMesa in infoMesas)
+                //    {
+                //        if (itemServicio.Mesa == itemMesa.mesa)
+                //        {
+                //            itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
+                //            itemServicio.IdMesero = itemMesa.mesero;
+                //        }
+                //    }
+                //}
                 //}
 
                 //Guardamos en session
@@ -553,11 +556,12 @@ namespace RestoApp
             usuario = Helper.Session.GetUsuario();
             meseroPorDia = Helper.Session.GetMeseroPorDia();
 
-            if (meseroPorDia != null)
+            //Si hay mesero por dia
+			if (meseroPorDia != null)
             {
                 MesaNegocio mesaNegocio = new MesaNegocio();
-                List<MesaPorDia> mesasAsignadas = mesaNegocio.ListarMesaPorDia()
-                    .FindAll(x => x.Mesero == meseroPorDia.IdMesero && x.Cierre == null)
+				List<MesaPorDia>  mesasAsignadas = mesaNegocio.ListarMesaPorDia()
+					.FindAll(x => x.Mesero == meseroPorDia.IdMesero && x.Cierre == null)
                     .OrderBy(x => x.Mesa).ToList();
 
                 Helper.Session.SetMesasAsignadas(mesasAsignadas);
@@ -777,39 +781,39 @@ namespace RestoApp
         }
 
         //Cobramos el pedido
-        [WebMethod]
-        public static bool EmitirTicket(List<Dictionary<string, int>> data)
-        {
-            //Inicamos respuestas
-            bool response = false;
-            object msg = new { msg = $"El ticket no pudo emitirse. Esto puede deberse a un error de conexión o a que la mesa no se encuentra abierta.", tipo = "error" };
+        //[WebMethod]
+        //public static bool EmitirTicket(List<Dictionary<string, int>> data)
+        //{
+        //    //Inicamos respuestas
+        //    bool response = false;
+        //    object msg = new { msg = $"El ticket no pudo emitirse. Esto puede deberse a un error de conexión o a que la mesa no se encuentra abierta.", tipo = "error" };
 
-            ServicioNegocio servicioNegocio = new ServicioNegocio();
+        //    ServicioNegocio servicioNegocio = new ServicioNegocio();
 
-            foreach (var diccionario in data)
-            {
-                var numeroMesa = diccionario["mesa"];
-                var numeroServicio = diccionario["servicio"];
+        //    foreach (var diccionario in data)
+        //    {
+        //        var numeroMesa = diccionario["mesa"];
+        //        var numeroServicio = diccionario["servicio"];
 
-                if (numeroServicio > 0)
-                    if (servicioNegocio.CobrarServicio(numeroServicio))
-                    {
-                        //Si se cobró correctamente, sacamos el sercisio de la sessión de Servicios
-                        List<Servicio> servicio = Helper.Session.GetServicios().FindAll(item => item.Id != numeroServicio);
-                        Helper.Session.SetServicios(servicio);
+        //        if (numeroServicio > 0)
+        //            if (servicioNegocio.CobrarServicio(numeroServicio))
+        //            {
+        //                //Si se cobró correctamente, sacamos el sercisio de la sessión de Servicios
+        //                List<Servicio> servicio = Helper.Session.GetServicios().FindAll(item => item.Id != numeroServicio);
+        //                Helper.Session.SetServicios(servicio);
 
-                        //Generamores respuestas
-                        response = true;
-                        msg = new { msg = $"El ticket de la mesa {numeroMesa} fue emitido con éxito", tipo = "success" };
-                    }
-            }
+        //                //Generamores respuestas
+        //                response = true;
+        //                msg = new { msg = $"El ticket de la mesa {numeroMesa} fue emitido con éxito", tipo = "success" };
+        //            }
+        //    }
 
-            //Guardamos mensaje para modal de front
-            Helper.Session.SetMensajeModal(msg);
+        //    //Guardamos mensaje para modal de front
+        //    Helper.Session.SetMensajeModal(msg);
 
-            //Enviamos respuestaal fron
-            return response;
-        }
+        //    //Enviamos respuestaal fron
+        //    return response;
+        //}
 
 
         protected void ListarCategoriasProducto()
@@ -869,10 +873,6 @@ namespace RestoApp
             }
 
         }
-
-
-
-
 
         protected void BtnCancelarAgregarA_Click(object sender, EventArgs e)
         {
