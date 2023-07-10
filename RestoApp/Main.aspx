@@ -21,7 +21,7 @@
         </ContentTemplate>
     </asp:UpdatePanel>
 
-     <!-- Fin Boton Mesero -->
+    <!-- Fin Boton Mesero -->
     <!-- Fin Updatea Panel Botón Mesero -->
 
     <!-- Agregar Mesas habilitadas, mozos habilitados, productos, -->
@@ -191,141 +191,66 @@
             <%--SECCION PEDIDOS EN CURSO--%>
             <div class="col-10 bg-white rounded p-3 justify-content-around m-1 mt-2 content-fluid">
 
-                <div class="row bg-dark text-white p-2 h4">
-                    MIS PEDIDOS EN CURSO   
-                </div>
-
+                <div class="row bg-dark text-white p-2 h4"> MIS PEDIDOS EN CURSO </div>
 
                 <div class="row">
                     <asp:UpdatePanel runat="server">
                         <ContentTemplate>
                             <asp:Repeater runat="server" ID="RepeaterPedidosEnCurso" OnItemDataBound="RepeaterPedidosEnCurso_ItemDataBound">
                                 <ItemTemplate>
-
-                                    <div class="px-3 py-1 m-1" style="display: inline-table; width:150px; height: 80px">
-
-                                      
-                                        <asp:Panel runat="server" ID="PanelEstadoPedido" CssClass="row rounded-top align-items-center" style="height: 40px; font-weight: bold; font-size: .9rem;" title='<%#Eval("EstadoDescripcion")%>'>
-                                           <asp:Label runat="server" CssClass="col small" ID="lbNroPedido">#<%#Eval("Id")%></asp:Label>
-                                          <asp:Label runat="server" ID="lbNroMesaPedido" CssClass="col small"></asp:Label>
+                                    <div class="px-3 py-1 m-1" style="display: inline-table; width: 150px; height: 80px">
+                                        <asp:Panel runat="server" ID="PanelEstadoPedido" CssClass="row rounded-top align-items-center" Style="height: 40px; font-weight: bold; font-size: .9rem;" title='<%#Eval("EstadoDescripcion")%>'>
+                                            <asp:Label runat="server" CssClass="col small" ID="lbNroPedido">#<%#Eval("Id")%></asp:Label>
+                                            <asp:Label runat="server" ID="lbNroMesaPedido" CssClass="col small"></asp:Label>
                                         </asp:Panel>
-                                
-
-                                     
-                                    <%--    <asp:Label runat="server" ID="lbCantItemsPedido" CssClass="col small"></asp:Label>--%>
-                    
-
-                                        <div class="row justify-content-between bg-dark rounded-bottom" >
-                                            <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="col btn btn-small btn-dark" style="font-size: .9rem" Text="Ver" ToolTip="Ver Detalle"/>
-                                         <asp:Button ID="Button1" runat="server" Text="Cerrar" CssClass="col btn btn-small btn-dark" style="font-size: .9rem" ToolTip="Marcar como entregado"/>
+                                        <div class="row justify-content-between bg-dark rounded-bottom">
+                                            <asp:Button ID="BtnVerDetallePedido" runat="server" CssClass="col btn btn-small btn-dark verDetallePedido" Style="font-size: .9rem" Text="Ver" ToolTip="Ver Detalle" data-order-details='<%# getDetallePedido(Container.DataItem) %>' />
+                                            <asp:Button ID="BtnCerrarPedido" runat="server" Text="Cerrar" CssClass="col btn btn-small btn-dark" Style="font-size: .9rem" ToolTip="Marcar como entregado" OnClick="BtnCerrarPedido_Click" CommandArgument= '<%#Eval("Id")%>' />
                                         </div>
-
-                                        
-                                      
-                                </div>
+                                    </div>
                                 </ItemTemplate>
-                                
                             </asp:Repeater>
                         </ContentTemplate>
                     </asp:UpdatePanel>
-
                 </div>
-
-
-
-
-
-<%--                <div class="col d-inline-flex p-2 justify-content-around">
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="card-text">
-                                Mesa ## | Pedido ## | Estado 
-                            </p>
-                            <br />
-                            <button class="btn btn-dark">Detalle</button>
-                            <button class="btn btn-dark">Cerrar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col d-inline-flex p-2  justify-content-around">
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="card-text">
-                                Mesa ## | Pedido ## | Estado 
-                            </p>
-                            <br />
-                            <button class="btn btn-dark">Detalle</button>
-                            <button class="btn btn-dark">Cerrar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col d-inline-flex p-2  justify-content-around">
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="card-text">
-                                Mesa ## | Pedido ## | Estado 
-                            </p>
-                            <br />
-                            <button class="btn btn-dark">Detalle</button>
-                            <button class="btn btn-dark">Cerrar</button>
-                        </div>
-                    </div>
-                </div>--%>
-
 
             </div>
 
-
-
             <%--SECCION MENU RAPIDO--%>
-
             <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 ">
-                <%--  Label muestra sobre qué mesa estoy haciendo pedido--%>
 
                 <div class="row bg-dark ">
-
                     <div class="col-6 bg-dark text-white p-2">
                         <asp:UpdatePanel runat="server">
                             <ContentTemplate>
                                 <asp:Label ID="lbNumeroMesa" runat="server" CssClass="h4">SIN MESA SELECCIONADA</asp:Label>
-
                             </ContentTemplate>
                         </asp:UpdatePanel>
-
                     </div>
 
                     <div class="col-6 d-flex justify-content-end p-2">
-
-
                         <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
                             <ContentTemplate>
                                 <asp:Button runat="server" ID="btnGuardarPedido" Text="Enviar Pedido" Visible="false" CssClass="btn  btn-secondary" OnClick="btnGuardarPedido_Click" />
                                 <asp:Button runat="server" ID="btnTerminarPedido" Text="Cancelar" Visible="false" CssClass="btn btn-secondary" OnClick="btnTerminarPedido_Click" />
                             </ContentTemplate>
                         </asp:UpdatePanel>
-
                     </div>
                 </div>
 
-
-
-
+                <%--PLATOS DISPONIBLES--%>
                 <div class="col-6 p-2">
                     <label class="row h3 p-1">Platos Disponibles:</label>
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <asp:Label runat="server" CssClass="col-4">
-                                    <%#Eval("Nombre")%>
-                                </asp:Label>
+                                <asp:Label runat="server" CssClass="col"><%#Eval("Nombre")%> </asp:Label>
                                 <div class="col">
                                     <asp:UpdatePanel runat="server" CssClass="row">
                                         <ContentTemplate>
                                             <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" ToolTip="Ingrese Cantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
                                             <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
-                                            <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA_Click" ToolTip="Cancelar" />
+                                            <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖"  OnClick="BtnCancelarAgregarA_Click" ToolTip="Cancelar" Visible="false"/>
                                         </ContentTemplate>
                                     </asp:UpdatePanel>
                                 </div>
@@ -335,18 +260,13 @@
                 </div>
 
 
-                <%--Bebidas--%>
-
-
+                <%--BEBIDAS DISPONIBLES--%>
                 <div class="col-6 p-2">
                     <label class="row h3 p-1">Bebidas Disponibles:</label>
                     <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
                             <div class="row">
-                                <asp:Label runat="server" CssClass="col-4">
-                                      <%#Eval("Nombre")%>
-                                </asp:Label>
-
+                                <asp:Label runat="server" CssClass="col"><%#Eval("Nombre")%></asp:Label>
                                 <div class="col">
                                     <asp:UpdatePanel runat="server" CssClass="row">
                                         <ContentTemplate>
@@ -361,17 +281,8 @@
                     </asp:Repeater>
                 </div>
 
-
-
-
-
             </div>
         </div>
-
-
-
-
-
     </div>
     <% } %>
 
@@ -385,6 +296,26 @@
             <div id="modal-content" class="modal-body">
 
                 <!-- Desde JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal DetallePedido -->
+    <div id="ModalDetallePedido" class="modal modalDP" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="row bg-dark text-white rounded-top align-items-center">
+                    <span class="col" id="modalDP-titulo"></span>
+                    <span class="close col-3">&times;</span>
+                </div>
+                <div class="row modalDP-body border">
+                    <div><strong>ITEMS PEDIDOS:</strong></div>
+                    <div id="productosContainer"></div>
+                </div>
+                <div class="row bg-dark text-white rounded-bottom align-items-center p-2">
+                    <span class="col text-uppercase" id="estado"></span>
+                    <span class="col" id="ultimaActualizacion"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -433,7 +364,7 @@
             left: 0;
         }
 
-        .modal {
+        #modalMesas {
             display: none; /* Ocultar el modal por defecto */
             position: fixed;
             z-index: 1;
@@ -520,19 +451,23 @@
                 border-color: #dc3546c4;
             }
 
-            .bg-abierto{
-                background-color: #74b816;
-                border-color: #74b816;
-            }
+        .bg-abierto {
+            background-color: #74b816;
+            border-color: #74b816;
+        }
 
-            .bg-cobrar{
-                background-color: #8fbcbb;
-                border-color: #8fbcbb;
-            }
+        .bg-cobrar {
+            background-color: #8fbcbb;
+            border-color: #8fbcbb;
+        }
 
-            .cursor-pointer{
-                cursor: pointer;
-            }
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .modalDP .modal-content {
+            width: 100%;
+        }
     </style>
     <!-- Fin Styles Mesas -->
 
@@ -679,7 +614,7 @@
 
 
                 mesaEvento.addEventListener('click', () => {
-                    if(servicio){
+                    if (servicio) {
 
                         //En caso de que la mesa estén con un servicio abierto
                         let contieneNumero = /\d/.test(idMesa)
@@ -747,7 +682,7 @@
                 div2.className = "background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center";
 
                 var icon = document.createElement("i");
-                if(!servicio?.cierre && !servicio?.cobrado)
+                if (!servicio?.cierre && !servicio?.cobrado)
                     icon.className = "fa-solid fa-utensils fs-4";
                 else
                     icon.className = "fa-solid fa-dollar fs-4";
@@ -842,7 +777,7 @@
             }
 
             contenidoModal.innerHTML = "";
-            contenidoModal.innerHTML = `<p>${msg}</p>` 
+            contenidoModal.innerHTML = `<p>${msg}</p>`
         }
 
         function alertaModal(msg, mode) {
@@ -868,7 +803,7 @@
             let btnTicket = document.getElementById(`btnTicket_${i + 1}`);
 
             //Deshabilitamos botones según el caso
-            if(!servicio){
+            if (!servicio) {
                 btnPedido.title = 'Pedido deshabilitado'
                 btnPedido.disabled = true;
                 btnPedido.classList.remove("btnAbrirPedido")
@@ -883,7 +818,7 @@
                 btnTicket.classList.add("bg-muted")
             } else {
 
-                if(servicio?.cierre != '' && servicio != null){
+                if (servicio?.cierre != '' && servicio != null) {
                     btnServicio.disabled = true;
                     btnServicio.title = 'Servicio deshabilitado'
                     btnPedido.disabled = true;
@@ -910,7 +845,7 @@
             //Evento para abrir pedidos (se cierra desde lista de pedido)
             btnPedido.addEventListener('click', (e) => {
 
-                 let data = [{ mesa: mesa }];
+                let data = [{ mesa: mesa }];
                 mandarDatos('Main', 'AbrirPedido', data, e)
 
             })
@@ -929,7 +864,7 @@
                 e.preventDefault();
                 window.location.href = `Tickets.aspx?servicio=${servicio?.servicio}`;
                 //Mandamos datos a CodeBehind
-                 //let data = [{ mesa: servicio?.mesa, servicio: servicio?.servicio }];
+                //let data = [{ mesa: servicio?.mesa, servicio: servicio?.servicio }];
                 //mandarDatos('Main', 'EmitirTicket', data, e)
                 //MOSTRAR TICKET. ¿LINK CON QUERY?
             })
@@ -993,7 +928,84 @@
     </script>
     <!-- Fin Scripts Mesas -->
 
+    <%--Scrpit Modal Detalle Pedido--%>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.verDetallePedido', function () {
+                var orderDetails = $(this).data('order-details');
+                var order;
+
+                if (typeof orderDetails === 'string') {
+                    order = JSON.parse(orderDetails.replace(/&quot;/g, '"'));
+                } else {
+                    order = orderDetails;
+                }
+
+                $('#modalDP-titulo').text("PEDIDO #" + order.PedidoId);
+                $('#estado').text(order.Estado);
+
+                var productosContainer = $('#productosContainer');
+                productosContainer.empty();
+
+                order.Productos.forEach(function (producto) {
+                    var productoElement = $('<div class="producto row"></div>');
+                    productoElement.append('<span class="nombre col">' + producto.Nombre + '</span>');
+                    productoElement.append('<span class="cantidad col"> ' + producto.Cantidad + ' un.</span>');
+                    productosContainer.append(productoElement);
+                });
+
+                var ultimaActualizacion = new Date(parseInt(order.UltimaActualizacion.substr(6)));
+                var formattedDate = formatDate(ultimaActualizacion);
+                $('#ultimaActualizacion').text(formattedDate);
+
+                $('#ModalDetallePedido').modal('show');
+            });
+
+            $('#ModalDetallePedido').on('hidden.bs.modal', function () {
+                $('#pedidoId').text('');
+                $('#estado').text('');
+                $('#productosContainer').empty();
+                $('#ultimaActualizacion').text('');
+            });
+
+            $(document).on('click', '#ModalDetallePedido .close', function () {
+                $('#ModalDetallePedido').modal('hide');
+            });
+        });
+
+        function formatDate(date) {
+            var day = String(date.getDate()).padStart(2, '0');
+            var month = String(date.getMonth() + 1).padStart(2, '0');
+            var year = String(date.getFullYear()).slice(-2);
+            var hours = String(date.getHours()).padStart(2, '0');
+            var minutes = String(date.getMinutes()).padStart(2, '0');
+            var seconds = String(date.getSeconds()).padStart(2, '0');
+            return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes + ':' + seconds;
+        }
+    </script>
+    <%--Fin Script Modal Detalle Pedido--%>
 </asp:Content>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
