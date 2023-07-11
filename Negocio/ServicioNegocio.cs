@@ -2,7 +2,6 @@
 using Opciones;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Negocio
 {
@@ -16,10 +15,18 @@ namespace Negocio
 
 			try
 			{
-				datos.setQuery($"SELECT {ColumnasDB.Servicio.Id}, {ColumnasDB.MesasPorDia.IdMesa}, S.{ColumnasDB.Servicio.Fecha}, S.{ColumnasDB.Servicio.Apertura}, S.{ColumnasDB.Servicio.Cierre}, {ColumnasDB.Servicio.Cobrado} " +
+				datos.setQuery($"SELECT S.{ColumnasDB.Servicio.Id}, MPD.{ColumnasDB.MesasPorDia.IdMesa}, U.{ColumnasDB.Usuario.Id}, U.{ColumnasDB.Usuario.Apellidos}, U.{ColumnasDB.Usuario.Nombres} ,S.{ColumnasDB.Servicio.Fecha}, S.{ColumnasDB.Servicio.Apertura}, S.{ColumnasDB.Servicio.Cierre}, {ColumnasDB.Servicio.Cobrado} " +
 					$"FROM {ColumnasDB.Servicio.DB} S " +
 					$"INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD " +
-					$"ON S.{ColumnasDB.MesasPorDia.Id} = MPD.{ColumnasDB.MesasPorDia.Id}");
+					$"ON S.{ColumnasDB.MesasPorDia.Id} = MPD.{ColumnasDB.MesasPorDia.Id} " +
+					$" INNER JOIN {ColumnasDB.Mesa.DB} M " +
+					$"ON MPD.{ColumnasDB.MesasPorDia.IdMesa} = M.{ColumnasDB.Mesa.Numero} " +
+					$" INNER JOIN {ColumnasDB.MeseroPorDia.DB} MP " +
+					$"ON MPD.{ColumnasDB.MeseroPorDia.Id} = MP.{ColumnasDB.MeseroPorDia.Id} " +
+					$"INNER JOIN {ColumnasDB.Usuario.DB} U " +
+					$"ON MP.{ColumnasDB.Servicio.IdMesero} = U.{ColumnasDB.Usuario.Id} " +
+					$"WHERE S.{ColumnasDB.Servicio.Cierre} IS NULL " +
+					$"ORDER BY S.{ColumnasDB.Servicio.Fecha} DESC, S.{ColumnasDB.Servicio.Apertura} DESC");
 
 				datos.executeReader();
 
@@ -31,9 +38,17 @@ namespace Negocio
 					//ID
 					auxServicio.Id = (Int32)datos.Reader[ColumnasDB.Servicio.Id];
 
-					//Mesa
+					//MESA
 					if (datos.Reader[ColumnasDB.MesasPorDia.IdMesa] != null)
-						auxServicio.Mesa = (int)datos.Reader[ColumnasDB.MesasPorDia.IdMesa]; ;
+						auxServicio.Mesa = (int)datos.Reader[ColumnasDB.MesasPorDia.IdMesa];
+
+					//IDMESERO
+					if (datos.Reader[ColumnasDB.Usuario.Id] != null)
+						auxServicio.IdMesero = (int)datos.Reader[ColumnasDB.Usuario.Id];
+
+					//Fecha
+					if (datos.Reader[ColumnasDB.Usuario.Nombres] != null && datos.Reader[ColumnasDB.Usuario.Apellidos] != null)
+						auxServicio.Mesero = (string)datos.Reader[ColumnasDB.Usuario.Nombres] + " " + (string)datos.Reader[ColumnasDB.Usuario.Apellidos];
 
 					//Fecha
 					if (datos.Reader[ColumnasDB.Servicio.Fecha] != null)

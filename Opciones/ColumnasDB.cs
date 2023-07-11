@@ -107,6 +107,7 @@ namespace Opciones
 			public const string Cierre = "Cierre";
 			public const string Fecha = "Fecha";
 			public const string Cobrado = "Cobrado";
+			public const string IdMesero = "IdMesero";
 			public const string DB = "Servicio";
 		}
         public struct Pedido
