@@ -18,6 +18,7 @@ using System.Web.Script.Serialization;
 using System.Web.Handlers;
 using System.Web.Services.Description;
 
+
 namespace RestoApp
 {
     public partial class Main1 : System.Web.UI.Page
@@ -250,14 +251,15 @@ namespace RestoApp
         private void CargarDatosMesas()
         {
             {
-                //Llamdados a DB
-                //MesaNegocio mesaNegocio = new MesaNegocio(datos);
-                //mesas = mesaNegocio.Listar();
-                mesasPorDia = mesaNegocio.ListarMesaPorDia();
-
-                //Sessiones
-                Helper.Session.SetMesas(mesas);
-                Helper.Session.SetMesasAsignadas(mesasPorDia);
+				//Llamdados a DB
+				//MesaNegocio mesaNegocio = new MesaNegocio(datos);
+				mesas = mesaNegocio.Listar();
+				//mesasPorDia = mesaNegocio.ListarMesaPorDia();
+				//mesasPorDia = Helper.Session.GetMesasAsignadas();
+				
+				//Sessiones
+				Helper.Session.SetMesas(mesas);
+                //Helper.Session.SetMesasAsignadas(mesasPorDia);
 
                 //Guardamos cantidad de mesas activas para mostrar en ASPX
                 MesasActivas = mesas.FindAll(m => m.Activo == true).Count();
@@ -377,13 +379,17 @@ namespace RestoApp
 		
         private void CargarMeseros()
         {
-            //MesaNegocio mesaNegocio = new MesaNegocio(datos);
+			//MesaNegocio mesaNegocio = new MesaNegocio(datos);
+			
+			mesasPorDia = mesaNegocio.ListarMesaPorDia();
+            Helper.Session.SetMesasAsignadas(mesasPorDia);
 
-            //Lista de IDs de Meseros con mesas asignadas
-            List<int> IdMeserosConMesasAbiertas = mesaNegocio.ListaIdMeserosActivosConMesasAbiertas();
+			//Lista de IDs de Meseros con mesas asignadas
+			//List<int> IdMeserosConMesasAbiertas = mesaNegocio.ListaIdMeserosActivosConMesasAbiertas();
+			List<int?> IdMeserosConMesasAbiertas = mesasPorDia.Select(mesa => mesa.IDMeseroPorDia).ToList();
 
-            //Meseros Presentes
-            List<MeseroPorDia> meseroPorDia = mesaNegocio.ListaMeseroPorDia();
+			//Meseros Presentes
+			List<MeseroPorDia> meseroPorDia = mesaNegocio.ListaMeseroPorDia();
 
             //Meseros Ausentes
             List<Usuario> meserosAusentes = mesaNegocio.ListaMeserosAusentes();
@@ -1037,9 +1043,10 @@ namespace RestoApp
         {
             Session["Pedidos"] = null;
             PedidoNegocio PNAux = new PedidoNegocio();
-            Session.Add("Pedidos", PNAux.ListarPedidos());
+            //Session.Add("Pedidos", PNAux.ListarPedidos());
+            Session.Add("Pedidos", new List<Pedido>());
 
-        }
+		}
 
         protected void ActualizarPedidos()
         {
