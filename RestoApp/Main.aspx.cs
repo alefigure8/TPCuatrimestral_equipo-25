@@ -868,13 +868,25 @@ namespace RestoApp
                         Session.Add("ProductosPorPedido", list);
                     }
 
-                    productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
-                    ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
-
+                    if (((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Count > 0){
+                        if (((List<ProductoPorPedido>)Session["ProductosPorPedido"]).First<ProductoPorPedido>().Productodeldia.Categoria == (ListaCategoriasProducto.Find(x => x.Descripcion.ToLower() == "platos")).Id)
+                        {
+                            productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
+                            ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
+                        }
+                        else
+                        {
+                            string script = "alert('No puede agregar Platos al Pedido en curso (Pedido de Bebidas)');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+                        }
+                    }
+                    else
+                    {
+                        productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
+                        ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
+                    }
                 }
-
             }
-
         }
 
         protected void BtnCancelarAgregarA_Click(object sender, EventArgs e)
@@ -981,9 +993,24 @@ namespace RestoApp
                         Session.Add("ProductosPorPedido", list);
                     }
 
-                    productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
-                    ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
-
+                    if (((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Count > 0)
+                    {
+                        if (((List<ProductoPorPedido>)Session["ProductosPorPedido"]).First<ProductoPorPedido>().Productodeldia.Categoria == (ListaCategoriasProducto.Find(x => x.Descripcion.ToLower() == "bebidas")).Id)
+                        {
+                            productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
+                            ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
+                        }
+                        else
+                        {
+                            string script = "alert('No puede agregar Bebidas al Pedido en curso (Pedido de Platos)');";
+                            ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+                        }
+                    }
+                    else
+                    {
+                        productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
+                        ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
+                    }
                 }
 
             }
@@ -1097,7 +1124,6 @@ namespace RestoApp
             PNaux.CambiarEstadoPedido(int.Parse(BtnCerrarPedido.CommandArgument), 5);
 
             ActualizarPedidos();
-
         }
     }
 }
