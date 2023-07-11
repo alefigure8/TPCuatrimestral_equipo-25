@@ -895,6 +895,16 @@ namespace RestoApp
                 Pedido Paux = new Pedido();
                 Paux.IdServicio = ((List<Servicio>)Session["Servicios"]).Find(x => x.Mesa == Helper.Session.GetNumeroMesaPedido()).Id;
                 Paux.Productossolicitados = ((List<ProductoPorPedido>)Session["ProductosPorPedido"]);
+
+                foreach(ProductoPorPedido PPP in Paux.Productossolicitados)
+                {
+                    ((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == PPP.Productodeldia.Id).Stock -= PPP.Cantidad;
+                    Producto ProductoAux = new Producto(PPP.Productodeldia);
+                    ProductoNegocio ProductoNegocioAux = new ProductoNegocio();
+                    ProductoNegocioAux.ModificarProducto(ProductoAux);
+                    ProductoNegocioAux.ModificarProductoDD((Dominio.ProductoDelDia)(((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == PPP.Productodeldia.Id)));
+                }
+
                 PedidoNegocio PNaux = new PedidoNegocio();
                 PNaux.AbrirPedido(Paux);
                 Session["ProductosPorPedido"] = null;
