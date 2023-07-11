@@ -16,23 +16,25 @@ namespace RestoApp
 	{
 		public static List<Mesa> mesas;
 		public Usuario usuario { get; set; }
+		static AccesoDB datos;
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
 				usuario = (Usuario)Session[Configuracion.Session.Usuario];
-
+			
 			// CONTENIDO GERENTE
 			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
 			{
-				CargarMesas();
+				datos = new AccesoDB();
+				CargarMesas(datos);
 				CargarNumeroDeMesasAlDesplegable();
 				CargarMesasGuardadas();
 			}
 		}
 
-		private void CargarMesas()
+		private void CargarMesas(AccesoDB datos)
 		{
-			MesaNegocio mesaNegocio = new MesaNegocio();
+			MesaNegocio mesaNegocio = new MesaNegocio(datos);
 			mesas = mesaNegocio.Listar();
 		}
 
@@ -67,7 +69,7 @@ namespace RestoApp
 		public static void GuardarMesas(int[] array)
 		{
 
-			MesaNegocio mesaNegocio = new MesaNegocio();
+			MesaNegocio mesaNegocio = new MesaNegocio(datos);
 			for (int i = 0; i < array.Length; i++)
 			{
 				//Verificar cambios

@@ -15,6 +15,8 @@ using Helper;
 using System.Data;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.Script.Serialization;
+using System.Web.Handlers;
+using System.Web.Services.Description;
 
 namespace RestoApp
 {
@@ -26,9 +28,7 @@ namespace RestoApp
         public int MesasActivas { get; set; }
         public int MesasAsignadas { get; set; }
         public int MeserosPresentes { get; set; }
-
         public string tipoUsuario;
-
         public List<CategoriaProducto> ListaCategoriasProducto;
 
         //Private
@@ -37,14 +37,18 @@ namespace RestoApp
         private List<Mesa> mesas;
         private List<MesaPorDia> mesasPorDia;
 
-        //Javascript atributos
-        private string datosMesasJSON;
+        //DB
+        private AccesoDB datos;
+        private MesaNegocio mesaNegocio;
+        static ServicioNegocio servicioNegocio;
+
+		//Javascript atributos
+		private string datosMesasJSON;
         private string mesasActivasJSON;
         private string numeroMesasJSON;
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
 
             //Verificar que sea usuario
             if (AutentificacionUsuario.esUser(Helper.Session.GetUsuario()))
@@ -56,21 +60,39 @@ namespace RestoApp
                 //Acciona mensajes de alerta en caso de que haya mensajes guardados
                 if (Helper.Session.GetMensajeModal() != null)
                 {
-                    dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
-                    string msg = msgModal.msg;
-                    string tipo = msgModal.tipo;
-                    string scriptModal = $"alertaModal(\"{msg}\", \"{tipo}\");";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
-                    Helper.Session.SetMensajeModal(null);
-                }
+					dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
+					UIMostrarAlerta(msgModal.msg, msgModal.tipo);
+				}
 
-                tipoUsuario = Configuracion.Rol.Gerente;
-                CargarMeseros();
-                CargarDatosMesas();
-                CargarServicios();
-                CargarEstadoMesas();
-                ActualizarPedidos();
-                CargarPedido();
+                try
+                {
+                    //Conexión a base de datos, única instancia
+                    datos = new AccesoDB();
+
+                    //Negocios
+                    mesaNegocio = new MesaNegocio(datos);
+                    servicioNegocio = new ServicioNegocio(datos);
+
+                    //Variable para front
+					tipoUsuario = Configuracion.Rol.Gerente;
+
+                    //Métodos
+                    CargarMeseros();
+                    CargarDatosMesas();
+                    CargarServicios();
+                    CargarEstadoMesas();
+                    ActualizarPedidos();
+                    CargarPedido();
+                }
+                catch (Exception error)
+                {
+                    UIMostrarAlerta(error.Message);
+				}
+				finally
+                {
+                    //Cerramos conexión
+					datos.closeConnection();
+				}
             }
 
             //Si es postback, recargamos funciones de script en Gerente
@@ -102,24 +124,41 @@ namespace RestoApp
                 if (Helper.Session.GetMensajeModal() != null)
                 {
                     dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
-                    string msg = msgModal.msg;
-                    string tipo = msgModal.tipo;
-                    string scriptModal = $"alertaModal(\"{msg}\", \"{tipo}\");";
-                    ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
-                    Helper.Session.SetMensajeModal(null);
-                }
+					UIMostrarAlerta(msgModal.msg, msgModal.tipo);
+				}
 
+				try
+				{
+                    //Conexión a base de datos, única instancia
+					datos = new AccesoDB();
 
-                tipoUsuario = Configuracion.Rol.Mesero;
-                CargarMeseros();
-                CargarMenuDisponible();
-                CargarMeseroPorDia();
-                CargarMesasAsignadas();
-                CargarServicios();
-                ActualizarPedidos();
+                    //Negocios
+					mesaNegocio = new MesaNegocio(datos);
+					servicioNegocio = new ServicioNegocio(datos);
+					
+					//Variable para front
+					tipoUsuario = Configuracion.Rol.Mesero;
 
-            }
+                    //Métodos
+					CargarMeseros();
+					CargarMenuDisponible();
+					CargarMeseroPorDia();
+					CargarMesasAsignadas();
+					CargarServicios();
+					ActualizarPedidos();
+				}
+				catch (Exception error)
+				{
+                    UIMostrarAlerta(error.Message);
+				}
+				finally
+				{
+					datos.closeConnection();
+				}
 
+			}
+
+			
             //Si es postback, recargamos funciones de script en Mesero
             if (IsPostBack && AutentificacionUsuario.esMesero(usuario))
             {
@@ -129,25 +168,29 @@ namespace RestoApp
                 ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
             }
 
-
-
             ListarCategoriasProducto();
         }
 
-        private void Tr_reloj_Tick(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+        //Modal errores o éxitos: Tipo: error o success
+		private void UIMostrarAlerta(string mensaje, string tipoMensaje = "error")
+		{
+			string scriptModal = $"alertaModal(\"{mensaje}\", \"{tipoMensaje}\");";
+			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
 
-        protected void ActivarBtnCancelarPedido()
+            //Borramos mensaje del modal
+			Helper.Session.SetMensajeModal(null);
+		}
+
+		protected void ActivarBtnCancelarPedido()
         {
             btnTerminarPedido.Visible = true;
 
         }
 
+		//Cargamos los servicios desde la base de datos
         private void CargarServicios()
         {
-            ServicioNegocio servicioNegocio = new ServicioNegocio();
+            //ServicioNegocio servicioNegocio = new ServicioNegocio();
             List<Servicio> serviciosDB = servicioNegocio.Listar().FindAll(serv => serv.Cobrado == false);
 
             //Si la session existe completamos los datos desde la DB
@@ -173,26 +216,6 @@ namespace RestoApp
                     }
                 }
 
-                //if (AutentificacionUsuario.esGerente(usuario))
-                //{
-                //Info de la mesa desde session
-                //List<object> infoMesas = (List<object>)Session["infoMesas"];
-
-                //foreach (Servicio itemServicio in serviciosSession)
-                //{
-
-                //    foreach (dynamic itemMesa in infoMesas)
-                //    {
-
-                //        if (itemServicio.Mesa == itemMesa.mesa)
-                //        {
-                //            itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
-                //            itemServicio.IdMesero = itemMesa.mesero;
-                //        }
-                //    }
-                //}
-                //}
-
                 //Guardamos en session
                 Helper.Session.SetServicios(serviciosSession);
             }
@@ -216,24 +239,6 @@ namespace RestoApp
                     servicio.Add(auxServicioSession);
                 }
 
-                //if (AutentificacionUsuario.esGerente(usuario))
-                //{
-                //    //Info de la mesa desde session
-                //List<object> infoMesas = (List<object>)Session["infoMesas"];
-
-                //foreach (Servicio itemServicio in servicio)
-                //{
-                //    foreach (dynamic itemMesa in infoMesas)
-                //    {
-                //        if (itemServicio.Mesa == itemMesa.mesa)
-                //        {
-                //            itemServicio.Mesero = $"{itemMesa.nombre} {itemMesa.apellido}";
-                //            itemServicio.IdMesero = itemMesa.mesero;
-                //        }
-                //    }
-                //}
-                //}
-
                 //Guardamos en session
                 Helper.Session.SetServicios(servicio);
             }
@@ -241,13 +246,13 @@ namespace RestoApp
             //Mandamos datos a JS
             ScriptDataServicios();
         }
-
+		
         private void CargarDatosMesas()
         {
             {
                 //Llamdados a DB
-                MesaNegocio mesaNegocio = new MesaNegocio();
-                mesas = mesaNegocio.Listar();
+                //MesaNegocio mesaNegocio = new MesaNegocio(datos);
+                //mesas = mesaNegocio.Listar();
                 mesasPorDia = mesaNegocio.ListarMesaPorDia();
 
                 //Sessiones
@@ -369,10 +374,10 @@ namespace RestoApp
             datagridPedidos.DataSource = dataTable;
             datagridPedidos.DataBind();
         }
-
+		
         private void CargarMeseros()
         {
-            MesaNegocio mesaNegocio = new MesaNegocio();
+            //MesaNegocio mesaNegocio = new MesaNegocio(datos);
 
             //Lista de IDs de Meseros con mesas asignadas
             List<int> IdMeserosConMesasAbiertas = mesaNegocio.ListaIdMeserosActivosConMesasAbiertas();
@@ -435,7 +440,7 @@ namespace RestoApp
             PlatosDelDia.DataSource = ListaProductosDisponibles;
             PlatosDelDia.DataBind();
         }
-
+		
         private void CargarBebidasDelDia()
         {
             ListarCategoriasProducto();
@@ -447,9 +452,9 @@ namespace RestoApp
 
         private void CargarMeseroPorDia()
         {
-            List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
-            MesaNegocio mesaNegocio = new MesaNegocio();
+            //MesaNegocio mesaNegocio = new MesaNegocio(datos);
 
+            List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
             meserosPorDia = mesaNegocio.ListaMeseroPorDia();
 
             //Verificamos si el mesero está dado de alta y no de baja
@@ -481,7 +486,7 @@ namespace RestoApp
 
             //BTN
             Session["BotonID"] = btnMeseroAlta.ClientID;
-
+			
             if (meseroPorDia == null)
             {
                 //Darse de Alta
@@ -494,7 +499,7 @@ namespace RestoApp
                     meseroPorDia.Fecha = DateTime.Now;
                     meseroPorDia.Ingreso = DateTime.Now.TimeOfDay;
 
-                    MesaNegocio mesaNegocio = new MesaNegocio();
+                    //MesaNegocio mesaNegocio = new MesaNegocio(datos);
                     meseroPorDia.Id = mesaNegocio.CrearMeseroPorDia(meseroPorDia);
 
                 }
@@ -516,7 +521,7 @@ namespace RestoApp
                 //Darse de baja
                 try
                 {
-                    MesaNegocio mesaNegocio = new MesaNegocio();
+                   // MesaNegocio mesaNegocio = new MesaNegocio(datos);
 
                     List<MesaPorDia> mesasAsignadas = Helper.Session.GetMesasAsignadas();
 
@@ -549,7 +554,7 @@ namespace RestoApp
                 }
             }
         }
-
+		
         private void CargarMesasAsignadas()
         {
             // Session
@@ -559,7 +564,7 @@ namespace RestoApp
             //Si hay mesero por dia
             if (meseroPorDia != null)
             {
-                MesaNegocio mesaNegocio = new MesaNegocio();
+                //MesaNegocio mesaNegocio = new MesaNegocio(datos);
                 List<MesaPorDia> mesasAsignadas = mesaNegocio.ListarMesaPorDia()
                     .FindAll(x => x.Mesero == meseroPorDia.IdMesero && x.Cierre == null)
                     .OrderBy(x => x.Mesa).ToList();
@@ -657,7 +662,7 @@ namespace RestoApp
         [WebMethod]
         public static bool AbrirServicio(List<Dictionary<string, int>> data)
         {
-            ServicioNegocio servicioNegocio = new ServicioNegocio();
+            //ServicioNegocio servicioNegocio = new ServicioNegocio();
 
             bool response = false;
             object msg = new { msg = "El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a que la mesa ya se encuentra abierta.", tipo = "error" };
@@ -712,7 +717,7 @@ namespace RestoApp
         [WebMethod]
         public static bool CerrarServicio(List<Dictionary<string, int>> data)
         {
-            ServicioNegocio servicioNegocio = new ServicioNegocio();
+           // ServicioNegocio servicioNegocio = new ServicioNegocio();
 
             //Iniciamos respuestas
             bool response = false;
@@ -1038,7 +1043,7 @@ namespace RestoApp
 
         protected void ActualizarPedidos()
         {
-            ServicioNegocio SNAux = new ServicioNegocio();
+            //ServicioNegocio SNAux = new ServicioNegocio();
             List<Servicio> ListaServicios = (Helper.Session.GetServicios());
 
             ListarPedidos();

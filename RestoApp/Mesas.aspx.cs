@@ -24,6 +24,7 @@ namespace RestoApp
 		public List<MeseroPorDia> meserosPorDiaAsignados = new List<MeseroPorDia>();
 		public List<MesaPorDia> mesasPorDia;
 		public Usuario usuario { get; set; }
+		static AccesoDB datos;
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -33,16 +34,28 @@ namespace RestoApp
 			// CONTENIDO GERENTE
 			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
 			{
-				CargarMesas();
-				CargarMesasGuardadas();
-				CargarMesasPorDiaGuardadas();
-				CargarMeseros();
+				try
+				{
+					datos = new AccesoDB();
+					CargarMesas(datos);
+					CargarMesasGuardadas();
+					CargarMesasPorDiaGuardadas(datos);
+					CargarMeseros(datos);
+				}catch(Exception error)
+				{
+					throw new Exception(error.Message);
+				}
+				finally
+				{
+					datos.closeConnection();
+				}
+				
 			}
 		}
 
-		private void CargarMesas()
+		private void CargarMesas(AccesoDB datos)
 		{
-			MesaNegocio mesaNegocio = new MesaNegocio();
+			MesaNegocio mesaNegocio = new MesaNegocio(datos);
 			mesas = mesaNegocio.Listar();
 		}
 
@@ -60,10 +73,10 @@ namespace RestoApp
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasGuardas", $"var numeroMesasGuardasJSON = '{numeroMesasGuardasJSON}';", true);
 		}
 
-		private void CargarMesasPorDiaGuardadas()
+		private void CargarMesasPorDiaGuardadas(AccesoDB datos)
 		{
 			//Enviar Mesas por día con idMeseros
-			MesaNegocio mesaNegocio = new MesaNegocio();
+			MesaNegocio mesaNegocio = new MesaNegocio(datos);
 			
 
 			List<MesaPorDia> mesasPorDia = new List<MesaPorDia>();
@@ -80,14 +93,14 @@ namespace RestoApp
 
 			// Convierte la lista en una cadena JSON
 			var numeroMesasPorDiaJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(objetos);
-
+			
 			//Mandamos el dato a main.js
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasPorDia", $"var numeroMesasPorDiaJSON = '{numeroMesasPorDiaJSON}';", true);
 		}
-
-		private void CargarMeseros()
+		
+		private void CargarMeseros(AccesoDB datos)
 		{
-			MesaNegocio mesaNegocio = new MesaNegocio();
+			MesaNegocio mesaNegocio = new MesaNegocio(datos);
 
 			List<int> IdMeserosConMesasAbiertas = mesaNegocio.ListaIdMeserosActivosConMesasAbiertas();
 			List<MeseroPorDia> meseroPorDia = mesaNegocio.ListaMeseroPorDia();
@@ -117,7 +130,7 @@ namespace RestoApp
 		[WebMethod]
 		public static void GuardarMesas(Dictionary<string, int>[] array)
 		{
-			MesaNegocio mesaNegocio = new MesaNegocio();
+			MesaNegocio mesaNegocio = new MesaNegocio(datos);
 
 			List<MesaPorDia> mesasPorDiaAbierta = new List<MesaPorDia>();
 

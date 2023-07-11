@@ -7,11 +7,16 @@ namespace Negocio
 {
 	public class ServicioNegocio
 	{
-		//Listamos todos los servicios Abiertos
-		public List<Servicio> Listar()
+		AccesoDB datos;
+        public ServicioNegocio(AccesoDB datos)
+        {
+			this.datos = datos;
+        }
+        //Listamos todos los servicios Abiertos
+        public List<Servicio> Listar()
 		{
 			List<Servicio> servicios = new List<Servicio>();
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 
 			try
 			{
@@ -85,7 +90,7 @@ namespace Negocio
 		public int AbrirServicio(int mesa)
 		{
 			int id = 0;
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 
 			//Validar que no se pueda crear servicios si para la mesa el cobro está como false
 			Servicio servicio = this.Listar().Find(item => item.Cobrado == false && item.Mesa == mesa);
@@ -142,7 +147,7 @@ namespace Negocio
 		//Cerramos el servicio y retornamos true o false dependiendo la operación
 		public bool CerrarServicio(int mesa)
 		{
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 
 			string estadoPedido = "Entregado";
 			int cantidadPedidosAbiertos = 0;
@@ -223,7 +228,7 @@ namespace Negocio
 		//Cobrar servicio. Modificamos cobrado  a true
 		public bool CobrarServicio(int idServicio)
 		{
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 
 			//Validar que el servicio esté cerrado con la fecha de cierre.
 			//Validar que cobrado esté en false

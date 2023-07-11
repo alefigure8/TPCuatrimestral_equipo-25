@@ -15,6 +15,11 @@ namespace RestoApp
 	{
 		private Usuario usuario;
 		public Decimal precio = 0;
+
+		//DB
+		AccesoDB datos;
+		TicketNegocio ticketNegocio;
+		ServicioNegocio servicioNegocio;
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			//Verificar que sea usuario
@@ -31,12 +36,41 @@ namespace RestoApp
 				{
 					//Guardamos el número en session
 					Session["ServicioTicket"] = servicio;
-					BuscarTicket();
-				}
+
+					try
+					{
+						datos = new AccesoDB();
+						ticketNegocio = new TicketNegocio(datos);
+						servicioNegocio = new ServicioNegocio(datos);
+						BuscarTicket();
+					}
+					catch
+					{
+						throw new Exception("Error al cargar el ticket");
+					}
+					finally
+					{
+						datos.closeConnection();
+					}
+				}	
 				else
 				{
 					//Render de todos los tickets del mesero
-					CargarTicketsAbiertos();
+					try
+					{
+						datos = new AccesoDB();
+						ticketNegocio = new TicketNegocio(datos);
+						servicioNegocio = new ServicioNegocio(datos);
+						CargarTicketsAbiertos();
+					}
+					catch
+					{
+						throw new Exception("Error al cargar el ticket");
+					}
+					finally
+					{
+						datos.closeConnection();
+					}
 				}
 			}
 
@@ -48,12 +82,40 @@ namespace RestoApp
 				{
 					//Guardamos el número en session
 					Session["ServicioTicket"] = servicio;
-					BuscarTicket();
+					try
+					{
+						datos = new AccesoDB();
+						ticketNegocio = new TicketNegocio(datos);
+						servicioNegocio = new ServicioNegocio(datos);
+						BuscarTicket();
+					}
+					catch
+					{
+						throw new Exception("Error al cargar el ticket");
+					}
+					finally
+					{
+						datos.closeConnection();
+					}
 				}
 				else
 				{
 					//Render de todos los tickets del mesero
-					CargarTicketPorMesero();
+					try
+					{
+						datos = new AccesoDB();
+						ticketNegocio = new TicketNegocio(datos);
+						servicioNegocio = new ServicioNegocio(datos);
+						CargarTicketPorMesero();
+					}
+					catch
+					{
+						throw new Exception("Error al cargar el ticket");
+					}
+					finally
+					{
+						datos.closeConnection();
+					}
 				}
 
 			}
@@ -66,7 +128,7 @@ namespace RestoApp
 		private List<Ticket> BuscarTicket()
 		{
 			//Iniciamos Ticket Negocio
-			TicketNegocio ticketNegocio = new TicketNegocio();
+			//TicketNegocio ticketNegocio = new TicketNegocio();
 
 			List<Ticket> tickets = new List<Ticket>();
 
@@ -93,7 +155,7 @@ namespace RestoApp
 		private List<Ticket> CargarTicketsAbiertos()
 		{
 			//Iniciamos Ticket Negocio
-			TicketNegocio ticketNegocio = new TicketNegocio();
+			//TicketNegocio ticketNegocio = new TicketNegocio();
 
 			//Listamos tickets
 			List<Ticket> tickets = ticketNegocio.Listar();
@@ -111,7 +173,7 @@ namespace RestoApp
 			int idMesero = Helper.Session.GetUsuario().Id;
 
 			//Iniciamos Ticket Negocio
-			TicketNegocio ticketNegocio = new TicketNegocio();
+			//TicketNegocio ticketNegocio = new TicketNegocio();
 
 			//Listamos tickets
 			List<Ticket> tickets = ticketNegocio.ListarPorMesero(idMesero);
@@ -169,7 +231,7 @@ namespace RestoApp
 			int numeroServicio = Convert.ToInt32(btn.CommandArgument);
 
 			//Iniciamos negocio de Servicio
-			ServicioNegocio servicioNegocio = new ServicioNegocio();
+			//ServicioNegocio servicioNegocio = new ServicioNegocio();
 
 			//Si se cierra el servicio, sacamos del Session el servicio
 			if (servicioNegocio.CobrarServicio(numeroServicio))

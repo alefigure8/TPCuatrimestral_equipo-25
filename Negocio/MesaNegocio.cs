@@ -10,10 +10,16 @@ namespace Negocio
 {
 	public class MesaNegocio
 	{
-		public List<Mesa> Listar()
+		AccesoDB datos;
+
+		public MesaNegocio(AccesoDB datos)
+        {
+            this.datos = datos;
+        }
+        public List<Mesa> Listar()
 		{
 			List<Mesa> mesas = new List<Mesa>();
-			AccesoDB datos = new AccesoDB();
+			///*AccesoDB datos = new AccesoDB();*/
 
 			try
 			{
@@ -43,6 +49,7 @@ namespace Negocio
 			}
 			finally
 			{
+				//datos.closeConnection();
 				datos.closeConnection();
 			}
 
@@ -53,7 +60,7 @@ namespace Negocio
 		//Activar Mesa
 		public void ActivarMesasPorNumero(int numero, int activo)
 		{
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 
 			//En caso de false, verificar que la mesa no esté asignada
 
@@ -68,6 +75,7 @@ namespace Negocio
 			}
 			finally
 			{
+				//datos.closeConnection();
 				datos.closeConnection();
 			}
 		}
@@ -76,7 +84,7 @@ namespace Negocio
 		public List<MeseroPorDia> ListaMeseroPorDia()
 		{
 			List<MeseroPorDia> mesas = new List<MeseroPorDia>();
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 
 			try
 			{
@@ -126,6 +134,7 @@ namespace Negocio
 			}
 			finally
 			{
+				//datos.closeConnection();
 				datos.closeConnection();
 			}
 
@@ -136,7 +145,7 @@ namespace Negocio
 		public List<Usuario> ListaMeserosAusentes()
 		{
 			List<Usuario> meserosAusentes = new List<Usuario>();
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 
 			try
 			{
@@ -174,6 +183,7 @@ namespace Negocio
 			}
 			finally
 			{
+				//datos.closeConnection();
 				datos.closeConnection();
 			}
 
@@ -183,7 +193,7 @@ namespace Negocio
 		//Activar Meseros Ausentes
 		public int CrearMeseroPorDia(MeseroPorDia meseroPorDia)
 		{
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 			int id = 0;
 			
 			if (meseroPorDia.Id == 0)
@@ -202,6 +212,7 @@ namespace Negocio
 				}
 				finally
 				{
+					//datos.closeConnection();
 					datos.closeConnection();
 				}
 			}
@@ -212,7 +223,7 @@ namespace Negocio
 		//Dar de Baja Meseros Presentes
 		public bool ModificarMeseroPorDia(int id, TimeSpan? salida = null)
 		{
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 
 			if(salida == null)
 			{
@@ -231,6 +242,7 @@ namespace Negocio
 			}
 			finally
 			{
+				//datos.closeConnection();
 				datos.closeConnection();
 			}
 
@@ -240,7 +252,7 @@ namespace Negocio
 		public List<MesaPorDia> ListarMesaPorDia()
 		{
 			List<MesaPorDia> mesas = new List<MesaPorDia>();
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 
 			try
 			{
@@ -290,6 +302,7 @@ namespace Negocio
 			}
 			finally
 			{
+				//datos.closeConnection();
 				datos.closeConnection();
 			}
 
@@ -299,7 +312,7 @@ namespace Negocio
 		//Asignamos Mesa que estén activas a un mesero
 		public int CrearMesaPorDia(int mesero, int mesa, int idmeseropordia)
 		{
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 			
 			int id = 0;
 				
@@ -344,6 +357,7 @@ namespace Negocio
 				}
 				finally
 				{
+					//datos.closeConnection();
 					datos.closeConnection();
 				}
 
@@ -356,7 +370,7 @@ namespace Negocio
 		//Cerrar mesa asignada a un mesero
 		public bool ModificarMesaPorDia(int idMesaPorDia,int mesa, int mesero)
 		{
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 
 			bool estaCargadaLaMesa = false;
 
@@ -387,6 +401,7 @@ namespace Negocio
 			}
 			finally
 			{
+				//datos.closeConnection();
 				datos.closeConnection();
 			}
 		}
@@ -394,7 +409,7 @@ namespace Negocio
 		//Listamos los ids de los meseros activos que tienen mesas abiertas
 		public List<int> ListaIdMeserosActivosConMesasAbiertas()
 		{
-			AccesoDB datos = new AccesoDB();
+			//AccesoDB datos = new AccesoDB();
 			
 			List<int> IDMeseros = new List<int>();
 
@@ -421,6 +436,7 @@ namespace Negocio
 			}
 			finally
 			{
+				//datos.closeConnection();
 				datos.closeConnection();
 			}
 			
