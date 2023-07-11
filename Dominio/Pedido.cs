@@ -22,6 +22,6 @@ namespace Dominio
 
         public DateTime ultimaactualizacion;
 
-
+        public DateTime ingresococina;
     }
 }

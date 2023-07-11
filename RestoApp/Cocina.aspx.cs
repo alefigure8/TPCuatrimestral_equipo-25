@@ -58,6 +58,9 @@ namespace RestoApp
             Pedidosenpreparacion = new List<Pedido>();
             PedidoNegocio pedidoNegocio = new PedidoNegocio();
             Pedidossolicitados = pedidoNegocio.ListarPedidos(Estados.Solicitado);
+            Pedidossolicitados = Pedidossolicitados.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList();
+
+
 
             // VALIDAR QUE SEAN DE HOY Y ESTEN EN ESTADO SOLICITADO
             foreach (Pedido pedido in Pedidossolicitados.ToList())
@@ -96,8 +99,14 @@ namespace RestoApp
         {
 
             PedidoNegocio pedidoNegocio = new PedidoNegocio();
-            Pedidosenpreparacion = pedidoNegocio.ListarPedidos(Estados.EnPreparacion);
-            Pedidosenpreparacion.AddRange(pedidoNegocio.ListarPedidos(Estados.DemoradoEnCocina));
+            Pedidosenpreparacion = pedidoNegocio.ListarPedidos(Estados.EnPreparacion);                     
+
+             Pedidosenpreparacion.AddRange(pedidoNegocio.ListarPedidos(Estados.DemoradoEnCocina));
+            foreach (Pedido pedido in Pedidosenpreparacion)
+            {
+                pedido.ingresococina = pedidoNegocio.HorarioEnPrepPedido(pedido.Id);
+            }
+
 
             // VALIDAR QUE SEAN DE HOY Y ESTEN EN ESTADO SOLICITADO
             foreach (Pedido pedido in Pedidosenpreparacion.ToList())
@@ -123,7 +132,7 @@ namespace RestoApp
                 }
 
             }
-
+            Pedidosenpreparacion = Pedidosenpreparacion.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList(); 
             Session.Add("Pedidosenpreparacion", Pedidosenpreparacion);
 
 
@@ -157,7 +166,7 @@ namespace RestoApp
             DataTable DTEstadopedidos = (DataTable)Session["DTEstadoPedidos"];
             Estadopedidos = Session["Pedidosenpreparacion"] as List<Pedido>;
             PedidoNegocio pedidoNegocio = new PedidoNegocio();
-
+            Estadopedidos = Estadopedidos.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList(); 
             TimeSpan? Tiempomax = TimeSpan.Zero;
             DTEstadopedidos.Rows.Clear();
 
@@ -218,7 +227,7 @@ namespace RestoApp
             Reloj = (DateTime)Session["Reloj"];
             Pedidosenpreparacion = Session["Pedidosenpreparacion"] as List<Pedido>;
             PedidoNegocio pedidoNegocio = new PedidoNegocio();
-
+            Pedidosenpreparacion = Pedidosenpreparacion.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList();
 
             foreach (Pedido p in Pedidosenpreparacion)
             {
@@ -331,7 +340,7 @@ namespace RestoApp
             DataTable DTCocina = (DataTable)Session["DTCocina"];
             // RECUPERA LISTA DE PEDIDOS EN PREPARACION
             Pedidosenpreparacion = Session["Pedidosenpreparacion"] as List<Pedido>;
-
+           Pedidosenpreparacion = Pedidosenpreparacion.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList(); 
             // RECUPERA LISTA DE FILAS POR COLUMNA POR TIEMPO DE COCCION
             Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
             if (Helpercocina != null)
@@ -342,7 +351,7 @@ namespace RestoApp
 
             DTCocina.Rows.Clear();
             // RECORRE LISTA DE PEDIDOS EN PREPARACION
-            foreach (var pedido in Pedidosenpreparacion.ToList())
+            foreach (var pedido in Pedidosenpreparacion)
             {
                 DateTime aux1 = pedidoNegocio.HorarioEnPrepPedido(pedido.Id);
                 // VALIDA QUE SE ENCUENTRE EN EL HORARIO ACTUAL
@@ -443,12 +452,12 @@ namespace RestoApp
             {
                 int rowIndex = Convert.ToInt32(e.CommandArgument);
                 Estadopedidos = Session["Pedidosenpreparacion"] as List<Pedido>;
+                Estadopedidos = Estadopedidos.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList(); 
                 PedidoNegocio PedidoNegocio = new PedidoNegocio();
                 Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
                 Helpercocina.RemoveAll(x => x.idPedido == Estadopedidos[rowIndex].Id);
                 Session.Add("Helpercocina", Helpercocina);
                 Reloj = (DateTime)Session["Reloj"];
-
                 PedidoNegocio.CambiarEstadoPedido(Estadopedidos[rowIndex].Id, Estados.ListoParaEntregar, Reloj);
                 Estadopedidos.RemoveAll(x => x.Id == Estadopedidos[rowIndex].Id);
                 Session.Add("Pedidosenpreparacion", Estadopedidos);
@@ -732,7 +741,7 @@ namespace RestoApp
         protected void GVDEstadopedidos_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             Estadopedidos = Session["Pedidosenpreparacion"] as List<Pedido>;
-
+            Estadopedidos = Estadopedidos.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList();
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
 
