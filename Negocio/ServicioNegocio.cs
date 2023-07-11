@@ -7,7 +7,7 @@ namespace Negocio
 {
 	public class ServicioNegocio
 	{
-		AccesoDB datos;
+		private AccesoDB datos;
         public ServicioNegocio(AccesoDB datos)
         {
 			this.datos = datos;
@@ -30,7 +30,6 @@ namespace Negocio
 					$"ON MPD.{ColumnasDB.MeseroPorDia.Id} = MP.{ColumnasDB.MeseroPorDia.Id} " +
 					$"INNER JOIN {ColumnasDB.Usuario.DB} U " +
 					$"ON MP.{ColumnasDB.Servicio.IdMesero} = U.{ColumnasDB.Usuario.Id} " +
-					$"WHERE S.{ColumnasDB.Servicio.Cierre} IS NULL " +
 					$"ORDER BY S.{ColumnasDB.Servicio.Fecha} DESC, S.{ColumnasDB.Servicio.Apertura} DESC");
 
 				datos.executeReader();

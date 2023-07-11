@@ -17,9 +17,8 @@ namespace RestoApp
 		public Decimal precio = 0;
 
 		//DB
-		AccesoDB datos;
-		TicketNegocio ticketNegocio;
-		ServicioNegocio servicioNegocio;
+		private AccesoDB datos;
+		private ServicioNegocio servicioNegocio;
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			//Verificar que sea usuario
@@ -39,9 +38,7 @@ namespace RestoApp
 
 					try
 					{
-						datos = new AccesoDB();
-						ticketNegocio = new TicketNegocio(datos);
-						servicioNegocio = new ServicioNegocio(datos);
+						DBLlamados();
 						BuscarTicket();
 					}
 					catch
@@ -58,9 +55,7 @@ namespace RestoApp
 					//Render de todos los tickets del mesero
 					try
 					{
-						datos = new AccesoDB();
-						ticketNegocio = new TicketNegocio(datos);
-						servicioNegocio = new ServicioNegocio(datos);
+						DBLlamados();
 						CargarTicketsAbiertos();
 					}
 					catch
@@ -84,9 +79,7 @@ namespace RestoApp
 					Session["ServicioTicket"] = servicio;
 					try
 					{
-						datos = new AccesoDB();
-						ticketNegocio = new TicketNegocio(datos);
-						servicioNegocio = new ServicioNegocio(datos);
+						DBLlamados();
 						BuscarTicket();
 					}
 					catch
@@ -103,9 +96,7 @@ namespace RestoApp
 					//Render de todos los tickets del mesero
 					try
 					{
-						datos = new AccesoDB();
-						ticketNegocio = new TicketNegocio(datos);
-						servicioNegocio = new ServicioNegocio(datos);
+						DBLlamados();
 						CargarTicketPorMesero();
 					}
 					catch
@@ -128,7 +119,7 @@ namespace RestoApp
 		private List<Ticket> BuscarTicket()
 		{
 			//Iniciamos Ticket Negocio
-			//TicketNegocio ticketNegocio = new TicketNegocio();
+			TicketNegocio ticketNegocio = new TicketNegocio();
 
 			List<Ticket> tickets = new List<Ticket>();
 
@@ -155,7 +146,7 @@ namespace RestoApp
 		private List<Ticket> CargarTicketsAbiertos()
 		{
 			//Iniciamos Ticket Negocio
-			//TicketNegocio ticketNegocio = new TicketNegocio();
+			TicketNegocio ticketNegocio = new TicketNegocio();
 
 			//Listamos tickets
 			List<Ticket> tickets = ticketNegocio.Listar();
@@ -173,7 +164,7 @@ namespace RestoApp
 			int idMesero = Helper.Session.GetUsuario().Id;
 
 			//Iniciamos Ticket Negocio
-			//TicketNegocio ticketNegocio = new TicketNegocio();
+			TicketNegocio ticketNegocio = new TicketNegocio();
 
 			//Listamos tickets
 			List<Ticket> tickets = ticketNegocio.ListarPorMesero(idMesero);
@@ -230,8 +221,8 @@ namespace RestoApp
 			Button btn = (Button)sender;
 			int numeroServicio = Convert.ToInt32(btn.CommandArgument);
 
-			//Iniciamos negocio de Servicio
-			//ServicioNegocio servicioNegocio = new ServicioNegocio();
+			//Iniciamos negocio de Servicios
+			DBLlamados();
 
 			//Si se cierra el servicio, sacamos del Session el servicio
 			if (servicioNegocio.CobrarServicio(numeroServicio))
@@ -243,6 +234,12 @@ namespace RestoApp
 				//Redirigir a Main
 				Response.Redirect("Main.aspx");
 			}
+		}
+
+		private void DBLlamados()
+		{
+			datos = new AccesoDB();
+			servicioNegocio = new ServicioNegocio(datos);
 		}
 	}
 }

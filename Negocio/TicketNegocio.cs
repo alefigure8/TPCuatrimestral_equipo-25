@@ -11,16 +11,12 @@ namespace Negocio
 {
 	public class TicketNegocio
 	{
-		AccesoDB datos;
-        public TicketNegocio(AccesoDB datos)
-        {
-			this.datos = datos;
-        }
+
         //Retornarmos todos los tickets que no estén cobrados, pero que hayan cerrado
         public List<Ticket> Listar()
 		{
 			List<Ticket> tickets = new List<Ticket>();
-			//AccesoDB datos = new AccesoDB();
+			AccesoDB datos = new AccesoDB();
 
 			string query =
 				$"SELECT S.{ColumnasDB.Servicio.Id}, S.{ColumnasDB.Servicio.Fecha}, S.{ColumnasDB.Servicio.Cierre}, S.{ColumnasDB.Servicio.Cobrado}, M.{ColumnasDB.Mesa.Numero}, M.{ColumnasDB.MesasPorDia.IdMesero}" +
@@ -84,8 +80,8 @@ namespace Negocio
 		public List<TicketDetalle> ListarDetalle(int servicio)
 		{
 			List<TicketDetalle> detalles = new List<TicketDetalle>();
-			//AccesoDB datos = new AccesoDB();
-			
+			AccesoDB datos = new AccesoDB();
+
 			//Buscamos el listado de pedidos por servicio
 			string query = 
 				$"SELECT P.{ColumnasDB.Pedido.Id}, PXP.{ColumnasDB.ProductoPorPedido.Cantidad} , PM.{ColumnasDB.ProductoDD.Valor}, {ColumnasDB.ProductoDD.Nombre}" +
@@ -139,8 +135,8 @@ namespace Negocio
 		public Ticket TicketPorServicio(int servicio)
 		{
 			Ticket ticket = new Ticket();
-			
-			//AccesoDB datos = new AccesoDB();
+
+			AccesoDB datos = new AccesoDB();
 
 			string query =
 				$"SELECT S.{ColumnasDB.Servicio.Id}, S.{ColumnasDB.Servicio.Fecha}, S.{ColumnasDB.Servicio.Cierre}, S.{ColumnasDB.Servicio.Cobrado}, M.{ColumnasDB.Mesa.Numero}, M.{ColumnasDB.MesasPorDia.IdMesero}" +
@@ -202,7 +198,7 @@ namespace Negocio
 		public List<Ticket> ListarPorMesero(int mesero)
 		{
 			List<Ticket> tickets = new List<Ticket>();
-			//AccesoDB datos = new AccesoDB();
+			AccesoDB datos = new AccesoDB();
 
 			string query =
 				$"SELECT S.{ColumnasDB.Servicio.Id}, S.{ColumnasDB.Servicio.Fecha}, S.{ColumnasDB.Servicio.Cierre}, S.{ColumnasDB.Servicio.Cobrado}, M.{ColumnasDB.Mesa.Numero}, M.{ColumnasDB.MesasPorDia.IdMesero}" +

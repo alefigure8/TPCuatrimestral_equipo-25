@@ -99,11 +99,8 @@ namespace RestoApp
             //Si es postback, recargamos funciones de script en Gerente
             if (IsPostBack && AutentificacionUsuario.esGerente(usuario))
             {
-                ScriptsDataGerente();
-                ScriptDataServicios();
-                string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); });";
-                ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
-            }
+                ScriptsGerentePostBack();
+			}
 
 
             //CONTENIDO MESERO
@@ -163,14 +160,12 @@ namespace RestoApp
             //Si es postback, recargamos funciones de script en Mesero
             if (IsPostBack && AutentificacionUsuario.esMesero(usuario))
             {
-                ScriptsDataMesero();
-                ScriptDataServicios();
-                string script = " obtenerDatosMesasMesero().then(({ numeroMesas, numeroServicios }) => {renderMesaMesero(numeroMesas, numeroServicios); });";
-                ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
-            }
+                ScriptsMeseroPostBack();
+			}
 
             ListarCategoriasProducto();
         }
+
 
         //Modal errores o éxitos: Tipo: error o success
 		private void UIMostrarAlerta(string mensaje, string tipoMensaje = "error")
@@ -185,7 +180,6 @@ namespace RestoApp
 		protected void ActivarBtnCancelarPedido()
         {
             btnTerminarPedido.Visible = true;
-
         }
 
 		//Cargamos los servicios desde la base de datos
@@ -428,6 +422,7 @@ namespace RestoApp
 
 
         // VISTA MESERO
+		
         private void CargarMenuDisponible()
         {
             Session["ListaMenu"] = null;
@@ -456,7 +451,7 @@ namespace RestoApp
             BebidasDelDia.DataBind();
         }
 
-        private void CargarMeseroPorDia()
+		private void CargarMeseroPorDia()
         {
             //MesaNegocio mesaNegocio = new MesaNegocio(datos);
 
@@ -613,6 +608,9 @@ namespace RestoApp
             lbSinMesasAsignadas.Text = "No cuenta con mesas asignadas. Comuníquese con el Gerente.";
         }
 
+
+        //SCRIPTS
+		
         //Enviamos datos a script para recuperar en un postback
         private void ScriptsDataMesero()
         {
@@ -663,9 +661,29 @@ namespace RestoApp
             ClientScript.RegisterStartupScript(this.GetType(), "seviciosJSON", $"var seviciosJSON = '{seviciosJSON}';", true);
         }
 
-        //WEBMETHOD
-        //Obtenemos número de mesa y le abrimos un servicio
-        [WebMethod]
+		//Enviamos los datos del Gerente al scripr
+		private void ScriptsGerentePostBack()
+		{
+			ScriptsDataGerente();
+			ScriptDataServicios();
+			string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); });";
+			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
+		}
+
+		//Enviamos los datos del mesero al script
+		private void ScriptsMeseroPostBack()
+		{
+			ScriptsDataMesero();
+			ScriptDataServicios();
+			string script = " obtenerDatosMesasMesero().then(({ numeroMesas, numeroServicios }) => {renderMesaMesero(numeroMesas, numeroServicios); });";
+			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
+
+		}
+
+		//WEBMETHOD
+
+		//Obtenemos número de mesa y le abrimos un servicio
+		[WebMethod]
         public static bool AbrirServicio(List<Dictionary<string, int>> data)
         {
             //ServicioNegocio servicioNegocio = new ServicioNegocio();
