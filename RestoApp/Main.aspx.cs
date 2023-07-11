@@ -163,9 +163,9 @@ namespace RestoApp
                         {
                             itemServicioSession.Id = itemServicioDB.Id;
                             itemServicioSession.Mesa = itemServicioDB.Mesa;
-							itemServicioSession.Mesero = itemServicioDB.Mesero;
+                            itemServicioSession.Mesero = itemServicioDB.Mesero;
                             itemServicioSession.IdMesero = itemServicioDB.IdMesero;
-							itemServicioSession.Fecha = itemServicioDB.Fecha;
+                            itemServicioSession.Fecha = itemServicioDB.Fecha;
                             itemServicioSession.Apertura = itemServicioDB.Apertura;
                             itemServicioSession.Cierre = itemServicioDB.Cierre;
                             itemServicioSession.Cobrado = itemServicioDB.Cobrado;
@@ -206,9 +206,9 @@ namespace RestoApp
 
                     auxServicioSession.Id = item.Id;
                     auxServicioSession.Mesa = item.Mesa;
-					auxServicioSession.Mesero = item.Mesero;
-					auxServicioSession.IdMesero = item.IdMesero;
-					auxServicioSession.Fecha = item.Fecha;
+                    auxServicioSession.Mesero = item.Mesero;
+                    auxServicioSession.IdMesero = item.IdMesero;
+                    auxServicioSession.Fecha = item.Fecha;
                     auxServicioSession.Apertura = item.Apertura;
                     auxServicioSession.Cierre = item.Cierre;
                     auxServicioSession.Cobrado = item.Cobrado;
@@ -431,7 +431,7 @@ namespace RestoApp
         {
             ListarCategoriasProducto();
             List<ProductoDelDia> ListaProductosDisponibles =
-            ((List<ProductoDelDia>)Session["ListaMenu"]).FindAll(x => x.Activo == true && x.Categoria == ListaCategoriasProducto.Find(y => y.Descripcion == "Platos").Id);
+            ((List<ProductoDelDia>)Session["ListaMenu"]).FindAll(x => x.Activo == true && x.Stock > 1 && x.Categoria == ListaCategoriasProducto.Find(y => y.Descripcion == "Platos").Id);
             PlatosDelDia.DataSource = ListaProductosDisponibles;
             PlatosDelDia.DataBind();
         }
@@ -440,7 +440,7 @@ namespace RestoApp
         {
             ListarCategoriasProducto();
             List<ProductoDelDia> ListaProductosDisponibles =
-            ((List<ProductoDelDia>)Session["ListaMenu"]).FindAll(x => x.Activo == true && x.Categoria == ListaCategoriasProducto.Find(y => y.Descripcion == "Bebidas").Id);
+            ((List<ProductoDelDia>)Session["ListaMenu"]).FindAll(x => x.Activo == true && x.Stock > 1 && x.Categoria == ListaCategoriasProducto.Find(y => y.Descripcion == "Bebidas").Id);
             BebidasDelDia.DataSource = ListaProductosDisponibles;
             BebidasDelDia.DataBind();
         }
@@ -557,11 +557,11 @@ namespace RestoApp
             meseroPorDia = Helper.Session.GetMeseroPorDia();
 
             //Si hay mesero por dia
-			if (meseroPorDia != null)
+            if (meseroPorDia != null)
             {
                 MesaNegocio mesaNegocio = new MesaNegocio();
-				List<MesaPorDia>  mesasAsignadas = mesaNegocio.ListarMesaPorDia()
-					.FindAll(x => x.Mesero == meseroPorDia.IdMesero && x.Cierre == null)
+                List<MesaPorDia> mesasAsignadas = mesaNegocio.ListarMesaPorDia()
+                    .FindAll(x => x.Mesero == meseroPorDia.IdMesero && x.Cierre == null)
                     .OrderBy(x => x.Mesa).ToList();
 
                 Helper.Session.SetMesasAsignadas(mesasAsignadas);
@@ -844,9 +844,14 @@ namespace RestoApp
                 Button btnGuardarPedido = UPGuardarPedido.FindControl("BtnGuardarPedido") as Button;
                 btnGuardarPedido.Visible = true;
 
+                ProductoPorPedido productoPorPedido = new ProductoPorPedido();
+                productoPorPedido.Productodeldia = ((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+
+
                 if (button.Text.ToLower() == "✚")
                 {
                     tbCantidad.Visible = true;
+                    tbCantidad.Attributes.Add("max", productoPorPedido.Productodeldia.Stock.ToString());
                     button.Text = "✔";
                     btnCancelar.Visible = true;
                 }
@@ -863,8 +868,6 @@ namespace RestoApp
                         Session.Add("ProductosPorPedido", list);
                     }
 
-                    ProductoPorPedido productoPorPedido = new ProductoPorPedido();
-                    productoPorPedido.Productodeldia = ((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == int.Parse(button.CommandArgument));
                     productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
                     ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
 
@@ -896,9 +899,10 @@ namespace RestoApp
                 Paux.IdServicio = ((List<Servicio>)Session["Servicios"]).Find(x => x.Mesa == Helper.Session.GetNumeroMesaPedido()).Id;
                 Paux.Productossolicitados = ((List<ProductoPorPedido>)Session["ProductosPorPedido"]);
 
-                foreach(ProductoPorPedido PPP in Paux.Productossolicitados)
+                foreach (ProductoPorPedido PPP in Paux.Productossolicitados)
                 {
                     ((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == PPP.Productodeldia.Id).Stock -= PPP.Cantidad;
+                    ((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == PPP.Productodeldia.Id).StockCierre -= PPP.Cantidad;
                     Producto ProductoAux = new Producto(PPP.Productodeldia);
                     ProductoNegocio ProductoNegocioAux = new ProductoNegocio();
                     ProductoNegocioAux.ModificarProducto(ProductoAux);
@@ -953,9 +957,15 @@ namespace RestoApp
                 Button btnGuardarPedido = UPGuardarPedido.FindControl("BtnGuardarPedido") as Button;
                 btnGuardarPedido.Visible = true;
 
+
+                ProductoPorPedido productoPorPedido = new ProductoPorPedido();
+                productoPorPedido.Productodeldia = ((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == int.Parse(button.CommandArgument));
+
+
                 if (button.Text.ToLower() == "✚")
                 {
                     tbCantidad.Visible = true;
+                    tbCantidad.Attributes.Add("max", productoPorPedido.Productodeldia.Stock.ToString());
                     button.Text = "✔";
                     btnCancelar.Visible = true;
                 }
@@ -965,15 +975,12 @@ namespace RestoApp
                     button.Text = "✚";
                     btnCancelar.Visible = false;
 
-
                     if (Session["ProductosPorPedido"] == null)
                     {
                         List<ProductoPorPedido> list = new List<ProductoPorPedido>();
                         Session.Add("ProductosPorPedido", list);
                     }
 
-                    ProductoPorPedido productoPorPedido = new ProductoPorPedido();
-                    productoPorPedido.Productodeldia = ((List<ProductoDelDia>)Session["ListaMenu"]).Find(x => x.Id == int.Parse(button.CommandArgument));
                     productoPorPedido.Cantidad = int.Parse(tbCantidad.Text);
                     ((List<ProductoPorPedido>)Session["ProductosPorPedido"]).Add(productoPorPedido);
 
@@ -1009,7 +1016,7 @@ namespace RestoApp
 
             ListarPedidos();
 
-            List<Pedido>Pedidos = ((List<Pedido>)Session["Pedidos"]);
+            List<Pedido> Pedidos = ((List<Pedido>)Session["Pedidos"]);
 
             List<Pedido> PedidosAux = new List<Pedido>();
 
@@ -1040,7 +1047,7 @@ namespace RestoApp
             RepeaterPedidosEnCurso.DataBind();
 
             //Guardo Session de PedidosAux para vista de Gerente
-          // Session["Pedidos"] = PedidosAux;
+            // Session["Pedidos"] = PedidosAux;
 
             // consultar con ale. Esta lista esta filtrada por estado y idmesero. Pedidos en session no deberia mantener la lista original?
             // agrego funcion a parte
