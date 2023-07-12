@@ -45,8 +45,7 @@ namespace RestoApp
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
-            //Verificar que sea usuario
+            //AUTENTIFICACION USUARIO
             if (AutentificacionUsuario.esUser(Helper.Session.GetUsuario()))
                 usuario = Helper.Session.GetUsuario();
 
@@ -85,9 +84,8 @@ namespace RestoApp
                 ScriptsGerentePostBack();
 			}
 
-
-            //CONTENIDO MESERO
-            if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
+            // CONTENIDO MESERO
+			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
 
             {
                 //Verificamos que si ya está en memoria el meseropordia
@@ -110,7 +108,6 @@ namespace RestoApp
 
 				try
 				{
-					
 					//Variable para front
 					tipoUsuario = Configuracion.Rol.Mesero;
 
@@ -126,9 +123,7 @@ namespace RestoApp
 				{
                     UIMostrarAlerta(error.Message);
 				}
-
 			}
-
 			
             //Si es postback, recargamos funciones de script en Mesero
             if (IsPostBack && AutentificacionUsuario.esMesero(usuario))
@@ -139,24 +134,15 @@ namespace RestoApp
             ListarCategoriasProducto();
         }
 
-
-        //Modal errores o éxitos: Tipo: error o success
-		private void UIMostrarAlerta(string mensaje, string tipoMensaje = "error")
-		{
-			string scriptModal = $"alertaModal(\"{mensaje}\", \"{tipoMensaje}\");";
-			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
-
-            //Borramos mensaje del modal
-			Helper.Session.SetMensajeModal(null);
-		}
-
 		protected void ActivarBtnCancelarPedido()
         {
             btnTerminarPedido.Visible = true;
         }
 
+		// ********** VISTA GERENTE ************
+
 		//Cargamos los servicios desde la base de datos
-        private void CargarServicios()
+		private void CargarServicios()
         {
             ServicioNegocio servicioNegocio = new ServicioNegocio();
             List<Servicio> serviciosDB = servicioNegocio.Listar().FindAll(serv => serv.Cobrado == false);
@@ -393,7 +379,7 @@ namespace RestoApp
         }
 
 
-        // VISTA MESERO
+        // ********** VISTA MESERO ************
 		
         private void CargarMenuDisponible()
         {
@@ -452,6 +438,7 @@ namespace RestoApp
             }
         }
 
+        //Evento de botón de alta de mesero
         protected void btnMeseroAlta_Click(object sender, EventArgs e)
         {
             // Session
@@ -476,13 +463,13 @@ namespace RestoApp
                     //DB
                     MesaNegocio mesaNegocio = new MesaNegocio();
 
-                    //Creamos mesa y recuperamos ID
-                    meseroPorDia.Id = mesaNegocio.CrearMeseroPorDia(meseroPorDia);
-
-                }
+                    //Creamos mesero y recuperamos ID
+                    meseroPorDia.Id = mesaNegocio.CrearMeseroPorDia(meseroPorDia);                        
+				}
                 catch (Exception ex)
                 {
-					throw ex;
+                    //Mostramos error
+                    UIMostrarAlerta(ex.Message);
 				}
 
                 //Si se crea correctamente cambiamos el texto del botón
@@ -491,7 +478,10 @@ namespace RestoApp
                     btnMeseroAlta.Text = "Darse de Baja";
                     btnMeseroAlta.CssClass = "btn btn-sm btn-light";
                     Helper.Session.SetMeseroPorDia(meseroPorDia);
-                }
+
+                    //Mostramos resultado exitoso
+					UIMostrarAlerta("Se ha dado de alta exitosamente", "success");
+				}
             }
             else
             {
@@ -523,11 +513,14 @@ namespace RestoApp
                         meseroPorDia = null;
                         Helper.Session.SetMeseroPorDia(null);
 
-                    }
-                }
+                        //Mostramos mensaje de baja confirmando
+						UIMostrarAlerta("Se ha dado de baja exitosamente", "success");
+					}
+				}
                 catch (Exception ex)
                 {
-					throw ex;
+					//Mostramos error
+					UIMostrarAlerta(ex.Message);
 				}
             }
         }
@@ -586,209 +579,6 @@ namespace RestoApp
             }
 
             lbSinMesasAsignadas.Text = "No cuenta con mesas asignadas. Comuníquese con el Gerente.";
-        }
-
-
-        //SCRIPTS
-		
-        //Enviamos datos a script para recuperar en un postback
-        private void ScriptsDataMesero()
-        {
-            //Recuperamos datos de session
-            numeroMesasJSON = (string)Session["numeroMesaJSON"];
-
-            //Mandamos a script de javascript
-            ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasArray", $"var numeroMesasArray = '{numeroMesasJSON}';", true);
-        }
-
-
-        //Metodo que enviado datos del Gerente a script
-        private void ScriptsDataGerente()
-        {
-            //Recuperamos datos por si es postback
-            mesasActivasJSON = (string)Session["mesasActivasJSON"];
-            datosMesasJSON = (string)Session["datosMesasJSON"];
-
-            //Enviamos datos a JS
-            ClientScript.RegisterStartupScript(this.GetType(), "datosMesasArray", $"var datosMesasArray = '{datosMesasJSON}';", true);
-            ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasActivasArray", $"var numeroMesasActivasArray = '{mesasActivasJSON}';", true);
-        }
-
-        //Enviamos datos a script para recuperar en un postback
-        private void ScriptDataServicios()
-        {
-            //Recuperamos datos de session
-            List<Servicio> servicios = Helper.Session.GetServicios();
-            List<object> serviciosJS = new List<object>();
-
-            foreach (Servicio item in servicios)
-            {
-                serviciosJS.Add(
-                    new
-                    {
-                        mesa = item.Mesa,
-                        servicio = item.Id,
-                        cobrado = item.Cobrado,
-                        apertura = (item.Fecha + item.Apertura).ToString("HH:mm:ss"),
-                        cierre = item.Cierre.HasValue ? (item.Fecha + item.Apertura).ToString("HH:mm:ss") : String.Empty,
-                        mesero = item.Mesero
-                    });
-            }
-
-            string seviciosJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(serviciosJS);
-
-            //Mandamos a script de javascript
-            ClientScript.RegisterStartupScript(this.GetType(), "seviciosJSON", $"var seviciosJSON = '{seviciosJSON}';", true);
-        }
-
-		//Enviamos los datos del Gerente al scripr
-		private void ScriptsGerentePostBack()
-		{
-			ScriptsDataGerente();
-			ScriptDataServicios();
-			string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); });";
-			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
-		}
-
-		//Enviamos los datos del mesero al script
-		private void ScriptsMeseroPostBack()
-		{
-			ScriptsDataMesero();
-			ScriptDataServicios();
-			string script = " obtenerDatosMesasMesero().then(({ numeroMesas, numeroServicios }) => {renderMesaMesero(numeroMesas, numeroServicios); });";
-			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
-
-		}
-
-		//WEBMETHOD
-
-		//Obtenemos número de mesa y le abrimos un servicio
-		[WebMethod]
-        public static bool AbrirServicio(List<Dictionary<string, int>> data)
-        {
-			//DB
-            ServicioNegocio servicioNegocio = new ServicioNegocio();
-
-            bool response = false;
-            object msg = new { msg = "El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a que la mesa ya se encuentra abierta.", tipo = "error" };
-
-            foreach (var diccionario in data)
-            {
-                var numeroMesa = diccionario["mesa"];
-                int idServicio = servicioNegocio.AbrirServicio(numeroMesa);
-
-                //Si se guardó de manera correcta
-                if (idServicio > 0)
-                {
-                    //Guardamos todo en la session en caso de que exista
-                    if (Helper.Session.GetServicios() != null)
-                    {
-                        List<Servicio> servicio = Helper.Session.GetServicios();
-                        Servicio auxServicioSession = new Servicio();
-
-                        auxServicioSession.Id = idServicio;
-                        auxServicioSession.Mesa = numeroMesa;
-
-                        servicio.Add(auxServicioSession);
-
-                        //Guardamos en Session
-                        Helper.Session.SetServicios(servicio);
-                    }
-                    else
-                    {
-                        List<Servicio> servicio = new List<Servicio>();
-                        Servicio auxServicioSession = new Servicio();
-
-                        auxServicioSession.Id = idServicio;
-                        auxServicioSession.Mesa = numeroMesa;
-
-                        servicio.Add(auxServicioSession);
-
-                        //Guardamos en Session
-                        Helper.Session.SetServicios(servicio);
-                    }
-
-                    response = true;
-                    msg = new { msg = $"El servicio de la mesa {numeroMesa} fue abierto con éxito", tipo = "success" };
-                };
-            }
-
-            //Guardamos mensaje para modal de front
-            Helper.Session.SetMensajeModal(msg);
-
-            return response;
-        }
-
-        [WebMethod]
-        public static bool CerrarServicio(List<Dictionary<string, int>> data)
-        {
-			//DB
-           ServicioNegocio servicioNegocio = new ServicioNegocio();
-
-            //Iniciamos respuestas
-            bool response = false;
-            object msg = new { msg = $"El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a pedidos que aún permanecen abiertos.", tipo = "error" };
-
-            foreach (var diccionario in data)
-            {
-                var numeroMesa = diccionario["mesa"];
-
-                if (servicioNegocio.CerrarServicio(numeroMesa))
-                {
-                    //Modificamos la sessión agregándole la hora de cierre al servicio, pero sigue abierto hasta que cobrado no sea true
-                    List<Servicio> servicio = Helper.Session.GetServicios();
-
-                    foreach (var item in servicio)
-                    {
-                        if (item.Mesa == numeroMesa)
-                        {
-                            item.Cierre = DateTime.Now.TimeOfDay;
-                        }
-                    }
-
-                    //Guardamos servicio
-                    Helper.Session.SetServicios(servicio);
-
-                    //Generamos respuestas
-                    response = true;
-                    msg = new { msg = $"El servicio de la mesa {numeroMesa} fue cerrado con éxito", tipo = "success" };
-                }
-                else
-                {
-                    //Generamos respuestas
-                    response = false;
-                    msg = new { msg = $"El servicio de la mesa {numeroMesa} no pudo cerrarse. Esto puede deberse a un error de conexión o a pedidos que aún permanecen abiertos", tipo = "error" };
-                }
-            }
-
-            //Guardamos mensaje para modal de front
-            Helper.Session.SetMensajeModal(msg);
-
-            //Enviamos respuesta al fron
-            return response;
-        }
-
-        //Guardamos número de mesa en pedido
-        [WebMethod]
-        public static bool AbrirPedido(List<Dictionary<string, int>> data)
-        {
-            //Iniciamos respuesta
-            bool response = false;
-
-            foreach (var diccionario in data)
-            {
-                var numeroMesa = diccionario["mesa"];
-
-                if (numeroMesa > 0)
-                {
-                    //Guardamos numero de mesa que se seleccionó para iniciar pedido
-                    Helper.Session.SetNumeroMesaPedido(numeroMesa);
-                    response = true;
-                }
-            }
-
-            //Enviamos resupuesta al fron
-            return response;
         }
 
         protected void ListarCategoriasProducto()
@@ -1100,22 +890,219 @@ namespace RestoApp
 
             ActualizarPedidos();
         }
-    }
+
+		// ************** SCRIPTS ***************
+
+		//Modal errores o éxitos: Tipo: error o success
+		private void UIMostrarAlerta(string mensaje, string tipoMensaje = "error")
+		{
+			string scriptModal = $"alertaModal(\"{mensaje}\", \"{tipoMensaje}\");";
+			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
+
+			//Borramos mensaje del modal
+			Helper.Session.SetMensajeModal(null);
+		}
+
+		//Enviamos datos a script para recuperar en un postback
+		private void ScriptsDataMesero()
+		{
+			//Recuperamos datos de session
+			numeroMesasJSON = (string)Session["numeroMesaJSON"];
+
+			//Mandamos a script de javascript
+			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasArray", $"var numeroMesasArray = '{numeroMesasJSON}';", true);
+		}
+
+
+		//Metodo que enviado datos del Gerente a script
+		private void ScriptsDataGerente()
+		{
+			//Recuperamos datos por si es postback
+			mesasActivasJSON = (string)Session["mesasActivasJSON"];
+			datosMesasJSON = (string)Session["datosMesasJSON"];
+
+			//Enviamos datos a JS
+			ClientScript.RegisterStartupScript(this.GetType(), "datosMesasArray", $"var datosMesasArray = '{datosMesasJSON}';", true);
+			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasActivasArray", $"var numeroMesasActivasArray = '{mesasActivasJSON}';", true);
+		}
+
+		//Enviamos datos a script para recuperar en un postback
+		private void ScriptDataServicios()
+		{
+			//Recuperamos datos de session
+			List<Servicio> servicios = Helper.Session.GetServicios();
+			List<object> serviciosJS = new List<object>();
+
+			foreach (Servicio item in servicios)
+			{
+				serviciosJS.Add(
+					new
+					{
+						mesa = item.Mesa,
+						servicio = item.Id,
+						cobrado = item.Cobrado,
+						apertura = (item.Fecha + item.Apertura).ToString("HH:mm:ss"),
+						cierre = item.Cierre.HasValue ? (item.Fecha + item.Apertura).ToString("HH:mm:ss") : String.Empty,
+						mesero = item.Mesero
+					});
+			}
+
+			string seviciosJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(serviciosJS);
+
+			//Mandamos a script de javascript
+			ClientScript.RegisterStartupScript(this.GetType(), "seviciosJSON", $"var seviciosJSON = '{seviciosJSON}';", true);
+		}
+
+		//Enviamos los datos del Gerente al scripr
+		private void ScriptsGerentePostBack()
+		{
+			ScriptsDataGerente();
+			ScriptDataServicios();
+			string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); });";
+			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
+		}
+
+		//Enviamos los datos del mesero al script
+		private void ScriptsMeseroPostBack()
+		{
+			ScriptsDataMesero();
+			ScriptDataServicios();
+			string script = " obtenerDatosMesasMesero().then(({ numeroMesas, numeroServicios }) => {renderMesaMesero(numeroMesas, numeroServicios); });";
+			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
+
+		}
+
+		// ************ WEBMETHOD *************
+
+		//Obtenemos número de mesa y le abrimos un servicio
+		[WebMethod]
+		public static bool AbrirServicio(List<Dictionary<string, int>> data)
+		{
+			//DB
+			ServicioNegocio servicioNegocio = new ServicioNegocio();
+
+			bool response = false;
+			object msg = new { msg = "El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a que la mesa ya se encuentra abierta.", tipo = "error" };
+
+			foreach (var diccionario in data)
+			{
+				var numeroMesa = diccionario["mesa"];
+				int idServicio = servicioNegocio.AbrirServicio(numeroMesa);
+
+				//Si se guardó de manera correcta
+				if (idServicio > 0)
+				{
+					//Guardamos todo en la session en caso de que exista
+					if (Helper.Session.GetServicios() != null)
+					{
+						List<Servicio> servicio = Helper.Session.GetServicios();
+						Servicio auxServicioSession = new Servicio();
+
+						auxServicioSession.Id = idServicio;
+						auxServicioSession.Mesa = numeroMesa;
+
+						servicio.Add(auxServicioSession);
+
+						//Guardamos en Session
+						Helper.Session.SetServicios(servicio);
+					}
+					else
+					{
+						List<Servicio> servicio = new List<Servicio>();
+						Servicio auxServicioSession = new Servicio();
+
+						auxServicioSession.Id = idServicio;
+						auxServicioSession.Mesa = numeroMesa;
+
+						servicio.Add(auxServicioSession);
+
+						//Guardamos en Session
+						Helper.Session.SetServicios(servicio);
+					}
+
+					response = true;
+					msg = new { msg = $"El servicio de la mesa {numeroMesa} fue abierto con éxito", tipo = "success" };
+				};
+			}
+
+			//Guardamos mensaje para modal de front
+			Helper.Session.SetMensajeModal(msg);
+
+			return response;
+		}
+
+        //Cerrar servicios de la mesa
+		[WebMethod]
+		public static bool CerrarServicio(List<Dictionary<string, int>> data)
+		{
+			//DB
+			ServicioNegocio servicioNegocio = new ServicioNegocio();
+
+			//Iniciamos respuestas
+			bool response = false;
+			object msg = new { msg = $"El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a pedidos que aún permanecen abiertos.", tipo = "error" };
+
+			foreach (var diccionario in data)
+			{
+				var numeroMesa = diccionario["mesa"];
+
+				if (servicioNegocio.CerrarServicio(numeroMesa))
+				{
+					//Modificamos la sessión agregándole la hora de cierre al servicio, pero sigue abierto hasta que cobrado no sea true
+					List<Servicio> servicio = Helper.Session.GetServicios();
+
+					foreach (var item in servicio)
+					{
+						if (item.Mesa == numeroMesa)
+						{
+							item.Cierre = DateTime.Now.TimeOfDay;
+						}
+					}
+
+					//Guardamos servicio
+					Helper.Session.SetServicios(servicio);
+
+					//Generamos respuestas
+					response = true;
+					msg = new { msg = $"El servicio de la mesa {numeroMesa} fue cerrado con éxito", tipo = "success" };
+				}
+				else
+				{
+					//Generamos respuestas
+					response = false;
+					msg = new { msg = $"El servicio de la mesa {numeroMesa} no pudo cerrarse. Esto puede deberse a un error de conexión o a pedidos que aún permanecen abiertos", tipo = "error" };
+				}
+			}
+
+			//Guardamos mensaje para modal de front
+			Helper.Session.SetMensajeModal(msg);
+
+			//Enviamos respuesta al fron
+			return response;
+		}
+
+		//Guardamos número de mesa en pedido
+		[WebMethod]
+		public static bool AbrirPedido(List<Dictionary<string, int>> data)
+		{
+			//Iniciamos respuesta
+			bool response = false;
+
+			foreach (var diccionario in data)
+			{
+				var numeroMesa = diccionario["mesa"];
+
+				if (numeroMesa > 0)
+				{
+					//Guardamos numero de mesa que se seleccionó para iniciar pedido
+					Helper.Session.SetNumeroMesaPedido(numeroMesa);
+					response = true;
+				}
+			}
+
+			//Enviamos resupuesta al fron
+			return response;
+		}
+
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

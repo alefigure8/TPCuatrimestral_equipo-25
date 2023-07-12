@@ -24,6 +24,7 @@ namespace RestoApp
 
 			//Verificar Query del número de servicio
 			int servicio = Convert.ToInt32(Request.QueryString["servicio"]);
+			//int mesero = Convert.ToInt32(Request.QueryString["mesero"]);
 
 			// CONTENIDO GERENTE
 			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
@@ -113,6 +114,7 @@ namespace RestoApp
 			
 			if(ticket.IdMesero == idMesero)
 			{
+				lbTituloTicket.Text = "Ticket del servicio #" + ticket.Id;
 				return tickets;
 			}
 
@@ -131,6 +133,9 @@ namespace RestoApp
 			//Guardamos Tickets en Session
 			Session["Tickets"] = tickets;
 
+			//Label
+			lbTituloTicket.Text = "Tickets abiertos";
+
 			return tickets;
 		}
 
@@ -145,6 +150,9 @@ namespace RestoApp
 
 			//Listamos tickets
 			List<Ticket> tickets = ticketNegocio.ListarPorMesero(idMesero);
+
+			//Label
+			lbTituloTicket.Text = "Tickets abiertos";
 
 			return tickets;
 		}
@@ -208,8 +216,18 @@ namespace RestoApp
 				List<Servicio> servicio = Helper.Session.GetServicios().FindAll(item => item.Id != numeroServicio);
 				Helper.Session.SetServicios(servicio);
 
+				//Mensaje de exito
+				object msg = new { msg = $"El servicio número {numeroServicio} fue cobrado con éxito", tipo = "success" };
+				Helper.Session.SetMensajeModal(msg);
+
 				//Redirigir a Main
 				Response.Redirect("Main.aspx");
+			}
+			else
+			{
+				//Mensaje error
+				object msg = new { msg = $"El servicio número {numeroServicio} no pudo ser cobrado", tipo = "error" };
+				Helper.Session.SetMensajeModal(msg);
 			}
 		}
 	}

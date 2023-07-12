@@ -43,10 +43,19 @@ namespace RestoApp
 
 				}catch(Exception error)
 				{
-					//TODO: MODAL DE ERROR
-					throw new Exception(error.Message);
+					UIMostrarAlerta(error.Message);
 				}
 			}
+		}
+
+		//Modal Alerta
+		private void UIMostrarAlerta(string mensaje, string tipoMensaje = "error")
+		{
+			string scriptModal = $"alertaModal(\"{mensaje}\", \"{tipoMensaje}\");";
+			ScriptManager.RegisterStartupScript(this, GetType(), "ScriptMesa", scriptModal, true);
+
+			//Borramos mensaje del modal
+			Helper.Session.SetMensajeModal(null);
 		}
 
 		private void CargarMesas(AccesoDB datos)

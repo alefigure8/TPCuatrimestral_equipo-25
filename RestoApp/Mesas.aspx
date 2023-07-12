@@ -86,4 +86,39 @@
         </div>
     </div>
     <!-- FIN PANEL-->
+
+    <!-- Modal -->
+     <div id="modalMesas" class="modal">
+        <div class="modal-content">
+            <div class="d-flex justify-content-between align-items-center border-1 border-bottom">
+                <h5 class="modal-title" id="modal-titulo">Mesero Asignado</h5>
+                <span class="close">&times;</span>
+            </div>
+            <div id="modal-content" class="modal-body">
+
+                <!-- Desde JS -->
+            </div>
+        </div>
+    </div>
+
+    <script id="ScriptMesa">
+        const closeModalBtn = document.getElementsByClassName("close")[0];
+        const modalTitulo = document.getElementById("modal-titulo");
+        let contenidoModal = document.getElementById("modal-content");
+
+        //Modal Alerta
+        function alertaModal(msg, mode) {
+            console.log(msg, mode)
+            modalTitulo.textContent = "Mensaje";
+            modal.style.display = "block";
+            contenidoModal.innerHTML = "";
+
+            if (mode == "error") {
+                contenidoModal.innerHTML = `<p class="text-danger">${msg}</p>`
+            } else {
+                contenidoModal.innerHTML = `<p class="text-success">${msg}</p>`
+            }
+
+        }
+    </script>
 </asp:Content>

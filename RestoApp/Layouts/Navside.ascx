@@ -27,9 +27,9 @@
             <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
                 { %>
             <li class="mb-1">
-                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#otro-collapse" aria-bs-expanded="true">Mesas
+                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#mesa-collapse" aria-bs-expanded="true">Mesas
                 </a>
-                <div class="collapse " id="otro-collapse">
+                <div class="collapse " id="mesa-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                         <li><a href="Mesas.aspx" class="nav-link ps-3">Asignar Mesas</a></li>
                         <li><a href="MesaHabilitar.aspx" class="nav-link ps-3">Habilitar Mesas</a></li>
@@ -84,6 +84,23 @@
                 </div>
             </li>
               <%}%>
+            <li class="mb-1">
+                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#ticket-collapse" aria-bs-expanded="true">Tickets
+                </a>
+                <div class="collapse " id="ticket-collapse">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                 <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                    { %>
+                        <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets del Dia</a></li>
+                    <%}%>
+                         <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+                    { %>
+                        <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets del Dia</a></li>
+                     <%}%>
+                        <li><a href="#" class="nav-link ps-3">Estadística (HACER)</a></li>
+                    </ul>
+                </div>
+            </li>
         </ul>
         <hr />
         <div class="dropdown">
