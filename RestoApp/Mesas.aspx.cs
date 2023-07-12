@@ -24,7 +24,6 @@ namespace RestoApp
 		public List<MeseroPorDia> meserosPorDiaAsignados = new List<MeseroPorDia>();
 		public List<MesaPorDia> mesasPorDia;
 		public Usuario usuario { get; set; }
-		static AccesoDB datos;
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -36,12 +35,13 @@ namespace RestoApp
 			{
 				try
 				{
-					CargarMesas(datos);
+					CargarMesas();
 					CargarMesasGuardadas();
-					CargarMesasPorDiaGuardadas(datos);
-					CargarMeseros(datos);
+					CargarMesasPorDiaGuardadas();
+					CargarMeseros();
 
-				}catch(Exception error)
+				}
+				catch(Exception error)
 				{
 					UIMostrarAlerta(error.Message);
 				}
@@ -58,11 +58,19 @@ namespace RestoApp
 			Helper.Session.SetMensajeModal(null);
 		}
 
-		private void CargarMesas(AccesoDB datos)
+		private void CargarMesas()
 		{
-			//DB
-			MesaNegocio mesaNegocio = new MesaNegocio();
-			mesas = mesaNegocio.Listar();
+			if(Helper.Session.GetMesas() != null)
+			{
+				//Session
+				mesas = Helper.Session.GetMesas();
+			}
+			else
+			{
+				//DB
+				MesaNegocio mesaNegocio = new MesaNegocio();
+				mesas = mesaNegocio.Listar();
+			}
 		}
 
 		//Cargamos las mesas Activas
@@ -79,14 +87,22 @@ namespace RestoApp
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasGuardas", $"var numeroMesasGuardasJSON = '{numeroMesasGuardasJSON}';", true);
 		}
 
-		private void CargarMesasPorDiaGuardadas(AccesoDB datos)
+		private void CargarMesasPorDiaGuardadas()
 		{
-			
-			//DB
-			MesaNegocio mesaNegocio = new MesaNegocio();
-
 			List<MesaPorDia> mesasPorDia = new List<MesaPorDia>();
-			mesasPorDia = mesaNegocio.ListarMesaPorDia().FindAll(mesa => mesa.Cierre == null);
+
+			if(Helper.Session.GetMesasAsignadas() != null )
+			{
+				//Session
+				mesasPorDia = Helper.Session.GetMesasAsignadas().FindAll(mesa => mesa.Cierre == null);
+			}
+			else
+			{
+				//DB
+				MesaNegocio mesaNegocio = new MesaNegocio();
+				mesasPorDia = mesaNegocio.ListarMesaPorDia().FindAll(mesa => mesa.Cierre == null);
+				Helper.Session.SetMesasAsignadas(mesasPorDia);
+			}
 	
 			//Creamos objeto con mesa y mesero
 			List<object> objetos = new List<object>();
@@ -104,25 +120,48 @@ namespace RestoApp
 			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasPorDia", $"var numeroMesasPorDiaJSON = '{numeroMesasPorDiaJSON}';", true);
 		}
 		
-		private void CargarMeseros(AccesoDB datos)
+		private void CargarMeseros()
 		{
 			//DB
 			MesaNegocio mesaNegocio = new MesaNegocio();
+			List<int> IdMeserosConMesasAbiertas;
 
-			List<int> IdMeserosConMesasAbiertas = mesaNegocio.ListaIdMeserosActivosConMesasAbiertas();
-			List<MeseroPorDia> meseroPorDia = mesaNegocio.ListaMeseroPorDia();
+			if (Helper.Session.GetMesasAsignadas() != null )
+			{
+				//Session
+				mesasPorDia = Helper.Session.GetMesasAsignadas();
+				IdMeserosConMesasAbiertas = mesasPorDia.Select(mesa => (int)mesa?.IDMeseroPorDia).ToList();
+			}
+			else
+			{
+				//DB
+				IdMeserosConMesasAbiertas = mesaNegocio.ListaIdMeserosActivosConMesasAbiertas();
+			}
+
+			if(Helper.Session.GetMeserosAsignados() != null && Helper.Session.GetMeserosNoAsignados() != null)
+			{
+				//Session
+				meserosPorDiaAsignados = Helper.Session.GetMeserosAsignados();
+				meserosPorDiaNoAsignados = Helper.Session.GetMeserosNoAsignados();
+			}
+			else
+			{
+				//DB
+				List<MeseroPorDia> meseroPorDia = mesaNegocio.ListaMeseroPorDia();
 			
-			//Meseros no asignados
-			meserosPorDiaNoAsignados = meseroPorDia.Where(usuario => !IdMeserosConMesasAbiertas.Contains(usuario.Id)).ToList();
+				//Meseros no asignados
+				meserosPorDiaNoAsignados = meseroPorDia.Where(usuario => !IdMeserosConMesasAbiertas.Contains(usuario.Id)).ToList();
 
-			//Meseros asignados
-			meserosPorDiaAsignados = meseroPorDia.Where(usuario => IdMeserosConMesasAbiertas.Contains(usuario.Id)).ToList();
+				//Meseros asignados
+				meserosPorDiaAsignados = meseroPorDia.Where(usuario => IdMeserosConMesasAbiertas.Contains(usuario.Id)).ToList();
 
-			//Colocar cantidad de mesas asignadas
-			meserosPorDiaAsignados.ForEach(mesero => mesero.MesasAsignadas = IdMeserosConMesasAbiertas.FindAll(id => id == mesero.Id).Count);
+				//Colocar cantidad de mesas asignadas
+				meserosPorDiaAsignados.ForEach(mesero => mesero.MesasAsignadas = IdMeserosConMesasAbiertas.FindAll(id => id == mesero.Id).Count);
 
-			Session[Configuracion.Session.MeserosAsignados] = meserosPorDiaAsignados;
-			Session[Configuracion.Session.MeserosNoAsignados] = meserosPorDiaNoAsignados;
+				Helper.Session.SetMeserosAsignados(meserosPorDiaAsignados);
+				Helper.Session.SetMeserosNoAsignados(meserosPorDiaNoAsignados);
+			}
+
 
 			//Repeater Meseros No Asignados
 			repeaterMeserosNoAsignados.DataSource = meserosPorDiaNoAsignados;
@@ -139,10 +178,18 @@ namespace RestoApp
 		{
 			//DB
 			MesaNegocio mesaNegocio = new MesaNegocio();
-
 			List<MesaPorDia> mesasPorDiaAbierta = new List<MesaPorDia>();
 
-			mesasPorDiaAbierta = mesaNegocio.ListarMesaPorDia().FindAll(mesa => mesa.Cierre == null);
+			if (Helper.Session.GetMesasAsignadas() != null)
+			{
+				//Session
+				mesasPorDiaAbierta = Helper.Session.GetMesasAsignadas();
+			}
+			else
+			{
+				//DB
+				mesasPorDiaAbierta = mesaNegocio.ListarMesaPorDia().FindAll(mesa => mesa.Cierre == null);
+			}
 			
 			foreach (var diccionario in array)
 			{

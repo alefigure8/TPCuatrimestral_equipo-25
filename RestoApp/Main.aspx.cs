@@ -342,9 +342,10 @@ namespace RestoApp
 
 			//Meseros Presentes
 			List<MeseroPorDia> meseroPorDia = mesaNegocio.ListaMeseroPorDia();
+			Session["MeserosPresentes"] = meseroPorDia;
 
-            //Meseros Ausentes
-            List<Usuario> meserosAusentes = mesaNegocio.ListaMeserosAusentes();
+			//Meseros Ausentes
+			List<Usuario> meserosAusentes = mesaNegocio.ListaMeserosAusentes();
 
             //Meseros no asignados
             meserosPorDiaNoAsignados = meseroPorDia.Where(usuario => !IdMeserosConMesasAbiertas.Contains(usuario.Id)).ToList();

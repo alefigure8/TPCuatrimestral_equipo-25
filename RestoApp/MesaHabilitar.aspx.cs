@@ -16,31 +16,40 @@ namespace RestoApp
 	{
 		public static List<Mesa> mesas;
 		public Usuario usuario { get; set; }
-		static AccesoDB datos;
+
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
 				usuario = (Usuario)Session[Configuracion.Session.Usuario];
 			
-			// CONTENIDO GERENTE
 			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
 			{
-				CargarMesas(datos);
+				CargarMesas();
 				CargarNumeroDeMesasAlDesplegable();
 				CargarMesasGuardadas();
 			}
 		}
 
-		private void CargarMesas(AccesoDB datos)
+		private void CargarMesas()
 		{
-			MesaNegocio mesaNegocio = new MesaNegocio();
-			mesas = mesaNegocio.Listar();
+			if (Helper.Session.GetMesas() != null)
+			{
+				//Session
+				mesas = Helper.Session.GetMesas();
+			}
+			else
+			{
+				//DB
+				MesaNegocio mesaNegocio = new MesaNegocio();
+				mesas = mesaNegocio.Listar();
+			}
 		}
 
 		//Ponemos el número de mesas de la base de datos en el dropdown
 		private void CargarNumeroDeMesasAlDesplegable()
 		{
 			int numeroMesas = mesas.Count();
+			
 			//Mandamos el dato a main.js
 			ClientScript.RegisterStartupScript(this.GetType(), "cantidadMesas", $"var cantidadMesas = '{numeroMesas}';", true);
 		}
