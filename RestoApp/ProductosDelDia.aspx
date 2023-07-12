@@ -44,21 +44,21 @@
         <%--Productos Disponibles--%>
         <div class="col">
             <h2 class="row rounded">Productos disponibles</h2>            <div class="row p-1 bg-dark text-white h5">
-                <span class="col-3 align-middle">Producto </span>
-                <span class="col-3 align-middle">Stock </span>
-                <span class="col-3 align-middle">Categoria </span>
-                <span class="col-3 d-flex justify-content-around"> </span>
+                <span class="col-6 align-middle">Producto </span>
+                <span class="col-2 align-middle" style="text-align: center;">Stock </span>
+                <span class="col-2 align-middle">Categoria </span>
+                <span class="col-2 d-flex justify-content-around"> </span>
             </div>
 
 
             <asp:Repeater runat="server" ID="ProductoRepetidor" OnItemDataBound="ProductoRepetidor_ItemDataBound">
                 <ItemTemplate>
-                    <div class="row p-1">
-                        <span class="col-3 align-middle"><%#Eval("Nombre")%></span>
-                        <span class="col-3 align-middle"><%#Eval("Stock")%> </span>
-                        <asp:Label ID="lblCategoria" runat="server" CssClass="col-3 align-middle" Font-Size="15px" Text='<%#Eval("Categoria")%> '></asp:Label>
-                        <div class="col-3 d-flex justify-content-around">
-                            <asp:Button runat="server" ID="BtnAgregarAPDD" OnClick="BtnAgregarAPDD_Click" CommandArgument='<%#Eval("Id")%>' Text=">" CssClass=" btn btn-dark rounded-circle" />
+                    <div class="row p-1 border-bottom">
+                        <span class="col-6 align-middle"><%#Eval("Nombre")%></span>
+                        <span class="col-2 align-middle" style="text-align: center;"><%#Eval("Stock")%> </span>
+                        <asp:Label ID="lblCategoria" runat="server" CssClass="col-2 align-middle" Font-Size="15px" Text='<%#Eval("Categoria")%> '></asp:Label>
+                        <div class="col-2 d-flex justify-content-around">
+                            <asp:Button runat="server" ID="BtnAgregarAPDD" OnClick="BtnAgregarAPDD_Click" ToolTip="Agregar a Menú" CommandArgument='<%#Eval("Id")%>' Text=">" CssClass=" btn btn-dark rounded-circle" />
                         </div>
 
                     </div>
@@ -70,18 +70,18 @@
         <div class="col">
             <h2 class="row rounded">Productos en menú actual</h2>
              <div class="row p-1 bg-dark text-white h5">
-                <span class="col-3 align-middle">  </span>
-                <span class="col-3 align-middle"> Estado </span>
-                <span class="col-3 columna-btn"> Stock </span>
+                <span class="col-5 align-middle">  </span>
+                <span class="col-2 align-middle"> Estado </span>
+                <span class="col columna-btn" style="text-align: center;"> Stock </span>
             </div>
             <asp:Repeater runat="server" ID="ProductoDelDiaRepetidor">
                 <ItemTemplate>
-                    <div class="row p-1">
-                        <span class="col-3"><%#Eval("Nombre")%></span>
-                        <span class="col-3">
+                    <div class="row p-1 border-bottom">
+                        <span class="col-5"><%#Eval("Nombre")%></span>
+                        <span class="col-2">
                             <asp:Button runat="server" ID="BtnDesactivar" OnClick="BtnDesactivar_Click" Text='<%#Eval("Activo").Equals(true) ? "Cerrar" : "Reabrir" %>' CommandArgument='<%#Eval("Id") %>' CssClass="btn btn-dark" />
                          </span>
-                        <span class="col">
+                        <span class="col" style="text-align: center;">
                             <asp:Button runat="server" ID="BtnAgregarStock" Text="+" ToolTip="Agregar Stock" OnClick="BtnAgregarStock_Click" CssClass="btn btn-dark rounded-circle" CommandArgument='<%#Eval("Id") %>' />
                             <asp:TextBox runat="server" TextMode="Number" min="0" ID="tbAgregarStock" CssClass="col-3"></asp:TextBox>
                             <asp:Button runat="server" ID="BtnQuitarStock" Text="-" ToolTip="Restar Stock" OnClick="BtnQuitarStock_Click" CssClass="btn btn-dark rounded-circle" CommandArgument='<%#Eval("Id") %>' />

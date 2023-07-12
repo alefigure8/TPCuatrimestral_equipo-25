@@ -188,7 +188,8 @@ namespace Negocio
 
         }
 
-        // LISTAR PEDIDOS POR DÍA. 
+
+        // Listar pedidos del dia, valida que la fecha del servicio asociado al pedido sea de la fecha actual.  
         public List<Pedido> ListarPedidosDelDia()
         {
             AccesoDB AccesoDB = new AccesoDB();
