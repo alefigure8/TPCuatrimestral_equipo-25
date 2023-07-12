@@ -13,6 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helper", "Helper\Helper.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Opciones", "Opciones\Opciones.csproj", "{BE63E89B-2A66-4FFE-85FF-BFCA6566876B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLDB", "SQLDB", "{F0CB65DE-1493-4F92-B301-2357E8B75932}"
+	ProjectSection(SolutionItems) = preProject
+		SQLDB\RestoDB.sql = SQLDB\RestoDB.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
