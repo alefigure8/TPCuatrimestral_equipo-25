@@ -98,44 +98,41 @@
         {
     %>
 
-    <div class="row m-2 rounded">
-        <div class="col-2 bg-dark"></div>
+       <h2 class="display-4 text-white">Menú disponible</h2>
+        <div class="col-11 p-3 bg-white rounded ">
+         
 
-        <div class="col bg-white">
-            <h2 class="display-4 bg-secondary text-white row">Menú disponible</h2>
             <asp:Repeater runat="server" ID="MenuMeseroRep">
                 <ItemTemplate>
 
                     <div class="row border-bottom p-2">
 
-                        <div class="col">
+                        <div class="col" style="height: 80px;">
+                             
+                            <div class="row text-uppercase" style="font-size: 20px; padding-left: 1rem; font-weight: bolder"> <%#Eval("Nombre")%> </div>
 
-                            <div class="row h4 text-uppercase">
-                                <%#Eval("Nombre")%>
-                            </div>
-
-                            <asp:Panel runat="server" ID="PanelDetalles" CssClass="row small" Visible="false">
+                            <asp:Panel runat="server" ID="PanelDetalles" CssClass="row" Visible="false">
                                 <div class="row">
-                                    <div class="col">
-                                        <%#Eval("Descripcion")%>
-                                    </div>
-                                    <div class="col-2">
-                                        <%#Eval("Valor","{0:C}")%>
-                                    </div>
+                                    <div class="col" style="font-style: italic;"><%#Eval("Descripcion")%></div>
+                                    <div class="col-2" style="font-weight: bold;"><%#Eval("Valor","{0:C}")%> </div>
                                 </div>
 
+                                <div class="row">
                                 <%#Eval("AptoVegano").Equals(true) ? "· Es apto vegano" : string.Empty %>
                                 <%#Eval("AptoCeliaco").Equals(true) ? "· Es apto celiaco" : string.Empty %>
                                 <%#Eval("Alcohol").Equals(true) ? "· Contiene Alcohol" : string.Empty %>
                                 <%#Eval("TiempoCoccion")!=null ? "· Cocción:" : string.Empty  %> <%#Eval("TiempoCoccion")%>
+                                </div>
+
+                              
                             </asp:Panel>
 
                         </div>
 
 
-                        <div class="col-3">
-                            <asp:Button runat="server" CssClass="row btn btn-dark btn-sm small m-1" Text="Agregar  a pedido" />
-                            <asp:Button runat="server" CssClass="row btn btn-dark btn-sm small m-1" Text="Ver detalle" ID="BtnVerDetalle" OnClick="BtnVerDetalle_Click" />
+                        <div class="col-2">
+                          <%--  <asp:Button runat="server" CssClass="row btn btn-dark btn-sm small m-1" Text="Agregar  a pedido" />--%>
+                            <asp:Button runat="server" CssClass="row btn btn-dark" Text="Ver detalle" ID="BtnVerDetalle" OnClick="BtnVerDetalle_Click" />
                         </div>
                     </div>
 
@@ -146,9 +143,6 @@
         </div>
 
 
-        <div class="col-2 bg-dark"></div>
-
-    </div>
 
 
 
