@@ -1057,10 +1057,11 @@ namespace RestoApp
             btnCancelar.Visible = false;
         }
 
-        protected void ListarPedidos()
+        protected void ListarPedidosDelDia()
         {
             Session["Pedidos"] = null;
             PedidoNegocio PNAux = new PedidoNegocio();
+            //Session.Add("Pedidos", PNAux.ListarPedidosDelDia()); --------- listar pedidos del dia
             //Session.Add("Pedidos", PNAux.ListarPedidos());
             Session.Add("Pedidos", new List<Pedido>());
 
@@ -1071,7 +1072,7 @@ namespace RestoApp
             //ServicioNegocio SNAux = new ServicioNegocio();
             List<Servicio> ListaServicios = (Helper.Session.GetServicios());
 
-            ListarPedidos();
+            ListarPedidosDelDia();
 
             List<Pedido> Pedidos = ((List<Pedido>)Session["Pedidos"]);
 
