@@ -38,11 +38,6 @@ namespace RestoApp
         private List<Mesa> mesas;
         private List<MesaPorDia> mesasPorDia;
 
-        //DB
-        private AccesoDB datos;
-        private MesaNegocio mesaNegocio;
-        static ServicioNegocio servicioNegocio;
-
 		//Javascript atributos
 		private string datosMesasJSON;
         private string mesasActivasJSON;
@@ -67,13 +62,6 @@ namespace RestoApp
 
                 try
                 {
-                    //Conexión a base de datos, única instancia
-                    datos = new AccesoDB();
-
-                    //Negocios
-                    mesaNegocio = new MesaNegocio(datos);
-                    servicioNegocio = new ServicioNegocio(datos);
-
                     //Variable para front
 					tipoUsuario = Configuracion.Rol.Gerente;
 
@@ -88,11 +76,6 @@ namespace RestoApp
                 catch (Exception error)
                 {
                     UIMostrarAlerta(error.Message);
-				}
-				finally
-                {
-                    //Cerramos conexión
-					datos.closeConnection();
 				}
             }
 
@@ -127,12 +110,6 @@ namespace RestoApp
 
 				try
 				{
-                    //Conexión a base de datos, única instancia
-					datos = new AccesoDB();
-
-                    //Negocios
-					mesaNegocio = new MesaNegocio(datos);
-					servicioNegocio = new ServicioNegocio(datos);
 					
 					//Variable para front
 					tipoUsuario = Configuracion.Rol.Mesero;
@@ -148,10 +125,6 @@ namespace RestoApp
 				catch (Exception error)
 				{
                     UIMostrarAlerta(error.Message);
-				}
-				finally
-				{
-					datos.closeConnection();
 				}
 
 			}
@@ -185,7 +158,7 @@ namespace RestoApp
 		//Cargamos los servicios desde la base de datos
         private void CargarServicios()
         {
-            //ServicioNegocio servicioNegocio = new ServicioNegocio();
+            ServicioNegocio servicioNegocio = new ServicioNegocio();
             List<Servicio> serviciosDB = servicioNegocio.Listar().FindAll(serv => serv.Cobrado == false);
 
             //Si la session existe completamos los datos desde la DB
@@ -246,14 +219,11 @@ namespace RestoApp
         {
             {
 				//Llamdados a DB
-				//MesaNegocio mesaNegocio = new MesaNegocio(datos);
+				MesaNegocio mesaNegocio = new MesaNegocio();
 				mesas = mesaNegocio.Listar();
-				//mesasPorDia = mesaNegocio.ListarMesaPorDia();
-				//mesasPorDia = Helper.Session.GetMesasAsignadas();
 				
 				//Sessiones
 				Helper.Session.SetMesas(mesas);
-                //Helper.Session.SetMesasAsignadas(mesasPorDia);
 
                 //Guardamos cantidad de mesas activas para mostrar en ASPX
                 MesasActivas = mesas.FindAll(m => m.Activo == true).Count();
@@ -325,13 +295,16 @@ namespace RestoApp
 
         private void CargarPedido()
         {
-            //TODO: LLAMADO A DB PARA OBTENER ESTADO DE PEDIDOS
+            //Session
             List<Pedido> pedidos = (List<Pedido>)Session["Pedidos"];
+
+            //Filtramos los pedidos que no tengan "Entregado"
             pedidos = pedidos.FindAll(pedido => pedido.EstadoDescripcion != "Entregado");
 
             //Ordenar los pedidos por mesa para que aparezcan en orden en el listado
             List<Servicio> servicios = (List<Servicio>)Helper.Session.GetServicios();
 
+            //DataTable
             var dataTable = new DataTable();
 
             dataTable.Columns.Add("Mesa", typeof(int));
@@ -355,9 +328,7 @@ namespace RestoApp
                 }
             }
 
-            //Tener en cuenta todos los distintos estados.
-            //Pensar hasta qué punto ponerlos. Entregado no iría... pero debería haber un historial del día para saber qué pasó con el pedido
-
+            //Filas
             foreach (DataRow row in dataTable.Rows)
             {
                 int mesa = (int)row["Mesa"];
@@ -373,13 +344,14 @@ namespace RestoApp
 		
         private void CargarMeseros()
         {
-			//MesaNegocio mesaNegocio = new MesaNegocio(datos);
-			
+			//DB
+			MesaNegocio mesaNegocio = new MesaNegocio();
 			mesasPorDia = mesaNegocio.ListarMesaPorDia();
+
+            //Session
             Helper.Session.SetMesasAsignadas(mesasPorDia);
 
 			//Lista de IDs de Meseros con mesas asignadas
-			//List<int> IdMeserosConMesasAbiertas = mesaNegocio.ListaIdMeserosActivosConMesasAbiertas();
 			List<int?> IdMeserosConMesasAbiertas = mesasPorDia.Select(mesa => mesa.IDMeseroPorDia).ToList();
 
 			//Meseros Presentes
@@ -453,7 +425,8 @@ namespace RestoApp
 
 		private void CargarMeseroPorDia()
         {
-            //MesaNegocio mesaNegocio = new MesaNegocio(datos);
+			//DB
+            MesaNegocio mesaNegocio = new MesaNegocio();
 
             List<MeseroPorDia> meserosPorDia = new List<MeseroPorDia>();
             meserosPorDia = mesaNegocio.ListaMeseroPorDia();
@@ -500,14 +473,17 @@ namespace RestoApp
                     meseroPorDia.Fecha = DateTime.Now;
                     meseroPorDia.Ingreso = DateTime.Now.TimeOfDay;
 
-                    //MesaNegocio mesaNegocio = new MesaNegocio(datos);
+                    //DB
+                    MesaNegocio mesaNegocio = new MesaNegocio();
+
+                    //Creamos mesa y recuperamos ID
                     meseroPorDia.Id = mesaNegocio.CrearMeseroPorDia(meseroPorDia);
 
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
-                }
+					throw ex;
+				}
 
                 //Si se crea correctamente cambiamos el texto del botón
                 if (meseroPorDia.Id > 0)
@@ -522,7 +498,8 @@ namespace RestoApp
                 //Darse de baja
                 try
                 {
-                   // MesaNegocio mesaNegocio = new MesaNegocio(datos);
+				    //DB
+                   MesaNegocio mesaNegocio = new MesaNegocio();
 
                     List<MesaPorDia> mesasAsignadas = Helper.Session.GetMesasAsignadas();
 
@@ -532,7 +509,6 @@ namespace RestoApp
                     {
                         foreach (MesaPorDia item in mesasAsignadas)
                         {
-
                             mesaNegocio.ModificarMesaPorDia(item.Id, item.Mesa, (int)item.Mesero);
                         }
                     }
@@ -551,8 +527,8 @@ namespace RestoApp
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
-                }
+					throw ex;
+				}
             }
         }
 		
@@ -565,11 +541,15 @@ namespace RestoApp
             //Si hay mesero por dia
             if (meseroPorDia != null)
             {
-                //MesaNegocio mesaNegocio = new MesaNegocio(datos);
+				//DB
+                MesaNegocio mesaNegocio = new MesaNegocio();
+				
+				
                 List<MesaPorDia> mesasAsignadas = mesaNegocio.ListarMesaPorDia()
                     .FindAll(x => x.Mesero == meseroPorDia.IdMesero && x.Cierre == null)
                     .OrderBy(x => x.Mesa).ToList();
 
+                //Session - Guardamos las mesas asignadas después de filtrarlas por IdMesero y que no estén cerradas
                 Helper.Session.SetMesasAsignadas(mesasAsignadas);
 
                 if (mesasAsignadas != null)
@@ -686,7 +666,8 @@ namespace RestoApp
 		[WebMethod]
         public static bool AbrirServicio(List<Dictionary<string, int>> data)
         {
-            //ServicioNegocio servicioNegocio = new ServicioNegocio();
+			//DB
+            ServicioNegocio servicioNegocio = new ServicioNegocio();
 
             bool response = false;
             object msg = new { msg = "El servicio no pudo cargarse. Esto puede deberse a un error de conexión o a que la mesa ya se encuentra abierta.", tipo = "error" };
@@ -741,7 +722,8 @@ namespace RestoApp
         [WebMethod]
         public static bool CerrarServicio(List<Dictionary<string, int>> data)
         {
-           // ServicioNegocio servicioNegocio = new ServicioNegocio();
+			//DB
+           ServicioNegocio servicioNegocio = new ServicioNegocio();
 
             //Iniciamos respuestas
             bool response = false;
@@ -808,42 +790,6 @@ namespace RestoApp
             //Enviamos resupuesta al fron
             return response;
         }
-
-        //Cobramos el pedido
-        //[WebMethod]
-        //public static bool EmitirTicket(List<Dictionary<string, int>> data)
-        //{
-        //    //Inicamos respuestas
-        //    bool response = false;
-        //    object msg = new { msg = $"El ticket no pudo emitirse. Esto puede deberse a un error de conexión o a que la mesa no se encuentra abierta.", tipo = "error" };
-
-        //    ServicioNegocio servicioNegocio = new ServicioNegocio();
-
-        //    foreach (var diccionario in data)
-        //    {
-        //        var numeroMesa = diccionario["mesa"];
-        //        var numeroServicio = diccionario["servicio"];
-
-        //        if (numeroServicio > 0)
-        //            if (servicioNegocio.CobrarServicio(numeroServicio))
-        //            {
-        //                //Si se cobró correctamente, sacamos el sercisio de la sessión de Servicios
-        //                List<Servicio> servicio = Helper.Session.GetServicios().FindAll(item => item.Id != numeroServicio);
-        //                Helper.Session.SetServicios(servicio);
-
-        //                //Generamores respuestas
-        //                response = true;
-        //                msg = new { msg = $"El ticket de la mesa {numeroMesa} fue emitido con éxito", tipo = "success" };
-        //            }
-        //    }
-
-        //    //Guardamos mensaje para modal de front
-        //    Helper.Session.SetMensajeModal(msg);
-
-        //    //Enviamos respuestaal fron
-        //    return response;
-        //}
-
 
         protected void ListarCategoriasProducto()
         {
@@ -973,7 +919,6 @@ namespace RestoApp
             btnTerminarPedido.Visible = false;
             lbNumeroMesa.Text = "SIN MESA SELECCIONADA";
             ActualizarPedidos();
-
         }
 
         protected void AgregarAPedido2_Click(object sender, EventArgs e)
@@ -1064,7 +1009,6 @@ namespace RestoApp
             //Session.Add("Pedidos", PNAux.ListarPedidosDelDia()); --------- listar pedidos del dia
             //Session.Add("Pedidos", PNAux.ListarPedidos());
             Session.Add("Pedidos", new List<Pedido>());
-
 		}
 
         protected void ActualizarPedidos()

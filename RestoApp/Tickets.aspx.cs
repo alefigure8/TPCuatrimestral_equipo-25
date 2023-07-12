@@ -16,10 +16,7 @@ namespace RestoApp
 		private Usuario usuario;
 		public Decimal precio = 0;
 
-		//DB
-		private AccesoDB datos;
-		private ServicioNegocio servicioNegocio;
-		protected void Page_Load(object sender, EventArgs e)
+			protected void Page_Load(object sender, EventArgs e)
 		{
 			//Verificar que sea usuario
 			if (AutentificacionUsuario.esUser(Helper.Session.GetUsuario()))
@@ -38,16 +35,11 @@ namespace RestoApp
 
 					try
 					{
-						DBLlamados();
 						BuscarTicket();
 					}
 					catch
 					{
 						throw new Exception("Error al cargar el ticket");
-					}
-					finally
-					{
-						datos.closeConnection();
 					}
 				}	
 				else
@@ -55,16 +47,11 @@ namespace RestoApp
 					//Render de todos los tickets del mesero
 					try
 					{
-						DBLlamados();
 						CargarTicketsAbiertos();
 					}
 					catch
 					{
 						throw new Exception("Error al cargar el ticket");
-					}
-					finally
-					{
-						datos.closeConnection();
 					}
 				}
 			}
@@ -79,16 +66,11 @@ namespace RestoApp
 					Session["ServicioTicket"] = servicio;
 					try
 					{
-						DBLlamados();
 						BuscarTicket();
 					}
 					catch
 					{
 						throw new Exception("Error al cargar el ticket");
-					}
-					finally
-					{
-						datos.closeConnection();
 					}
 				}
 				else
@@ -96,16 +78,11 @@ namespace RestoApp
 					//Render de todos los tickets del mesero
 					try
 					{
-						DBLlamados();
 						CargarTicketPorMesero();
 					}
 					catch
 					{
 						throw new Exception("Error al cargar el ticket");
-					}
-					finally
-					{
-						datos.closeConnection();
 					}
 				}
 
@@ -222,7 +199,7 @@ namespace RestoApp
 			int numeroServicio = Convert.ToInt32(btn.CommandArgument);
 
 			//Iniciamos negocio de Servicios
-			DBLlamados();
+			ServicioNegocio servicioNegocio = new ServicioNegocio();
 
 			//Si se cierra el servicio, sacamos del Session el servicio
 			if (servicioNegocio.CobrarServicio(numeroServicio))
@@ -234,12 +211,6 @@ namespace RestoApp
 				//Redirigir a Main
 				Response.Redirect("Main.aspx");
 			}
-		}
-
-		private void DBLlamados()
-		{
-			datos = new AccesoDB();
-			servicioNegocio = new ServicioNegocio(datos);
 		}
 	}
 }

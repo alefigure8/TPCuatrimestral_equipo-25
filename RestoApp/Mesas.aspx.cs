@@ -36,26 +36,23 @@ namespace RestoApp
 			{
 				try
 				{
-					datos = new AccesoDB();
 					CargarMesas(datos);
 					CargarMesasGuardadas();
 					CargarMesasPorDiaGuardadas(datos);
 					CargarMeseros(datos);
+
 				}catch(Exception error)
 				{
+					//TODO: MODAL DE ERROR
 					throw new Exception(error.Message);
 				}
-				finally
-				{
-					datos.closeConnection();
-				}
-				
 			}
 		}
 
 		private void CargarMesas(AccesoDB datos)
 		{
-			MesaNegocio mesaNegocio = new MesaNegocio(datos);
+			//DB
+			MesaNegocio mesaNegocio = new MesaNegocio();
 			mesas = mesaNegocio.Listar();
 		}
 
@@ -75,9 +72,9 @@ namespace RestoApp
 
 		private void CargarMesasPorDiaGuardadas(AccesoDB datos)
 		{
-			//Enviar Mesas por día con idMeseros
-			MesaNegocio mesaNegocio = new MesaNegocio(datos);
 			
+			//DB
+			MesaNegocio mesaNegocio = new MesaNegocio();
 
 			List<MesaPorDia> mesasPorDia = new List<MesaPorDia>();
 			mesasPorDia = mesaNegocio.ListarMesaPorDia().FindAll(mesa => mesa.Cierre == null);
@@ -100,7 +97,8 @@ namespace RestoApp
 		
 		private void CargarMeseros(AccesoDB datos)
 		{
-			MesaNegocio mesaNegocio = new MesaNegocio(datos);
+			//DB
+			MesaNegocio mesaNegocio = new MesaNegocio();
 
 			List<int> IdMeserosConMesasAbiertas = mesaNegocio.ListaIdMeserosActivosConMesasAbiertas();
 			List<MeseroPorDia> meseroPorDia = mesaNegocio.ListaMeseroPorDia();
@@ -130,7 +128,8 @@ namespace RestoApp
 		[WebMethod]
 		public static void GuardarMesas(Dictionary<string, int>[] array)
 		{
-			MesaNegocio mesaNegocio = new MesaNegocio(datos);
+			//DB
+			MesaNegocio mesaNegocio = new MesaNegocio();
 
 			List<MesaPorDia> mesasPorDiaAbierta = new List<MesaPorDia>();
 
