@@ -76,14 +76,16 @@ namespace Negocio
 
             AccesoDB datos = new AccesoDB();
 
+            string formato = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
             try
             {
 
                 datos.setQuery(
                  $"INSERT INTO {ColumnasDB.EstadosxPedido.DB} ({ColumnasDB.EstadosxPedido.IdPedido}, {ColumnasDB.EstadosxPedido.IdEstado}, {ColumnasDB.EstadosxPedido.FechaActualizacion}) " +
-                 $"VALUES ({idpedido}, 1 , '{DateTime.Now.ToString("G")}')");
+                 $"VALUES ({idpedido}, 1 , CAST('{formato}' AS DATETIME))");
                 datos.executeNonQuery();
-
+            
             }
 
             catch (Exception Ex)
@@ -400,10 +402,10 @@ namespace Negocio
             AccesoDB datos = new AccesoDB();
             try
             {
-
+                
                 datos.setQuery(
                  $"INSERT INTO {ColumnasDB.EstadosxPedido.DB} ({ColumnasDB.EstadosxPedido.IdPedido}, {ColumnasDB.EstadosxPedido.IdEstado}, {ColumnasDB.EstadosxPedido.FechaActualizacion}) " +
-                 $"VALUES ({idpedido}, {nuevoestado} , '{DateTime.Now.ToString("G")}')");
+                 $"VALUES ({idpedido}, {nuevoestado} , '{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}')");
                 datos.executeNonQuery();
                 datos.closeConnection();
 

@@ -95,10 +95,6 @@ namespace RestoApp
 
             foreach (Pedido pedido in Pedidosencocina)
             {
-                if (pedido.Estado == Estados.EnPreparacion)
-                {
-                    pedido.Horaingresococina = pedido.ultimaactualizacion;
-                }
                 HelperCocina Item = new HelperCocina();
                 pedido.Productossolicitados = cocinaNegocio.ListarProductosPorPedido(pedido.Id);
 
@@ -111,6 +107,14 @@ namespace RestoApp
                         Tiempomax = producto.Productodeldia.TiempoCoccion;
                     }
 
+                }
+                if (pedido.Estado == Estados.EnPreparacion)
+                {
+                    pedido.Horaingresococina = pedido.ultimaactualizacion;
+                }
+                else
+                {
+                    pedido.Horaingresococina = pedido.ultimaactualizacion - (TimeSpan)Tiempomax;
                 }
 
                 int casillerostiempomax = CantidadCasilleros(Tiempomax.Value);
@@ -461,17 +465,19 @@ namespace RestoApp
         Reloj = Reloj.AddSeconds(180);
         Txtreloj.Text = Reloj.ToString("HH:mm");
         Session.Add("Reloj", Reloj);
+      
     }
 
-
+       
         protected void GVDCocina_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             Reloj = (DateTime)Session["Reloj"];
             Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
             int Indicecolumnahora = IndiceColumna(HoraToString(Reloj));
-
-            // AGREGO BORDE DERECHO A CADA CELDA PARA GENERA LINEAS VERTICALES
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            
+           
+                // AGREGO BORDE DERECHO A CADA CELDA PARA GENERA LINEAS VERTICALES
+                if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 foreach (TableCell cell in e.Row.Cells)
 
@@ -497,6 +503,8 @@ namespace RestoApp
 
                     for (int i = item.Columna; i < item.Columna + item.TiempoCoccion; i++)
                     {
+
+
                         if (i > Indicecolumnahora)
                         {
 
@@ -534,7 +542,7 @@ namespace RestoApp
 
 
             }
-
+            
 
         }
 
