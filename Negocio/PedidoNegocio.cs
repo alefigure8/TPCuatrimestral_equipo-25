@@ -137,8 +137,6 @@ namespace Negocio
             }
         }
 
-
-
         public List<Pedido> ListarPedidos()
         {
             AccesoDB AccesoDB = new AccesoDB();
@@ -210,6 +208,57 @@ namespace Negocio
                     $" WHERE MxD.{ColumnasDB.MesasPorDia.IdMesero} = {IdMesero} " +
                     $" AND S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("G")}' " +
                     $" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id})"
+                    );
+
+                AccesoDB.executeReader();
+
+                while (AccesoDB.Reader.Read())
+                {
+                    Pedido aux = new Pedido();
+                    aux.Id = (Int32)AccesoDB.Reader[ColumnasDB.Pedido.Id];
+                    aux.IdServicio = (Int32)AccesoDB.Reader[ColumnasDB.Pedido.IdServicio];
+                    aux.Estado = (Int32)AccesoDB.Reader[ColumnasDB.Estados.Id];
+                    aux.EstadoDescripcion = (string)AccesoDB.Reader[ColumnasDB.Estados.Descripcion];
+                    aux.ultimaactualizacion = (DateTime)AccesoDB.Reader[ColumnasDB.EstadosxPedido.FechaActualizacion];
+                    aux.Productossolicitados = ListarProductosPorPedido(aux.Id);
+                    listapedidos.Add(aux);
+                }
+
+                return listapedidos;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+        }
+
+
+        // Lista pedidos del dia para gerente, valida que el estado sea distinto a entregado
+        public List<Pedido> ListarPedidosDelDia()
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            List<Pedido> listapedidos = new List<Pedido>();
+
+            try
+            {
+                AccesoDB.setQuery($"SELECT P.{ColumnasDB.Pedido.Id} " +
+                    $", P.{ColumnasDB.Pedido.IdServicio} " +
+                    $", E.{ColumnasDB.Estados.Id} " +
+                    $", E.{ColumnasDB.Estados.Descripcion} " +
+                    $", ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} " +
+                    $" FROM {ColumnasDB.Pedido.DB} P " +
+                    $" JOIN {ColumnasDB.EstadosxPedido.DB} ExP ON P.{ColumnasDB.Pedido.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido} " +
+                    $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
+                    $" JOIN {ColumnasDB.Servicio.DB} S on S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
+                    $" JOIN {ColumnasDB.MesasPorDia.DB} MxD on MxD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.Servicio.IdMesa}" +
+                    $" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("G")}' " +
+                    $" ExP " +
+                    $" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
+                    $" AND (SELECT E.{ColumnasDB.Estados.Descripcion} FROM {ColumnasDB.Estados.DB} E WHERE E.{ColumnasDB.Estados.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido}) <> 'entregado')"
                     );
 
                 AccesoDB.executeReader();
