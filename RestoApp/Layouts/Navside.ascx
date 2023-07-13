@@ -11,15 +11,15 @@
         <hr />
         <ul class="list-unstyled ps-0">
             <li class="align-items-center rounded collapsed text-light btn">
-               
-            <% if (usuario?.Tipo != Opciones.ColumnasDB.TipoUsuario.Cocinero)
-                { %>    
+
+                <% if (usuario?.Tipo != Opciones.ColumnasDB.TipoUsuario.Cocinero)
+                { %>
                 <a href="Main.aspx" class="nav-link active" aria-current="page">Inicio
                 </a>
                 <%}
                     else
                     {  %>
-                  <a href="Cocina.aspx" class="nav-link active" aria-current="page">Cocina
+                <a href="Cocina.aspx" class="nav-link active" aria-current="page">Cocina
                 </a>
                 <%} %>
             </li>
@@ -41,8 +41,8 @@
             <li class="mb-1">
                 <%if (usuario?.Tipo != Opciones.ColumnasDB.TipoUsuario.Cocinero) {  %>
                 <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#productos-collapse" aria-bs-expanded="true">
-                   <%--Si es gerente o admin la solapa se llama productos, si no, se llama menu--%>
-                          <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                    <%--Si es gerente o admin la solapa se llama productos, si no, se llama menu--%>
+                    <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
                               { %>  Productos
                     <%} else
             { %>
@@ -52,13 +52,13 @@
                 <div class="collapse" id="productos-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                         <%--Si es gerente o admin puede ver la opcion administrar producto--%>
-                          <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                        <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
                               { %>
                         <li><a href="Productos.aspx" class="nav-link ps-3">Administrar Productos</a></li>
                         <%} %>
                         <li><a href="ProductosDelDia.aspx" class="nav-link ps-3">
-                              <%--Si es gerente o admin la solapa se llama productos, si no, se llama menu--%>
-                          <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                            <%--Si es gerente o admin la solapa se llama productos, si no, se llama menu--%>
+                            <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
                               { %> 
                             Productos del día
                                <%} else
@@ -66,13 +66,12 @@
                 Menu completo
                     <%            } %>
 
-                            </a></li>
-                        <li><a href="#" class="nav-link ps-3">opcion 3</a></li>
+                        </a></li>
                     </ul>
                 </div>
             </li>
             <%}%>
-          <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+            <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
                 { %>
             <li class="mb-1">
                 <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#usuarios-collapse" aria-bs-expanded="true">Usuarios
@@ -80,26 +79,26 @@
                 <div class="collapse" id="usuarios-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                         <li><a href="usuarios.aspx" class="nav-link ps-3">Administrar usuarios</a></li>
-                       </ul>
+                    </ul>
                 </div>
             </li>
-              <%}%>
+            <%}%>
             <li class="mb-1">
                 <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#ticket-collapse" aria-bs-expanded="true">Tickets
                 </a>
                 <div class="collapse " id="ticket-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                 <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                        <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
                     { %>
                         <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets Abiertos</a></li>
                         <li><a href="Tickets.aspx?dia=<%: DateTime.Now.ToString("yyyy-MM-dd") %>" class="nav-link ps-3">Tickets Del Dia</a></li>
                         <li><a href="#" class="nav-link ps-3">Estadística</a></li>
-                    <%}%>
-                         <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+                        <%}%>
+                        <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
                     { %>
                         <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets Abiertos</a></li>
                         <li><a href="#" class="nav-link ps-3">Tickets Del Dia</a></li>
-                     <%}%>
+                        <%}%>
                     </ul>
                 </div>
             </li>
@@ -126,14 +125,16 @@
                             <!-- Estado del mesero -->
                             <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero && meseroPorDia == null)
                                 { %>
-                             <i class="fa-sharp fa-solid fa-circle text-warning"></i>
-                            <%} else if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero) { %>
+                            <i class="fa-sharp fa-solid fa-circle text-warning"></i>
+                            <%}
+                                else if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+                                { %>
                             <i class="fa-sharp fa-solid fa-circle text-success"></i>
                             <%} %>
                             <!-- Fin Estado del mesero -->
                         </ContentTemplate>
                         <Triggers>
-                            <asp:AsyncPostBackTrigger  ControlID="hiddenBotonID" EventName="ValueChanged"/>
+                            <asp:AsyncPostBackTrigger ControlID="hiddenBotonID" EventName="ValueChanged" />
                         </Triggers>
                     </asp:UpdatePanel>
                 </strong>
@@ -142,8 +143,8 @@
                 class="dropdown-menu dropdown-menu-dark text-small shadow"
                 aria-labelledby="dropdownUser1">
                 <li>
-                    <asp:LinkButton ID="Btn_Perfil" runat="server" class="dropdown-item" Text="Perfil" OnClick="Btn_Perfil_Click"/>
-                    </li>
+                    <asp:LinkButton ID="Btn_Perfil" runat="server" class="dropdown-item" Text="Perfil" OnClick="Btn_Perfil_Click" />
+                </li>
                 <li>
                     <hr class="dropdown-divider" />
                 </li>
