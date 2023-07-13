@@ -17,58 +17,160 @@ namespace RestoApp
     {
         public DateTime Reloj { get; set; }
         public Usuario usuario { get; set; }
-
+        public CocinaNegocio cocinaNegocio { get; set; }
         public List<Pedido> Pedidosencocina { get; set; }
-
-        public List<Pedido> Pedidossolicitados { get; set; }
-        public List<Pedido> Pedidosenpreparacion { get; set; }
-        public List<Pedido> Pedidosdemorados { get; set; }
-        public List<Pedido> Estadopedidos { get; set; }
+        public List<Pedido> Pedidosencocinasession { get; set; }
         public List<HelperCocina> Helpercocina { get; set; }
-
         public List<ProductoPorPedido> Productosenpreparacion { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
-            /*
+
 
             if (!IsPostBack)
             {
-                bool sinproductos = true;
-                Session.Add("sinproductos", sinproductos);
-                Reloj = DateTime.Now;
-                Session.Add("Reloj", Reloj);
+
+                InstanciarObjetos();
                 CrearDatatableCocina();
                 CrearDataTableProductosEnPreparacion();
                 CrearDataTableEstadoPedidos();
 
             }
+
+
             ActualizarCocina();
+            
+        
             //ActualizarSolicitadosenDB();
             //Listarpedidosenpreparacion();
             ActualizarDGVCocina();
             ActualizarDGVEstadoPedidos();
             ActualizarDGVProductosenPreparacion();
             ActualizarDemorados();
-            */
+            
         }
+
+
+
+        public void InstanciarObjetos()
+        {
+
+            bool sinproductos = true;
+            Session.Add("sinproductos", sinproductos);
+
+            Reloj = DateTime.Now;
+            Session.Add("Reloj", Reloj);
+
+            cocinaNegocio = new CocinaNegocio();
+            Session.Add("CocinaNegocio", cocinaNegocio);
+
+            Pedidosencocina = new List<Pedido>();
+            Session.Add("Pedidosencocina", Pedidosencocina);
+
+            Pedidosencocinasession = new List<Pedido>();
+            Session.Add("Pedidosencocinasession", Pedidosencocinasession);
+
+            Helpercocina = new List<HelperCocina>();
+            Session.Add("Helpercocina", Helpercocina);
+
+            Productosenpreparacion = new List<ProductoPorPedido>();
+            Session.Add("Productosenpreparacion", Productosenpreparacion);
+        }
+
+        public void ActualizarSolicitados(CocinaNegocio cocinaNegocio)
+        {
+            cocinaNegocio.ActualizarSolicitados();
+        }
+
+        public List<Pedido> ListarPedidosenCocina(CocinaNegocio cocinaNegocio)
+        {
+            Helpercocina = (List<HelperCocina>)Session["Helpercocina"];
+            Productosenpreparacion = (List<ProductoPorPedido>)Session["Productosenpreparacion"];
+            Pedidosencocina = (List<Pedido>)Session["Pedidosencocina"];
+
+            Pedidosencocina = cocinaNegocio.ListarPedidosenCocina();
+            Pedidosencocina = Pedidosencocina.OrderBy(Pedidosencocina => Pedidosencocina.Id).ToList();
+
+            foreach (Pedido pedido in Pedidosencocina)
+            {
+                if (pedido.Estado == Estados.EnPreparacion)
+                {
+                    pedido.Horaingresococina = pedido.ultimaactualizacion;
+                }
+                HelperCocina Item = new HelperCocina();
+                pedido.Productossolicitados = cocinaNegocio.ListarProductosPorPedido(pedido.Id);
+
+                TimeSpan? Tiempomax = TimeSpan.Zero;
+
+                foreach (ProductoPorPedido producto in pedido.Productossolicitados)
+                {
+                    if (producto.Productodeldia.TiempoCoccion > Tiempomax)
+                    {
+                        Tiempomax = producto.Productodeldia.TiempoCoccion;
+                    }
+
+                }
+
+                int casillerostiempomax = CantidadCasilleros(Tiempomax.Value);
+
+                foreach (ProductoPorPedido producto in pedido.Productossolicitados)
+                {
+                                     
+                                    
+                    Item.TiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
+                    
+                    if (casillerostiempomax == Item.TiempoCoccion)
+                    {
+                        Item.Columna = IndiceColumna(HoraToString(pedido.Horaingresococina));
+                    }
+                    else if(casillerostiempomax  > Item.TiempoCoccion)
+                    {
+                        int diferencia = casillerostiempomax - Item.TiempoCoccion;
+                        Item.Columna = diferencia + IndiceColumna(HoraToString(pedido.Horaingresococina)); 
+
+                    }
+                        Item.idPedido = pedido.Id;
+                                   
+                    Helpercocina.Add(Item);
+
+                }
+                
+                pedido.Horalisto = pedido.Horaingresococina.Add(Tiempomax.Value);
+
+            }
+                
+
+            Session.Add("Helpercocina", Helpercocina);
+            Session.Add("Productosenpreparacion", Productosenpreparacion);
+            Session.Add("Pedidosencocina", Pedidosencocina);
+            return Pedidosencocina;
+        }     
         
+
+
+        public void AgregarPedidosenCocinaaSession(List<Pedido> pedidosenCocina) {
+
+        }
+
         public void ActualizarCocina()
         {
-            CocinaNegocio cocinanegocio = new CocinaNegocio();
-            PedidoNegocio pedidoNegocio = new PedidoNegocio();
-            cocinanegocio.ActualizarSolicitados();
-            Pedidosencocina = cocinanegocio.ListarPedidosenCocina();
-            //Session
+            cocinaNegocio = (CocinaNegocio)Session["CocinaNegocio"];
+
+            ActualizarSolicitados(cocinaNegocio);
+            Pedidosencocina = ListarPedidosenCocina(cocinaNegocio);
+          
+
         }
-       
+
+
+
         /*
         string ultimaactualizacion = pedido.ultimaactualizacion.ToString("yyyy-MM-dd");
         string hoy = DateTime.Now.ToString("yyyy-MM-dd");
         */
-
+        /*
         public void ActualizarSolicitadosenDB()
         {
             Pedidosenpreparacion = new List<Pedido>();
@@ -108,8 +210,8 @@ namespace RestoApp
             }
 
         }
-
-
+        */
+        /*
 
         public void Listarpedidosenpreparacion()
         {
@@ -154,7 +256,19 @@ namespace RestoApp
 
 
         }
+        */
 
+        public DataTable CrearDatatableCocina()
+        {
+            DataTable DTCocina = new DataTable();
+            foreach (string horario in horarios())
+            {
+                DTCocina.Columns.Add(horario, typeof(string));
+            }
+            Session.Add("DTCocina", DTCocina);
+            return DTCocina;
+
+        }
 
         public DataTable CrearDataTableProductosEnPreparacion()
         {
@@ -178,98 +292,59 @@ namespace RestoApp
 
         public void ActualizarDGVEstadoPedidos()
         {
-
-            Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
             DataTable DTEstadopedidos = (DataTable)Session["DTEstadoPedidos"];
-            Estadopedidos = Session["Pedidosenpreparacion"] as List<Pedido>;
-            PedidoNegocio pedidoNegocio = new PedidoNegocio();
-            Estadopedidos = Estadopedidos.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList(); 
-            TimeSpan? Tiempomax = TimeSpan.Zero;
+            Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
+
             DTEstadopedidos.Rows.Clear();
 
-            foreach (Pedido pedido in Estadopedidos)
+            foreach (Pedido pedido in Pedidosencocina)
             {
-                foreach (ProductoPorPedido producto in pedido.Productossolicitados)
-                {
-                    if (producto.Productodeldia.TiempoCoccion > Tiempomax)
-                    {
-                        Tiempomax = producto.Productodeldia.TiempoCoccion;
-                    }
-                }
-
                 DataRow row = DTEstadopedidos.NewRow();
                 row["Pedido"] = "#" + pedido.Id;
                 row["Estado"] = pedido.EstadoDescripcion;
-
-                if (pedido.Estado == Estados.DemoradoEnCocina)
+                if(pedido.Estado == Estados.EnPreparacion)
                 {
-                    row["Listo"] = "";
+                    row["Listo"] = pedido.Horalisto.TimeOfDay;
                 }
                 else
                 {
-                    row["Listo"] = pedido.ultimaactualizacion.Add((TimeSpan)Tiempomax).ToString("HH:mm");
-                }
-
+                    row["Listo"] = "";
+                }            
                 DTEstadopedidos.Rows.Add(row);
-
-                if (Helpercocina != null && Helpercocina.Count > 0 && pedido.Estado == Estados.EnPreparacion)
-                {
-                    
-                    Helpercocina.Find(x => x.idPedido == pedido.Id).horafin = pedido.ultimaactualizacion.Add((TimeSpan)Tiempomax);
-
-
-                }
             }
-
-
-
-            Session.Add("DTEstadoPedidos", DTEstadopedidos);
             GVDEstadopedidos.DataSource = DTEstadopedidos;
-            GVDEstadopedidos.DataBind();
-
+            GVDEstadopedidos.DataBind();           
 
         }
 
 
         public void ActualizarDemorados()
         {
-            if (Session["Helpercocina"] == null)
-            {
-                Helpercocina = new List<HelperCocina>();
-            }
-            else
-            {
-                Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
-            }
+           
             Reloj = (DateTime)Session["Reloj"];
-            Pedidosenpreparacion = Session["Pedidosenpreparacion"] as List<Pedido>;
+            Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
             PedidoNegocio pedidoNegocio = new PedidoNegocio();
-            Pedidosenpreparacion = Pedidosenpreparacion.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList();
 
-            foreach (Pedido p in Pedidosenpreparacion)
+            foreach (Pedido p in Pedidosencocina.ToList())
             {
-
-                TimeSpan aux;
-
-                if (Helpercocina.Count > 0)
-                {
-
-                    aux = HoraRedondeada(Helpercocina.Find(x => x.idPedido == p.Id).horafin);
-
-                    if (Reloj.TimeOfDay > aux)
-                    {
-                        if (p.Estado == Estados.EnPreparacion)
-                        {
-
-
-                            pedidoNegocio.CambiarEstadoPedido(p.Id, Estados.DemoradoEnCocina, Reloj);
-                        }
-                    }
-                }
-
+                if (p.Horalisto < Reloj)
+                    pedidoNegocio.CambiarEstadoPedido(p.Id, Estados.DemoradoEnCocina, Reloj);
             }
-        }
 
+        }
+        public int CantidadCasilleros(TimeSpan? TiempoCoccion)
+        {
+
+            TimeSpan timeSpan = (TimeSpan)TiempoCoccion;
+
+            int casilleros = 0;
+            casilleros = timeSpan.Minutes / 5;
+            if (timeSpan.Minutes % 5 > 3)
+            {
+                casilleros++;
+            }
+            return casilleros;
+        }
 
 
         public void ActualizarDGVProductosenPreparacion()
@@ -277,23 +352,10 @@ namespace RestoApp
           
             // RECUPERA DATATABLE CREADA
             DataTable dataTable = (DataTable)Session["DTProductosenpreparacion"];
-            Pedidosenpreparacion = Session["Pedidosenpreparacion"] as List<Pedido>;
-            List<ProductoPorPedido> Productosenpreparacion = new List<ProductoPorPedido>();
-
+            Productosenpreparacion = Session["Productosenpreparacion"] as List<ProductoPorPedido>;
+       
             dataTable.Rows.Clear();
-            foreach (Pedido p in Pedidosenpreparacion)
-            {
-
-                foreach (ProductoPorPedido pxp in p.Productossolicitados)
-                {
-
-                    Productosenpreparacion.Add(pxp);
-
-
-                }
-
-
-            }
+            
             Dictionary<string, int> productosAgrupados = new Dictionary<string, int>();
 
             // Recorrer la lista productosenpreparacion
@@ -319,187 +381,95 @@ namespace RestoApp
                 string nombreProducto = producto.Key;
                 int cantidad = producto.Value;
 
-
                 DataRow filaNueva = dataTable.NewRow();
                 filaNueva[0] = nombreProducto;
                 filaNueva[1] = cantidad;
-                dataTable.Rows.Add(filaNueva);
-            }
+                dataTable.Rows.Add(filaNueva);          }
 
-
-
-
-
-            Session.Add("DTProductosenpreparacion", dataTable);
+                    
             GVDProductosenprep.DataSource = dataTable;
             GVDProductosenprep.DataBind();
 
         }
 
 
-        public DataTable CrearDatatableCocina()
-        {
-            DataTable DTCocina = new DataTable();
-            foreach (string horario in horarios())
-            {
-                DTCocina.Columns.Add(horario, typeof(string));
-            }
-            Session.Add("DTCocina", DTCocina);
-            return DTCocina;
-
-        }
-
-
-
-
 
         public void ActualizarDGVCocina()
         {
-            // RECUPERA DATATABLE CREADA DE SESION
+
             DataTable DTCocina = (DataTable)Session["DTCocina"];
-            // RECUPERA LISTA DE PEDIDOS EN PREPARACION
-            Pedidosenpreparacion = Session["Pedidosenpreparacion"] as List<Pedido>;
-           Pedidosenpreparacion = Pedidosenpreparacion.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList(); 
-            // RECUPERA LISTA DE FILAS POR COLUMNA POR TIEMPO DE COCCION
+            Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
             Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
-            if (Helpercocina != null)
-            {
-                Helpercocina.Clear();
-            }
-            PedidoNegocio pedidoNegocio = new PedidoNegocio();
 
             DTCocina.Rows.Clear();
-            // RECORRE LISTA DE PEDIDOS EN PREPARACION
-            foreach (var pedido in Pedidosenpreparacion)
+
+            foreach (var pedido in Pedidosencocina)
             {
-                DateTime aux1 = pedidoNegocio.HorarioEnPrepPedido(pedido.Id);
-                // VALIDA QUE SE ENCUENTRE EN EL HORARIO ACTUAL
+
+
                 if (horarios().Contains(HoraToString(pedido.ultimaactualizacion)))
                 {
-
                     // BUSCA EL PRODUCTO DENTRO DEL PEDIDO QUE TENGA MAYOR TIEMPO DE COCCION
-                    int CasillerosMaxTiempoCoccion = 0;
-                    foreach (ProductoPorPedido producto in pedido.Productossolicitados)
-                    {
-                        if (CasillerosMaxTiempoCoccion < CantidadCasilleros(producto.Productodeldia.TiempoCoccion))
-                        {
-                            CasillerosMaxTiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
-                        }
-                    }
+                    int CasillerosMaxTiempoCoccion = CantidadCasilleros(pedido.Horalisto - pedido.Horaingresococina);
 
-                    foreach (ProductoPorPedido producto in pedido.Productossolicitados)
+                    for (int i = 0; i < pedido.Productossolicitados.Count; i++)
                     {
+                        ProductoPorPedido ProductossolicitadopsProductodeldia = pedido.Productossolicitados[i];
 
-                        // CALCULA EL AJUSTE DE COLUMNA SEGUN EL TIEMPO DE COCCION DEL PRODUCTO
-                        int TiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
-                        int Ajuste = ajusteportiempomaximopedido(TiempoCoccion, CasillerosMaxTiempoCoccion);
+                        int Ajuste = ajusteportiempomaximopedido(Helpercocina[i].TiempoCoccion, CasillerosMaxTiempoCoccion);
 
                         DataRow filaNueva = DTCocina.NewRow();
-
-                        if (pedido.Estado == Estados.EnPreparacion)
-                        {
-                            // AGREGA FILA POR CADA PRODUCTO DEL PEDIDO
-
-                            filaNueva[Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion))] = "#" + pedido.Id;
-                            filaNueva[IndiceColumna(HoraToString(pedido.ultimaactualizacion)) + CasillerosMaxTiempoCoccion - 2] = producto.Productodeldia.Nombre;
-                            filaNueva[IndiceColumna(HoraToString(pedido.ultimaactualizacion)) + CasillerosMaxTiempoCoccion - 1] = "C:" + producto.Cantidad;
-
-                        }
-                        else if (pedido.Estado == Estados.DemoradoEnCocina)
-                        {
-
-                            filaNueva[Ajuste + IndiceColumna(HoraToString(aux1))] = "#" + pedido.Id;
-                            filaNueva[IndiceColumna(HoraToString(aux1)) + CasillerosMaxTiempoCoccion - 2] = producto.Productodeldia.Nombre;
-                            filaNueva[IndiceColumna(HoraToString(aux1)) + CasillerosMaxTiempoCoccion - 1] = "C:" + producto.Cantidad;
-                        }
-
-
+                        filaNueva[Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion))] = "#" + pedido.Id;
+                        filaNueva[IndiceColumna(HoraToString(pedido.ultimaactualizacion)) + CasillerosMaxTiempoCoccion - 2] = ProductossolicitadopsProductodeldia.Productodeldia.Nombre;
+                        filaNueva[IndiceColumna(HoraToString(pedido.ultimaactualizacion)) + CasillerosMaxTiempoCoccion - 1] = "C:" + ProductossolicitadopsProductodeldia.Cantidad;
                         DTCocina.Rows.Add(filaNueva);
 
-
-                        // GUARDA EN DATOS LA FILA POR COLUMNA POR TIEMPO DE COCCION PARA LUEGO PINTARLA
-                        HelperCocina helpercocina = new HelperCocina();
-
-                        helpercocina.Fila = DTCocina.Rows.IndexOf(filaNueva);
-                        helpercocina.TiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
-                        helpercocina.idPedido = pedido.Id;
-                        if (pedido.Estado == Estados.EnPreparacion)
-                        {
-
-                            helpercocina.Columna = Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion));
-
-                        }
-                        else
-                        {
-                            helpercocina.Columna = Ajuste + IndiceColumna(HoraToString(aux1));
-                        }
-
-                        // GUARDA EN SESION LA FILA POR COLUMNA POR TIEMPO DE COCCION
-                        if (Session["Helpercocina"] == null)
-                        {
-                            Helpercocina = new List<HelperCocina>();
-                            Helpercocina.Add(helpercocina);
-                            Session.Add("Helpercocina", Helpercocina);
-
-                        }
-                        else
-                        {
-                            if (!(Helpercocina = Session["Helpercocina"] as List<HelperCocina>).Contains(helpercocina))
-                            {
-                                Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
-                                Helpercocina.Add(helpercocina);
-                                Session.Add("Helpercocina", Helpercocina);
-                            }
-                        }
                     }
-
                 }
-            }
 
-            // ACTUALIZA DATAGRIDVIEW COCINA
-            Session.Add("DTCocina", DTCocina);
-            GVDCocina.DataSource = DTCocina;
-            GVDCocina.DataBind();
+                GVDCocina.DataSource = DTCocina;
+                GVDCocina.DataBind();
+            }
         }
 
-
-        protected void GVDEstadopedidos_RowCommand(object sender, GridViewCommandEventArgs e)
+       public void GVDEstadopedidos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-
 
             if (e.CommandName == "ListoparaEntregar")
             {
-                int rowIndex = Convert.ToInt32(e.CommandArgument);
-                Estadopedidos = Session["Pedidosenpreparacion"] as List<Pedido>;
-                Estadopedidos = Estadopedidos.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList(); 
-                PedidoNegocio PedidoNegocio = new PedidoNegocio();
                 Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
-                Helpercocina.RemoveAll(x => x.idPedido == Estadopedidos[rowIndex].Id);
-                Session.Add("Helpercocina", Helpercocina);
+                Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
                 Reloj = (DateTime)Session["Reloj"];
-                PedidoNegocio.CambiarEstadoPedido(Estadopedidos[rowIndex].Id, Estados.ListoParaEntregar, Reloj);
-                Estadopedidos.RemoveAll(x => x.Id == Estadopedidos[rowIndex].Id);
-                Session.Add("Pedidosenpreparacion", Estadopedidos);
+                    
+                int rowIndex = Convert.ToInt32(e.CommandArgument);
+                                
+        
+                PedidoNegocio PedidoNegocio = new PedidoNegocio();
+                PedidoNegocio.CambiarEstadoPedido(Pedidosencocina[rowIndex].Id, Estados.ListoParaEntregar, Reloj);
 
+             
+                Helpercocina.RemoveAll(x => x.idPedido == Pedidosencocina[rowIndex].Id);
+                Session.Add("Helpercocina", Helpercocina);   
 
 
             }
         }
-
-
-        public void Timer1_Tick(object sender, EventArgs e)
-        {
-            Reloj = (DateTime)Session["Reloj"];
-            Reloj = Reloj.AddSeconds(180);
-            Txtreloj.Text = Reloj.ToString("HH:mm");
-            Session.Add("Reloj", Reloj);
-        }
+        
+    public void Timer1_Tick(object sender, EventArgs e)
+    {
+        Reloj = (DateTime)Session["Reloj"];
+        Reloj = Reloj.AddSeconds(180);
+        Txtreloj.Text = Reloj.ToString("HH:mm");
+        Session.Add("Reloj", Reloj);
+    }
 
 
         protected void GVDCocina_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             Reloj = (DateTime)Session["Reloj"];
+            Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
             int Indicecolumnahora = IndiceColumna(HoraToString(Reloj));
+
             // AGREGO BORDE DERECHO A CADA CELDA PARA GENERA LINEAS VERTICALES
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
@@ -517,47 +487,52 @@ namespace RestoApp
 
 
             // PINTO DE COLOR AZUL LAS CELDAS QUE CORRESPONDEN A UN PEDIDO
-            Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
-            if (Session["Helpercocina"] != null)
+           
+
+            for (int j = 0; j < Helpercocina.Count; j++)
             {
-                foreach (var item in Helpercocina)
+                if (e.Row.RowIndex == j)
                 {
-                    if (e.Row.RowIndex == item.Fila)
+                    HelperCocina item = Helpercocina[j];
+
+                    for (int i = item.Columna; i < item.Columna + item.TiempoCoccion; i++)
                     {
-                        for (int i = item.Columna; i < item.Columna + item.TiempoCoccion; i++)
+                        if (i > Indicecolumnahora)
                         {
-                            if (i > Indicecolumnahora)
-                            {
 
-                                int seed = item.idPedido.GetHashCode();
-                                Random random = new Random(seed);
-                                Color randomColor = Color.FromArgb(50, random.Next(100, 200), random.Next(100, 200), random.Next(100, 200));
-                                double factor = 0.8; 
+                            int seed = item.idPedido.GetHashCode();
+                            Random random = new Random(seed);
+                            Color randomColor = Color.FromArgb(50, random.Next(100, 200), random.Next(100, 200), random.Next(100, 200));
+                            double factor = 0.8;
 
-                                int red = (int)(randomColor.R * factor);
-                                int green = (int)(randomColor.G * factor);
-                                int blue = (int)(randomColor.B * factor);
+                            int red = (int)(randomColor.R * factor);
+                            int green = (int)(randomColor.G * factor);
+                            int blue = (int)(randomColor.B * factor);
 
-                                Color darkColor = Color.FromArgb(red, green, blue);
+                            Color darkColor = Color.FromArgb(red, green, blue);
 
-                                e.Row.Cells[i].BackColor = darkColor;
-                            }
-                            else if (i <= Indicecolumnahora)
-                            {
-                                e.Row.Cells[i].BackColor = Color.Gray;
-
-
-                            }
-                            else if(Indicecolumnahora ==-1)
-                            {
-                                e.Row.Cells[i].BackColor = Color.Gray;
-                            }
+                            e.Row.Cells[i].BackColor = darkColor;
                         }
+                        else if (i <= Indicecolumnahora)
+                        {
+                            e.Row.Cells[i].BackColor = Color.Gray;
 
 
-
+                        }
+                        else if (Indicecolumnahora == -1)
+                        {
+                            e.Row.Cells[i].BackColor = Color.Gray;
+                        }
                     }
+
+
+
                 }
+
+
+
+
+
             }
 
 
@@ -733,19 +708,7 @@ namespace RestoApp
             }
         }
 
-        public int CantidadCasilleros(TimeSpan? TiempoCoccion)
-        {
 
-            TimeSpan timeSpan = (TimeSpan)TiempoCoccion;
-
-            int casilleros = 0;
-            casilleros = timeSpan.Minutes / 5;
-            if (timeSpan.Minutes % 5 > 3)
-            {
-                casilleros++;
-            }
-            return casilleros;
-        }
 
         public int ajusteportiempomaximopedido(int Tiempococcion, int Tiempomaximo)
         {
@@ -766,18 +729,15 @@ namespace RestoApp
 
 
 
-
         protected void GVDEstadopedidos_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            Estadopedidos = Session["Pedidosenpreparacion"] as List<Pedido>;
-            Estadopedidos = Estadopedidos.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList();
+            Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
+            
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-
-
                 foreach (TableCell cell in e.Row.Cells)
                 {
-                    if (Estadopedidos[e.Row.RowIndex].Estado == Estados.EnPreparacion)
+                    if (Pedidosencocina                        [e.Row.RowIndex].Estado == Estados.EnPreparacion)
                     {
                         cell.BackColor = System.Drawing.Color.LightGreen;
 

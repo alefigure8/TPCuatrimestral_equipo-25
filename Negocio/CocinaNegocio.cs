@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 using System.Web.Caching;
 
 
+
 namespace Negocio
 {
-    public class CocinaNegocio {
+    public class CocinaNegocio
+    {
 
         public AccesoDB acceso { get; set; }
 
@@ -26,10 +28,15 @@ namespace Negocio
         public void ActualizarSolicitados()
         {
             acceso = new AccesoDB();
-           
-            try 
+
+            string cambiarformato = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            try
             {
-                acceso.setQuery($"SP_ACTUALIZARCOCINA '{DateTime.Now.ToString()}'");                   ;
+                acceso.setQuery(
+                    $"declare @FECHAHORA datetime " +
+                    $"set @FECHAHORA = CAST('{cambiarformato}' AS DATETIME) " +
+                    $"EXEC SP_ACTUALIZARCOCINA @FECHAHORA"); ;
                 acceso.executeNonQuery();
             }
             catch
@@ -48,11 +55,13 @@ namespace Negocio
             acceso = new AccesoDB();
             try
             {
-                acceso.setQuery($"SELECT EXP.IDPEDIDO, Max(EXP.IDESTADO), EXP.FECHAACTUALIZACION,E.Descripcion" +
-                    $" FROM ESTADO_X_PEDIDO EXP JOIN PEDIDO PE ON EXP.IDPEDIDO = PE.IDPEDIDO " +
-                    $"join Estadopedido E on Exp.IdEstado = E.IdEstado " +
-                    $"WHERE EXP.IDESTADO = 2");
+                acceso.setQuery($"SELECT ExP.IdPedido,ExP.IdEstado,ExP.FechaActualizacion, e.Descripcion FROM ESTADO_X_PEDIDO ExP " +
+                        $"join estadopedido E on ExP.IdEstado = e.IdEstado WHERE ExP.IdEstado = 2 and ExP.idEstado = " +
+                        $"(Select max(IdEstado) from ESTADO_X_PEDIDO ep where ep.IdPedido = exp.IdPedido) " +
+                        $"or ExP.IdEstado = 3 and ExP.idEstado = (Select max(IdEstado) from ESTADO_X_PEDIDO ep where ep.IdPedido = exp.IdPedido)");
                 acceso.executeReader();
+
+
 
                 while (acceso.Reader.Read())
                 {
@@ -66,10 +75,52 @@ namespace Negocio
             }
             catch
             { }
-            finally {
-                acceso.closeConnection(); }
+            finally
+            {
+                acceso.closeConnection();
+            }
 
             return Pedidosenpreparacion;
         }
 
-    } }
+        public List<ProductoPorPedido> ListarProductosPorPedido(int idPedido)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            List<ProductoPorPedido> listaproductoporpedidos = new List<ProductoPorPedido>();
+
+            try
+            {
+                AccesoDB.setQuery($"SELECT  PxP.{ColumnasDB.ProductoPorPedido.IdProductoPorDia} " +
+                $", PxP.{ColumnasDB.ProductoPorPedido.Cantidad} " +
+                $", P.{ColumnasDB.Producto.Nombre}, P.{ColumnasDB.Producto.TiempoCoccion} " +
+                $", P.{ColumnasDB.Producto.Categoria} " +
+                $" FROM {ColumnasDB.ProductoPorPedido.DB} PxP " +
+                $" JOIN {ColumnasDB.Producto.DB} P ON PxP.{ColumnasDB.ProductoPorPedido.IdProductoPorDia} = P.{ColumnasDB.Producto.Id}" +
+                $" WHERE {ColumnasDB.ProductoPorPedido.IdPedido} = {idPedido} ");
+                AccesoDB.executeReader();
+
+                while (AccesoDB.Reader.Read())
+                {
+                    ProductoPorPedido aux = new ProductoPorPedido();
+                    aux.Productodeldia.Nombre = (string)AccesoDB.Reader[ColumnasDB.Producto.Nombre];
+                    aux.Productodeldia.TiempoCoccion = (TimeSpan?)AccesoDB.Reader[ColumnasDB.Producto.TiempoCoccion];
+                    aux.Productodeldia.Categoria = (int)AccesoDB.Reader[ColumnasDB.Producto.Categoria];
+                    aux.Productodeldia.Id = (Int32)AccesoDB.Reader[ColumnasDB.ProductoPorPedido.IdProductoPorDia];
+                    aux.Cantidad = (Int32)AccesoDB.Reader[ColumnasDB.ProductoPorPedido.Cantidad];
+                    listaproductoporpedidos.Add(aux);
+                }
+
+                return listaproductoporpedidos;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+        }
+        
+    }
+}

@@ -376,6 +376,45 @@ REFERENCES ESTADOPEDIDO (IdEstado)
 
 GO
 
+Create PROCEDURE SP_ACTUALIZARCOCINA (@FECHAYHORA DATETIME)
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRANSACTION
+
+        DECLARE @IDPEDIDO INT
+
+        DECLARE @pedidossolicitados TABLE (IdPedido INT)
+
+
+        INSERT INTO @pedidossolicitados (IdPedido)
+        SELECT distinct ExP.IdPedido
+        FROM ESTADO_X_PEDIDO ExP
+        JOIN PRODUCTO_X_PEDIDO PxP ON ExP.IdPedido = PxP.IdPedido
+        JOIN PRODUCTOs P ON P.CategoriaProducto = 3
+        WHERE IdEstado = 1 AND idEstado = (SELECT MAX(IdEstado) FROM ESTADO_X_PEDIDO ep WHERE ep.IdPedido = ExP.IdPedido)
+
+
+     
+        WHILE EXISTS (SELECT 1 FROM @pedidossolicitados)
+        BEGIN
+            SELECT TOP 1 @IDPEDIDO = IdPedido
+            FROM @pedidossolicitados
+
+            INSERT INTO Estado_x_pedido (IdEstado, IdPedido, FechaActualizacion)
+            VALUES (2, @IDPEDIDO, @FECHAYHORA)
+
+            DELETE FROM @pedidossolicitados WHERE IdPedido = @IDPEDIDO
+        END
+
+        COMMIT TRANSACTION
+    END TRY
+    BEGIN CATCH
+        -- Manejar el error si es necesario
+    END CATCH
+END
+GO
+
 create TRIGGER TR_INSERTARESTADO ON ESTADO_X_PEDIDO
 INSTEAD OF INSERT
 AS
@@ -463,3 +502,5 @@ VALUES
 -- Insert data into CATEGORIAPRODUCTO table
 INSERT INTO CATEGORIAPRODUCTO (Descripcion)
 VALUES ('Bebidas'), ('Entradas'), ('Platos Principales'), ('Postres');
+
+

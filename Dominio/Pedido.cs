@@ -22,6 +22,7 @@ namespace Dominio
 
         public DateTime ultimaactualizacion;
 
-        public DateTime ingresococina;
+        public DateTime Horaingresococina;
+        public DateTime Horalisto;
     }
 }

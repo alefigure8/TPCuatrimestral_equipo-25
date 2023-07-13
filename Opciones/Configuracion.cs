@@ -8,6 +8,15 @@ namespace Opciones
 {
 	public class Configuracion
 	{
+
+		public struct Fechas
+		{
+            public const string FormatoFecha = "dd/MM/yyyy";
+            public const string FormatoHora = "HH:mm:ss";
+            public const string FormatoFechaHora = "dd/MM/yyyy HH:mm:ss";
+        }
+	
+
 		public struct Pagina
 		{
 			public const string Login = "Default.aspx";

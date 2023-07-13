@@ -303,10 +303,10 @@ namespace Negocio
                           
                 datos.setQuery(
                  $"INSERT INTO {ColumnasDB.EstadosxPedido.DB} ({ColumnasDB.EstadosxPedido.IdPedido}, {ColumnasDB.EstadosxPedido.IdEstado}, {ColumnasDB.EstadosxPedido.FechaActualizacion}) " +
-                 $"VALUES ({idpedido}, {nuevoestado} , '{DateTime.Now.ToString("G")}')");
+                 $"VALUES ({idpedido}, {nuevoestado} ,  CAST('{DateTime.Now.ToString(Configuracion.Fechas.FormatoFechaHora)}' AS DATETIME) )");
                 datos.executeNonQuery();
                 datos.closeConnection();
-
+              
             }
 
             catch (Exception Ex)
@@ -322,52 +322,21 @@ namespace Negocio
 
         }
 
-        public DateTime HorarioEnPrepPedido (int Pedido)
-        {
-             AccesoDB dB = new AccesoDB();
-            DateTime horario = new DateTime();
-
-            try
-            {
-                dB.setQuery($"Select FechaActualizacion from Estado_x_Pedido where IdPedido = {Pedido} and IdEstado = 2");
-               dB.executeReader();
-                while (dB.Reader.Read())
-                {
-
-                    horario = (DateTime)dB.Reader[ColumnasDB.EstadosxPedido.FechaActualizacion];
-                  
-                }
-                dB.closeConnection();
-            }
-            catch
-            {
-
-
-            }
-            finally
-            {
-                dB.closeConnection();
-
-            }
-
-            return horario;
-        }
-
-
-
+        
         public void CambiarEstadoPedido(int idpedido, int nuevoestado, DateTime Fechahora)
         {
             AccesoDB datos = new AccesoDB();
             try
             {
+                string formato = Fechahora.ToString("yyyy-MM-dd HH:mm:ss");
 
                 datos.setQuery(
                  $"INSERT INTO {ColumnasDB.EstadosxPedido.DB} ({ColumnasDB.EstadosxPedido.IdPedido}, {ColumnasDB.EstadosxPedido.IdEstado}, {ColumnasDB.EstadosxPedido.FechaActualizacion}) " +
-                 $"VALUES ({idpedido}, {nuevoestado} , '{Fechahora}')");
+                 $"VALUES ({idpedido}, {nuevoestado} , CAST('{formato}' AS DATETIME))");
                 datos.executeNonQuery();
                 datos.closeConnection();
             }
-
+          
             catch (Exception Ex)
             {
 
@@ -379,5 +348,8 @@ namespace Negocio
 
 
         }
+        
+
+
     }
 }
