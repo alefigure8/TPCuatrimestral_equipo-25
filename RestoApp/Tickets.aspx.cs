@@ -15,6 +15,8 @@ namespace RestoApp
 	{
 		private Usuario usuario;
 		public Decimal precio = 0;
+		int servicio;
+		string dia;
 
 			protected void Page_Load(object sender, EventArgs e)
 		{
@@ -23,8 +25,8 @@ namespace RestoApp
 				usuario = Helper.Session.GetUsuario();
 
 			//Verificar Query del número de servicio
-			int servicio = Convert.ToInt32(Request.QueryString["servicio"]);
-			//int mesero = Convert.ToInt32(Request.QueryString["mesero"]);
+			servicio = Convert.ToInt32(Request.QueryString["servicio"]);
+			dia = Request.QueryString["dia"];
 
 			// CONTENIDO GERENTE
 			if (!IsPostBack && AutentificacionUsuario.esGerente(usuario))
@@ -38,11 +40,23 @@ namespace RestoApp
 					{
 						BuscarTicket();
 					}
-					catch
+					catch(Exception ex)
 					{
-						throw new Exception("Error al cargar el ticket");
+						UIMostrarAlerta(ex.Message);
 					}
-				}	
+				}
+				else if (dia != null)
+				{
+					//Render de todos los tickets del mesero
+					try
+					{
+						CargarTicketsDiario();
+					}
+					catch(Exception ex)
+					{
+						UIMostrarAlerta(ex.Message);
+					}
+				}
 				else
 				{
 					//Render de todos los tickets del mesero
@@ -50,9 +64,10 @@ namespace RestoApp
 					{
 						CargarTicketsAbiertos();
 					}
-					catch
+					catch(Exception ex)
 					{
-						throw new Exception("Error al cargar el ticket");
+						UIMostrarAlerta(ex.Message);
+
 					}
 				}
 			}
@@ -69,9 +84,9 @@ namespace RestoApp
 					{
 						BuscarTicket();
 					}
-					catch
+					catch(Exception ex)
 					{
-						throw new Exception("Error al cargar el ticket");
+						UIMostrarAlerta(ex.Message);
 					}
 				}
 				else
@@ -81,9 +96,9 @@ namespace RestoApp
 					{
 						CargarTicketPorMesero();
 					}
-					catch
+					catch (Exception ex)
 					{
-						throw new Exception("Error al cargar el ticket");
+						UIMostrarAlerta(ex.Message);
 					}
 				}
 
@@ -92,6 +107,16 @@ namespace RestoApp
 			//Cargamos el repeater
 			CargarRepeaterTicker();
 
+		}
+
+		//UI Alerta Modal
+		private void UIMostrarAlerta(string mensaje, string tipoMensaje = "error")
+		{
+			string scriptModal = $"alertaModal(\"{mensaje}\", \"{tipoMensaje}\");";
+			ScriptManager.RegisterStartupScript(this, GetType(), "ScriptTicket", scriptModal, true);
+
+			//Borramos mensaje del modal
+			Helper.Session.SetMensajeModal(null);
 		}
 
 		private List<Ticket> BuscarTicket()
@@ -119,6 +144,20 @@ namespace RestoApp
 			}
 
 			return null;
+		}
+		
+		private List<Ticket> CargarTicketsDiario()
+		{
+			//Iniciamos Ticket Negocio
+			TicketNegocio ticketNegocio = new TicketNegocio();
+
+			//Listamos tickets
+			List<Ticket> tickets = ticketNegocio.ListarTicketsDiario(dia);
+
+			//Label
+			lbTituloTicket.Text = $"Tickets del Dia {DateTime.Now.ToString("yyyy-MM-dd")}";
+
+			return tickets;
 		}
 
 		//Retornamos todos los ticket abiertos

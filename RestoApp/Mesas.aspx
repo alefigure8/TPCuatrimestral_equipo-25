@@ -101,7 +101,59 @@
         </div>
     </div>
 
+     <style>
+        :root {
+            --bg-danger: #ffc107;
+            --bg-mesero: #17a2b8;
+        }
+
+        #modalMesas {
+            display: none; /* Ocultar el modal por defecto */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4); /* Fondo semitransparente */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 25%;
+        }
+
+        .close {
+            display: flex;
+            justify-content: end;
+            color: #aaaaaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .modalDP .modal-content {
+            width: 100%;
+        }
+    </style>
+
     <script id="ScriptMesa">
+        const modal = document.getElementById("modalMesas");
         const closeModalBtn = document.getElementsByClassName("close")[0];
         const modalTitulo = document.getElementById("modal-titulo");
         let contenidoModal = document.getElementById("modal-content");
@@ -120,5 +172,10 @@
             }
 
         }
+
+        //Boton modal para cerrar
+        closeModalBtn.addEventListener("click", function () {
+            modal.style.display = "none";
+        });
     </script>
 </asp:Content>

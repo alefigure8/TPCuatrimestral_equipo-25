@@ -261,6 +261,69 @@ namespace Negocio
 			return tickets;
 		}
 
+		public List<Ticket> ListarTicketsDiario(string dia)
+		{
+			List<Ticket> tickets = new List<Ticket>();
+			AccesoDB datos = new AccesoDB();
+
+			string query =
+				$"SELECT S.{ColumnasDB.Servicio.Id}, S.{ColumnasDB.Servicio.Fecha}, S.{ColumnasDB.Servicio.Cierre}, S.{ColumnasDB.Servicio.Cobrado}, M.{ColumnasDB.Mesa.Numero}, M.{ColumnasDB.MesasPorDia.IdMesero}" +
+				$" FROM {ColumnasDB.Servicio.DB} S" +
+				$" INNER JOIN {ColumnasDB.MesasPorDia.DB} M" +
+				$" ON S.{ColumnasDB.MesasPorDia.Id} = M.{ColumnasDB.MesasPorDia.Id}" +
+				$" WHERE S.{ColumnasDB.Servicio.Fecha} = '{dia}'" +
+				$" AND S.{ColumnasDB.Servicio.Cierre} IS NOT NULL "; 
+
+			try
+			{
+				datos.setQuery(query);
+				datos.executeReader();
+
+				while (datos.Reader.Read())
+				{
+					Ticket auxTicket = new Ticket();
+					//ID
+					auxTicket.Id = (Int32)datos.Reader[ColumnasDB.Servicio.Id];
+
+					//FECHA
+					if (datos.Reader[ColumnasDB.Servicio.Fecha] != null)
+						auxTicket.Fecha = (DateTime)datos.Reader[ColumnasDB.Servicio.Fecha];
+
+					//CIERRE
+					if (datos.Reader[ColumnasDB.Servicio.Cierre] != null)
+						auxTicket.Cierre = (TimeSpan)datos.Reader[ColumnasDB.Servicio.Cierre];
+
+					//COBRADO
+					if (datos.Reader[ColumnasDB.Servicio.Cobrado] != null)
+						auxTicket.Cobrado = (bool)datos.Reader[ColumnasDB.Servicio.Cobrado];
+
+					//MESA
+					if (datos.Reader[ColumnasDB.Mesa.Numero] != null)
+						auxTicket.Mesa = (int)datos.Reader[ColumnasDB.Mesa.Numero];
+
+					//MESARO ID
+					if (datos.Reader[ColumnasDB.MesasPorDia.IdMesero] != null)
+						auxTicket.IdMesero = (int)datos.Reader[ColumnasDB.MesasPorDia.IdMesero];
+
+					//PEDIDOS
+					List<TicketDetalle> detalles = this.ListarDetalle(auxTicket.Id);
+					auxTicket.Detalle = detalles;
+
+					tickets.Add(auxTicket);
+				}
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+			return tickets;
+
+		}
 		//TODO: Retornar ticket por dia o periodo.
 	}
 }
