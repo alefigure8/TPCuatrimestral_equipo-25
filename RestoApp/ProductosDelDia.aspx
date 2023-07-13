@@ -42,12 +42,15 @@
     %>
 
     <%--    Contenedor  --%>
-    <div class="row bg-white rounded m-2 p-4">
+      <div class="row col-12 bg-dark display-6 rounded-top text-white">
+     <div class="col-6">Productos disponibles</div>
+        <div class="col-6">Productos en menú actual</div>
+          </div>
 
+    <div class="row col-12 bg-white rounded-bottom">
         <%--Productos Disponibles--%>
         <div class="col">
-            <h2 class="row rounded">Productos disponibles</h2>
-            <div class="row p-1 bg-dark text-white h5">
+            <div class="row p-1 h5" style="font-weight: bold;">
                 <span class="col-6 align-middle">Producto </span>
                 <span class="col-2 align-middle" style="text-align: center;">Stock </span>
                 <span class="col-2 align-middle">Categoria </span>
@@ -72,8 +75,7 @@
 
         <%--Productos Del Dia--%>
         <div class="col">
-            <h2 class="row rounded">Productos en menú actual</h2>
-            <div class="row p-1 bg-dark text-white h5">
+            <div class="row p-1 h5" style="font-weight: bold;">
                 <span class="col-5 align-middle"></span>
                 <span class="col-2 align-middle">Estado </span>
                 <span class="col columna-btn" style="text-align: center;">Stock </span>
