@@ -42,12 +42,15 @@
     %>
 
     <%--    Contenedor  --%>
-    <div class="row bg-white rounded m-2 p-4">
+      <div class="row col-12 bg-dark display-6 rounded-top text-white">
+     <div class="col-6">Productos disponibles</div>
+        <div class="col-6">Productos en menú actual</div>
+          </div>
 
+    <div class="row col-12 bg-white rounded-bottom">
         <%--Productos Disponibles--%>
         <div class="col">
-            <h2 class="row rounded">Productos disponibles</h2>
-            <div class="row p-1 bg-dark text-white h5">
+            <div class="row p-1 h5" style="font-weight: bold;">
                 <span class="col-6 align-middle">Producto </span>
                 <span class="col-2 align-middle" style="text-align: center;">Stock </span>
                 <span class="col-2 align-middle">Categoria </span>
@@ -72,8 +75,7 @@
 
         <%--Productos Del Dia--%>
         <div class="col">
-            <h2 class="row rounded">Productos en menú actual</h2>
-            <div class="row p-1 bg-dark text-white h5">
+            <div class="row p-1 h5" style="font-weight: bold;">
                 <span class="col-5 align-middle"></span>
                 <span class="col-2 align-middle">Estado </span>
                 <span class="col columna-btn" style="text-align: center;">Stock </span>
@@ -102,8 +104,8 @@
         {
     %>
 
-    <h2 class="display-4 text-white">Menú disponible</h2>
-    <div class="col-11 p-3 bg-white rounded ">
+    <div class="col-11 p-2 display-4 text-white bg-dark rounded-top" style="font-weight: bolder;">Menú disponible</div>
+    <div class="col-11 p-3 bg-white rounded-bottom ">
 
 
         <asp:Repeater runat="server" ID="MenuMeseroRep">
@@ -111,17 +113,17 @@
 
                 <div class="row border-bottom p-2">
 
-                    <div class="col" style="height: 80px;">
+                    <div class="col">
 
-                        <div class="row text-uppercase" style="font-size: 20px; padding-left: 1rem; font-weight: bolder"><%#Eval("Nombre")%> </div>
+                        <div class="row text-uppercase align-middle" style="font-size: 20px; padding-left: 1rem; font-weight: bolder"><%#Eval("Nombre")%> </div>
 
                         <asp:Panel runat="server" ID="PanelDetalles" CssClass="row" Visible="false">
                             <div class="row">
-                                <div class="col" style="font-style: italic;"><%#Eval("Descripcion")%></div>
+                                <div class="col" style="font-style: italic; padding-left: 1rem;"><%#Eval("Descripcion")%></div>
                                 <div class="col-2" style="font-weight: bold;"><%#Eval("Valor","{0:C}")%> </div>
                             </div>
 
-                            <div class="row">
+                            <div class="row" style="padding-left: 2rem;">
                                 <%#Eval("AptoVegano").Equals(true) ? "· Es apto vegano" : string.Empty %>
                                 <%#Eval("AptoCeliaco").Equals(true) ? "· Es apto celiaco" : string.Empty %>
                                 <%#Eval("Alcohol").Equals(true) ? "· Contiene Alcohol" : string.Empty %>

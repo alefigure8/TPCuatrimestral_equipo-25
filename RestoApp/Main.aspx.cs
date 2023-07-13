@@ -688,7 +688,7 @@ namespace RestoApp
                 }
 
                 PedidoNegocio PNaux = new PedidoNegocio();
-                PNaux.AbrirPedido(Paux);
+                ((List<Pedido>)Session["Pedidos"]).Add(PNaux.BuscarPedido(PNaux.AbrirPedido(Paux)));
                 Session["ProductosPorPedido"] = null;
                 btnGuardarPedido.Visible = false;
                 btnTerminarPedido.Text = "Terminar Pedido";
@@ -703,7 +703,6 @@ namespace RestoApp
         protected void btnTerminarPedido_Click(object sender, EventArgs e)
         {
             Button btnTerminarPedido = sender as Button;
-
             Session["NumeroMesaPedido"] = null;
             Session["ProductosPorPedido"] = null;
             btnGuardarPedido.Visible = false;
@@ -797,17 +796,27 @@ namespace RestoApp
         {
             Session["Pedidos"] = null;
             PedidoNegocio PNAux = new PedidoNegocio();
-            //Session.Add("Pedidos", PNAux.ListarPedidosDelDia()); --------- listar pedidos del dia
-            //Session.Add("Pedidos", PNAux.ListarPedidos());
-            Session.Add("Pedidos", new List<Pedido>());
-		}
+            if (AutentificacionUsuario.esMesero(usuario))
+            {
+                Session.Add("Pedidos", PNAux.ListarPedidosDelDia(int.Parse((Session["IdUsuario"]).ToString())));
+            }
+            if (AutentificacionUsuario.esGerente(usuario))
+            {
+                Session.Add("Pedidos", new List<Pedido>());
+            }
+
+
+        }
 
         protected void ActualizarPedidos()
         {
             //ServicioNegocio SNAux = new ServicioNegocio();
             List<Servicio> ListaServicios = (Helper.Session.GetServicios());
 
-            ListarPedidosDelDia();
+            if (Session["Pedidos"] == null)
+            {
+                ListarPedidosDelDia();
+            }
 
             List<Pedido> Pedidos = ((List<Pedido>)Session["Pedidos"]);
 
@@ -888,7 +897,7 @@ namespace RestoApp
             Button BtnCerrarPedido = sender as Button;
             PedidoNegocio PNaux = new PedidoNegocio();
             PNaux.CambiarEstadoPedido(int.Parse(BtnCerrarPedido.CommandArgument), 5);
-
+            ((List<Pedido>)Session["Pedidos"]).Find(x => x.Id == int.Parse(BtnCerrarPedido.CommandArgument)).Estado = 5;
             ActualizarPedidos();
         }
 
