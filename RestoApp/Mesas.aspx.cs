@@ -70,6 +70,7 @@ namespace RestoApp
 				//DB
 				MesaNegocio mesaNegocio = new MesaNegocio();
 				mesas = mesaNegocio.Listar();
+				Helper.Session.SetMesas(mesas);
 			}
 		}
 
@@ -78,7 +79,7 @@ namespace RestoApp
 		{
 			//Guardamos número de mesa activas
 			List<int> numeroMesasGuardas = new List<int>();
-			numeroMesasGuardas = mesas.Select(m => m.Activo == true ? m.Numero : 0).ToList();
+			numeroMesasGuardas = Helper.Session.GetMesas().Select(m => m.Activo == true ? m.Numero : 0).ToList();
 
 			// Convierte la lista en una cadena JSON
 			var numeroMesasGuardasJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(numeroMesasGuardas);
@@ -91,23 +92,16 @@ namespace RestoApp
 		{
 			List<MesaPorDia> mesasPorDia = new List<MesaPorDia>();
 
-			if(Helper.Session.GetMesasAsignadas() != null )
-			{
-				//Session
-				mesasPorDia = Helper.Session.GetMesasAsignadas().FindAll(mesa => mesa.Cierre == null);
-			}
-			else
-			{
-				//DB
-				MesaNegocio mesaNegocio = new MesaNegocio();
-				mesasPorDia = mesaNegocio.ListarMesaPorDia().FindAll(mesa => mesa.Cierre == null);
-				Helper.Session.SetMesasAsignadas(mesasPorDia);
-			}
+			//DB
+			MesaNegocio mesaNegocio = new MesaNegocio();
+			mesasPorDia = mesaNegocio.ListarMesaPorDia();
+			Helper.Session.SetMesasAsignadas(mesasPorDia);
+			Session["MesasAsignadasPorDiaAbiertas"] = mesasPorDia.FindAll(mesa => mesa.Cierre == null);
 	
 			//Creamos objeto con mesa y mesero
 			List<object> objetos = new List<object>();
 
-			foreach (var item in mesasPorDia)
+			foreach (var item in (List<MesaPorDia>)HttpContext.Current.Session["MesasAsignadasPorDiaAbiertas"])
 			{
 				//Crear objeto para javascript
 				objetos.Add(new { mesa = item.Mesa, mesero = item.Mesero, idmeseropordia = item.IDMeseroPorDia, abierta = true });
@@ -129,7 +123,7 @@ namespace RestoApp
 			if (Helper.Session.GetMesasAsignadas() != null )
 			{
 				//Session
-				mesasPorDia = Helper.Session.GetMesasAsignadas();
+				mesasPorDia = (List<MesaPorDia>)Session["MesasAsignadasPorDiaAbiertas"];
 				IdMeserosConMesasAbiertas = mesasPorDia.Select(mesa => (int)mesa?.IDMeseroPorDia).ToList();
 			}
 			else
@@ -183,12 +177,15 @@ namespace RestoApp
 			if (Helper.Session.GetMesasAsignadas() != null)
 			{
 				//Session
-				mesasPorDiaAbierta = Helper.Session.GetMesasAsignadas();
+				mesasPorDiaAbierta = (List<MesaPorDia>)HttpContext.Current.Session["MesasAsignadasPorDiaAbiertas"];
 			}
 			else
 			{
 				//DB
-				mesasPorDiaAbierta = mesaNegocio.ListarMesaPorDia().FindAll(mesa => mesa.Cierre == null);
+				mesasPorDiaAbierta = mesaNegocio.ListarMesaPorDia();
+				Helper.Session.SetMesasAsignadas(mesasPorDiaAbierta);
+				mesasPorDiaAbierta = mesasPorDiaAbierta.FindAll(mesa => mesa.Cierre == null);
+				HttpContext.Current.Session["MesasAsignadasPorDiaAbiertas"] = mesasPorDiaAbierta;
 			}
 			
 			foreach (var diccionario in array)
@@ -203,12 +200,38 @@ namespace RestoApp
 				if (!mesasPorDiaAbierta.Exists(el => el.Mesa == numeroMesa))
 				{
 					mesaNegocio.CrearMesaPorDia(numeroMesero, numeroMesa, numeromeseropordia);
+
+					List<MesaPorDia> mesasPorDiaAbiertaAux = (List<MesaPorDia>)HttpContext.Current.Session["MesasAsignadasPorDiaAbiertas"];
+
+					MesaPorDia aux = new MesaPorDia();
+					aux.Mesa = numeroMesa;
+					aux.IDMeseroPorDia = numeromeseropordia;
+					aux.Mesero = numeroMesero;
+					aux.Fecha = DateTime.Now.Date;
+					aux.Apertura = TimeSpan.FromTicks(DateTime.Now.Ticks);
+
+					mesasPorDiaAbierta.Add(aux);
+
+					HttpContext.Current.Session["MesasAsignadasPorDiaAbiertas"] = mesasPorDiaAbiertaAux;
 				}
 
 				//Cerramos mesa
 				if (mesasPorDiaAbierta.Exists(el => el.Mesa == numeroMesa && el.Mesero == numeroMesero && estaAbierta == 0))
 				{
 					mesaNegocio.ModificarMesaPorDia(mesasPorDiaAbierta.Find(el => el.Mesa == numeroMesa).Id, numeroMesa, numeroMesero);
+
+					List<MesaPorDia> mesasPorDiaAbiertaAux = (List<MesaPorDia>)HttpContext.Current.Session["MesasAsignadasPorDiaAbiertas"];
+
+					foreach (var mesaPorDia in mesasPorDiaAbiertaAux)
+					{
+						if (mesaPorDia.Mesa == numeroMesa)
+						{
+							mesaPorDia.Cierre = TimeSpan.FromTicks(DateTime.Now.Ticks);
+							break;
+						}
+					}
+
+					HttpContext.Current.Session["MesasAsignadasPorDiaAbiertas"] = mesasPorDiaAbiertaAux;
 				}
 
 			}
