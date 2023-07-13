@@ -5,7 +5,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="row">
         <header class="col-10 bg-white rounded p-3 m-3">
-            <p class="fs-2">Tickets</p>
+            <asp:Label runat="server" ID="lbTituloTicket" class="fs-2">Tickets</asp:Label>
         </header>
     </div>
 

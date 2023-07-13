@@ -10,6 +10,9 @@ namespace Negocio
 {
 	public class MesaNegocio
 	{
+		// ********** MESAS **********
+
+		//Listar las mesas de la base de datos
 		public List<Mesa> Listar()
 		{
 			List<Mesa> mesas = new List<Mesa>();
@@ -56,7 +59,6 @@ namespace Negocio
 			AccesoDB datos = new AccesoDB();
 
 			//En caso de false, verificar que la mesa no esté asignada
-
 			try
 			{
 				datos.setQuery($"UPDATE {ColumnasDB.Mesa.DB} SET {ColumnasDB.Mesa.Activo} = {activo} WHERE {ColumnasDB.Mesa.Numero} = {numero}");
@@ -71,6 +73,164 @@ namespace Negocio
 				datos.closeConnection();
 			}
 		}
+
+		//Listamos las mesas que se encuentran asignadas a un mesero
+		public List<MesaPorDia> ListarMesaPorDia()
+		{
+			List<MesaPorDia> mesas = new List<MesaPorDia>();
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				datos.setQuery($"SELECT MesaPD.{ColumnasDB.MesasPorDia.Id}, MeseroPD.{ColumnasDB.MeseroPorDia.IdMesero}, MesaPD.{ColumnasDB.MesasPorDia.IdMesa}, MesaPD.{ColumnasDB.MesasPorDia.IdMeseroPorDia} ,MesaPD.{ColumnasDB.MesasPorDia.Fecha}, MesaPD.{ColumnasDB.MesasPorDia.Apertura}, MesaPD.{ColumnasDB.MesasPorDia.Cierre} " +
+					$"FROM {ColumnasDB.MesasPorDia.DB} MesaPD " +
+					$"INNER JOIN {ColumnasDB.MeseroPorDia.DB} MeseroPD " +
+					$" ON MesaPD.{ColumnasDB.MesasPorDia.IdMeseroPorDia} = MeseroPD.{ColumnasDB.MeseroPorDia.Id}");
+
+				datos.executeReader();
+
+				while (datos.Reader.Read())
+				{
+					MesaPorDia auxMesero = new MesaPorDia();
+					//ID
+					auxMesero.Id = (Int32)datos.Reader[ColumnasDB.MesasPorDia.Id];
+
+					//MESERO
+					object valorMesero = datos.Reader[ColumnasDB.MeseroPorDia.IdMesero];
+					auxMesero.Mesero = DBNull.Value.Equals(valorMesero) ? (int?)null : Convert.ToInt32(valorMesero);
+
+					//MESA
+					if (datos.Reader[ColumnasDB.MesasPorDia.IdMesa] != null)
+						auxMesero.Mesa = (Int32)datos.Reader[ColumnasDB.MesasPorDia.IdMesa];
+
+					//MESERO POR DIA
+					object valorMeseroPorDia = datos.Reader[ColumnasDB.MesasPorDia.IdMeseroPorDia];
+					auxMesero.IDMeseroPorDia = DBNull.Value.Equals(valorMesero) ? (int?)null : Convert.ToInt32(valorMeseroPorDia);
+
+					//FECHA
+					if (datos.Reader[ColumnasDB.MesasPorDia.Fecha] != null)
+						auxMesero.Fecha = (DateTime)datos.Reader[ColumnasDB.MesasPorDia.Fecha];
+
+					//APERTURA
+					if (datos.Reader[ColumnasDB.MesasPorDia.Apertura] != null)
+						auxMesero.Apertura = (TimeSpan)datos.Reader[ColumnasDB.MesasPorDia.Apertura];
+
+					//SALIDA
+					object valorCierre = datos.Reader[ColumnasDB.MesasPorDia.Cierre];
+					auxMesero.Cierre = DBNull.Value.Equals(valorCierre) ? (TimeSpan?)null : (TimeSpan)valorCierre; ;
+
+					mesas.Add(auxMesero);
+				}
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+			return mesas;
+		}
+
+		//Asignamos Mesa que estén activas a un mesero
+		public int CrearMesaPorDia(int mesero, int mesa, int idmeseropordia)
+		{
+			AccesoDB datos = new AccesoDB();
+
+			int id = 0;
+
+			bool estaCargadaLaMesa = false;
+			bool estaActivaLaMesa = false;
+
+			//Validar si el mismo servicio de mesero tiene la mesa
+			List<MesaPorDia> mesasPorDia = this.ListarMesaPorDia().FindAll(m => m.Cierre == null);
+			foreach (MesaPorDia item in mesasPorDia)
+			{
+				//Si el mesero con el mismo servicio tiene la mesa asignada y abierta no se puede crear
+				if (item.Mesero == mesero && item.Mesa == mesa)
+					estaCargadaLaMesa = true;
+
+				//Si es la misma mesa pero su servicio está abierto no se puede crear
+				else if (item.Mesa == mesa)
+					estaCargadaLaMesa = true;
+			}
+
+			//Validar que la mesa este Activa
+			List<Mesa> mesas = this.Listar();
+			
+			foreach (Mesa item in mesas)
+			{
+				if (item.Numero == mesa)
+				{
+					estaActivaLaMesa = item.Activo;
+				}
+			}
+
+			if (!estaCargadaLaMesa && estaActivaLaMesa)
+			{
+				try
+				{
+					datos.setQuery($"INSERT INTO {ColumnasDB.MesasPorDia.DB} ({ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.IdMeseroPorDia}, {ColumnasDB.MesasPorDia.Fecha}, {ColumnasDB.MesasPorDia.Apertura}) " +
+					$"VALUES ({mesa}, {mesero}, {idmeseropordia}, '{DateTime.Now.ToString("yyyy - MM - dd")}', '{DateTime.Now.ToString("HH:mm:ss")}') "
+					+ "SELECT CAST(scope_identity() AS int)");
+					id = datos.executeScalar();
+				}
+				catch (Exception Ex)
+				{
+					throw Ex;
+				}
+				finally
+				{
+					datos.closeConnection();
+				}
+
+				return id;
+			}
+
+			return 0;
+		}
+
+		//Cerrar mesa asignada a un mesero
+		public bool ModificarMesaPorDia(int idMesaPorDia, int mesa, int mesero)
+		{
+			AccesoDB datos = new AccesoDB();
+
+			bool estaCargadaLaMesa = false;
+
+			//Validar que el mesero sea el mismo que tiene la mesa abierta
+			List<MesaPorDia> mesasPorDia = this.ListarMesaPorDia().FindAll(m => m.Cierre == null);
+
+			foreach (MesaPorDia item in mesasPorDia)
+			{
+				if (item.Mesero == mesero && item.Mesa == mesa)
+					estaCargadaLaMesa = true;
+			}
+
+			try
+			{
+				if (estaCargadaLaMesa)
+				{
+					//Modificamos el cierre de la mesas
+					datos.setQuery($"UPDATE {ColumnasDB.MesasPorDia.DB} SET {ColumnasDB.MesasPorDia.Cierre} = '{DateTime.Now.ToString("HH:mm:ss")}' WHERE {ColumnasDB.MesasPorDia.Id} = {idMesaPorDia}");
+					return datos.executeNonQuery();
+				}
+
+				return false;
+			}
+			catch (Exception ex)
+			{
+				return false;
+				throw ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+		}
+
+		// ********* MESEROS ***********
 
 		//Listado de Meseros presentes
 		public List<MeseroPorDia> ListaMeseroPorDia()
@@ -214,7 +374,7 @@ namespace Negocio
 		{
 			AccesoDB datos = new AccesoDB();
 
-			if(salida == null)
+			if (salida == null)
 			{
 				salida = DateTime.Now.TimeOfDay;
 			}
@@ -222,180 +382,28 @@ namespace Negocio
 			try
 			{
 				datos.setQuery($"UPDATE {ColumnasDB.MeseroPorDia.DB} SET {ColumnasDB.MeseroPorDia.Salida} = '{salida}' WHERE {ColumnasDB.MeseroPorDia.Id} = {id}");
-				return datos.executeNonQuery();
-			}
-			catch (Exception Ex)
-			{
-				return false;
-				throw Ex;
-			}
-			finally
-			{
-				datos.closeConnection();
-			}
-
-		}
-
-		//Listamos las mesas que se encuentran asignadas a un mesero
-		public List<MesaPorDia> ListarMesaPorDia()
-		{
-			List<MesaPorDia> mesas = new List<MesaPorDia>();
-			AccesoDB datos = new AccesoDB();
-
-			try
-			{
-				datos.setQuery($"SELECT MesaPD.{ColumnasDB.MesasPorDia.Id}, MeseroPD.{ColumnasDB.MeseroPorDia.IdMesero}, MesaPD.{ColumnasDB.MesasPorDia.IdMesa}, MesaPD.{ColumnasDB.MesasPorDia.IdMeseroPorDia} ,MesaPD.{ColumnasDB.MesasPorDia.Fecha}, MesaPD.{ColumnasDB.MesasPorDia.Apertura}, MesaPD.{ColumnasDB.MesasPorDia.Cierre} " +
-					$"FROM {ColumnasDB.MesasPorDia.DB} MesaPD " +
-					$"INNER JOIN {ColumnasDB.MeseroPorDia.DB} MeseroPD " +
-					$" ON MesaPD.{ColumnasDB.MesasPorDia.IdMeseroPorDia} = MeseroPD.{ColumnasDB.MeseroPorDia.Id}");
-
-				datos.executeReader();
-
-				while (datos.Reader.Read())
-				{
-					MesaPorDia auxMesero = new MesaPorDia();
-					//ID
-					auxMesero.Id = (Int32)datos.Reader[ColumnasDB.MesasPorDia.Id];
-
-					//MESERO
-					object valorMesero = datos.Reader[ColumnasDB.MeseroPorDia.IdMesero];
-					auxMesero.Mesero = DBNull.Value.Equals(valorMesero) ? (int?)null : Convert.ToInt32(valorMesero);
-
-					//MESA
-					if (datos.Reader[ColumnasDB.MesasPorDia.IdMesa] != null)
-						auxMesero.Mesa = (Int32)datos.Reader[ColumnasDB.MesasPorDia.IdMesa];
-
-					//MESERO POR DIA
-					object valorMeseroPorDia = datos.Reader[ColumnasDB.MesasPorDia.IdMeseroPorDia];
-					auxMesero.IDMeseroPorDia = DBNull.Value.Equals(valorMesero) ? (int?)null : Convert.ToInt32(valorMeseroPorDia);
-
-					//FECHA
-					if (datos.Reader[ColumnasDB.MesasPorDia.Fecha] != null)
-						auxMesero.Fecha = (DateTime)datos.Reader[ColumnasDB.MesasPorDia.Fecha];
-
-					//APERTURA
-					if (datos.Reader[ColumnasDB.MesasPorDia.Apertura] != null)
-						auxMesero.Apertura = (TimeSpan)datos.Reader[ColumnasDB.MesasPorDia.Apertura];
-
-					//SALIDA
-					object valorCierre = datos.Reader[ColumnasDB.MesasPorDia.Cierre];
-					auxMesero.Cierre = DBNull.Value.Equals(valorCierre) ? (TimeSpan?)null : (TimeSpan)valorCierre; ;
-
-					mesas.Add(auxMesero);
-				}
-			}
-			catch (Exception Ex)
-			{
-				throw Ex;
-			}
-			finally
-			{
-				datos.closeConnection();
-			}
-
-			return mesas;
-		}
-
-		//Asignamos Mesa que estén activas a un mesero
-		public int CrearMesaPorDia(int mesero, int mesa, int idmeseropordia)
-		{
-			AccesoDB datos = new AccesoDB();
-			
-			int id = 0;
 				
-			bool estaCargadaLaMesa = false;
-			bool estaActivaLaMesa = false;
-
-			//Validar si el mismo servicio de mesero tiene la mesa
-			List<MesaPorDia> mesasPorDia = this.ListarMesaPorDia().FindAll(m => m.Cierre == null);
-			foreach (MesaPorDia item in mesasPorDia)
-			{
-				//Si el mesero con el mismo servicio tiene la mesa asignada y abierta no se puede crear
-				if (item.Mesero == mesero && item.Mesa == mesa)
-					estaCargadaLaMesa = true;
-
-				//Si es la misma mesa pero su servicio está abierto no se puede crear
-				else if(item.Mesa == mesa)
-					estaCargadaLaMesa = true;
+				if(datos.executeNonQuery())
+					return true;
+				else
+					return false;
 			}
-			
-			//Validar que la mesa este Activa
-			List<Mesa> mesas = this.Listar();
-			foreach(Mesa item in mesas)
+			catch (Exception Ex)
 			{
-				if (item.Numero == mesa)
-				{
-					estaActivaLaMesa = item.Activo;
-				}
-			}
-
-			if(!estaCargadaLaMesa && estaActivaLaMesa)
-			{
-				try
-				{
-					datos.setQuery($"INSERT INTO {ColumnasDB.MesasPorDia.DB} ({ColumnasDB.MesasPorDia.IdMesa}, {ColumnasDB.MesasPorDia.IdMesero}, {ColumnasDB.MesasPorDia.IdMeseroPorDia}, {ColumnasDB.MesasPorDia.Fecha}, {ColumnasDB.MesasPorDia.Apertura}) " +
-					$"VALUES ({mesa}, {mesero}, {idmeseropordia}, '{DateTime.Now.ToString("yyyy - MM - dd")}', '{DateTime.Now.ToString("HH:mm:ss")}') "
-					+ "SELECT CAST(scope_identity() AS int)");
-					id = datos.executeScalar();
-				}
-				catch (Exception Ex)
-				{
-					throw Ex;
-				}
-				finally
-				{
-					datos.closeConnection();
-				}
-
-				return id;
-			}
-
-			return 0;
-		}
-
-		//Cerrar mesa asignada a un mesero
-		public bool ModificarMesaPorDia(int idMesaPorDia,int mesa, int mesero)
-		{
-			AccesoDB datos = new AccesoDB();
-
-			bool estaCargadaLaMesa = false;
-
-			//Validar que el mesero no tenga la misma mesa ya asignada
-			List<MesaPorDia> mesasPorDia = this.ListarMesaPorDia().FindAll(m => m.Cierre == null);
-			
-			foreach (MesaPorDia item in mesasPorDia)
-			{
-				if (item.Mesero == mesero && item.Mesa == mesa)
-					estaCargadaLaMesa = true;
-			}
-
-			try
-			{
-				if (estaCargadaLaMesa)
-				{
-					//Si no está cargado el mesero, lo cargamos
-					datos.setQuery($"UPDATE {ColumnasDB.MesasPorDia.DB} SET {ColumnasDB.MesasPorDia.Cierre} = '{DateTime.Now.ToString("HH:mm:ss")}' WHERE {ColumnasDB.MesasPorDia.Id} = {idMesaPorDia}");
-					return datos.executeNonQuery();
-				}
-
-				return false;
-			}
-			catch(Exception ex)
-			{
-				return false;
-				throw ex;
+				throw Ex;
 			}
 			finally
 			{
 				datos.closeConnection();
 			}
+
 		}
 
 		//Listamos los ids de los meseros activos que tienen mesas abiertas
 		public List<int> ListaIdMeserosActivosConMesasAbiertas()
 		{
 			AccesoDB datos = new AccesoDB();
-			
+
 			List<int> IDMeseros = new List<int>();
 
 			try
@@ -424,7 +432,6 @@ namespace Negocio
 				datos.closeConnection();
 			}
 			
-
 			return IDMeseros;
 			
 		}

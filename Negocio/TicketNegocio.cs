@@ -12,8 +12,8 @@ namespace Negocio
 	public class TicketNegocio
 	{
 
-		//Retornarmos todos los tickets que no estén cobrados, pero que hayan cerrado
-		public List<Ticket> Listar()
+        //Retornarmos todos los tickets que no estén cobrados, pero que hayan cerrado
+        public List<Ticket> Listar()
 		{
 			List<Ticket> tickets = new List<Ticket>();
 			AccesoDB datos = new AccesoDB();
@@ -81,7 +81,7 @@ namespace Negocio
 		{
 			List<TicketDetalle> detalles = new List<TicketDetalle>();
 			AccesoDB datos = new AccesoDB();
-			
+
 			//Buscamos el listado de pedidos por servicio
 			string query = 
 				$"SELECT P.{ColumnasDB.Pedido.Id}, PXP.{ColumnasDB.ProductoPorPedido.Cantidad} , PM.{ColumnasDB.ProductoDD.Valor}, {ColumnasDB.ProductoDD.Nombre}" +
@@ -135,7 +135,7 @@ namespace Negocio
 		public Ticket TicketPorServicio(int servicio)
 		{
 			Ticket ticket = new Ticket();
-			
+
 			AccesoDB datos = new AccesoDB();
 
 			string query =

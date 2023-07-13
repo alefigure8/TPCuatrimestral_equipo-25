@@ -16,12 +16,11 @@
                         { %>
                     <asp:Button CssClass="btn btn-sm" Text="Darse de Alta" runat="server" ID="btnMeseroAlta" OnClick="btnMeseroAlta_Click" />
                     <%} %>
+                  <!-- Fin Boton Mesero -->
                 </div>
             </div>
         </ContentTemplate>
     </asp:UpdatePanel>
-
-    <!-- Fin Boton Mesero -->
     <!-- Fin Updatea Panel Botón Mesero -->
 
     <!-- Agregar Mesas habilitadas, mozos habilitados, productos, -->
@@ -766,6 +765,7 @@
             }
         }
 
+        //ModalAlerta
         function modalAlerta(result) {
 
             let msg;
