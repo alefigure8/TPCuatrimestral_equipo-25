@@ -797,10 +797,17 @@ namespace RestoApp
         {
             Session["Pedidos"] = null;
             PedidoNegocio PNAux = new PedidoNegocio();
-            //Session.Add("Pedidos", PNAux.ListarPedidosDelDia()); --------- listar pedidos del dia
-            //Session.Add("Pedidos", PNAux.ListarPedidos());
-            Session.Add("Pedidos", new List<Pedido>());
-		}
+            if (AutentificacionUsuario.esMesero(usuario))
+            {
+                Session.Add("Pedidos", PNAux.ListarPedidosDelDia(int.Parse((Session["IdUsuario"]).ToString())));
+            }
+            if (AutentificacionUsuario.esGerente(usuario))
+            {
+                Session.Add("Pedidos", new List<Pedido>());
+            }
+
+
+        }
 
         protected void ActualizarPedidos()
         {

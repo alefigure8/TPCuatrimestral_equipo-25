@@ -146,13 +146,14 @@
 
             {%>
 
-        <div class="row content-fluid">
+        <div class="row content-fluid" >
 
             <!-- SECCION MESAS ASIGNDAS -->
-            <section class="col-10 bg-white rounded p-3 justify-content-around m-1">
-                <div class="row bg-dark text-white p-2 h4">
+             <div class="col-11 bg-dark text-white p-2 rounded-top display-6">
                     MIS MESAS   
                 </div>
+            <section class="col-11 bg-white p-3 rounded-bottom justify-content-around ">
+               
                 <div class="row justify-content-around justify-items-start p-3" id="section-mesa-mesero">
 
                     <!-- Mensaje de Mesas asignadas -->
@@ -188,9 +189,10 @@
 
 
             <%--SECCION PEDIDOS EN CURSO--%>
-            <div class="col-10 bg-white rounded p-3 justify-content-around m-1 mt-2 content-fluid">
+            <div class="col-11 bg-dark text-white p-2 mt-3 rounded-top display-6"> MIS PEDIDOS EN CURSO </div>
+            <div class="col-11 bg-white p-3 justify-content-around content-fluid rounded-bottom">
 
-                <div class="row bg-dark text-white p-2 h4"> MIS PEDIDOS EN CURSO </div>
+                
 
                 <div class="row">
                     <asp:UpdatePanel runat="server">
@@ -215,19 +217,20 @@
 
             </div>
 
-            <%--SECCION MENU RAPIDO--%>
-            <div class="col-10 row bg-white rounded p-2 justify-content-around m-1 mt-2 ">
 
-                <div class="row bg-dark ">
-                    <div class="col-6 bg-dark text-white p-2">
+
+            <%--SECCION MENU RAPIDO--%>
+                     <div class="col-11 bg-dark text-white p-2 mt-3 rounded-top display-6">
+                         <div class="row">
+                               <div class="col-8 text-white">
                         <asp:UpdatePanel runat="server">
                             <ContentTemplate>
-                                <asp:Label ID="lbNumeroMesa" runat="server" CssClass="h4">SIN MESA SELECCIONADA</asp:Label>
+                                <asp:Label ID="lbNumeroMesa" runat="server" >SIN MESA SELECCIONADA</asp:Label>
                             </ContentTemplate>
                         </asp:UpdatePanel>
                     </div>
 
-                    <div class="col-6 d-flex justify-content-end p-2">
+                    <div class="col-3 d-flex justify-content-end">
                         <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
                             <ContentTemplate>
                                 <asp:Button runat="server" ID="btnGuardarPedido" Text="Enviar Pedido" Visible="false" CssClass="btn  btn-secondary" OnClick="btnGuardarPedido_Click" />
@@ -235,10 +238,15 @@
                             </ContentTemplate>
                         </asp:UpdatePanel>
                     </div>
+                         </div>
+                  
+
                 </div>
 
-                <%--PLATOS DISPONIBLES--%>
-                <div class="col-6 p-2">
+            <div class="col-11 bg-white rounded-bottom p-2 justify-content-around ">
+                <div class="row p-2">
+                     <%--PLATOS DISPONIBLES--%>
+                <div class="col-6">
                     <label class="row h3 p-1">Platos Disponibles:</label>
                     <asp:Repeater runat="server" ID="PlatosDelDia">
                         <ItemTemplate>
@@ -260,7 +268,7 @@
 
 
                 <%--BEBIDAS DISPONIBLES--%>
-                <div class="col-6 p-2">
+                <div class="col-6 ">
                     <label class="row h3 p-1">Bebidas Disponibles:</label>
                     <asp:Repeater runat="server" ID="BebidasDelDia">
                         <ItemTemplate>
@@ -279,9 +287,12 @@
                         </ItemTemplate>
                     </asp:Repeater>
                 </div>
+                </div>
+               
 
             </div>
         </div>
+
     </div>
     <% } %>
 

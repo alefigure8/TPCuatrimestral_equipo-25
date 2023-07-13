@@ -189,12 +189,11 @@ namespace Negocio
         }
 
 
-        // Listar pedidos del dia, valida que la fecha del servicio asociado al pedido sea de la fecha actual.  
-        public List<Pedido> ListarPedidosDelDia()
+        // Listar pedidos del dia, valida que la fecha del servicio asociado al pedido sea de la fecha actual y filtra por Id de mesero
+        public List<Pedido> ListarPedidosDelDia(int IdMesero)
         {
             AccesoDB AccesoDB = new AccesoDB();
             List<Pedido> listapedidos = new List<Pedido>();
-
 
             try
             {
@@ -207,7 +206,9 @@ namespace Negocio
                     $" JOIN {ColumnasDB.EstadosxPedido.DB} ExP ON P.{ColumnasDB.Pedido.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido} " +
                     $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
                     $" JOIN {ColumnasDB.Servicio.DB} S on S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
-                    $" WHERE {ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("G")}' " + 
+                    $" JOIN {ColumnasDB.MesasPorDia.DB} MxD on MxD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.Servicio.IdMesa}" +
+                    $" WHERE MxD.{ColumnasDB.MesasPorDia.IdMesero} = {IdMesero} " +
+                    $" AND S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("G")}' " +
                     $" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id})"
                     );
 
