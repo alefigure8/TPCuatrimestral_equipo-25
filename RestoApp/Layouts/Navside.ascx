@@ -91,13 +91,15 @@
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                  <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
                     { %>
-                        <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets del Dia</a></li>
+                        <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets Abiertos</a></li>
+                        <li><a href="#" class="nav-link ps-3">Tickets Del Dia</a></li>
+                        <li><a href="#" class="nav-link ps-3">Estadística</a></li>
                     <%}%>
                          <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
                     { %>
-                        <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets del Dia</a></li>
+                        <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets Abiertos</a></li>
+                        <li><a href="#" class="nav-link ps-3">Tickets Del Dia</a></li>
                      <%}%>
-                        <li><a href="#" class="nav-link ps-3">Estadística (HACER)</a></li>
                     </ul>
                 </div>
             </li>

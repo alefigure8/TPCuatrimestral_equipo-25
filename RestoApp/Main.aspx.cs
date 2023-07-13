@@ -70,7 +70,8 @@ namespace RestoApp
                     CargarServicios();
                     CargarEstadoMesas();
                     ActualizarPedidos();
-                    CargarPedido();
+                    CargarPedidosDelDiaGerente();
+					CargarPedido();
                 }
                 catch (Exception error)
                 {
@@ -252,22 +253,25 @@ namespace RestoApp
             List<Servicio> servicios = Helper.Session.GetServicios();
 
             var dataTable = new DataTable();
+            dataTable.Columns.Add("Servicio", typeof(int));
             dataTable.Columns.Add("Numero", typeof(int));
-            dataTable.Columns.Add("Mesero", typeof(string));
+			dataTable.Columns.Add("Mesero", typeof(string));
             dataTable.Columns.Add("Apertura", typeof(DateTime));
             dataTable.Columns.Add("Cierre", typeof(DateTime));
 
             foreach (Servicio item in servicios)
             {
                 dataTable.Rows.Add(
+                    (int)item.Id,
                     (int)item.Mesa,
                     (string)item.Mesero,
                     (DateTime)item.Fecha + item.Apertura,
-                    (DateTime?)item.Fecha + item.Cierre);
+                    (DateTime?)item.Fecha + item.Cierre); ;
             }
 
             foreach (DataRow row in dataTable.Rows)
             {
+                int servicio = (int)row["Servicio"];
                 int numero = (int)row["Numero"];
                 string mesero = (string)row["Mesero"];
                 DateTime apertura = (DateTime)row["Apertura"];
@@ -279,10 +283,17 @@ namespace RestoApp
             datagrid.DataBind();
         }
 
+		private void CargarPedidosDelDiaGerente()
+        {
+			PedidoNegocio pedidoNegocio = new PedidoNegocio();
+            List<Pedido> pedidosGerente = pedidoNegocio.ListarPedidosDelDia();
+            Session["PedidosGerente"] = pedidosGerente;
+		}
+
         private void CargarPedido()
         {
             //Session
-            List<Pedido> pedidos = (List<Pedido>)Session["Pedidos"];
+            List<Pedido> pedidos = (List<Pedido>)Session["PedidosGerente"];
 
             //Filtramos los pedidos que no tengan "Entregado"
             pedidos = pedidos.FindAll(pedido => pedido.EstadoDescripcion != "Entregado");

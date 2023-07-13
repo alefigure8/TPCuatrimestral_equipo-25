@@ -103,7 +103,7 @@
                         <asp:BoundColumn DataField="Cierre" HeaderText="Cierre" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
                         <asp:TemplateColumn HeaderText="Estado">
                             <ItemTemplate>
-                                <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-success\" title=\"Mesa Abierta\"></i>" : "<i class=\"fa-sharp fa-solid fa-dollar text-danger\" title=\"Cobrar\"></i>" %>
+                            <%# Convert.IsDBNull(Eval("Cierre")) ? "<i class=\"fa-sharp fa-solid fa-circle text-success\" title=\"Mesa Abierta\"></i>" : "<a href='Tickets.aspx?servicio=" + Eval("Servicio") + "'><i class=\"fa-sharp fa-solid fa-dollar text-danger\" title=\"Cobrar\"></i></a>" %>
                             </ItemTemplate>
                             <ItemStyle CssClass="bg-light p-2 rounded" />
                             <HeaderStyle CssClass="bg-light p-2 rounded" />

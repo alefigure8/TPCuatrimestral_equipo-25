@@ -57,7 +57,7 @@ namespace RestoApp
 				}
 			}
 
-			// CONTENIDO GERENTE
+			// CONTENIDO MESERO
 			if (!IsPostBack && AutentificacionUsuario.esMesero(usuario))
 			{
 
@@ -150,6 +150,9 @@ namespace RestoApp
 
 			//Listamos tickets
 			List<Ticket> tickets = ticketNegocio.ListarPorMesero(idMesero);
+
+			//Guardamos Tickets en Session
+			Session["Tickets"] = tickets;
 
 			//Label
 			lbTituloTicket.Text = "Tickets abiertos";
