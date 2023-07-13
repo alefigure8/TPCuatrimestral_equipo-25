@@ -537,10 +537,10 @@
 
 
 
-        <div class="col-2 me-2 btn btn-dark" title="Modificar Selección" data-bs-toggle="modal" data-bs-target="#modalEditarLote">
+<%--        <div class="col-2 me-2 btn btn-dark" title="Modificar Selección" data-bs-toggle="modal" data-bs-target="#modalEditarLote">
             <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
             <p class="h5">Lote</p>
-        </div>
+        </div>--%>
 
         <div class="col-2 me-2 btn btn-dark" title="Eliminar Selección"  data-bs-toggle="modal" data-bs-target="#modalEliminarLote">
             <i class="row fa fa-trash  align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
