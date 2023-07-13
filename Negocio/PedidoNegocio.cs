@@ -258,7 +258,7 @@ namespace Negocio
                     $" JOIN {ColumnasDB.MesasPorDia.DB} MxD on MxD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.Servicio.IdMesa}" +
                     $" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
                     $" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
-                    $" AND (SELECT E.{ColumnasDB.Estados.Descripcion} FROM {ColumnasDB.Estados.DB} E WHERE E.{ColumnasDB.Estados.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido}) <> 'entregado')"
+                    $" AND LOWER(E.{ColumnasDB.Estados.Descripcion}) <> 'entregado')"
                     );
 
                 AccesoDB.executeReader();
@@ -285,10 +285,6 @@ namespace Negocio
             {
                 AccesoDB.closeConnection();
             }
-
-
-
-
         }
 
         // Busca un pedido por ID
