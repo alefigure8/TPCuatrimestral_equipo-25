@@ -10,19 +10,21 @@ using System.Linq;
 using System.Web.UI.WebControls;
 
 
+
 namespace RestoApp
 {
     public partial class Cocina : System.Web.UI.Page
     {
         public DateTime Reloj { get; set; }
         public Usuario usuario { get; set; }
+
+        public List<Pedido> Pedidosencocina { get; set; }
+
         public List<Pedido> Pedidossolicitados { get; set; }
         public List<Pedido> Pedidosenpreparacion { get; set; }
         public List<Pedido> Pedidosdemorados { get; set; }
         public List<Pedido> Estadopedidos { get; set; }
         public List<HelperCocina> Helpercocina { get; set; }
-
-
 
         public List<ProductoPorPedido> Productosenpreparacion { get; set; }
 
@@ -30,7 +32,7 @@ namespace RestoApp
         {
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
-
+            /*
 
             if (!IsPostBack)
             {
@@ -43,15 +45,29 @@ namespace RestoApp
                 CrearDataTableEstadoPedidos();
 
             }
-
-            ActualizarSolicitadosenDB();
-            Listarpedidosenpreparacion();
+            ActualizarCocina();
+            //ActualizarSolicitadosenDB();
+            //Listarpedidosenpreparacion();
             ActualizarDGVCocina();
             ActualizarDGVEstadoPedidos();
             ActualizarDGVProductosenPreparacion();
             ActualizarDemorados();
-
+            */
         }
+        
+        public void ActualizarCocina()
+        {
+            CocinaNegocio cocinanegocio = new CocinaNegocio();
+            PedidoNegocio pedidoNegocio = new PedidoNegocio();
+            cocinanegocio.ActualizarSolicitados();
+            Pedidosencocina = cocinanegocio.ListarPedidosenCocina();
+            //Session
+        }
+       
+        /*
+        string ultimaactualizacion = pedido.ultimaactualizacion.ToString("yyyy-MM-dd");
+        string hoy = DateTime.Now.ToString("yyyy-MM-dd");
+        */
 
         public void ActualizarSolicitadosenDB()
         {
@@ -97,21 +113,22 @@ namespace RestoApp
 
         public void Listarpedidosenpreparacion()
         {
-
             PedidoNegocio pedidoNegocio = new PedidoNegocio();
-            Pedidosenpreparacion = pedidoNegocio.ListarPedidos(Estados.EnPreparacion);                     
+            Pedidosenpreparacion = pedidoNegocio.ListarPedidos(Estados.EnPreparacion);
 
-             Pedidosenpreparacion.AddRange(pedidoNegocio.ListarPedidos(Estados.DemoradoEnCocina));
+            Pedidosenpreparacion.AddRange(pedidoNegocio.ListarPedidos(Estados.DemoradoEnCocina));
             foreach (Pedido pedido in Pedidosenpreparacion)
             {
                 pedido.ingresococina = pedidoNegocio.HorarioEnPrepPedido(pedido.Id);
             }
 
-
             // VALIDAR QUE SEAN DE HOY Y ESTEN EN ESTADO SOLICITADO
             foreach (Pedido pedido in Pedidosenpreparacion.ToList())
             {
-                if (InvertirFecha(pedido.ultimaactualizacion) != DateTime.Now.ToString("d"))
+                string ultimaactualizacion = pedido.ultimaactualizacion.ToString("yyyy-MM-dd");
+                string hoy = DateTime.Now.ToString("yyyy-dd-MM");
+
+                if (ultimaactualizacion != hoy)
                 {
                     Pedidosenpreparacion.Remove(pedido);
                 }
@@ -243,6 +260,8 @@ namespace RestoApp
                     {
                         if (p.Estado == Estados.EnPreparacion)
                         {
+
+
                             pedidoNegocio.CambiarEstadoPedido(p.Id, Estados.DemoradoEnCocina, Reloj);
                         }
                     }
@@ -513,7 +532,7 @@ namespace RestoApp
                                 int seed = item.idPedido.GetHashCode();
                                 Random random = new Random(seed);
                                 Color randomColor = Color.FromArgb(50, random.Next(100, 200), random.Next(100, 200), random.Next(100, 200));
-                                double factor = 0.8; // Ajusta el factor de oscurecimiento según tus preferencias
+                                double factor = 0.8; 
 
                                 int red = (int)(randomColor.R * factor);
                                 int green = (int)(randomColor.G * factor);
@@ -528,6 +547,10 @@ namespace RestoApp
                                 e.Row.Cells[i].BackColor = Color.Gray;
 
 
+                            }
+                            else if(Indicecolumnahora ==-1)
+                            {
+                                e.Row.Cells[i].BackColor = Color.Gray;
                             }
                         }
 
@@ -698,10 +721,16 @@ namespace RestoApp
         public int IndiceColumna(string hora)
         {
             //int columnaIndice = dataTable.Columns.IndexOf("Nombre");
-            int indice = 0;
+            int indice;
             List<string> listaHorarios = new List<string>(horarios());
             indice = listaHorarios.IndexOf(hora);
+            if(indice == -1)
+            {
+                return -1;
+            }
+            else { 
             return indice + 1;
+            }
         }
 
         public int CantidadCasilleros(TimeSpan? TiempoCoccion)

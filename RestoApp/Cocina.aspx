@@ -67,7 +67,7 @@
 
                             <div style="margin-top: 10px; min-width: 220px; height: 180px; overflow-y: auto; background-color: white; border-radius: 5px; display: flex; align-items: flex-start;">
 
-                                <%if ((bool)Session["sinproductos"])  { %> <asp:Label runat="server" Text="Nada por aqui.."> </asp:Label>   <%} %>
+                                <%//if ((bool)Session["sinproductos"])  { %> <asp:Label runat="server" Text="Nada por aqui.."> </asp:Label>   <%//} %>
                        
                     <asp:UpdatePanel runat="server">
                         <ContentTemplate>
