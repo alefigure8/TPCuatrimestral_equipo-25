@@ -145,8 +145,8 @@ namespace Negocio
 
             try
             {
-                AccesoDB.setQuery($"SELECT P.{ColumnasDB.Pedido.Id} " +
-                    $", P.{ColumnasDB.Pedido.IdServicio} " +
+                AccesoDB.setQuery($"SELECT P.{ColumnasDB.Pedido.Id} "+
+                    $", P.{ColumnasDB.Pedido.IdServicio} " +                                                    
                     $", E.{ColumnasDB.Estados.Id} " +
                     $", E.{ColumnasDB.Estados.Descripcion} " +
                     $", ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} " +
@@ -166,6 +166,7 @@ namespace Negocio
                     aux.Estado = (Int32)AccesoDB.Reader[ColumnasDB.Estados.Id];
                     aux.EstadoDescripcion = (string)AccesoDB.Reader[ColumnasDB.Estados.Descripcion];
                     aux.ultimaactualizacion = (DateTime)AccesoDB.Reader[ColumnasDB.EstadosxPedido.FechaActualizacion];
+
                     aux.Productossolicitados = ListarProductosPorPedido(aux.Id);
                     listapedidos.Add(aux);
                 }
