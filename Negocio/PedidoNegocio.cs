@@ -207,7 +207,7 @@ namespace Negocio
                     $" JOIN {ColumnasDB.Servicio.DB} S on S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
                     $" JOIN {ColumnasDB.MesasPorDia.DB} MxD on MxD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.Servicio.IdMesa}" +
                     $" WHERE MxD.{ColumnasDB.MesasPorDia.IdMesero} = {IdMesero} " +
-                    $" AND S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("G")}' " +
+                    $" AND S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
                     $" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id})"
                     );
 
@@ -256,8 +256,7 @@ namespace Negocio
                     $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
                     $" JOIN {ColumnasDB.Servicio.DB} S on S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
                     $" JOIN {ColumnasDB.MesasPorDia.DB} MxD on MxD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.Servicio.IdMesa}" +
-                    $" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("G")}' " +
-                    $" ExP " +
+                    $" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
                     $" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
                     $" AND (SELECT E.{ColumnasDB.Estados.Descripcion} FROM {ColumnasDB.Estados.DB} E WHERE E.{ColumnasDB.Estados.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido}) <> 'entregado')"
                     );
