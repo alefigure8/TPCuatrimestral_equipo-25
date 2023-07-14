@@ -42,8 +42,9 @@ namespace RestoApp
 		private string datosMesasJSON;
         private string mesasActivasJSON;
         private string numeroMesasJSON;
+        private string seviciosJSON;
 
-        protected void Page_Load(object sender, EventArgs e)
+		protected void Page_Load(object sender, EventArgs e)
         {
             //AUTENTIFICACION USUARIO
             if (AutentificacionUsuario.esUser(Helper.Session.GetUsuario()))
@@ -70,9 +71,12 @@ namespace RestoApp
                     CargarServicios();
                     CargarEstadoMesas();
                     ActualizarPedidos();
-                    CargarPedidosDelDiaGerente();
-					CargarPedido();
-                }
+                    CargarDDLPedidos();
+
+                    //Si hubo una búsqueda anterior, se carga
+                    if((List<Pedido>)Session["PedidosGerente"] != null)
+					    CargarPedido();
+				}
                 catch (Exception error)
                 {
                     UIMostrarAlerta(error.Message);
@@ -283,11 +287,32 @@ namespace RestoApp
             datagrid.DataBind();
         }
 
-		private void CargarPedidosDelDiaGerente()
+        private void CargarDDLPedidos()
+        {
+            //Ordenamos la lista por mesa
+            List<Servicio> listaMesa = (List<Servicio>)Helper.Session.GetServicios().OrderBy(item => item.Mesa).ToList();
+
+			foreach (Servicio item in listaMesa)
+            {
+			    ddlPedidosGerente.Items.Add(new ListItem($"Mesa {item.Mesa}", item.Mesa.ToString()));
+            }
+		}
+
+        protected void BtnBuscarPedidos_Click(object sender, EventArgs e)
+        {
+            int mesa = Convert.ToInt32(ddlPedidosGerente.SelectedValue);
+			CargarPedidosDelDiaGerente(mesa);
+			
+		}
+		
+		private void CargarPedidosDelDiaGerente(int id)
         {
 			PedidoNegocio pedidoNegocio = new PedidoNegocio();
-            List<Pedido> pedidosGerente = pedidoNegocio.ListarPedidosDelDia();
-            Session["PedidosGerente"] = pedidosGerente;
+			// List<Pedido> pedidosGerente = pedidoNegocio.ListarPedidosDelDia();
+			List<Pedido> pedidosGerente = pedidoNegocio.ListarPedidosDelDiaPorMesa(id);
+			Session["PedidosGerente"] = pedidosGerente;
+			CargarPedido();
+            
 		}
 
         private void CargarPedido()
@@ -337,7 +362,7 @@ namespace RestoApp
             // Enlazar el DataTable al DataGrid
             datagridPedidos.DataSource = dataTable;
             datagridPedidos.DataBind();
-        }
+		}
 		
         private void CargarMeseros()
         {
@@ -968,7 +993,10 @@ namespace RestoApp
 					});
 			}
 
-			string seviciosJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(serviciosJS);
+			seviciosJSON = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(serviciosJS);
+
+            //Guardamos en Session Datos para reenviar en caso de postback
+            Session["servicioJSON"] = seviciosJSON;
 
 			//Mandamos a script de javascript
 			ClientScript.RegisterStartupScript(this.GetType(), "seviciosJSON", $"var seviciosJSON = '{seviciosJSON}';", true);
@@ -977,10 +1005,31 @@ namespace RestoApp
 		//Enviamos los datos del Gerente al scripr
 		private void ScriptsGerentePostBack()
 		{
-			ScriptsDataGerente();
-			ScriptDataServicios();
-			string script = "obtenerDatosMesasGerente().then(({ datosMesas, numeroMesas, numeroServicios }) => {renderMesaGerente(datosMesas, numeroMesas, numeroServicios); });";
+			// Recuperamos datos por si es postback
+			mesasActivasJSON = (string)Session["mesasActivasJSON"];
+			datosMesasJSON = (string)Session["datosMesasJSON"];
+			seviciosJSON = (string)Session["servicioJSON"];
+
+			// Mandamos a script de JavaScript
+			string script = @"
+            document.addEventListener('DOMContentLoaded', function() {
+            obtenerDatosMesasGerente()
+                .then(({ datosMesas, numeroMesas, numeroServicios }) => {
+                    renderMesaGerente(datosMesas, numeroMesas, numeroServicios);
+                });
+            })
+            ";
+
+            //Recuperamos el numero de mesas
+			mesas = (List<Mesa>)Helper.Session.GetMesas();
+			MesasActivas = mesas.FindAll(m => m.Activo == true).Count();
+
+			//Mandamos a script de javascript
+			ClientScript.RegisterStartupScript(this.GetType(), "seviciosJSON", $"var seviciosJSON = '{seviciosJSON}';", true);
+			ClientScript.RegisterStartupScript(this.GetType(), "datosMesasArray", $"var datosMesasArray = '{datosMesasJSON}';", true);
+			ClientScript.RegisterStartupScript(this.GetType(), "numeroMesasActivasArray", $"var numeroMesasActivasArray = '{mesasActivasJSON}';", true);
 			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", script, true);
+            
 		}
 
 		//Enviamos los datos del mesero al script

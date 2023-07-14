@@ -118,22 +118,29 @@
             <div class="bg-gray-100 p-5 rounded border-1">
                 <h4>Pedidos Estado</h4>
 
-                <asp:DataGrid ID="datagridPedidos" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
-                    <Columns>
-                        <asp:BoundColumn DataField="Mesa" HeaderText="Mesa" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-                        <asp:BoundColumn DataField="PedidoComida" HeaderText="Pedido de Comida" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-                        <asp:BoundColumn DataField="Actualización" HeaderText="Actualizacion" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-                        <asp:BoundColumn DataField="Estado" HeaderText="Estado" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
 
-                        <asp:TemplateColumn HeaderText="Estado">
-                            <ItemTemplate>
-                                <%# (string)Eval("Estado") != "Listo para entregar"  ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
-                            </ItemTemplate>
-                            <ItemStyle CssClass="bg-light p-2 rounded" />
-                            <HeaderStyle CssClass="bg-light p-2 rounded" />
-                        </asp:TemplateColumn>
-                    </Columns>
-                </asp:DataGrid>
+
+                        <div class="d-flex gap-3">
+                            <asp:DropDownList runat="server" ID="ddlPedidosGerente"></asp:DropDownList>
+                            <asp:Button runat="server" CssClass="btn btn-dark" Text="Buscar" OnClick="BtnBuscarPedidos_Click"/>
+                        </div>
+
+                        <asp:DataGrid ID="datagridPedidos" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
+                            <Columns>
+                                <asp:BoundColumn DataField="Mesa" HeaderText="Mesa" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                                <asp:BoundColumn DataField="PedidoComida" HeaderText="Pedido de Comida" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                                <asp:BoundColumn DataField="Actualización" HeaderText="Actualizacion" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                                <asp:BoundColumn DataField="Estado" HeaderText="Estado" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+
+                                <asp:TemplateColumn HeaderText="Estado">
+                                    <ItemTemplate>
+                                        <%# (string)Eval("Estado") != "Listo para entregar"  ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
+                                    </ItemTemplate>
+                                    <ItemStyle CssClass="bg-light p-2 rounded" />
+                                    <HeaderStyle CssClass="bg-light p-2 rounded" />
+                                </asp:TemplateColumn>
+                            </Columns>
+                        </asp:DataGrid>
 
             </div>
         </div>
@@ -159,29 +166,8 @@
                     <!-- Mensaje de Mesas asignadas -->
                     <asp:Label runat="server" ID="lbSinMesasAsignadas"></asp:Label>
 
-                    <!-- MESAS ASIGNADAS-->
-                    <%--<asp:Repeater runat="server" ID="repeaterMesasAsigndas">
-                        <ItemTemplate>--%>
+                    <!-- MESAS ASIGNADAS DESDE JS-->
 
-                    <!-- MESAS -->
-                    <%--<div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
-                                <div class="bg-warning w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
-                                    <div class="background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center">
-                                            <i class="fa-solid fa-utensils fs-4"></i>
-                                    </div>
-                                </div>
-                                <div class=" w-100 text-light d-flex justify-content-center">
-                                    <div class="w-50 bg-black rounded-4 text-center">
-                                        <small class="fw-bold"><%# Eval("Mesa") %></small>
-                                    </div>
-                                </div>
-                            </div>--%>
-                    <!-- FIN MESAS -->
-
-                    <%-- </ItemTemplate>
-                    </asp:Repeater>--%>
-
-                    <!-- FIN MESAS ASIGNADAS -->
                 </div>
             </section>
             <!-- FIN SECCION MESAS ASIGNDAS -->
@@ -190,9 +176,7 @@
 
             <%--SECCION PEDIDOS EN CURSO--%>
             <div class="col-11 bg-dark text-white p-2 mt-3 rounded-top display-6"> MIS PEDIDOS EN CURSO </div>
-            <div class="col-11 bg-white p-3 justify-content-around content-fluid rounded-bottom">
-
-                
+            <div class="col-11 bg-white p-3 justify-content-around content-fluid rounded-bottom">              
 
                 <div class="row">
                     <asp:UpdatePanel runat="server">
@@ -218,6 +202,7 @@
             </div>
 
 
+            <%--FIN SECCION PEDIDOS EN CURSO--%>
 
             <%--SECCION MENU RAPIDO--%>
                      <div class="col-11 bg-dark text-white p-2 mt-3 rounded-top display-6">
@@ -555,7 +540,7 @@
 
         //Funcion Gerente
         function renderMesaGerente(datosMesa, numeroMesas, numeroServicios) {
-
+              console.log(numeroMesa)
             for (let i = 0; i < numeroMesa; i++) {
 
                 //Buscamos mesa Asignada
@@ -607,6 +592,7 @@
                 mainDiv.appendChild(mesaNumber);
                 mainDiv.appendChild(mesaBottom);
                 sectionMesa.appendChild(mainDiv);
+
 
                 //Titulo
                 modalTitulo.textContent = "Mesero Asignado";
