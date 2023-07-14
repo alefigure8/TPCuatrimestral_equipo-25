@@ -258,9 +258,10 @@ namespace Negocio
                     $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
                     $" JOIN {ColumnasDB.Servicio.DB} S on S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
                     $" JOIN {ColumnasDB.MesasPorDia.DB} MxD on MxD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.Servicio.IdMesa}" +
-                    $" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
-                    $" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
-                    $" AND LOWER(E.{ColumnasDB.Estados.Descripcion}) <> 'entregado')"
+                    //$" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
+                    //$" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
+                    $" WHERE ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
+					$" AND LOWER(E.{ColumnasDB.Estados.Descripcion}) <> 'entregado')"
                     );
 
                 AccesoDB.executeReader();
@@ -405,7 +406,7 @@ namespace Negocio
                 
                 datos.setQuery(
                  $"INSERT INTO {ColumnasDB.EstadosxPedido.DB} ({ColumnasDB.EstadosxPedido.IdPedido}, {ColumnasDB.EstadosxPedido.IdEstado}, {ColumnasDB.EstadosxPedido.FechaActualizacion}) " +
-                 $"VALUES ({idpedido}, {nuevoestado} , '{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}')");
+                 $"VALUES ({idpedido}, {nuevoestado} , '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}')");
                 datos.executeNonQuery();
                 datos.closeConnection();
 
@@ -413,8 +414,7 @@ namespace Negocio
 
             catch (Exception Ex)
             {
-
-
+                throw Ex;
             }
             finally
             {

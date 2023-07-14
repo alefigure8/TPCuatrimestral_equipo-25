@@ -145,81 +145,52 @@ namespace Negocio
 		public bool CerrarServicio(int mesa)
 		{
 			AccesoDB datos = new AccesoDB();
-
 			string estadoPedido = "Entregado";
-			int cantidadPedidosAbiertos = 0;
-			
 
-			string queryCantidadPedidosAbiertos = $"DECLARE @IDSERVICIO BIGINT = (" +
-					$" SELECT S.{ColumnasDB.Servicio.Id}" +
-					$" FROM {ColumnasDB.Servicio.DB} S" +
-					$" INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD" +
-					$" ON MPD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.MesasPorDia.Id}" +
-					$" WHERE MPD.{ColumnasDB.MesasPorDia.IdMesa} = {mesa}" +
-					$" AND S.{ColumnasDB.MesasPorDia.Cierre} IS NULL" +
-					$" )" +
-					$"SELECT COUNT(*) AS CANTIDAD" +
-					$" FROM {ColumnasDB.Servicio.DB} S" +
-					$" INNER JOIN {ColumnasDB.Pedido.DB} P" +
-					$" ON S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
-					$" INNER JOIN {ColumnasDB.EstadosxPedido.DB} EXP" +
-					$" ON EXP.{ColumnasDB.EstadosxPedido.IdPedido}= P.{ColumnasDB.Pedido.Id}" +
-					$" INNER JOIN {ColumnasDB.Estados.DB} EP" +
-					$" ON EP.{ColumnasDB.Estados.Id} = EXP.{ColumnasDB.EstadosxPedido.IdEstado}" +
-					$" WHERE S.{ColumnasDB.Servicio.Id} = @IDSERVICIO" +
-					$" AND (EP.{ColumnasDB.Estados.Descripcion} <> '{estadoPedido}'" +
-					$" OR (EP.{ColumnasDB.Estados.Descripcion} = '{estadoPedido}' AND S.{ColumnasDB.Servicio.Cierre} IS NOT NULL))"
-					;
+			//Buscamos por mesa el número de servicio
+			//BUscamos cuántos pedidos hay en el servicio
+			//Buscamos cuántos pedidos están entregados
+			//Si coincide el número, cerramos el servicio
+			string query = 
+			$" DECLARE @IDSERVICIO BIGINT = (" +
+			$" SELECT S.{ColumnasDB.Servicio.Id}" +
+			$" FROM {ColumnasDB.Servicio.DB} S" +
+			$" INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD" +
+			$" ON MPD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.MesasPorDia.Id}" +
+			$" WHERE MPD.{ColumnasDB.MesasPorDia.IdMesa} = {mesa}" +
+			$" AND S.{ColumnasDB.Servicio.Cierre} IS NULL" +
+			$" )" +
+			$" DECLARE @CANTPEDIDOS BIGINT = (SELECT COUNT(DISTINCT P.{ColumnasDB.Pedido.Id}) AS Cantidad" +
+			$" FROM {ColumnasDB.Servicio.DB} S" +
+			$" INNER JOIN {ColumnasDB.Pedido.DB} P ON S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Servicio.Id}" +
+			$" INNER JOIN {ColumnasDB.EstadosxPedido.DB} EXP ON EXP.{ColumnasDB.Pedido.Id} = P.{ColumnasDB.Pedido.Id}" +
+			$" INNER JOIN {ColumnasDB.Estados.DB} EP ON EP.{ColumnasDB.Estados.Id} = EXP.{ColumnasDB.Estados.Id}" +
+			$" WHERE S.{ColumnasDB.Servicio.Id} = @IDSERVICIO)" +
+			$" DECLARE @CANTPEDIDOSENTREGADO BIGINT = (SELECT COUNT(DISTINCT P.{ColumnasDB.Pedido.Id}) AS Cantidad" +
+			$" FROM {ColumnasDB.Servicio.DB} S" +
+			$" INNER JOIN {ColumnasDB.Pedido.DB} P ON S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Servicio.Id}" +
+			$" INNER JOIN {ColumnasDB.EstadosxPedido.DB} EXP ON EXP.{ColumnasDB.Pedido.Id} = P.{ColumnasDB.Pedido.Id}" +
+			$" INNER JOIN {ColumnasDB.Estados.DB} EP ON EP.{ColumnasDB.Estados.Id} = EXP.{ColumnasDB.Estados.Id}" +
+			$" WHERE S.{ColumnasDB.Servicio.Id} = @IDSERVICIO" +
+			$" AND EP.{ColumnasDB.Estados.Descripcion} = '{estadoPedido}')" +
+			$" IF @CANTPEDIDOS = @CANTPEDIDOSENTREGADO" +
+			$" BEGIN" +
+			$" UPDATE {ColumnasDB.Servicio.DB} SET {ColumnasDB.Servicio.Cierre} = GETDATE(), {ColumnasDB.Servicio.Cobrado} = 0 WHERE {ColumnasDB.Servicio.Id} = @IDSERVICIO" +
+			$" END";
 
 			try
 			{
-				//Buscamos cantidad de pedidos abiertos para el sistema que contiene la mesa que nos entregan por parámetro
-				datos.setQuery(queryCantidadPedidosAbiertos);
-
-				datos.executeReader();
-
-				while (datos.Reader.Read())
-				{
-					cantidadPedidosAbiertos = Convert.ToInt32(datos.Reader["CANTIDAD"]);
-				}
-
+				datos.setQuery(query);
+				return datos.executeNonQuery();
 			}
-			catch (Exception ex)
+			catch (Exception Ex)
 			{
-				throw ex;
+			throw Ex;
 			}
 			finally
 			{
 				datos.closeConnection();
 			}
-		
-
-			//Valida que el servicio no se pueda cerrar si hay pedidos abiertos
-			if(cantidadPedidosAbiertos == 0)
-			{
-				try
-				{
-					datos.setQuery(
-						$" DECLARE @IDMESAPORDIA BIGINT" +
-						$" SET @IDMESAPORDIA = ISNULL((SELECT {ColumnasDB.MesasPorDia.Id} FROM {ColumnasDB.MesasPorDia.DB} WHERE {ColumnasDB.MesasPorDia.IdMesa} = {mesa} AND CIERRE IS NULL ), 0);" +
-						$" IF @IDMESAPORDIA  > 0" +
-						$" BEGIN" +
-							$" UPDATE SERVICIO SET {ColumnasDB.Servicio.Cierre} = '{DateTime.Now.ToString("HH:mm:ss")}' WHERE {ColumnasDB.MesasPorDia.Id} = @IDMESAPORDIA AND CIERRE IS NULL" +
-						$" END");
-
-					return datos.executeNonQuery();
-				}
-				catch (Exception Ex)
-				{
-					return false;
-				}
-				finally
-				{
-					datos.closeConnection();
-				}
-			}
-
-			return false;
 		}
 		
 		//Cobrar servicio. Modificamos cobrado  a true

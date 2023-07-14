@@ -120,6 +120,43 @@ namespace Negocio
 			return String.IsNullOrEmpty(usuario.Mail) ? null : usuario;
 		}
 
+		//Buscar mail
+		public int BuscarUsuarioPorMail(string mail)
+		{
+
+			int existeUsuario = 0;
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				datos.setQuery(
+					$"SELECT 1 AS existeUsuario " +
+					$"FROM {ColumnasDB.Usuario.DB} " +
+					$"INNER JOIN {ColumnasDB.TipoUsuario.DB} ON {ColumnasDB.Usuario.TipoUsuario} = {ColumnasDB.TipoUsuario.Id} " +
+					$"WHERE {ColumnasDB.Usuario.Mail} = '{mail}' " +
+					$"AND {ColumnasDB.Usuario.Activo} = 'true'"
+					);
+				datos.executeReader();
+
+				while (datos.Reader.Read())
+				{
+					//si es cero el usuario no existe, si es uno existe
+					existeUsuario = (Int32)datos.Reader["existeUsuario"];
+				}
+
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+			return existeUsuario;
+		}
+
 		// Listar los usuarios por meseros
 		public List<Usuario> ListarMeseros()
 		{
