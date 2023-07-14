@@ -69,6 +69,24 @@ namespace RestoApp
 		protected global::System.Web.UI.WebControls.DropDownList ddlPedidosGerente;
 
 		/// <summary>
+		/// lbCantidadPedidos control.
+		/// </summary>
+		/// <remarks>
+		/// Auto-generated field.
+		/// To modify move field declaration from designer file to code-behind file.
+		/// </remarks>
+		protected global::System.Web.UI.WebControls.Label lbCantidadPedidos;
+
+		/// <summary>
+		/// lbPedidoMesero control.
+		/// </summary>
+		/// <remarks>
+		/// Auto-generated field.
+		/// To modify move field declaration from designer file to code-behind file.
+		/// </remarks>
+		protected global::System.Web.UI.WebControls.Label lbPedidoMesero;
+
+		/// <summary>
 		/// datagridPedidos control.
 		/// </summary>
 		/// <remarks>

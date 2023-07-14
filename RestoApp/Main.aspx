@@ -116,13 +116,18 @@
         <!-- Tabla Pedidos abiertos-->
         <div class="col-5 mt-3">
             <div class="bg-gray-100 p-5 rounded border-1">
-                <h4>Pedidos Estado</h4>
+                <h4 class="mb-3">Pedidos Estado</h4>
 
+                        <div class="d-flex gap-3 mb-3 justify-content-start">
+                            <asp:DropDownList runat="server" ID="ddlPedidosGerente" CssClass="dropdown dropdown-toggle w-25"></asp:DropDownList>
+                            <asp:Button runat="server" CssClass="btn btn-dark w-25" Text="Buscar" OnClick="BtnBuscarPedidos_Click"/>
+                        </div>
+                        <div>
+                        <div class="d-flex gap-5 justify-content-between">
+                            <asp:Label runat="server" ID="lbCantidadPedidos"></asp:Label>
+                            <asp:Label runat="server" ID="lbPedidoMesero"></asp:Label>
+                        </div>
 
-
-                        <div class="d-flex gap-3">
-                            <asp:DropDownList runat="server" ID="ddlPedidosGerente"></asp:DropDownList>
-                            <asp:Button runat="server" CssClass="btn btn-dark" Text="Buscar" OnClick="BtnBuscarPedidos_Click"/>
                         </div>
 
                         <asp:DataGrid ID="datagridPedidos" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
@@ -540,7 +545,6 @@
 
         //Funcion Gerente
         function renderMesaGerente(datosMesa, numeroMesas, numeroServicios) {
-              console.log(numeroMesa)
             for (let i = 0; i < numeroMesa; i++) {
 
                 //Buscamos mesa Asignada

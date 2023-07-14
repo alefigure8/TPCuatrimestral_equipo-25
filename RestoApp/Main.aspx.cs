@@ -295,7 +295,8 @@ namespace RestoApp
 			foreach (Servicio item in listaMesa)
             {
 			    ddlPedidosGerente.Items.Add(new ListItem($"Mesa {item.Mesa}", item.Mesa.ToString()));
-            }
+				ddlPedidosGerente.Attributes["class"] = "dropdown-item";
+			}
 		}
 
         protected void BtnBuscarPedidos_Click(object sender, EventArgs e)
@@ -311,8 +312,14 @@ namespace RestoApp
 			// List<Pedido> pedidosGerente = pedidoNegocio.ListarPedidosDelDia();
 			List<Pedido> pedidosGerente = pedidoNegocio.ListarPedidosDelDiaPorMesa(id);
 			Session["PedidosGerente"] = pedidosGerente;
+
+            string mesa = $"<p><span class=\"fw-semibold\">Mesa:</span> {pedidosGerente.Select(item => item.Productossolicitados.Count() > 0 ? item.Productossolicitados.Count() : 0).Sum()}</p>";
+			lbCantidadPedidos.Text = HttpUtility.HtmlDecode(mesa);
+
+			string mesero = $"<p><span class=\"fw-semibold\">Mesero:</span> {Helper.Session.GetServicios().Find(item => item.Mesa == id).Mesero}</p>";
+            lbPedidoMesero.Text = HttpUtility.HtmlDecode(mesero);
+
 			CargarPedido();
-            
 		}
 
         private void CargarPedido()
