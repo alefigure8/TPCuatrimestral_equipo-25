@@ -36,20 +36,21 @@ namespace RestoApp
                 CrearDatatableCocina();
                 CrearDataTableProductosEnPreparacion();
                 CrearDataTableEstadoPedidos();
-
+               
             }
-
-
             ActualizarCocina();
-            
-        
-            //ActualizarSolicitadosenDB();
-            //Listarpedidosenpreparacion();
             ActualizarDGVCocina();
             ActualizarDGVEstadoPedidos();
             ActualizarDGVProductosenPreparacion();
             ActualizarDemorados();
-            
+            /*
+            ActualizarCocina();
+            ActualizarDGVCocina();
+            ActualizarDGVEstadoPedidos();
+            ActualizarDGVProductosenPreparacion();
+            ActualizarDemorados();
+           */
+
         }
 
 
@@ -89,17 +90,23 @@ namespace RestoApp
             Helpercocina = (List<HelperCocina>)Session["Helpercocina"];
             Productosenpreparacion = (List<ProductoPorPedido>)Session["Productosenpreparacion"];
             Pedidosencocina = (List<Pedido>)Session["Pedidosencocina"];
+            List<ProductoPorPedido> Auxiliarproductosenpreparacion = new List<ProductoPorPedido>();
+           List<HelperCocina> AuxiliiarHelpercocina = new List<HelperCocina>();
 
-            Pedidosencocina = cocinaNegocio.ListarPedidosenCocina();
+
+        Pedidosencocina = cocinaNegocio.ListarPedidosenCocina();
             Pedidosencocina = Pedidosencocina.OrderBy(Pedidosencocina => Pedidosencocina.Id).ToList();
 
             foreach (Pedido pedido in Pedidosencocina)
             {
+
                 HelperCocina Item = new HelperCocina();
+                
+                // POR CADA PEDIDO LISTAMOS SUS PRODUCTOS
                 pedido.Productossolicitados = cocinaNegocio.ListarProductosPorPedido(pedido.Id);
 
+                // DETERMINAMOS CUAL DE LOS PRODUCTOS TIENE MAYOR TIEMPO DE COCCION
                 TimeSpan? Tiempomax = TimeSpan.Zero;
-
                 foreach (ProductoPorPedido producto in pedido.Productossolicitados)
                 {
                     if (producto.Productodeldia.TiempoCoccion > Tiempomax)
@@ -108,23 +115,33 @@ namespace RestoApp
                     }
 
                 }
+
+                // SI EL ESTADO ESTA EN PREPARACION LA HORA INGRESO ES LA ULTIMA ACTUALIZACION
                 if (pedido.Estado == Estados.EnPreparacion)
                 {
                     pedido.Horaingresococina = pedido.ultimaactualizacion;
                 }
                 else
                 {
+                    // SI ESTA DEMORADO ES LA RESTA DE SU ULTIMA ACTUALIZACION Y EL TIEMPO MAXIMO DE COCCION 
                     pedido.Horaingresococina = pedido.ultimaactualizacion - (TimeSpan)Tiempomax;
                 }
 
+                // DETERMINAMOS LA CANTIDAD DE CASILLEROS QUE OCUPA EL PRODUCTO DE MAS COCCION
                 int casillerostiempomax = CantidadCasilleros(Tiempomax.Value);
 
+
                 foreach (ProductoPorPedido producto in pedido.Productossolicitados)
+                
                 {
-                                     
-                                    
+                    // POR CADA PEDIDO AGREGAMOS UN PRODUCTO A LA LISTA
+               
+                    Auxiliarproductosenpreparacion.Add(producto);
+
+                    // CARGAMOS LA CANTIDAD DE CASILLEROS EN LA LISTA HELPER
                     Item.TiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
                     
+                    // SI EL TIEMPO DE COCCION DEL PRODUCTO ES IGUAL AL DE MAYOR TIEMPO INDICE COLUMNA EXACTO
                     if (casillerostiempomax == Item.TiempoCoccion)
                     {
                         Item.Columna = IndiceColumna(HoraToString(pedido.Horaingresococina));
@@ -132,31 +149,44 @@ namespace RestoApp
                     else if(casillerostiempomax  > Item.TiempoCoccion)
                     {
                         int diferencia = casillerostiempomax - Item.TiempoCoccion;
-                        Item.Columna = diferencia + IndiceColumna(HoraToString(pedido.Horaingresococina)); 
+                        ajusteportiempomaximopedido(CantidadCasilleros(producto.Productodeldia.TiempoCoccion), casillerostiempomax);
+                        Item.Columna = IndiceColumna(HoraToString(pedido.Horaingresococina)) + diferencia + 2;
+
+                        
+                        
 
                     }
-                        Item.idPedido = pedido.Id;
-                                   
-                    Helpercocina.Add(Item);
+                     Item.idPedido = pedido.Id;
+
+                    AuxiliiarHelpercocina.Add(Item);
 
                 }
-                
+       
                 pedido.Horalisto = pedido.Horaingresococina.Add(Tiempomax.Value);
 
             }
-                
 
-            Session.Add("Helpercocina", Helpercocina);
-            Session.Add("Productosenpreparacion", Productosenpreparacion);
+
+
+            if (AuxiliiarHelpercocina.ToList() != Helpercocina.ToList())
+            {
+                Session.Add("Helpercocina", AuxiliiarHelpercocina);
+            }
+
+
+            if (Auxiliarproductosenpreparacion.ToList() != Productosenpreparacion.ToList())
+            {
+                Session.Add("Productosenpreparacion", Auxiliarproductosenpreparacion);
+            }
+
+
+
             Session.Add("Pedidosencocina", Pedidosencocina);
             return Pedidosencocina;
         }     
         
 
 
-        public void AgregarPedidosenCocinaaSession(List<Pedido> pedidosenCocina) {
-
-        }
 
         public void ActualizarCocina()
         {
@@ -388,9 +418,10 @@ namespace RestoApp
                 DataRow filaNueva = dataTable.NewRow();
                 filaNueva[0] = nombreProducto;
                 filaNueva[1] = cantidad;
-                dataTable.Rows.Add(filaNueva);          }
+                dataTable.Rows.Add(filaNueva);         
+            }
 
-                    
+                  
             GVDProductosenprep.DataSource = dataTable;
             GVDProductosenprep.DataBind();
 
@@ -410,8 +441,7 @@ namespace RestoApp
             foreach (var pedido in Pedidosencocina)
             {
 
-
-                if (horarios().Contains(HoraToString(pedido.ultimaactualizacion)))
+                if (horarios().Contains(HoraToString(pedido.Horaingresococina)))
                 {
                     // BUSCA EL PRODUCTO DENTRO DEL PEDIDO QUE TENGA MAYOR TIEMPO DE COCCION
                     int CasillerosMaxTiempoCoccion = CantidadCasilleros(pedido.Horalisto - pedido.Horaingresococina);
@@ -420,12 +450,12 @@ namespace RestoApp
                     {
                         ProductoPorPedido ProductossolicitadopsProductodeldia = pedido.Productossolicitados[i];
 
-                        int Ajuste = ajusteportiempomaximopedido(Helpercocina[i].TiempoCoccion, CasillerosMaxTiempoCoccion);
+                        int Ajuste = ajusteportiempomaximopedido(CantidadCasilleros(pedido.Productossolicitados[i].Productodeldia.TiempoCoccion), CasillerosMaxTiempoCoccion);
 
                         DataRow filaNueva = DTCocina.NewRow();
-                        filaNueva[Ajuste + IndiceColumna(HoraToString(pedido.ultimaactualizacion))] = "#" + pedido.Id;
-                        filaNueva[IndiceColumna(HoraToString(pedido.ultimaactualizacion)) + CasillerosMaxTiempoCoccion - 2] = ProductossolicitadopsProductodeldia.Productodeldia.Nombre;
-                        filaNueva[IndiceColumna(HoraToString(pedido.ultimaactualizacion)) + CasillerosMaxTiempoCoccion - 1] = "C:" + ProductossolicitadopsProductodeldia.Cantidad;
+                        filaNueva[Ajuste + IndiceColumna(HoraToString(pedido.Horaingresococina))] = "#" + pedido.Id;
+                        filaNueva[IndiceColumna(HoraToString(pedido.Horaingresococina)) + CasillerosMaxTiempoCoccion - 2] = ProductossolicitadopsProductodeldia.Productodeldia.Nombre;
+                        filaNueva[IndiceColumna(HoraToString(pedido.Horaingresococina)) + CasillerosMaxTiempoCoccion - 1] = "C:" + ProductossolicitadopsProductodeldia.Cantidad;
                         DTCocina.Rows.Add(filaNueva);
 
                     }
@@ -462,22 +492,42 @@ namespace RestoApp
     public void Timer1_Tick(object sender, EventArgs e)
     {
         Reloj = (DateTime)Session["Reloj"];
-        Reloj = Reloj.AddSeconds(180);
+        Reloj = Reloj.AddSeconds(120);
         Txtreloj.Text = Reloj.ToString("HH:mm");
         Session.Add("Reloj", Reloj);
-      
-    }
+        /*
+        int contador = 0;
+        if (Session["Contador"] != null)
+        {
+                contador = (int)Session["Contador"];
+       }
 
-       
+       contador++;
+       Session["Contador"] = contador;
+
+       if (contador % 5 == 0)
+            {*/
+                //ActualizarCocina();
+                //ActualizarDGVCocina();
+                //ActualizarDGVEstadoPedidos();
+                //ActualizarDGVProductosenPreparacion();
+                //ActualizarDemorados();
+           // }
+
+
+
+        }
+
+
         protected void GVDCocina_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             Reloj = (DateTime)Session["Reloj"];
             Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
-            int Indicecolumnahora = IndiceColumna(HoraToString(Reloj));
-            
-           
-                // AGREGO BORDE DERECHO A CADA CELDA PARA GENERA LINEAS VERTICALES
-                if (e.Row.RowType == DataControlRowType.DataRow)
+            int? Indicecolumnahora = IndiceColumna(HoraToString(Reloj));
+
+
+            // AGREGO BORDE DERECHO A CADA CELDA PARA GENERA LINEAS VERTICALES
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 foreach (TableCell cell in e.Row.Cells)
 
@@ -492,63 +542,113 @@ namespace RestoApp
             }
 
 
-            // PINTO DE COLOR AZUL LAS CELDAS QUE CORRESPONDEN A UN PEDIDO
-           
 
-            for (int j = 0; j < Helpercocina.Count; j++)
+
+
+            Pedidosencocina = (List<Pedido>)Session["Pedidosencocina"];
+            int rowindex = 0;
+
+            foreach (var pedido in Pedidosencocina)
             {
-                if (e.Row.RowIndex == j)
+                if (horarios().Contains(HoraToString(pedido.Horaingresococina)))
                 {
-                    HelperCocina item = Helpercocina[j];
+                    // BUSCA EL PRODUCTO DENTRO DEL PEDIDO QUE TENGA MAYOR TIEMPO DE COCCION
+                    int CasillerosMaxTiempoCoccion = CantidadCasilleros(pedido.Horalisto - pedido.Horaingresococina);
 
-                    for (int i = item.Columna; i < item.Columna + item.TiempoCoccion; i++)
+                    foreach (ProductoPorPedido pxp in pedido.Productossolicitados)
                     {
 
-
-                        if (i > Indicecolumnahora)
+                        if (e.Row.RowIndex == rowindex)
                         {
-
-                            int seed = item.idPedido.GetHashCode();
+                            int Ajuste = ajusteportiempomaximopedido(CantidadCasilleros(pxp.Productodeldia.TiempoCoccion), CasillerosMaxTiempoCoccion);
+                            int seed = pedido.Id.GetHashCode();
                             Random random = new Random(seed);
                             Color randomColor = Color.FromArgb(50, random.Next(100, 200), random.Next(100, 200), random.Next(100, 200));
                             double factor = 0.8;
-
                             int red = (int)(randomColor.R * factor);
                             int green = (int)(randomColor.G * factor);
                             int blue = (int)(randomColor.B * factor);
-
                             Color darkColor = Color.FromArgb(red, green, blue);
+                            for (int i = 0; i < CantidadCasilleros(pxp.Productodeldia.TiempoCoccion); i++)
+                            {
+                                if ((Ajuste + IndiceColumna(HoraToString(pedido.Horaingresococina)) + i) > Indicecolumnahora)
+                                {
+                                    e.Row.Cells[Ajuste + IndiceColumna(HoraToString(pedido.Horaingresococina)) + i].BackColor = darkColor;
+                                }
+                                else
+                                {
+                                    e.Row.Cells[Ajuste + IndiceColumna(HoraToString(pedido.Horaingresococina)) + i].BackColor = Color.Gray;
 
-                            e.Row.Cells[i].BackColor = darkColor;
-                        }
-                        else if (i <= Indicecolumnahora)
-                        {
-                            e.Row.Cells[i].BackColor = Color.Gray;
+                                }
 
+                            }
+                           
+                        }
+                        rowindex++;
 
-                        }
-                        else if (Indicecolumnahora == -1)
-                        {
-                            e.Row.Cells[i].BackColor = Color.Gray;
-                        }
                     }
-
-
 
                 }
 
 
 
 
+                /*
+                for (int j = 0; j < Helpercocina.Count; j++)
+                {
+                    if (e.Row.RowIndex == j)
+                    {
+                        HelperCocina item = Helpercocina[j];
 
+                        for (int i = item.Columna; i < item.Columna + item.TiempoCoccion; i++)
+                        {
+
+                            if (i > Indicecolumnahora)
+                            {
+
+                                int seed = item.idPedido.GetHashCode();
+                                Random random = new Random(seed);
+                                Color randomColor = Color.FromArgb(50, random.Next(100, 200), random.Next(100, 200), random.Next(100, 200));
+                                double factor = 0.8;
+                                int red = (int)(randomColor.R * factor);
+                                int green = (int)(randomColor.G * factor);
+                                int blue = (int)(randomColor.B * factor);
+                                Color darkColor = Color.FromArgb(red, green, blue);
+                                e.Row.Cells[i].BackColor = darkColor;
+                            }
+                            else if (i <= Indicecolumnahora)
+                            {
+                                e.Row.Cells[i].BackColor = Color.Gray;
+
+
+                            }
+                            else if (Indicecolumnahora == -1)
+                            {
+                                e.Row.Cells[i].BackColor = Color.Gray;
+                            }
+                            else if (Indicecolumnahora == null)
+                            {
+
+                                e.Row.Cells[i].BackColor = Color.Gray;
+                            }
+                        }
+
+
+
+                    }
+
+
+
+
+
+                }
+
+                */
             }
-            
+
+
 
         }
-
-
-
-
 
         public string InvertirFecha(DateTime fechaactualizacion)
         {
@@ -599,6 +699,7 @@ namespace RestoApp
                 "16:50", "16:55", "17:00", "17:05", "17:10", "17:15", "17:20", "17:25", "17:30", "17:35",
                 "17:40", "17:45", "17:50", "17:55", "18:00", "18:05", "18:10", "18:15", "18:20", "18:25",
                 "18:30", "18:35", "18:40", "18:45", "18:50", "18:55", "19:00", "19:05", "19:10", "19:15",
+                "19:20", "19:25", "19:30", "19:35", "19:40", "19:45", "19:50", "19:55", "20:00", "20:05"
             };
 
             List<string> listaHorarios = new List<string>(horariosdia);
@@ -712,7 +813,7 @@ namespace RestoApp
                 return -1;
             }
             else { 
-            return indice + 1;
+            return indice;
             }
         }
 
@@ -737,7 +838,7 @@ namespace RestoApp
 
 
 
-        protected void GVDEstadopedidos_RowDataBound(object sender, GridViewRowEventArgs e)
+        public void GVDEstadopedidos_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
             
@@ -768,7 +869,7 @@ namespace RestoApp
                 }
             }
         }
-        protected void GVDProductosenprep_RowDataBound(object sender, GridViewRowEventArgs e)
+        public void GVDProductosenprep_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             bool sinproductos = false;
             Session.Add("sinproductos", sinproductos);
