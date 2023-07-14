@@ -313,7 +313,7 @@ namespace RestoApp
 			List<Pedido> pedidosGerente = pedidoNegocio.ListarPedidosDelDiaPorMesa(id);
 			Session["PedidosGerente"] = pedidosGerente;
 
-            string mesa = $"<p><span class=\"fw-semibold\">Mesa:</span> {pedidosGerente.Select(item => item.Productossolicitados.Count() > 0 ? item.Productossolicitados.Count() : 0).Sum()}</p>";
+            string mesa = $"<p><span class=\"fw-semibold\">Cantidad de Pedidos:</span> {pedidosGerente.Select(item => item.Productossolicitados.Count() > 0 ? item.Productossolicitados.Count() : 0).Sum()}</p>";
 			lbCantidadPedidos.Text = HttpUtility.HtmlDecode(mesa);
 
 			string mesero = $"<p><span class=\"fw-semibold\">Mesero:</span> {Helper.Session.GetServicios().Find(item => item.Mesa == id).Mesero}</p>";
