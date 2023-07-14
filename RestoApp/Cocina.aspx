@@ -10,13 +10,16 @@
     <div class="row">
 
         <div class="col-9 d-flex" style="overflow-x: auto;">
-            <asp:UpdatePanel runat="server">
+            <asp:UpdatePanel runat="server" UpdateMode="Always">
                 <ContentTemplate>
                     <asp:GridView ID="GVDCocina" runat="server" OnRowDataBound="GVDCocina_RowDataBound" AutoPostBack="true" CssClass="gridview-style">
                         <HeaderStyle HorizontalAlign="right" VerticalAlign="Middle" CssClass="small" />
 
                     </asp:GridView>
                 </ContentTemplate>
+                          <Triggers>
+        <asp:AsyncPostBackTrigger ControlID="Timer1" EventName="Tick" />
+    </Triggers>
             </asp:UpdatePanel>
         </div>
 

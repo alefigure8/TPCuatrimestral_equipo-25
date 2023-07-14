@@ -54,11 +54,18 @@ namespace Negocio
             List<Pedido> Pedidosenpreparacion = new List<Pedido>();
             acceso = new AccesoDB();
             try
-            {
-                acceso.setQuery($"SELECT ExP.IdPedido,ExP.IdEstado,ExP.FechaActualizacion, e.Descripcion FROM ESTADO_X_PEDIDO ExP " +
-                        $"join estadopedido E on ExP.IdEstado = e.IdEstado WHERE ExP.IdEstado = 2 and ExP.idEstado = " +
-                        $"(Select max(IdEstado) from ESTADO_X_PEDIDO ep where ep.IdPedido = exp.IdPedido) " +
-                        $"or ExP.IdEstado = 3 and ExP.idEstado = (Select max(IdEstado) from ESTADO_X_PEDIDO ep where ep.IdPedido = exp.IdPedido)");
+            {             
+
+
+
+                acceso.setQuery($"SELECT ExP.IdPedido,ExP.IdEstado,ExP.FechaActualizacion, e.Descripcion,p.CategoriaProducto FROM ESTADO_X_PEDIDO ExP " +
+                        $"join estadopedido E on ExP.IdEstado = e.IdEstado " +
+                        $" join PRODUCTO_X_PEDIDO  pxp on pxp.IdPedido = exp.IdPedido " +
+                        $"join PRODUCTOS P on pxp.IdProductopordia = P.IdProducto " +
+                        $" WHERE ExP.IdEstado = 2 and ExP.idEstado = (Select max(IdEstado) from ESTADO_X_PEDIDO ep where ep.IdPedido = exp.IdPedido) " +
+                        $" or ExP.IdEstado = 3 and ExP.idEstado = (Select max(IdEstado) from ESTADO_X_PEDIDO ep where ep.IdPedido = exp.IdPedido) " +
+                        $"group by ExP.IdPedido,ExP.IdEstado,ExP.FechaActualizacion, e.Descripcion,p.CategoriaProducto "+
+                        $"having CategoriaProducto = 3");
                 acceso.executeReader();
 
 
@@ -96,7 +103,7 @@ namespace Negocio
                 $", P.{ColumnasDB.Producto.Categoria} " +
                 $" FROM {ColumnasDB.ProductoPorPedido.DB} PxP " +
                 $" JOIN {ColumnasDB.Producto.DB} P ON PxP.{ColumnasDB.ProductoPorPedido.IdProductoPorDia} = P.{ColumnasDB.Producto.Id}" +
-                $" WHERE {ColumnasDB.ProductoPorPedido.IdPedido} = {idPedido} ");
+                $" WHERE {ColumnasDB.ProductoPorPedido.IdPedido} = {idPedido} and P.CategoriaProducto = 3");
                 AccesoDB.executeReader();
 
                 while (AccesoDB.Reader.Read())
