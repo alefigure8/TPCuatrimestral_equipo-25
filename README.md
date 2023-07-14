@@ -45,13 +45,28 @@ Al final del día se podrán requerir reportes tales como pedidos por mesa, pedi
 etc.
 
 ----
-#### **Páginas**
+#### **Página**
+
+ - [x] **Sitio** -  [Ver](http://equipo25tpfinal.somee.com/)
 
 ----
-#### **Digrama de Clases**
+#### **Páginas**
+
+- [x] 1.  **Login** -  [Ver](http://equipo25tpfinal.somee.com/)
+- [x] 1.  **Recuperación Contraseña** -  [Ver](http://equipo25tpfinal.somee.com?recuperar=true)
+- [x] 2.  **Home** -  [Ver](http://equipo25tpfinal.somee.com/Main.aspx)
+- [x] 3.  **Mesas** -  [Ver](http://equipo25tpfinal.somee.com/Mesas.aspx)
+- [x] 4.  **Asignar Meseros** -  [Ver](http://equipo25tpfinal.somee.com/MesaHabilitar.aspx)
+- [x] 5.  **Productos** -  [Ver](http://equipo25tpfinal.somee.com/Productos.aspx)
+- [x] 6.  **Cocina** -  [Ver](http://equipo25tpfinal.somee.com/Cocina.aspx)
+- [x] 7.  **Usuarios** -  [Ver](http://equipo25tpfinal.somee.com/Usuarios.aspx)
+- [x] 8.  **Tickets** -  [Ver](http://equipo25tpfinal.somee.com/Tickets.aspx)
 
 ----
 #### **Digrama de la Base de Datos**
 
+![Screenshot](https://i.imgur.com/c0CimGr.jpg)
+
 ----
 #### **Screenshot**
+En preparación
