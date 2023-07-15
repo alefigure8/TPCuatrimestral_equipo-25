@@ -139,7 +139,7 @@ namespace RestoApp
 			
 			if(ticket.IdMesero == idMesero)
 			{
-				lbTituloTicket.Text = "Ticket del servicio #" + ticket.Id;
+				lbTituloTicket.Text = "Ticket de la Mesa N° " + ticket.Mesa; 
 				return tickets;
 			}
 
@@ -213,22 +213,25 @@ namespace RestoApp
 			{
 
 				StringBuilder sb = new StringBuilder();
-
+				int i = 1;
 				foreach (TicketDetalle item in detalles)
 				{
 					precio += item.Precio * item.Cantidad;
 
 					sb.AppendFormat(
 						@"<tr>
-						<th scope=""row"">1</th>
+						<th scope=""row"">{3}</th>
 						<td>{0}</td>
 						<td>{1}</td>
 						<td>{2}</td>
 						</tr>",
 						item.Descripcion,
 						item.Cantidad,
-						item.Precio
+						item.Precio,
+						i
 					);
+
+					i++;
 				}
 
 				return sb.ToString();

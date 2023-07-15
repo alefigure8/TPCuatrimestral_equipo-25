@@ -75,6 +75,7 @@
     <Content Include="Global.asax" />
     <Content Include="Layouts\Navside.ascx" />
     <Content Include="Main.aspx" />
+    <Content Include="Pedidos.aspx" />
     <Content Include="Perfil.aspx" />
     <Content Include="ProductosDelDia.aspx" />
     <Content Include="MesaHabilitar.aspx" />
@@ -129,6 +130,13 @@
     </Compile>
     <Compile Include="Masters\Main.Master.designer.cs">
       <DependentUpon>Main.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Pedidos.aspx.cs">
+      <DependentUpon>Pedidos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pedidos.aspx.designer.cs">
+      <DependentUpon>Pedidos.aspx</DependentUpon>
     </Compile>
     <Compile Include="Perfil.aspx.cs">
       <DependentUpon>Perfil.aspx</DependentUpon>

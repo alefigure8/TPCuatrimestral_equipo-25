@@ -17,10 +17,13 @@
                 <!-- Ticket -->
                 <section class="col-3 bg-white rounded d-flex flex-column m-3 p-3 border">
                     <div class="d-flex flex-column w-100">
-                        <p class="fw-semibold fs-5 text-center">#<%# Eval("Id") %></p>
+                        <div class="w-100 d-flex justify-content-between align-items-center">
+                          <img src="/Content/Image/logo.jpg" style="width: 50px; height: 50px;" class="rounded-circle mb-3" />
+                          <p class="fw-semibold fs-6">Servicio N° <%# Eval("Id") %></p>
+                        </div>
                         <div class="d-flex justify-content-between w-100 border-1 border-bottom">
                             <p><i class="fa-sharp fa-solid fa-calendar-days me-2"></i><%# Eval("Fecha", "{0:dd/MM/yyyy}") %></p>
-                            <p><i class="fa-regular fa-clock me-2"></i><%# Eval("Cierre") %></p>
+                            <p><i class="fa-regular fa-clock me-2"></i><%# Eval("Cierre") != DBNull.Value ? DateTime.Parse(Eval("Cierre").ToString()).ToString("HH:mm:ss") : string.Empty %></p>
                         </div>
                     </div>
                     <div class="w-100 d-flex justify-content-between mt-3">

@@ -43,11 +43,12 @@
                 <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#productos-collapse" aria-bs-expanded="true">
                     <%--Si es gerente o admin la solapa se llama productos, si no, se llama menu--%>
                     <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
-                              { %>  Productos
+                    { %>  
+                    Productos
                     <%} else
-            { %>
-                Menu
-                    <%            } %>
+                { %>
+                    Menu
+                    <% } %>
                 </a>
                 <div class="collapse" id="productos-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
@@ -60,12 +61,11 @@
                             <%--Si es gerente o admin la solapa se llama productos, si no, se llama menu--%>
                             <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
                               { %> 
-                            Productos del día
+                                Productos del día
                                <%} else
-            { %>
-                Menu completo
-                    <%            } %>
-
+                            { %>
+                                Menu completo
+                             <% } %>
                         </a></li>
                     </ul>
                 </div>
@@ -98,6 +98,24 @@
                     { %>
                         <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets Abiertos</a></li>
                         <li><a href="#" class="nav-link ps-3">Tickets Del Dia</a></li>
+                        <%}%>
+                    </ul>
+                </div>
+            </li>
+                        <li class="mb-1">
+                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#peidos-collapse" aria-bs-expanded="true">Tickets
+                </a>
+                <div class="collapse " id="peidos-collapse">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                        <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Admin)
+                    { %>
+                        <li><a href="Pedidos.aspx" class="nav-link ps-3">Pedidos del Día</a></li>
+                        <li><a href="#" class="nav-link ps-3">Estadística</a></li>
+                        <%}%>
+                        <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+                    { %>
+                        <li><a href="Pedidos.aspx?abiertos=true" class="nav-link ps-3">Pedidos Abiertos</a></li>
+                        <li><a href="Pedidos.aspx?dia=<%: DateTime.Now.ToString("yyyy-MM-dd") %>" class="nav-link ps-3">Pedidos Del Dia</a></li>
                         <%}%>
                     </ul>
                 </div>
