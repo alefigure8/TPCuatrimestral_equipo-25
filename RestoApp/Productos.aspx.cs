@@ -124,10 +124,11 @@ namespace RestoApp
 
         public void ListarProductos()
         {
-            Session["ListaProductos"] = null;
-            ProductoNegocio productoNegocio = new ProductoNegocio();
-            Session.Add("ListaProductos", productoNegocio.ListarProductos());
-
+            if (((List<Producto>)Session["ListaProductos"]) == null)
+            {
+                ProductoNegocio productoNegocio = new ProductoNegocio();
+                Session.Add("ListaProductos", productoNegocio.ListarProductos());
+            }
             GVProductos.DataSource = Session["ListaProductos"];
             GVProductos.DataBind();
         }
@@ -220,8 +221,19 @@ namespace RestoApp
                 NuevoProducto.Stock = int.Parse(NuevoProductoStock.Text);
 
                 ProductoNegocio PNaux = new ProductoNegocio();
-                PNaux.NuevoProducto(NuevoProducto);
+                try
+                {
+                    PNaux.NuevoProducto(NuevoProducto);
+                    ((List<Producto>)Session["ListaProductos"]).Add(NuevoProducto);
 
+                }
+                catch (Exception ex)
+                {
+                    
+                    string script = $"alert('Error al guardar el registro. {ex.ToString()} ');";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "ServerAlert", script, true);
+                }
+              
                 NuevoProductoNombre.Text = null;
                 NuevoProductoDescripcion.Text = null;
                 NuevoProductoValor.Text = null;
@@ -238,7 +250,7 @@ namespace RestoApp
 
                 NuevoProductoTiempoCoccion.Text = null;
                 ListarProductos();
-                Response.Redirect("Productos.aspx");
+             
             }
             else
             {
