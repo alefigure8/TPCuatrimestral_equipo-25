@@ -103,7 +103,7 @@
                 </div>
             </li>
                         <li class="mb-1">
-                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#peidos-collapse" aria-bs-expanded="true">Tickets
+                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#peidos-collapse" aria-bs-expanded="true">Pedidos
                 </a>
                 <div class="collapse " id="peidos-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">

@@ -83,6 +83,79 @@ namespace Negocio
 			return servicios;
 		}
 
+		public List<Servicio> Listar(DateTime fecha)
+		{
+			List<Servicio> servicios = new List<Servicio>();
+			AccesoDB datos = new AccesoDB();
+
+			try
+			{
+				datos.setQuery($"SELECT S.{ColumnasDB.Servicio.Id}, MPD.{ColumnasDB.MesasPorDia.IdMesa}, U.{ColumnasDB.Usuario.Id}, U.{ColumnasDB.Usuario.Apellidos}, U.{ColumnasDB.Usuario.Nombres} ,S.{ColumnasDB.Servicio.Fecha}, S.{ColumnasDB.Servicio.Apertura}, S.{ColumnasDB.Servicio.Cierre}, {ColumnasDB.Servicio.Cobrado} " +
+					$"FROM {ColumnasDB.Servicio.DB} S " +
+					$"INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD " +
+					$"ON S.{ColumnasDB.MesasPorDia.Id} = MPD.{ColumnasDB.MesasPorDia.Id} " +
+					$" INNER JOIN {ColumnasDB.Mesa.DB} M " +
+					$"ON MPD.{ColumnasDB.MesasPorDia.IdMesa} = M.{ColumnasDB.Mesa.Numero} " +
+					$" INNER JOIN {ColumnasDB.MeseroPorDia.DB} MP " +
+					$"ON MPD.{ColumnasDB.MeseroPorDia.Id} = MP.{ColumnasDB.MeseroPorDia.Id} " +
+					$"INNER JOIN {ColumnasDB.Usuario.DB} U " +
+					$"ON MP.{ColumnasDB.Servicio.IdMesero} = U.{ColumnasDB.Usuario.Id} " +
+					$"WHERE S.{ColumnasDB.Servicio.Fecha} = '{fecha.ToString("yyyy-MM-dd")}' " +
+					$"ORDER BY S.{ColumnasDB.Servicio.Fecha} DESC, S.{ColumnasDB.Servicio.Apertura} DESC");
+
+				datos.executeReader();
+
+
+				while (datos.Reader.Read())
+				{
+					Servicio auxServicio = new Servicio();
+
+					//ID
+					auxServicio.Id = (Int32)datos.Reader[ColumnasDB.Servicio.Id];
+
+					//MESA
+					if (datos.Reader[ColumnasDB.MesasPorDia.IdMesa] != null)
+						auxServicio.Mesa = (int)datos.Reader[ColumnasDB.MesasPorDia.IdMesa];
+
+					//IDMESERO
+					if (datos.Reader[ColumnasDB.Usuario.Id] != null)
+						auxServicio.IdMesero = (int)datos.Reader[ColumnasDB.Usuario.Id];
+
+					//Fecha
+					if (datos.Reader[ColumnasDB.Usuario.Nombres] != null && datos.Reader[ColumnasDB.Usuario.Apellidos] != null)
+						auxServicio.Mesero = (string)datos.Reader[ColumnasDB.Usuario.Nombres] + " " + (string)datos.Reader[ColumnasDB.Usuario.Apellidos];
+
+					//Fecha
+					if (datos.Reader[ColumnasDB.Servicio.Fecha] != null)
+						auxServicio.Fecha = (DateTime)datos.Reader[ColumnasDB.Servicio.Fecha];
+
+					//Apertura
+					if (datos.Reader[ColumnasDB.Servicio.Apertura] != null)
+						auxServicio.Apertura = (TimeSpan)datos.Reader[ColumnasDB.Servicio.Apertura];
+
+					//Cierre
+					object valorCierre = datos.Reader[ColumnasDB.Servicio.Cierre];
+					auxServicio.Cierre = DBNull.Value.Equals(valorCierre) ? (TimeSpan?)null : (TimeSpan?)valorCierre;
+
+					//Cobrado
+					if (datos.Reader[ColumnasDB.Servicio.Cobrado] != null)
+						auxServicio.Cobrado = (bool)datos.Reader[ColumnasDB.Servicio.Cobrado];
+
+					servicios.Add(auxServicio);
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+			return servicios;
+		}
+
 		//Abrimos servicio y retornamos el ID del servicio creado
 		public int AbrirServicio(int mesa)
 		{

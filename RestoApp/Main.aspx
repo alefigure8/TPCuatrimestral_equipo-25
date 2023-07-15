@@ -122,12 +122,9 @@
                             <asp:DropDownList runat="server" ID="ddlPedidosGerente" CssClass="form-control w-50"></asp:DropDownList>
                             <asp:Button runat="server" CssClass="btn btn-dark w-25" Text="Buscar" OnClick="BtnBuscarPedidos_Click"/>
                         </div>
-                        <div>
                         <div class="d-flex gap-5 justify-content-between">
                             <asp:Label runat="server" ID="lbCantidadPedidos"></asp:Label>
                             <asp:Label runat="server" ID="lbPedidoMesero"></asp:Label>
-                        </div>
-
                         </div>
 
                         <asp:DataGrid ID="datagridPedidos" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
