@@ -5,11 +5,150 @@
 <asp:Content ID="ContentProductos" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
 
-    <h4 class="text-gray-100 small">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
+    <h4 class="text-gray-100 small" style="text-align: right; margin-right: 1rem;">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
 
-    <div class="row bg-white rounded m-2 p-4 small">
+    <div class="col-11">
 
 
+
+        <%--Nav filtros--%>
+        <div class="row p-2 bg-dark text-white rounded-top align-middle">
+            <div class="col-3 display-6"> Filtrar lista </div>
+            <asp:TextBox CssClass="col m-1 form-control" placeholder="Ingrese nombre o descripción" ID="TxtBuscar" runat="server"></asp:TextBox>
+            <asp:LinkButton runat="server" ID="BtnBuscar" CssClass="col-1 btn btn-dark m-1" OnClick="BtnBuscar_Click"> <i class="fa-solid fa-magnifying-glass"></i></asp:LinkButton>
+            <asp:LinkButton runat="server" ID="BtnLimpiarBusqueda" CssClass="col-1 btn btn-dark m-1" ><i class="fa fa-trash" aria-hidden="true"></i></asp:LinkButton>
+        </div>
+
+        <div class="row p-2 bg-white justify-content-around align-middle">
+
+            <div class="col-2 ">
+                <div class="row"> <asp:DropDownList ID="DDLEstado" runat="server" CssClass="row-2 btn btn-dark btn-sm"></asp:DropDownList> </div>
+                <div class="row mt-2"> <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="row-2 btn btn-dark btn-sm"></asp:DropDownList> </div>
+            </div>
+
+            <div class="col-3 justify-content-between">
+                 <div class="row" style="text-align: center;">
+                    <asp:Panel ID="PanelValor" runat="server">
+                        <label> VALOR </label>
+                        <asp:TextBox ID="tbPrecioMenor" TextMode="Number" min="0" runat="server" Text="Min"  CssClass="col-3"></asp:TextBox>
+                        <label> - </label>
+                        <asp:TextBox ID="tbPrecioMayor" TextMode="Number" min="0" runat="server" Text="Max"  CssClass="col-3"></asp:TextBox>
+                    </asp:Panel>
+                </div>
+                <div class="row m-1">
+                    <asp:DropDownList ID="DDLPrecios" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
+                </div>
+            </div>
+
+            <div class="col-3 justify-content-between">
+                <div class="row" style="text-align: center;">
+                    <asp:Panel ID="PanelStock" runat="server">
+                        <label> STOCK </label>
+                        <asp:TextBox ID="tbStockMenor" TextMode="Number" min="0" runat="server" Text="Min" CssClass="col-3"></asp:TextBox>
+                        <label> - </label>
+                        <asp:TextBox ID="tbStockMayor" runat="server" TextMode="Number" min="0" Text="Max" CssClass="col-3"></asp:TextBox>
+                    </asp:Panel>
+                </div>
+                <div class="row m-1">
+                    <asp:DropDownList ID="DDLStock" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
+                </div>
+            </div>
+
+            <div class="col-1"> <asp:CheckBoxList ID="CheckBoxAtributos" runat="server" CssClass="small"></asp:CheckBoxList> </div>
+
+            <div class="col-2">
+                <div class="row"> <asp:Button runat="server" ID="BtnAplicarFiltros" CssClass="btn btn-dark btn-sm" Text="Aplicar filtros" OnClick="BtnAplicarFiltros_Click" /> </div>
+                <div class="row mt-1"> <asp:Button ID="btnLimpiarFiltro" runat="server" CssClass="btn btn-dark btn-sm" Text="Limpiar filtros" OnClick="btnLimpiarFiltro_Click" /></div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <%--Fin nav filtros--%>
+
+
+    <%--    Grid View Lista productos--%>
+    <div class="row bg-white rounded m-2 p-4">
+
+        <asp:UpdatePanel runat="server">
+            <ContentTemplate>
+                <asp:GridView ID="GVProductos" runat="server" AutoGenerateColumns="false"
+                    OnRowDataBound="GVProductos_RowDataBound"
+                    CssClass="table small">
+                    <HeaderStyle HorizontalAlign="Center" VerticalAlign="Middle" CssClass="small" />
+                    <RowStyle HorizontalAlign="Left" VerticalAlign="Middle" CssClass="small" />
+                    <Columns>
+                        <asp:BoundField HeaderText="Nombre" DataField="Nombre" HeaderStyle-CssClass="columna-grilla" />
+                        <asp:BoundField HeaderText="Categoria" DataField="Categoria" HeaderStyle-CssClass="columna-grilla" />
+                        <asp:BoundField HeaderText="Valor" DataFormatString="{0:C}" DataField="Valor" HeaderStyle-CssClass="columna-grilla" />
+                        <asp:BoundField HeaderText="Vegano" DataField="AptoVegano" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField HeaderText="Celiaco" DataField="AptoCeliaco" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField HeaderText="Alcohol" DataField="Alcohol" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField HeaderText="Stock" DataField="Stock" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField HeaderText="Estado" DataField="Activo" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField HeaderText="Tiempo Cocción" DataField="TiempoCoccion" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
+
+
+
+                        <asp:TemplateField HeaderText="Stock" HeaderStyle-Width="150px" ItemStyle-HorizontalAlign="Center">
+                            <ItemTemplate>
+                                <asp:Button runat="server" OnClick="BtnAgregarStock_Click" ID="BtnAgregarStock" Text="+" ToolTip="Sumar Stock" CssClass="btn btn-dark" CommandArgument='<%#Eval("Id") %>' />
+                                <asp:TextBox runat="server" TextMode="Number" min="0" ID="tbAgregarStock" CssClass="col-4"></asp:TextBox>
+                                <asp:Button ID="BtnQuitarStock" runat="server" Text="-" ToolTip="Restar Producto" OnClick="BtnQuitarStock_Click" CommandArgument='<%#Eval("Id")%>' CssClass="btn btn-dark" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:Button ID="btnModificarProducto" runat="server" Text="🖍" ToolTip="Modificar Producto" OnClick="btnModificarProducto_Click" CommandArgument='<%#Eval("Id")%>' data-bs-toggle="modal" data-bs-target="#modalModificarProductos" CssClass="btn btn-dark" />
+                                <asp:Button runat="server" Text="🗑" OnClick="EliminarProducto" ToolTip="Eliminar Producto Permanentemente" CommandArgument='<%#Eval("Id")%>' CssClass="btn btn-dark" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+
+
+                    </Columns>
+
+                </asp:GridView>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+
+
+    </div>
+
+
+    <%--BOTONERA--%>
+    <div class="row bg-white rounded p-2  m-2 rounded justify-content-center">
+
+        <div class="col-2 me-2 btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalProductos" title="Agregar Nuevo Producto">
+            <i class="row fa fa-cutlery align-items-center justify-content-center" style="font-size: 3rem;" aria-hidden="true"></i>
+            <p class="h5">Nuevo producto</p>
+        </div>
+
+        <div class="col-2 me-2 btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalCategorias" title="Menú Categorías">
+            <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
+            <p class="h5">Categorias</p>
+        </div>
+
+
+
+<%--        <div class="col-2 me-2 btn btn-dark" title="Modificar Selección" data-bs-toggle="modal" data-bs-target="#modalEditarLote">
+            <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
+            <p class="h5">Lote</p>
+        </div>--%>
+
+        <div class="col-2 me-2 btn btn-dark" title="Eliminar Selección"  data-bs-toggle="modal" data-bs-target="#modalEliminarLote">
+            <i class="row fa fa-trash  align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
+            
+               <p class="h5">Lote</p>
+         
+        </div>
+
+
+
+        
         <!-- Modal Nuevo Producto-->
         <div class="modal fade" id="modalProductos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -394,160 +533,6 @@
 
 
 
-        <%--Nav filtros--%>
-        <div class="row p-2">
-            <div class="col-2">
-                <p class="h2">Filtrar lista</p>
-            </div>
-            <asp:TextBox CssClass="col m-1 form-control" placeholder="Ingrese nombre o descripción" ID="TxtBuscar" runat="server"></asp:TextBox>
-            <asp:LinkButton runat="server" ID="BtnBuscar" CssClass="col-2 btn btn-dark m-1" OnClick="BtnBuscar_Click"> <i class="fa-solid fa-magnifying-glass"></i></asp:LinkButton>
-        </div>
-
-        <br />
-        <br />
-
-        <div class="row">
-
-            <div class="col-2 ">
-
-                <div class="row">
-                    <asp:DropDownList ID="DDLEstado" runat="server" CssClass="row-2 btn btn-dark btn-sm"></asp:DropDownList>
-                </div>
-
-                <div class="row mt-2">
-                    <asp:DropDownList ID="DDLCategorias" runat="server" CssClass="row-2 btn btn-dark btn-sm"></asp:DropDownList>
-                </div>
-
-            </div>
-
-
-
-            <div class="col-2">
-                <div class="row-2 ">
-                    <asp:Panel ID="PanelValor" runat="server">
-                        <label class="small">VALOR</label>
-                        <asp:TextBox ID="tbPrecioMenor" TextMode="Number" min="0" runat="server" Text="Min" CssClass="col-md-3 pr-4"></asp:TextBox>
-                        <label>- </label>
-                        <asp:TextBox ID="tbPrecioMayor" TextMode="Number" min="0" runat="server" Text="Max" CssClass="col-md-3 pr-4"></asp:TextBox>
-                    </asp:Panel>
-                </div>
-                <div class="row-2 mt-2">
-                    <asp:DropDownList ID="DDLPrecios" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
-                </div>
-            </div>
-            <div class="col-2">
-                <div class="row-2 ">
-                    <asp:Panel ID="PanelStock" runat="server">
-                        <label class="small">STOCK</label>
-                        <asp:TextBox ID="tbStockMenor" TextMode="Number" min="0" runat="server" Text="Min" CssClass="col-md-3 pr-1"></asp:TextBox>
-                        <label>- </label>
-                        <asp:TextBox ID="tbStockMayor" runat="server" TextMode="Number" min="0" Text="Max" CssClass="col-md-3 pr-1"></asp:TextBox>
-                    </asp:Panel>
-                </div>
-                <div class="row-2 mt-2">
-                    <asp:DropDownList ID="DDLStock" runat="server" CssClass="btn btn-dark btn-sm"></asp:DropDownList>
-                </div>
-            </div>
-
-            <div class="col-2">
-
-                <asp:CheckBoxList ID="CheckBoxAtributos" runat="server"></asp:CheckBoxList>
-
-            </div>
-
-            <div class="col-2 p">
-                <div class="row">
-                    <asp:Button runat="server" ID="BtnAplicarFiltros" CssClass="btn btn-dark" Text="Aplicar filtros" OnClick="BtnAplicarFiltros_Click" />
-                </div>
-                <div class="row pt-1">
-                    <asp:Button ID="btnLimpiarFiltro" runat="server" CssClass="btn btn-dark" Text="Limpiar filtros" OnClick="btnLimpiarFiltro_Click" />
-                </div>
-            </div>
-
-
-        </div>
-
-    </div>
-
-    <%--Fin nav filtros--%>
-
-
-    <%--    Grid View Lista productos--%>
-    <div class="row bg-white rounded m-2 p-4">
-
-        <asp:UpdatePanel runat="server">
-            <ContentTemplate>
-                <asp:GridView ID="GVProductos" runat="server" AutoGenerateColumns="false"
-                    OnRowDataBound="GVProductos_RowDataBound"
-                    CssClass="table small">
-                    <HeaderStyle HorizontalAlign="Center" VerticalAlign="Middle" CssClass="small" />
-                    <RowStyle HorizontalAlign="Left" VerticalAlign="Middle" CssClass="small" />
-                    <Columns>
-                        <asp:BoundField HeaderText="Nombre" DataField="Nombre" HeaderStyle-CssClass="columna-grilla" />
-                        <asp:BoundField HeaderText="Categoria" DataField="Categoria" HeaderStyle-CssClass="columna-grilla" />
-                        <asp:BoundField HeaderText="Valor" DataFormatString="{0:C}" DataField="Valor" HeaderStyle-CssClass="columna-grilla" />
-                        <asp:BoundField HeaderText="Vegano" DataField="AptoVegano" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField HeaderText="Celiaco" DataField="AptoCeliaco" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField HeaderText="Alcohol" DataField="Alcohol" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField HeaderText="Stock" DataField="Stock" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField HeaderText="Estado" DataField="Activo" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField HeaderText="Tiempo Cocción" DataField="TiempoCoccion" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
-
-
-
-                        <asp:TemplateField HeaderText="Stock" HeaderStyle-Width="150px" ItemStyle-HorizontalAlign="Center">
-                            <ItemTemplate>
-                                <asp:Button runat="server" OnClick="BtnAgregarStock_Click" ID="BtnAgregarStock" Text="+" ToolTip="Sumar Stock" CssClass="btn btn-dark" CommandArgument='<%#Eval("Id") %>' />
-                                <asp:TextBox runat="server" TextMode="Number" min="0" ID="tbAgregarStock" CssClass="col-4"></asp:TextBox>
-                                <asp:Button ID="BtnQuitarStock" runat="server" Text="-" ToolTip="Restar Producto" OnClick="BtnQuitarStock_Click" CommandArgument='<%#Eval("Id")%>' CssClass="btn btn-dark" />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:Button ID="btnModificarProducto" runat="server" Text="🖍" ToolTip="Modificar Producto" OnClick="btnModificarProducto_Click" CommandArgument='<%#Eval("Id")%>' data-bs-toggle="modal" data-bs-target="#modalModificarProductos" CssClass="btn btn-dark" />
-                                <asp:Button runat="server" Text="🗑" OnClick="EliminarProducto" ToolTip="Eliminar Producto Permanentemente" CommandArgument='<%#Eval("Id")%>' CssClass="btn btn-dark" />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-
-
-
-                    </Columns>
-
-                </asp:GridView>
-            </ContentTemplate>
-        </asp:UpdatePanel>
-
-
-    </div>
-
-
-    <%--BOTONERA--%>
-    <div class="row bg-white rounded p-2  m-2 rounded justify-content-center">
-
-        <div class="col-2 me-2 btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalProductos" title="Agregar Nuevo Producto">
-            <i class="row fa fa-cutlery align-items-center justify-content-center" style="font-size: 3rem;" aria-hidden="true"></i>
-            <p class="h5">Nuevo producto</p>
-        </div>
-
-        <div class="col-2 me-2 btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalCategorias" title="Menú Categorías">
-            <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
-            <p class="h5">Categorias</p>
-        </div>
-
-
-
-<%--        <div class="col-2 me-2 btn btn-dark" title="Modificar Selección" data-bs-toggle="modal" data-bs-target="#modalEditarLote">
-            <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
-            <p class="h5">Lote</p>
-        </div>--%>
-
-        <div class="col-2 me-2 btn btn-dark" title="Eliminar Selección"  data-bs-toggle="modal" data-bs-target="#modalEliminarLote">
-            <i class="row fa fa-trash  align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
-            
-               <p class="h5">Lote</p>
-         
-        </div>
 
 
     </div>
