@@ -714,6 +714,11 @@ namespace RestoApp
             }
 
         }
+
+        protected void GVProductos_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+           
+        }
     }
     }
 

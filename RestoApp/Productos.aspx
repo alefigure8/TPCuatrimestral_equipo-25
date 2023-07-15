@@ -7,9 +7,10 @@
 
     <h4 class="text-gray-100 small" style="text-align: right; margin-right: 1rem;">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
 
-    <div class="col-11">
+    <div class="row col-12 justify-content-between">
 
 
+            <div class="col-10">
 
         <%--Nav filtros--%>
         <div class="row p-2 bg-dark text-white rounded-top align-middle">
@@ -18,7 +19,6 @@
             <asp:LinkButton runat="server" ID="BtnBuscar" CssClass="col-1 btn btn-dark m-1" OnClick="BtnBuscar_Click"> <i class="fa-solid fa-magnifying-glass"></i></asp:LinkButton>
             <asp:LinkButton runat="server" ID="BtnLimpiarBusqueda" CssClass="col-1 btn btn-dark m-1" ><i class="fa fa-trash" aria-hidden="true"></i></asp:LinkButton>
         </div>
-
         <div class="row p-2 bg-white justify-content-around align-middle">
 
             <div class="col-2 ">
@@ -54,23 +54,19 @@
                 </div>
             </div>
 
-            <div class="col-1"> <asp:CheckBoxList ID="CheckBoxAtributos" runat="server" CssClass="small"></asp:CheckBoxList> </div>
+            <div class="col-2" style="text-align: center;"> <asp:CheckBoxList ID="CheckBoxAtributos" runat="server" CssClass="small"></asp:CheckBoxList> </div>
 
             <div class="col-2">
                 <div class="row"> <asp:Button runat="server" ID="BtnAplicarFiltros" CssClass="btn btn-dark btn-sm" Text="Aplicar filtros" OnClick="BtnAplicarFiltros_Click" /> </div>
                 <div class="row mt-1"> <asp:Button ID="btnLimpiarFiltro" runat="server" CssClass="btn btn-dark btn-sm" Text="Limpiar filtros" OnClick="btnLimpiarFiltro_Click" /></div>
             </div>
 
-
         </div>
-
-    </div>
-
     <%--Fin nav filtros--%>
 
 
     <%--    Grid View Lista productos--%>
-    <div class="row bg-white rounded m-2 p-4">
+    <div class="row bg-white rounded-bottom"  style="max-height:500px; overflow-y:scroll;"> 
 
         <asp:UpdatePanel runat="server">
             <ContentTemplate>
@@ -90,8 +86,6 @@
                         <asp:BoundField HeaderText="Estado" DataField="Activo" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
                         <asp:BoundField HeaderText="Tiempo Cocción" DataField="TiempoCoccion" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />
 
-
-
                         <asp:TemplateField HeaderText="Stock" HeaderStyle-Width="150px" ItemStyle-HorizontalAlign="Center">
                             <ItemTemplate>
                                 <asp:Button runat="server" OnClick="BtnAgregarStock_Click" ID="BtnAgregarStock" Text="+" ToolTip="Sumar Stock" CssClass="btn btn-dark" CommandArgument='<%#Eval("Id") %>' />
@@ -100,7 +94,7 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
-                        <asp:TemplateField>
+                        <asp:TemplateField  HeaderStyle-Width="100px" ItemStyle-HorizontalAlign="Center">
                             <ItemTemplate>
                                 <asp:Button ID="btnModificarProducto" runat="server" Text="🖍" ToolTip="Modificar Producto" OnClick="btnModificarProducto_Click" CommandArgument='<%#Eval("Id")%>' data-bs-toggle="modal" data-bs-target="#modalModificarProductos" CssClass="btn btn-dark" />
                                 <asp:Button runat="server" Text="🗑" OnClick="EliminarProducto" ToolTip="Eliminar Producto Permanentemente" CommandArgument='<%#Eval("Id")%>' CssClass="btn btn-dark" />
@@ -118,37 +112,42 @@
 
     </div>
 
+            </div>
 
-    <%--BOTONERA--%>
-    <div class="row bg-white rounded p-2  m-2 rounded justify-content-center">
+        <%--BOTONERA--%>
+    <div class="col row bg-white rounded p-2 align-middle" style="margin-left: 5px; text-align: center;">
 
-        <div class="col-2 me-2 btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalProductos" title="Agregar Nuevo Producto">
-            <i class="row fa fa-cutlery align-items-center justify-content-center" style="font-size: 3rem;" aria-hidden="true"></i>
-            <p class="h5">Nuevo producto</p>
+        <div class="col-12 btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalProductos" title="Agregar Nuevo Producto">
+           
+                 <i class="row fa fa-cutlery align-items-center justify-content-center" aria-hidden="true" style="font-size: 5rem;"></i>
+           <div> Nuevo producto </div>            
         </div>
 
-        <div class="col-2 me-2 btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalCategorias" title="Menú Categorías">
-            <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
-            <p class="h5">Categorias</p>
-        </div>
-
-
-
-<%--        <div class="col-2 me-2 btn btn-dark" title="Modificar Selección" data-bs-toggle="modal" data-bs-target="#modalEditarLote">
-            <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
-            <p class="h5">Lote</p>
-        </div>--%>
-
-        <div class="col-2 me-2 btn btn-dark" title="Eliminar Selección"  data-bs-toggle="modal" data-bs-target="#modalEliminarLote">
-            <i class="row fa fa-trash  align-items-center justify-content-center" aria-hidden="true" style="font-size: 3rem;"></i>
-            
-               <p class="h5">Lote</p>
-         
+        <div class="col-12 btn btn-dark mt-1" data-bs-toggle="modal" data-bs-target="#modalCategorias" title="Menú Categorías">
+            <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 5rem;"></i>
+            Categorias
         </div>
 
 
 
+        <div class="col-12 btn btn-dark mt-1" title="Modificar Selección" data-bs-toggle="modal" data-bs-target="#modalEditarLote">
+            <i class="row fa fa-file align-items-center justify-content-center" aria-hidden="true" style="font-size: 5rem;"></i>
+            Modificar Lote
+        </div>
+
+        <div class="col-12 btn btn-dark mt-1" title="Eliminar Selección"  data-bs-toggle="modal" data-bs-target="#modalEliminarLote">
+            <i class="row fa fa-trash  align-items-center justify-content-center" aria-hidden="true" style="font-size: 5rem;"></i>
+              Eliminar Lote
+        </div>
+
+        </div>
         
+
+
+
+    </div>
+
+
         <!-- Modal Nuevo Producto-->
         <div class="modal fade" id="modalProductos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -531,11 +530,6 @@
 
 
 
-
-
-
-
-    </div>
 
 
 
