@@ -114,8 +114,7 @@
                         <%}%>
                         <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
                     { %>
-                        <li><a href="Pedidos.aspx?abiertos=true" class="nav-link ps-3">Pedidos Abiertos</a></li>
-                        <li><a href="Pedidos.aspx?dia=<%: DateTime.Now.ToString("yyyy-MM-dd") %>" class="nav-link ps-3">Pedidos Del Dia</a></li>
+                        <li><a href="Pedidos.aspx" class="nav-link ps-3">Pedidos del día</a></li>
                         <%}%>
                     </ul>
                 </div>

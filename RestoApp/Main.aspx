@@ -627,7 +627,7 @@
                         <p class="fw-bold">Estado: <span class="fw-normal">${estado}</span></p>
                         <p class="fw-bold">Mesero Asignado: <span class="fw-normal">${servicio.mesero}</span></p>
                         <p class="fw-bold">Apertura: <span class="fw-normal">${servicio.apertura}</span></p>
-                        <p class="fw-bold">Pedidos: <span class="fw-normal"><a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="Pedidos.aspx?pedido=${servicio.servicio}">Ver Listado</a></span></p>
+                        <p class="fw-bold">Pedidos: <span class="fw-normal"><a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="Pedidos.aspx?servicio=${servicio.servicio}">Ver Listado</a></span></p>
                         <p class="fw-bold">Cobrado: <span class="fw-normal">${servicio.cobrado ? 'Cobrado' : 'No cobrado'}</span></p>
                         `;
                         }
@@ -865,20 +865,13 @@
             //Evento para ver todos los pedidos que tiene la mesa
             btnLista.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log("Ver listado")
-                //Mandamos datos a CodeBehind
-                //mandarDatos('Main', 'AbrirServicio')
-                //MOSTRAR LISTADO DE PEDIDO. ¿lINK CON QUERY?
+                window.location.href = `Pedidos.aspx?servicio=${servicio?.servicio}`;
             })
 
             //Evento para mostrar ticket
             btnTicket.addEventListener('click', (e) => {
                 e.preventDefault();
                 window.location.href = `Tickets.aspx?servicio=${servicio?.servicio}`;
-                //Mandamos datos a CodeBehind
-                //let data = [{ mesa: servicio?.mesa, servicio: servicio?.servicio }];
-                //mandarDatos('Main', 'EmitirTicket', data, e)
-                //MOSTRAR TICKET. ¿LINK CON QUERY?
             })
 
         }
