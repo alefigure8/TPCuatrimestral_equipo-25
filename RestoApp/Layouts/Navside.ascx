@@ -97,7 +97,7 @@
                         <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
                     { %>
                         <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets Abiertos</a></li>
-                        <li><a href="#" class="nav-link ps-3">Tickets Del Dia</a></li>
+                        <li><a href="Tickets.aspx?dia=<%: DateTime.Now.ToString("yyyy-MM-dd") %>" class="nav-link ps-3">Tickets Del Dia</a></li>
                         <%}%>
                     </ul>
                 </div>

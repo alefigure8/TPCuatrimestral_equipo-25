@@ -47,7 +47,10 @@
 
                     <div class="border-top w-100 pt-3">
                         <p><span class="fw-semibold">Total: $</span> <%# CalcularPrecio() %> </p>
+                        <%if (dia == null)
+                            {  %>
                         <asp:Button ID="btnTicket" runat="server" OnClick="btnCobrar_Click" class="btn btn-dark w-100" Text="Cobrar" CommandArgument='<%# Eval("Id") %>'/>
+                        <%} %>
                     </div>
                 </section>
 
