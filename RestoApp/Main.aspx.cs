@@ -294,7 +294,7 @@ namespace RestoApp
 
 			foreach (Servicio item in listaMesa)
             {
-			    ddlPedidosGerente.Items.Add(new ListItem($"Mesa {item.Mesa}", item.Mesa.ToString()));
+			    ddlPedidosGerente.Items.Add(new ListItem($"Pedidos de la Mesa {item.Mesa}", item.Mesa.ToString()));
 				ddlPedidosGerente.Attributes["class"] = "dropdown-item";
 			}
 		}

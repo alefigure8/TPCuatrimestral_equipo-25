@@ -119,7 +119,7 @@
                 <h4 class="mb-3">Pedidos Estado</h4>
 
                         <div class="d-flex gap-3 mb-3 justify-content-start">
-                            <asp:DropDownList runat="server" ID="ddlPedidosGerente" CssClass="dropdown dropdown-toggle w-25"></asp:DropDownList>
+                            <asp:DropDownList runat="server" ID="ddlPedidosGerente" CssClass="form-control w-50"></asp:DropDownList>
                             <asp:Button runat="server" CssClass="btn btn-dark w-25" Text="Buscar" OnClick="BtnBuscarPedidos_Click"/>
                         </div>
                         <div>
@@ -342,11 +342,11 @@
             cursor: pointer;
         }
 
-            .mesa p {
-                font-size: 15px;
-                font-weight: bold;
-                margin: 0;
-            }
+        .mesa p {
+            font-size: 15px;
+            font-weight: bold;
+            margin: 0;
+        }
 
         .mesaTop {
             width: 100%;
@@ -393,12 +393,12 @@
             cursor: pointer;
         }
 
-            .close:hover,
-            .close:focus {
-                color: #000;
-                text-decoration: none;
-                cursor: pointer;
-            }
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
         .botonPedido {
             cursor: pointer;
@@ -416,40 +416,40 @@
             border-color: #FFC107;
         }
 
-            .btnAbrirMeasa:hover {
-                background-color: #ffc107c4;
-                border-color: #ffc107c4;
-            }
+        .btnAbrirMeasa:hover {
+            background-color: #ffc107c4;
+            border-color: #ffc107c4;
+        }
 
         .btnAbrirPedido {
             background-color: #0d6efd;
             border-color: #0d6efd;
         }
 
-            .btnAbrirPedido:hover {
-                background-color: #0d6dfdc4;
-                border-color: #0d6dfdc4;
-            }
+        .btnAbrirPedido:hover {
+            background-color: #0d6dfdc4;
+            border-color: #0d6dfdc4;
+        }
 
         .btnPedidos {
             background-color: #198754;
             border-color: #198754;
         }
 
-            .btnPedidos:hover {
-                background-color: #198754c2;
-                border-color: #198754c2;
-            }
+        .btnPedidos:hover {
+            background-color: #198754c2;
+            border-color: #198754c2;
+        }
 
         .btnTicket {
             background-color: #dc3545;
             border-color: #dc3545;
         }
 
-            .btnTicket:hover {
-                background-color: #dc3546c4;
-                border-color: #dc3546c4;
-            }
+        .btnTicket:hover {
+            background-color: #dc3546c4;
+            border-color: #dc3546c4;
+        }
 
         .bg-abierto {
             background-color: #74b816;
@@ -467,6 +467,13 @@
 
         .modalDP .modal-content {
             width: 100%;
+        }
+
+        .fa-circle-check{
+            font-size: 100px;
+        }
+        .fa-circle-xmark{
+            font-size: 100px;
         }
     </style>
     <!-- Fin Styles Mesas -->
@@ -597,10 +604,6 @@
                 mainDiv.appendChild(mesaBottom);
                 sectionMesa.appendChild(mainDiv);
 
-
-                //Titulo
-                modalTitulo.textContent = "Mesero Asignado";
-
                 let estado;
                 //Texto
                 if (servicio) {
@@ -612,15 +615,14 @@
                 //Evento de la mesa
                 let mesaEvento = document.getElementById(idMesa);
 
+                //Si isMesa tiene número entonces tiene servicio
+                let contieneNumero = /\d/.test(idMesa)
 
                 mesaEvento.addEventListener('click', () => {
                     if (servicio) {
 
                         //En caso de que la mesa estén con un servicio abierto
-                        let contieneNumero = /\d/.test(idMesa)
-
                         if (contieneNumero) {
-
                             modal.style.display = "block";
                             contenidoModal.innerHTML = "";
                             contenidoModal.innerHTML += `
@@ -628,7 +630,7 @@
                         <p class="fw-bold">Estado: <span class="fw-normal">${estado}</span></p>
                         <p class="fw-bold">Mesero Asignado: <span class="fw-normal">${servicio.mesero}</span></p>
                         <p class="fw-bold">Apertura: <span class="fw-normal">${servicio.apertura}</span></p>
-                        <p class="fw-bold">Cierre: <span class="fw-normal">${servicio.cierre}</span></p>
+                        <p class="fw-bold">Pedidos: <span class="fw-normal"><a class="link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" href="Pedidos.aspx?pedido=${servicio.servicio}">Ver Listado</a></span></p>
                         <p class="fw-bold">Cobrado: <span class="fw-normal">${servicio.cobrado ? 'Cobrado' : 'No cobrado'}</span></p>
                         `;
                         }
@@ -636,8 +638,6 @@
                     } else {
 
                         //En caso de que la mesa no esté con un servicio abierto
-                        let contieneNumero = /\d/.test(idMesa)
-
                         if (contieneNumero) {
                             modal.style.display = "block";
                             contenidoModal.innerHTML = "";
@@ -651,6 +651,9 @@
                         `;
                         }
                     }
+
+                    //Titulo
+                    modalTitulo.innerHTML = `<div class="d-flex align-items-center gap-3"><h3 class="m-0">Información Mesa</h3><i class="ms-2 fs-6 fa-solid ${servicio ? 'fa-circle text-success' : 'fa-circle text-warning'}"></i></div>`;
                 })
             }
         }
@@ -783,14 +786,25 @@
 
         function alertaModal(msg, mode) {
             console.log(msg, mode)
-            modalTitulo.textContent = "Mensaje";
+            modalTitulo.textContent = "";
             modal.style.display = "block";
             contenidoModal.innerHTML = "";
 
             if (mode == "error") {
-                contenidoModal.innerHTML = `<p class="text-danger">${msg}</p>`
+                contenidoModal.innerHTML = `
+                    <div class="d-flex justify-content-center mb-4">
+                    <i class="fa-solid fa-circle-xmark" style="color: #d20000;"></i>
+                        <i class="fa-solid fa-circle-check" style="color: #158b08;"></i>  
+                    </div >
+                    <h1 class="text-center mb-4">Error!</h1>
+                    <p class="text-center">${msg}</p>`
             } else {
-                contenidoModal.innerHTML = `<p class="text-success">${msg}</p>`
+                contenidoModal.innerHTML = `
+                    <div class="d-flex justify-content-center mb-4">
+                        <i class="fa-solid fa-circle-check" style="color: #158b08;"></i>  
+                    </div >
+                    <h1 class="text-center mb-4">Correcto!</h1>
+                    <p class="text-center">${msg}</p>`
             }
 
         }
