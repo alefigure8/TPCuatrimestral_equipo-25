@@ -229,7 +229,7 @@
                 </div>
             </div>
         </div>
-        <!-- Modal -->
+        <!-- Fin Modal Nuevo Producto -->
 
 
         <!-- Modal Modificar Producto-->
@@ -387,9 +387,7 @@
             </div>
         </div>
 
-
-
-        <!-- Modal -->
+        <!-- Fin Modal Categorias -->
 
 
         <%--Modal Editar lote--%>
