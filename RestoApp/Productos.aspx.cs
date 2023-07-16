@@ -42,23 +42,12 @@ namespace RestoApp
         }
         public void ListarProductos()
         {
-            if (((List<Producto>)Session["ListaProductos"]) == null)
-            {
-                ProductoNegocio productoNegocio = new ProductoNegocio();
-                Session.Add("ListaProductos", productoNegocio.ListarProductos());
-            }
+
+            ProductoNegocio productoNegocio = new ProductoNegocio();
+            Session.Add("ListaProductos", productoNegocio.ListarProductos());
+
             GVProductos.DataSource = Session["ListaProductos"];
             GVProductos.DataBind();
-        }
-        public void ActualizarGV(List<Producto> ListaFiltrada)
-        {
-
-            GVProductos.DataSource = ListaFiltrada;
-            GVProductos.DataBind();
-        }
-        protected void LimpiarListaFiltrada()
-        {
-            Session["ListaFiltrada"] = null;
         }
 
         // Carga de DDLs en Pagina principal y modales
@@ -141,14 +130,13 @@ namespace RestoApp
         {
             if (TxtBuscar.Text.Count() > 0 && TxtBuscar.Text != "Ingrese nombre o descripción")
             {
-                LimpiarListaFiltrada();
                 List<Producto> ListaFiltrada = ((List<Producto>)Session["ListaProductos"]).FindAll(x => x.Nombre.ToUpper().Contains(TxtBuscar.Text.ToUpper()) || x.Descripcion.ToUpper().Contains(TxtBuscar.Text.ToUpper()));
-                ActualizarGV(ListaFiltrada);
+                GVProductos.DataSource = ListaFiltrada;
+                GVProductos.DataBind();
             }
         }
         protected void BtnAplicarFiltros_Click(object sender, EventArgs e)
         {
-            LimpiarListaFiltrada();
             List<Producto> ListaFiltrada;
             ListaFiltrada = ((List<Producto>)Session["ListaProductos"]);
             bool SinCamposVacios = false;
@@ -261,7 +249,8 @@ namespace RestoApp
             if (SinCamposVacios == true)
             {
                 Session.Add("ListaFiltrada", ListaFiltrada);
-                ActualizarGV(ListaFiltrada);
+                GVProductos.DataSource = ListaFiltrada;
+                GVProductos.DataBind();
             }
 
 
@@ -269,7 +258,7 @@ namespace RestoApp
         protected void btnLimpiarFiltro_Click(object sender, EventArgs e)
         {
             ListarProductos();
-            LimpiarListaFiltrada();
+            Session["ListaFiltrada"] = null;
             LimpiarBotonesFiltros();
         }
         public List<Producto> OrdenarPorPrecio(List<Producto> ListaFiltrada)
