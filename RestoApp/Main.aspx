@@ -9,8 +9,8 @@
         runat="server">
         <ContentTemplate>
             <div class="d-flex align-items-center row">
-                <div class="d-flex align-items-center gap-3 mb-3 col-5">
-                    <h4 class="text-gray-100">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
+                <div class="d-flex align-items-center gap-3 mb-3 col-xl-5 col-lg-8 col-sm-12 m-2 p-3">
+                    <h4 class="fs-2 text-gray-100">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
                     <!-- Boton Mesero -->
                     <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
                         { %>
@@ -24,12 +24,12 @@
     <!-- Fin Updatea Panel Botón Mesero -->
 
     <!-- Agregar Mesas habilitadas, mozos habilitados, productos, -->
-    <div class="row content-fluid">
+    <div class="p-3 row content-fluid ">
 
         <!-- VISTA GERENTE -->
         <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Gerente)
             {%>
-        <div class="col-5">
+        <div class="col-xl-6 col-12 mt-3">
             <!-- Estado de las mesas -->
             <div class="bg-gray-100 rounded border-1 p-5">
                 <div class="d-flex">
@@ -46,7 +46,7 @@
             </div>
             <!-- Fin  Estado de las mesas -->
         </div>
-        <div class="col-5">
+        <div class="col-xl-6 col-12 mt-3">
             <div class="bg-gray-100 p-5 rounded border-1">
                 <div class="d-flex flex-column">
                     <div class="d-flex">
@@ -92,7 +92,7 @@
         </div>
 
         <!-- Tabla servicios abiertos-->
-        <div class="col-5 mt-3">
+        <div class="col-xl-6 col-12 mt-3">
             <div class="bg-gray-100 p-5 rounded border-1">
                 <h4>Mesas Estado</h4>
                 <asp:DataGrid ID="datagrid" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
@@ -113,37 +113,36 @@
             </div>
         </div>
         <!-- Fin Tabla servicios abiertos-->
+
         <!-- Tabla Pedidos abiertos-->
-        <div class="col-5 mt-3">
+        <div class="col-xl-6 col-12 mt-3">
             <div class="bg-gray-100 p-5 rounded border-1">
                 <h4 class="mb-3">Pedidos Estado</h4>
+                <div class="d-flex gap-3 mb-3 justify-content-start">
+                    <asp:DropDownList runat="server" ID="ddlPedidosGerente" CssClass="form-control w-50"></asp:DropDownList>
+                    <asp:Button runat="server" CssClass="btn btn-dark w-25" Text="Buscar" OnClick="BtnBuscarPedidos_Click"/>
+                </div>
+                <div class="d-flex gap-5 justify-content-between">
+                    <asp:Label runat="server" ID="lbCantidadPedidos"></asp:Label>
+                    <asp:Label runat="server" ID="lbPedidoMesero"></asp:Label>
+                </div>
 
-                        <div class="d-flex gap-3 mb-3 justify-content-start">
-                            <asp:DropDownList runat="server" ID="ddlPedidosGerente" CssClass="form-control w-50"></asp:DropDownList>
-                            <asp:Button runat="server" CssClass="btn btn-dark w-25" Text="Buscar" OnClick="BtnBuscarPedidos_Click"/>
-                        </div>
-                        <div class="d-flex gap-5 justify-content-between">
-                            <asp:Label runat="server" ID="lbCantidadPedidos"></asp:Label>
-                            <asp:Label runat="server" ID="lbPedidoMesero"></asp:Label>
-                        </div>
+                <asp:DataGrid ID="datagridPedidos" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
+                    <Columns>
+                        <asp:BoundColumn DataField="Mesa" HeaderText="Mesa" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                        <asp:BoundColumn DataField="PedidoComida" HeaderText="Pedido de Comida" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                        <asp:BoundColumn DataField="Actualización" HeaderText="Actualizacion" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                        <asp:BoundColumn DataField="Estado" HeaderText="Estado" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
 
-                        <asp:DataGrid ID="datagridPedidos" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
-                            <Columns>
-                                <asp:BoundColumn DataField="Mesa" HeaderText="Mesa" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-                                <asp:BoundColumn DataField="PedidoComida" HeaderText="Pedido de Comida" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-                                <asp:BoundColumn DataField="Actualización" HeaderText="Actualizacion" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-                                <asp:BoundColumn DataField="Estado" HeaderText="Estado" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
-
-                                <asp:TemplateColumn HeaderText="Estado">
-                                    <ItemTemplate>
-                                        <%# (string)Eval("Estado") != "Listo para entregar"  ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
-                                    </ItemTemplate>
-                                    <ItemStyle CssClass="bg-light p-2 rounded" />
-                                    <HeaderStyle CssClass="bg-light p-2 rounded" />
-                                </asp:TemplateColumn>
-                            </Columns>
-                        </asp:DataGrid>
-
+                        <asp:TemplateColumn HeaderText="Estado">
+                            <ItemTemplate>
+                                <%# (string)Eval("Estado") != "Listo para entregar"  ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
+                            </ItemTemplate>
+                            <ItemStyle CssClass="bg-light p-2 rounded" />
+                            <HeaderStyle CssClass="bg-light p-2 rounded" />
+                        </asp:TemplateColumn>
+                    </Columns>
+                </asp:DataGrid>
             </div>
         </div>
         <!-- Fin Tabla Pedidos abiertos-->
@@ -158,28 +157,20 @@
         <div class="row content-fluid" >
 
             <!-- SECCION MESAS ASIGNDAS -->
-             <div class="col-11 bg-dark text-white p-2 rounded-top display-6">
+             <div class="col-11 bg-dark text-gray-100 p-2 rounded-top display-6">
                     MIS MESAS   
                 </div>
             <section class="col-11 bg-white p-3 rounded-bottom justify-content-around ">
-               
                 <div class="row justify-content-around justify-items-start p-3" id="section-mesa-mesero">
-
-                    <!-- Mensaje de Mesas asignadas -->
                     <asp:Label runat="server" ID="lbSinMesasAsignadas"></asp:Label>
-
                     <!-- MESAS ASIGNADAS DESDE JS-->
-
                 </div>
             </section>
             <!-- FIN SECCION MESAS ASIGNDAS -->
 
-
-
             <%--SECCION PEDIDOS EN CURSO--%>
             <div class="col-11 bg-dark text-white p-2 mt-3 rounded-top display-6"> MIS PEDIDOS EN CURSO </div>
             <div class="col-11 bg-white p-3 justify-content-around content-fluid rounded-bottom">              
-
                 <div class="row">
                     <asp:UpdatePanel runat="server">
                         <ContentTemplate>
@@ -200,23 +191,19 @@
                         </ContentTemplate>
                     </asp:UpdatePanel>
                 </div>
-
             </div>
-
-
             <%--FIN SECCION PEDIDOS EN CURSO--%>
 
             <%--SECCION MENU RAPIDO--%>
-                     <div class="col-11 bg-dark text-white p-2 mt-3 rounded-top display-6">
-                         <div class="row">
-                               <div class="col-8 text-white">
+            <div class="col-11 bg-dark text-white p-2 mt-3 rounded-top display-6">
+                <div class="row">
+                     <div class="col-8 text-white">
                         <asp:UpdatePanel runat="server">
                             <ContentTemplate>
                                 <asp:Label ID="lbNumeroMesa" runat="server" >SIN MESA SELECCIONADA</asp:Label>
                             </ContentTemplate>
                         </asp:UpdatePanel>
                     </div>
-
                     <div class="col-3 d-flex justify-content-end">
                         <asp:UpdatePanel runat="server" ID="UPGuardarPedido">
                             <ContentTemplate>
@@ -225,61 +212,55 @@
                             </ContentTemplate>
                         </asp:UpdatePanel>
                     </div>
-                         </div>
-                  
-
                 </div>
+            </div>
 
             <div class="col-11 bg-white rounded-bottom p-2 justify-content-around ">
                 <div class="row p-2">
                      <%--PLATOS DISPONIBLES--%>
-                <div class="col-6">
-                    <label class="row h3 p-1">Platos Disponibles:</label>
-                    <asp:Repeater runat="server" ID="PlatosDelDia">
-                        <ItemTemplate>
-                            <div class="row">
-                                <asp:Label runat="server" CssClass="col"><%#Eval("Nombre")%> </asp:Label>
-                                <div class="col">
-                                    <asp:UpdatePanel runat="server" CssClass="row">
-                                        <ContentTemplate>
-                                            <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" ToolTip="Ingrese Cantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
-                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
-                                            <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖"  OnClick="BtnCancelarAgregarA_Click" ToolTip="Cancelar" Visible="false"/>
-                                        </ContentTemplate>
-                                    </asp:UpdatePanel>
+                    <div class="col-6">
+                        <label class="row h3 p-1">Platos Disponibles:</label>
+                        <asp:Repeater runat="server" ID="PlatosDelDia">
+                            <ItemTemplate>
+                                <div class="row">
+                                    <asp:Label runat="server" CssClass="col"><%#Eval("Nombre")%> </asp:Label>
+                                    <div class="col">
+                                        <asp:UpdatePanel runat="server" CssClass="row">
+                                            <ContentTemplate>
+                                                <asp:TextBox runat="server" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ID="tbCantidad" ToolTip="Ingrese Cantidad" Type="Number" min="1" Text="1" Visible="false"></asp:TextBox>
+                                                <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido" OnClick="AgregarAPedido_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
+                                                <asp:Button runat="server" ID="BtnCancelarAgregarA" CssClass="col btn btn-dark btn-sm small m-1" Text="✖"  OnClick="BtnCancelarAgregarA_Click" ToolTip="Cancelar" Visible="false"/>
+                                            </ContentTemplate>
+                                        </asp:UpdatePanel>
+                                    </div>
                                 </div>
-                            </div>
-                        </ItemTemplate>
-                    </asp:Repeater>
-                </div>
-
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </div>
 
                 <%--BEBIDAS DISPONIBLES--%>
-                <div class="col-6 ">
-                    <label class="row h3 p-1">Bebidas Disponibles:</label>
-                    <asp:Repeater runat="server" ID="BebidasDelDia">
-                        <ItemTemplate>
-                            <div class="row">
-                                <asp:Label runat="server" CssClass="col"><%#Eval("Nombre")%></asp:Label>
-                                <div class="col">
-                                    <asp:UpdatePanel runat="server" CssClass="row">
-                                        <ContentTemplate>
-                                            <asp:TextBox runat="server" ID="tbCantidad2" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ToolTip="Ingrese Cantidad" Type="Number" min="1" Visible="false" Text="1"></asp:TextBox>
-                                            <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido2" OnClick="AgregarAPedido2_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
-                                            <asp:Button runat="server" ID="BtnCancelarAgregarA2" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA2_Click" ToolTip="Cancelar" />
-                                        </ContentTemplate>
-                                    </asp:UpdatePanel>
+                    <div class="col-6 ">
+                        <label class="row h3 p-1">Bebidas Disponibles:</label>
+                        <asp:Repeater runat="server" ID="BebidasDelDia">
+                            <ItemTemplate>
+                                <div class="row">
+                                    <asp:Label runat="server" CssClass="col"><%#Eval("Nombre")%></asp:Label>
+                                    <div class="col">
+                                        <asp:UpdatePanel runat="server" CssClass="row">
+                                            <ContentTemplate>
+                                                <asp:TextBox runat="server" ID="tbCantidad2" CssClass="col-1 form-control small" Style="max-width: 100px; display: inline; box-shadow: 0 2px 4px rgba(0, 0, 0, 0);" ToolTip="Ingrese Cantidad" Type="Number" min="1" Visible="false" Text="1"></asp:TextBox>
+                                                <asp:Button runat="server" CssClass="col btn btn-dark btn-sm small m-1" Text="✚" ID="AgregarAPedido2" OnClick="AgregarAPedido2_Click" CommandArgument='<%#Eval("Id")%>' ToolTip="Agregar a pedido" />
+                                                <asp:Button runat="server" ID="BtnCancelarAgregarA2" CssClass="col btn btn-dark btn-sm small m-1" Text="✖" Visible="false" OnClick="BtnCancelarAgregarA2_Click" ToolTip="Cancelar" />
+                                            </ContentTemplate>
+                                        </asp:UpdatePanel>
+                                    </div>
                                 </div>
-                            </div>
-                        </ItemTemplate>
-                    </asp:Repeater>
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </div>
                 </div>
-                </div>
-               
-
             </div>
         </div>
-
     </div>
     <% } %>
 
@@ -318,6 +299,7 @@
     </div>
 
     <!--************* ESTILOS Y SCRIPTS *************** -->
+
     <!-- Styles Mesas -->
     <style>
         :root {
@@ -362,7 +344,7 @@
         }
 
         #modalMesas {
-            display: none; /* Ocultar el modal por defecto */
+            display: none;
             position: fixed;
             z-index: 1;
             left: 0;
@@ -370,7 +352,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4); /* Fondo semitransparente */
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
         .modal-content {
@@ -682,11 +664,11 @@
                 div2.className = "background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center";
 
                 var icon = document.createElement("i");
+
                 if (!servicio?.cierre && !servicio?.cobrado)
                     icon.className = "fa-solid fa-utensils fs-4";
                 else
                     icon.className = "fa-solid fa-dollar fs-4";
-
 
                 div2.appendChild(icon);
                 div1.appendChild(div2);
