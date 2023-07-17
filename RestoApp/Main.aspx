@@ -8,7 +8,7 @@
     <asp:UpdatePanel ID="UpdatePanel1"
         runat="server">
         <ContentTemplate>
-            <div class="d-flex align-items-center row">
+            <div class="col-12 d-flex align-items-center row">
                 <div class="d-flex align-items-center gap-3 mb-3 col-xl-5 col-lg-8 col-sm-12 m-2 p-3">
                     <h4 class="fs-2 text-gray-100">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
                     <!-- Boton Mesero -->
@@ -157,10 +157,10 @@
         <div class="row content-fluid" >
 
             <!-- SECCION MESAS ASIGNDAS -->
-             <div class="col-11 bg-dark text-gray-100 p-2 rounded-top display-6">
+             <div class="col-12  bg-dark text-gray-100 p-2 rounded-top display-6">
                     MIS MESAS   
                 </div>
-            <section class="col-11 bg-white p-3 rounded-bottom justify-content-around ">
+            <section class="col-12  bg-white p-3 rounded-bottom justify-content-around ">
                 <div class="row justify-content-around justify-items-start p-3" id="section-mesa-mesero">
                     <asp:Label runat="server" ID="lbSinMesasAsignadas"></asp:Label>
                     <!-- MESAS ASIGNADAS DESDE JS-->
@@ -169,8 +169,8 @@
             <!-- FIN SECCION MESAS ASIGNDAS -->
 
             <%--SECCION PEDIDOS EN CURSO--%>
-            <div class="col-11 bg-dark text-white p-2 mt-3 rounded-top display-6"> MIS PEDIDOS EN CURSO </div>
-            <div class="col-11 bg-white p-3 justify-content-around content-fluid rounded-bottom">              
+            <div class="col-12  bg-dark text-white p-2 mt-3 rounded-top display-6"> MIS PEDIDOS EN CURSO </div>
+            <div class="col-12  bg-white p-3 justify-content-around content-fluid rounded-bottom">              
                 <div class="row">
                     <asp:UpdatePanel runat="server">
                         <ContentTemplate>
@@ -195,7 +195,7 @@
             <%--FIN SECCION PEDIDOS EN CURSO--%>
 
             <%--SECCION MENU RAPIDO--%>
-            <div class="col-11 bg-dark text-white p-2 mt-3 rounded-top display-6">
+            <div class="col-12  bg-dark text-white p-2 mt-3 rounded-top display-6">
                 <div class="row">
                      <div class="col-8 text-white">
                         <asp:UpdatePanel runat="server">
@@ -215,10 +215,10 @@
                 </div>
             </div>
 
-            <div class="col-11 bg-white rounded-bottom p-2 justify-content-around ">
+            <div class="col-12  bg-white rounded-bottom p-2 justify-content-around ">
                 <div class="row p-2">
                      <%--PLATOS DISPONIBLES--%>
-                    <div class="col-6">
+                    <div class="col-lg-6 col-12">
                         <label class="row h3 p-1">Platos Disponibles:</label>
                         <asp:Repeater runat="server" ID="PlatosDelDia">
                             <ItemTemplate>
@@ -239,7 +239,7 @@
                     </div>
 
                 <%--BEBIDAS DISPONIBLES--%>
-                    <div class="col-6 ">
+                    <div class="col-lg-6 col-12 mt-3 m-lg-0">
                         <label class="row h3 p-1">Bebidas Disponibles:</label>
                         <asp:Repeater runat="server" ID="BebidasDelDia">
                             <ItemTemplate>
@@ -657,11 +657,11 @@
                 mainDiv.style.width = "150px";
 
                 var div1 = document.createElement("div");
-                div1.className = `${!servicio?.cierre && !servicio?.cobrado ? bgMesa : 'bg-cobrar'} w-100 h-100 border rounded-circle border-dark-subtle p-1 cursor-pointer`;
+                div1.className = `w-100 h-100 border rounded-circle border-dark-subtle p-1 cursor-pointer btn`;
                 div1.id = "mesa_" + numeroMesas[i].mesa;
 
                 var div2 = document.createElement("div");
-                div2.className = "background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center";
+                div2.className = `${!servicio?.cierre && !servicio?.cobrado ? bgMesa : 'bg-cobrar'} w-100 h-100 rounded-circle d-flex justify-content-center align-items-center`;
 
                 var icon = document.createElement("i");
 
@@ -706,7 +706,7 @@
                     <div class="col d-flex gap-4">
                         <button class="${!servicio?.cierre && !servicio?.cobrado ? 'btnAbrirMeasa' : 'bg-muted'} botonPedido" style="width: 150px; height: 150px;" id="btnAbrir_${i + 1}">
                                 <div class="d-flex align-items-center justify-content-center">
-                                    <i class="fa-solid fa-plus fs-1 text-white"></i>
+                                    <i class="fa-solid fa-${isDisabled ? "minus" : "plus"} fs-1 text-white"></i>
                                 </div>
                                 <div class="text-white">
                                     <p class="fw-semibold">${textoMesaAbrirServicio}</p>
