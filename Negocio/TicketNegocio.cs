@@ -207,8 +207,8 @@ namespace Negocio
 				$" ON S.{ColumnasDB.MesasPorDia.Id} = M.{ColumnasDB.MesasPorDia.Id}" +
 				$" INNER JOIN {ColumnasDB.Pedido.DB} P" +
 				$" ON S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Servicio.Id}" +
-				$" WHERE S.{ColumnasDB.Servicio.Cobrado} = 0" +
-				$" AND S.{ColumnasDB.Servicio.Cierre} IS NOT NULL " +
+				$" WHERE S.{ColumnasDB.Servicio.Cobrado} = 1" +
+				$" AND S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}'" +
 				$" AND M.{ColumnasDB.MesasPorDia.IdMesero} = {mesero}";
 
 			try
@@ -220,7 +220,7 @@ namespace Negocio
 				{
 					Ticket auxTicket = new Ticket();
 					//ID
-					auxTicket.Id = (Int32)datos.Reader[ColumnasDB.Mesa.Numero];
+					auxTicket.Id = (Int32)datos.Reader[ColumnasDB.Servicio.Id];
 
 					//FECHA
 					if (datos.Reader[ColumnasDB.Servicio.Fecha] != null)

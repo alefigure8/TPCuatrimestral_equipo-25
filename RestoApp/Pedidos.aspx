@@ -11,6 +11,8 @@
         </header>
     </div>
 
+    <%if (esListadoPorServicio)
+        {  %>
       <div class="row">
         <div class="col-10 bg-gray-100 rounded p-3 m-3">
             <div class="d-flex gap-4">
@@ -20,7 +22,7 @@
             </div>
         </div>
     </div>
-
+    <%} %>
     <div class="row">
         <!-- Repeater de Pedidos-->
             <div class="col-10 bg-gray-100 p-5 m-3 rounded border-1">

@@ -4,18 +4,18 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="row">
-        <header class="col-10 bg-white rounded p-3 m-3">
-            <asp:Label runat="server" ID="lbTituloTicket" class="fs-2">Tickets</asp:Label>
+        <header class="col-md-5 col-sm-12 m-3">
+            <asp:Label runat="server" ID="lbTituloTicket" class="fs-2 text-gray-100">Tickets</asp:Label>
         </header>
     </div>
 
-    <div class="row d-flex">
+    <div class="row p-3 d-flex">
         <!-- Repeater de Tickets-->
         <asp:Repeater runat="server" ID="repeaterTickets">
             <ItemTemplate>
 
                 <!-- Ticket -->
-                <section class="col-3 bg-white rounded d-flex flex-column m-3 p-3 border">
+                <section class=" col-md-6 col-lg-4 col-xl-3 bg-white rounded d-flex flex-column p-3 border content-fluid">
                     <div class="d-flex flex-column w-100">
                         <div class="w-100 d-flex justify-content-between align-items-center">
                           <img src="/Content/Image/logo.jpg" style="width: 50px; height: 50px;" class="rounded-circle mb-3" />
@@ -47,7 +47,10 @@
 
                     <div class="border-top w-100 pt-3">
                         <p><span class="fw-semibold">Total: $</span> <%# CalcularPrecio() %> </p>
+                        <%if (dia == null)
+                            {  %>
                         <asp:Button ID="btnTicket" runat="server" OnClick="btnCobrar_Click" class="btn btn-dark w-100" Text="Cobrar" CommandArgument='<%# Eval("Id") %>'/>
+                        <%} %>
                     </div>
                 </section>
 

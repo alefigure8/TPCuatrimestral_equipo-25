@@ -28,6 +28,7 @@ namespace Negocio
 					$"ON MPD.{ColumnasDB.MeseroPorDia.Id} = MP.{ColumnasDB.MeseroPorDia.Id} " +
 					$"INNER JOIN {ColumnasDB.Usuario.DB} U " +
 					$"ON MP.{ColumnasDB.Servicio.IdMesero} = U.{ColumnasDB.Usuario.Id} " +
+					$" AND S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
 					$"ORDER BY S.{ColumnasDB.Servicio.Fecha} DESC, S.{ColumnasDB.Servicio.Apertura} DESC");
 
 				datos.executeReader();
@@ -179,6 +180,7 @@ namespace Negocio
 							$"INNER JOIN {ColumnasDB.MesasPorDia.DB} M " +
 							$"ON S.{ColumnasDB.MesasPorDia.Id} = M.{ColumnasDB.MesasPorDia.Id} " +
 							$"WHERE S.{ColumnasDB.Servicio.Cierre} is null " +
+							$" AND S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
 							$"And M.{ColumnasDB.Mesa.Numero} = {mesa} " +
 						$") " +
 
@@ -231,6 +233,7 @@ namespace Negocio
 			$" INNER JOIN {ColumnasDB.MesasPorDia.DB} MPD" +
 			$" ON MPD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.MesasPorDia.Id}" +
 			$" WHERE MPD.{ColumnasDB.MesasPorDia.IdMesa} = {mesa}" +
+			$" AND S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
 			$" AND S.{ColumnasDB.Servicio.Cierre} IS NULL" +
 			$" )" +
 			$" DECLARE @CANTPEDIDOS BIGINT = (SELECT COUNT(DISTINCT P.{ColumnasDB.Pedido.Id}) AS Cantidad" +
@@ -245,6 +248,7 @@ namespace Negocio
 			$" INNER JOIN {ColumnasDB.EstadosxPedido.DB} EXP ON EXP.{ColumnasDB.Pedido.Id} = P.{ColumnasDB.Pedido.Id}" +
 			$" INNER JOIN {ColumnasDB.Estados.DB} EP ON EP.{ColumnasDB.Estados.Id} = EXP.{ColumnasDB.Estados.Id}" +
 			$" WHERE S.{ColumnasDB.Servicio.Id} = @IDSERVICIO" +
+			$" AND S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
 			$" AND EP.{ColumnasDB.Estados.Descripcion} = '{estadoPedido}')" +
 			$" IF @CANTPEDIDOS = @CANTPEDIDOSENTREGADO" +
 			$" BEGIN" +
