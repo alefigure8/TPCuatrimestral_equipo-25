@@ -6,84 +6,84 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     <!-- PANEL -->
-    <div class="d-flex flex-column container">
+    <div class="row">
+
         <h1 class="text-gray-100">Asignar Mesas</h1>
         <p id="titulo_gerente_Mesas" class="text-gray-100">Asignar Mesas a Meseros</p>
-        <div class="col">
+
+        <div class="row p-3">
             <!--MESAS-->
-            <div class="d-flex justify-content-between gap-5">
-                <div class="row col-8 bg-gray-100  border border-muted rounded" id="mesas">
+                <div class="col-12 col-xl-8 d-flex flex-wrap bg-gray-100 border border-muted rounded mb-3 mb-xl-0" id="mesas">
                 </div>
                 <!-- MESEROS-->
-              <div class="d-flex flex-column gap-4">
-                    <!-- MESEROS ASIGNADOS-->
-                <div class="p-3 border border-muted rounded bg-gray-100 h-auto">
-                    <div class="row ms-2">
-                        <p class="fs-6 fw-semibold text-gray-600">Meseros Asignados</p>
-                        <asp:Repeater runat="server" ID="repeaterMeserosAsignados">
-                            <ItemTemplate>
-                                <div class="row border-bottom d-flex align-items-center">
-                                    <div class="rounded" style="width: 20px; height: 20px;" id="colorMesero" id-mesero="<%# Eval("IdMesero") %>"></div>
-                                    <div class="col-5 fw-bold fs-6 d-flex justify-content-between align-items-center flex-grow-1">
-                                        <span class="text-start"><%# Eval("Nombres") %> <%# Eval("Apellidos") %></span>
+                  <div class="col-12 col-xl-4 d-flex flex-column p-0 ps-xl-3 m-lg-0 mt-3 ">
+                        <!-- MESEROS ASIGNADOS-->
+                    <div class="border border-muted rounded bg-gray-100 h-auto mb-3">
+                        <div class="ms-5 w-75 p-3  m-0 mb-xl-3">
+                            <p class="fs-6 fw-semibold text-gray-600">Meseros Asignados</p>
+                            <asp:Repeater runat="server" ID="repeaterMeserosAsignados">
+                                <ItemTemplate>
+                                    <div class="row border-bottom d-flex align-items-center">
+                                        <div class="rounded" style="width: 20px; height: 20px;" id="colorMesero" id-mesero="<%# Eval("IdMesero") %>"></div>
+                                        <div class="col-5 fw-bold fs-6 d-flex justify-content-between align-items-center flex-grow-1">
+                                            <span class="text-start"><%# Eval("Nombres") %> <%# Eval("Apellidos") %></span>
+                                        </div>
+                                        <div class="col fw-semibold"><%# Eval("MesasAsignadas") %></div>
+                                        <div class="col fw-semibold">0</div>
+                                        <div class="col btn text-end">
+                                            <i class="fa-solid fa-eye" data-bs-toggle="collapse" href="#<%#Eval("Id") %>" role="button" aria-expanded="false" aria-controls="<%#Eval("Id") %>"></i>
+                                        </div>
                                     </div>
-                                    <div class="col fw-semibold"><%# Eval("MesasAsignadas") %></div>
-                                    <div class="col fw-semibold">0</div>
-                                    <div class="col btn text-end">
-                                        <i class="fa-solid fa-eye" data-bs-toggle="collapse" href="#<%#Eval("Id") %>" role="button" aria-expanded="false" aria-controls="<%#Eval("Id") %>"></i>
-                                    </div>
-                                </div>
 
-                                <!-- Collide -->
-                                <div class="collapse" id="<%#Eval("Id") %>">
-                                    <div class="p-2">
-                                        <button class="btn btn-dark" id="asignarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>">Asignar Mesas</button>
-                                        <button class="btn btn-primary" id="guardarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>" disabled>Guardar</button>
-                                        <button class="btn btn-warning" id="cancelarMesa" onclick="return false;" disabled>Cancelar</button>
+                                    <!-- Collide -->
+                                    <div class="collapse" id="<%#Eval("Id") %>">
+                                        <div class="p-2">
+                                            <button class="btn btn-dark" id="asignarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>">Asignar Mesas</button>
+                                            <button class="btn btn-primary" id="guardarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>" disabled>Guardar</button>
+                                            <button class="btn btn-warning" id="cancelarMesa" onclick="return false;" disabled>Cancelar</button>
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- Fin Collide -->
-                            </ItemTemplate>
-                        </asp:Repeater>
+                                    <!-- Fin Collide -->
+                                </ItemTemplate>
+                            </asp:Repeater>
+                        </div>
                     </div>
-                </div>
-                <!-- FIN MESEROS ASIGNADOS-->
-                <!-- MESEROS NO ASIGNADOS-->
-                <div class="p-3 border border-muted rounded bg-gray-100 h-auto">
-                    <div class="row ms-2">
-                        <p class="fs-6 fw-semibold text-gray-600">Meseros No Asignados</p>
-                        <asp:Repeater runat="server" ID="repeaterMeserosNoAsignados">
-                            <ItemTemplate>
-                                <div class="row border-bottom d-flex align-items-center">
-                                    <div class="bg-danger rounded" style="width: 20px; height: 20px;"></div>
-                                    <div class="col-5 fw-bold fs-6 d-flex justify-content-between align-items-center flex-grow-1">
-                                        <span class="text-start"><%# Eval("Nombres") %> <%# Eval("Apellidos") %></span>
+                    <!-- FIN MESEROS ASIGNADOS-->
+                    <!-- MESEROS NO ASIGNADOS-->
+                    <div class="border border-muted rounded bg-gray-100 h-auto mb-3 mb-xl-0">
+                        <div class="ms-5 w-75 p-3">
+                            <p class="fs-6 fw-semibold text-gray-600">Meseros No Asignados</p>
+                            <asp:Repeater runat="server" ID="repeaterMeserosNoAsignados">
+                                <ItemTemplate>
+                                    <div class="row border-bottom d-flex align-items-center">
+                                        <div class="bg-danger rounded" style="width: 20px; height: 20px;"></div>
+                                        <div class="col-5 fw-bold fs-6 d-flex justify-content-between align-items-center flex-grow-1">
+                                            <span class="text-start"><%# Eval("Nombres") %> <%# Eval("Apellidos") %></span>
+                                        </div>
+                                        <div class="col fw-semibold">0</div>
+                                        <div class="col fw-semibold">0</div>
+                                        <div class="col btn text-end">
+                                            <i class="fa-solid fa-eye" data-bs-toggle="collapse" href="#<%#Eval("Id") %>" role="button" aria-expanded="false" aria-controls="<%#Eval("Id") %>"></i>
+                                        </div>
                                     </div>
-                                    <div class="col fw-semibold">0</div>
-                                    <div class="col fw-semibold">0</div>
-                                    <div class="col btn text-end">
-                                        <i class="fa-solid fa-eye" data-bs-toggle="collapse" href="#<%#Eval("Id") %>" role="button" aria-expanded="false" aria-controls="<%#Eval("Id") %>"></i>
-                                    </div>
-                                </div>
 
-                                <!-- Collide -->
-                                <div class="collapse" id="<%#Eval("Id") %>">
-                                    <div class="p-2">
-                                        <button class="btn btn-dark" id="asignarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>">Asignar Mesas</button>
-                                        <button class="btn btn-primary" id="guardarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>" disabled>Guardar</button>
-                                        <button class="btn btn-primary" id="cancelarMesa" onclick="return false;" disabled>Cancelar</button>
+                                    <!-- Collide -->
+                                    <div class="collapse" id="<%#Eval("Id") %>">
+                                        <div class="p-2">
+                                            <button class="btn btn-dark" id="asignarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>">Asignar Mesas</button>
+                                            <button class="btn btn-primary" id="guardarMesa" onclick="return false;" id-mesero =" <%#Eval("IdMesero") %>" id-meseropordia="<%#Eval("Id") %>" disabled>Guardar</button>
+                                            <button class="btn btn-primary" id="cancelarMesa" onclick="return false;" disabled>Cancelar</button>
+                                        </div>
                                     </div>
-                                </div>
-                                <!-- Fin Collide -->
-                            </ItemTemplate>
-                        </asp:Repeater>
+                                    <!-- Fin Collide -->
+                                </ItemTemplate>
+                            </asp:Repeater>
+                        </div>
                     </div>
+                    <!-- FIN MESEROS NO ASIGNADOS-->
+                  </div>
                 </div>
-                <!-- FIN MESEROS NO ASIGNADOS-->
-              </div>
-            </div>
-            <!--FIN MESAS-->
-        </div>
+                <!--FIN MESAS-->
     </div>
     <!-- FIN PANEL-->
 

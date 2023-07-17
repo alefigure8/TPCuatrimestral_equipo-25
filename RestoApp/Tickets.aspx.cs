@@ -15,8 +15,8 @@ namespace RestoApp
 	{
 		private Usuario usuario;
 		public Decimal precio = 0;
-		int servicio;
-		string dia;
+		public int servicio;
+		public string dia;
 
 			protected void Page_Load(object sender, EventArgs e)
 		{
@@ -89,12 +89,25 @@ namespace RestoApp
 						UIMostrarAlerta(ex.Message);
 					}
 				}
-				else
+				else if(dia != null)
 				{
 					//Render de todos los tickets del mesero
 					try
 					{
 						CargarTicketPorMesero();
+					}
+					catch (Exception ex)
+					{
+						UIMostrarAlerta(ex.Message);
+					}
+				}
+				else
+				{
+
+					//Render de todos los tickets del mesero
+					try
+					{
+						CargarTicketPorMeseroAbiertos();
 					}
 					catch (Exception ex)
 					{
@@ -151,8 +164,14 @@ namespace RestoApp
 			//Iniciamos Ticket Negocio
 			TicketNegocio ticketNegocio = new TicketNegocio();
 
+			//Parseamos a datetime
+			DateTime dateTime = DateTime.Parse(dia);
+
 			//Listamos tickets
-			List<Ticket> tickets = ticketNegocio.ListarTicketsDiario(dia);
+			List<Ticket> tickets = ticketNegocio.ListarTicketsDiario(dateTime.ToString("yyyy-MM-dd"));
+
+			//Guardamos Tickets en Session
+			Session["Tickets"] = tickets;
 
 			//Label
 			lbTituloTicket.Text = $"Tickets del Dia {DateTime.Now.ToString("yyyy-MM-dd")}";
@@ -195,6 +214,27 @@ namespace RestoApp
 
 			//Label
 			lbTituloTicket.Text = "Tickets abiertos";
+
+			return tickets;
+		}
+
+		//Retornamos el listado de tickets según el mesero
+		private List<Ticket> CargarTicketPorMeseroAbiertos()
+		{
+			//Buscamos el id del mesero
+			int idMesero = Helper.Session.GetUsuario().Id;
+
+			//Iniciamos Ticket Negocio
+			TicketNegocio ticketNegocio = new TicketNegocio();
+
+			//Listamos tickets
+			List<Ticket> tickets = ticketNegocio.ListarPorMesero(idMesero).FindAll(Item => Item.Cobrado == false);
+
+			//Guardamos Tickets en Session
+			Session["Tickets"] = tickets;
+
+			//Label
+			lbTituloTicket.Text = "Tickets del Día";
 
 			return tickets;
 		}

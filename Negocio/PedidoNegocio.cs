@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Dominio;
 
-
-
 namespace Negocio
 {
     public class PedidoNegocio
@@ -57,7 +55,6 @@ namespace Negocio
                     datos.executeNonQuery();
                     datos.closeConnection();
                 }
-
             }
 
             catch (Exception Ex)
@@ -73,9 +70,7 @@ namespace Negocio
 
         public int CargarEstadoPedido(int idpedido)
         {
-
             AccesoDB datos = new AccesoDB();
-
             string formato = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             try
@@ -85,7 +80,6 @@ namespace Negocio
                  $"INSERT INTO {ColumnasDB.EstadosxPedido.DB} ({ColumnasDB.EstadosxPedido.IdPedido}, {ColumnasDB.EstadosxPedido.IdEstado}, {ColumnasDB.EstadosxPedido.FechaActualizacion}) " +
                  $"VALUES ({idpedido}, 1 , CAST('{formato}' AS DATETIME))");
                 datos.executeNonQuery();
-            
             }
 
             catch (Exception Ex)
@@ -144,7 +138,6 @@ namespace Negocio
             AccesoDB AccesoDB = new AccesoDB();
             List<Pedido> listapedidos = new List<Pedido>();
 
-
             try
             {
                 AccesoDB.setQuery($"SELECT P.{ColumnasDB.Pedido.Id} "+
@@ -183,12 +176,7 @@ namespace Negocio
             {
                 AccesoDB.closeConnection();
             }
-
-
-
-
         }
-
 
         // Listar pedidos del dia, valida que la fecha del servicio asociado al pedido sea de la fecha actual y filtra por Id de mesero
         public List<Pedido> ListarPedidosDelDia(int IdMesero)
@@ -239,7 +227,6 @@ namespace Negocio
             }
         }
 
-
         // Lista pedidos del dia para gerente, valida que el estado sea distinto a entregado
         public List<Pedido> ListarPedidosDelDia()
         {
@@ -258,9 +245,8 @@ namespace Negocio
                     $" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
                     $" JOIN {ColumnasDB.Servicio.DB} S on S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
                     $" JOIN {ColumnasDB.MesasPorDia.DB} MxD on MxD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.Servicio.IdMesa}" +
-                    //$" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
-                    //$" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
-                    $" WHERE ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
+                    $" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
+                    $" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
 					$" AND LOWER(E.{ColumnasDB.Estados.Descripcion}) <> 'entregado')"
                     );
 
@@ -307,11 +293,58 @@ namespace Negocio
 					$" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
 					$" JOIN {ColumnasDB.Servicio.DB} S on S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
 					$" JOIN {ColumnasDB.MesasPorDia.DB} MxD on MxD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.Servicio.IdMesa}" +
-					//$" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
-					//$" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
-					$" WHERE ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id}" +
-					$" AND LOWER(E.{ColumnasDB.Estados.Descripcion}) <> 'entregado')" +
+					$" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
+					$" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id})" +
 					$" AND MxD.{ColumnasDB.MesasPorDia.IdMesa} = {mesa}"
+					);
+
+				AccesoDB.executeReader();
+
+				while (AccesoDB.Reader.Read())
+				{
+					Pedido aux = new Pedido();
+					aux.Id = (Int32)AccesoDB.Reader[ColumnasDB.Pedido.Id];
+					aux.IdServicio = (Int32)AccesoDB.Reader[ColumnasDB.Pedido.IdServicio];
+					aux.Estado = (Int32)AccesoDB.Reader[ColumnasDB.Estados.Id];
+					aux.EstadoDescripcion = (string)AccesoDB.Reader[ColumnasDB.Estados.Descripcion];
+					aux.ultimaactualizacion = (DateTime)AccesoDB.Reader[ColumnasDB.EstadosxPedido.FechaActualizacion];
+					aux.Productossolicitados = ListarProductosPorPedido(aux.Id);
+					listapedidos.Add(aux);
+				}
+
+				return listapedidos;
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+				AccesoDB.closeConnection();
+			}
+		}
+
+        //Listamos pedidos por servicio
+		public List<Pedido> ListarPedidosDelDiaPorServicio(int servicio)
+		{
+			AccesoDB AccesoDB = new AccesoDB();
+			List<Pedido> listapedidos = new List<Pedido>();
+
+			try
+			{
+				AccesoDB.setQuery($"SELECT P.{ColumnasDB.Pedido.Id} " +
+					$", P.{ColumnasDB.Pedido.IdServicio} " +
+					$", E.{ColumnasDB.Estados.Id} " +
+					$", E.{ColumnasDB.Estados.Descripcion} " +
+					$", ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} " +
+					$" FROM {ColumnasDB.Pedido.DB} P " +
+					$" JOIN {ColumnasDB.EstadosxPedido.DB} ExP ON P.{ColumnasDB.Pedido.Id} = ExP.{ColumnasDB.EstadosxPedido.IdPedido} " +
+					$" JOIN {ColumnasDB.Estados.DB} E on ExP.{ColumnasDB.EstadosxPedido.IdEstado} = E.{ColumnasDB.Estados.Id}" +
+					$" JOIN {ColumnasDB.Servicio.DB} S on S.{ColumnasDB.Servicio.Id} = P.{ColumnasDB.Pedido.IdServicio}" +
+					$" JOIN {ColumnasDB.MesasPorDia.DB} MxD on MxD.{ColumnasDB.MesasPorDia.Id} = S.{ColumnasDB.Servicio.IdMesa}" +
+					$" WHERE S.{ColumnasDB.Servicio.Fecha} = '{DateTime.Now.ToString("yyyy-MM-dd")}' " +
+					$" AND ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion} = (SELECT MAX(ExP.{ColumnasDB.EstadosxPedido.FechaActualizacion}) FROM {ColumnasDB.EstadosxPedido.DB} ExP WHERE ExP.{ColumnasDB.EstadosxPedido.IdPedido} = P.{ColumnasDB.Pedido.Id})" +
+					$" AND P.{ColumnasDB.Pedido.IdServicio} = {servicio}"
 					);
 
 				AccesoDB.executeReader();
@@ -387,7 +420,6 @@ namespace Negocio
                 }
 
                 return Pedido;
-
             }
             catch (Exception Ex)
             {
@@ -397,15 +429,12 @@ namespace Negocio
             {
                 AccesoDB.closeConnection();
             }
-
         }
-
 
         public List<Pedido> ListarPedidos(int estado1)
         {
             AccesoDB AccesoDB = new AccesoDB();
             List<Pedido> listapedidos = new List<Pedido>();
-
 
             try
             {
@@ -453,7 +482,6 @@ namespace Negocio
             AccesoDB datos = new AccesoDB();
             try
             {
-                
                 datos.setQuery(
                  $"INSERT INTO {ColumnasDB.EstadosxPedido.DB} ({ColumnasDB.EstadosxPedido.IdPedido}, {ColumnasDB.EstadosxPedido.IdEstado}, {ColumnasDB.EstadosxPedido.FechaActualizacion}) " +
                  $"VALUES ({idpedido}, {nuevoestado} , '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")}')");
@@ -470,12 +498,8 @@ namespace Negocio
             {
                 datos.closeConnection();
             }
-
-
         }
-
      
-        
         public void CambiarEstadoPedido(int idpedido, int nuevoestado, DateTime Fechahora)
         {
             AccesoDB datos = new AccesoDB();
@@ -498,8 +522,6 @@ namespace Negocio
             {
                 datos.closeConnection();
             }
-
-
         }
     }
 }

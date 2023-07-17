@@ -6,25 +6,45 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     <div class="row">
-        <header class="col-10 bg-white rounded p-3 m-3">
-            <asp:Label runat="server" ID="lbTituloTicket" class="fs-2">Pedidos</asp:Label>
+        <header class="col-10 p-3">
+            <asp:Label runat="server" ID="lbTituloTicket" class="fs-2 text-gray-100">Pedidos</asp:Label>
         </header>
     </div>
 
-    <div class="row d-flex">
+    <%if (esListadoPorServicio)
+        {  %>
+      <div class="row">
+        <div class="col-10 bg-gray-100 rounded p-3 m-3">
+            <div class="d-flex gap-4">
+                <asp:DropDownList runat="server" ID="ddlMesaPedidos" CssClass="w-25 form-control" OnSelectedIndexChanged="ddlMesaPedidos_SelectedIndexChanged" AutoPostBack="true"></asp:DropDownList>
+                <asp:DropDownList runat="server" ID="ddlServicioPedidos" CssClass="w-25 form-control"></asp:DropDownList>
+                <asp:Button runat="server" Text="Buscar" CssClass="btn btn-secondary" OnClick="BtnBuscar_Click"></asp:Button>
+            </div>
+        </div>
+    </div>
+    <%} %>
+    <div class="row">
         <!-- Repeater de Pedidos-->
-        <asp:Repeater runat="server" ID="repeaterPedidos">
-            <ItemTemplate>
-
+            <div class="col-10 bg-gray-100 p-5 m-3 rounded border-1">
                 <!-- Pedidos -->
-          
+                 <asp:DataGrid ID="datagridPedidosGerente" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered">
+                    <Columns>
+                        <asp:BoundColumn DataField="PedidoComida" HeaderText="Pedido de Comida" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                        <asp:BoundColumn DataField="Actualización" HeaderText="Actualizacion" DataFormatString="{0:HH:mm}" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
+                        <asp:BoundColumn DataField="Estado" HeaderText="Estado" ItemStyle-CssClass="bg-light p-2 rounded" HeaderStyle-CssClass="bg-light p-2 rounded" />
 
+                        <asp:TemplateColumn HeaderText="Estado">
+                            <ItemTemplate>
+                                <%# (string)Eval("Estado") != "Entregado"  ? "<i class=\"fa-sharp fa-solid fa-circle text-warning\"></i>" : "<i class=\"fa-sharp fa-solid fa-circle text-success\"></i>" %>
+                            </ItemTemplate>
+                            <ItemStyle CssClass="bg-light p-2 rounded" />
+                            <HeaderStyle CssClass="bg-light p-2 rounded" />
+                        </asp:TemplateColumn>
+                    </Columns>
+                </asp:DataGrid>
                 <!-- Fin Pedidos -->
-
-            </ItemTemplate>
-        </asp:Repeater>
+            </div>
         <!-- Fin Repeater de Pedidos-->
-
     </div>
 
         <!-- Modal -->

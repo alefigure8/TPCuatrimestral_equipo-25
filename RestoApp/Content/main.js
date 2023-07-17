@@ -87,7 +87,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
                  </style>`
 
                 mesas.innerHTML += `
-            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
+            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 170px; width: 150px;">
                 <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
                     <div class="bg-mesa${numeroIdMesero} w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id-mesero="${numeroIdMesero}" id="mesa_${i + i}">
                         <i class="fa-solid fa-utensils fs-4"></i>
@@ -102,7 +102,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
             `;
             } else {
                 mesas.innerHTML += `
-            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
+            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 170px; width: 150px;">
                 <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
                     <div class="bg-dark-subtle  w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${i + i}">
                         <i class="fa-solid fa-utensils fs-4"></i>
@@ -147,7 +147,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
                  </style>`
 
                 mesas.innerHTML += `
-            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
+            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 170px; width: 150px;">
                 <div class="bg-mesa${numeroIdMesero} w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
                     <div class="background-color w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id-mesero="${numeroIdMesero}" id="mesa_${j + i}">
                         <i class="fa-solid fa-utensils fs-4"></i>
@@ -162,7 +162,7 @@ if (currentPagePath.toLowerCase().indexOf('/mesas.aspx') !== -1) {
             `;
             } else {
                 mesas.innerHTML += `
-            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 150px; width: 150px;">
+            <div class="col-6 col-sm-3 d-flex justify-content-center flex-column m-4" style="height: 170px; width: 150px;">
                 <div class="w-100 h-100 border rounded-circle border-dark-subtle p-1 btn">
                     <div class="bg-dark-subtle  w-100 h-100 rounded-circle d-flex justify-content-center align-items-center" id="mesa_${j + i}">
                         <i class="fa-solid fa-utensils fs-4"></i>

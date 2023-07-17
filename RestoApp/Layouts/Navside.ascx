@@ -97,13 +97,13 @@
                         <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
                     { %>
                         <li><a href="Tickets.aspx" class="nav-link ps-3">Tickets Abiertos</a></li>
-                        <li><a href="#" class="nav-link ps-3">Tickets Del Dia</a></li>
+                        <li><a href="Tickets.aspx?dia=<%: DateTime.Now.ToString("yyyy-MM-dd") %>" class="nav-link ps-3">Tickets Del Dia</a></li>
                         <%}%>
                     </ul>
                 </div>
             </li>
                         <li class="mb-1">
-                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#peidos-collapse" aria-bs-expanded="true">Tickets
+                <a class="btn btn-toggle align-items-center rounded collapsed text-light" data-bs-toggle="collapse" data-bs-target="#peidos-collapse" aria-bs-expanded="true">Pedidos
                 </a>
                 <div class="collapse " id="peidos-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
@@ -114,8 +114,7 @@
                         <%}%>
                         <% if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
                     { %>
-                        <li><a href="Pedidos.aspx?abiertos=true" class="nav-link ps-3">Pedidos Abiertos</a></li>
-                        <li><a href="Pedidos.aspx?dia=<%: DateTime.Now.ToString("yyyy-MM-dd") %>" class="nav-link ps-3">Pedidos Del Dia</a></li>
+                        <li><a href="Pedidos.aspx" class="nav-link ps-3">Pedidos del día</a></li>
                         <%}%>
                     </ul>
                 </div>
