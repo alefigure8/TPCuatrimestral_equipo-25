@@ -17,6 +17,8 @@ namespace Dominio
         public ProductoDelDia Productodeldia { get; set; }
         public int Cantidad { get; set; }
         
+        public DateTime HoraListo { get; set; }
+
         public decimal Valor { get; set; }
     
     }

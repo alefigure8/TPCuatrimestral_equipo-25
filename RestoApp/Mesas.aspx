@@ -6,12 +6,12 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     <!-- PANEL -->
-    <div class="row">
+    <div class="row d-flex d-md-block justify-content-center">
 
         <h1 class="text-gray-100">Asignar Mesas</h1>
         <p id="titulo_gerente_Mesas" class="text-gray-100">Asignar Mesas a Meseros</p>
 
-        <div class="row p-3">
+        <div class="row">
             <!--MESAS-->
                 <div class="col-12 col-xl-8 d-flex flex-wrap bg-gray-100 border border-muted rounded mb-3 mb-xl-0" id="mesas">
                 </div>
@@ -19,7 +19,7 @@
                   <div class="col-12 col-xl-4 d-flex flex-column p-0 ps-xl-3 m-lg-0 mt-3 ">
                         <!-- MESEROS ASIGNADOS-->
                     <div class="border border-muted rounded bg-gray-100 h-auto mb-3">
-                        <div class="ms-5 w-75 p-3  m-0 mb-xl-3">
+                        <div class="ms-5 w-75 p-3 m-0 mb-xl-3">
                             <p class="fs-6 fw-semibold text-gray-600">Meseros Asignados</p>
                             <asp:Repeater runat="server" ID="repeaterMeserosAsignados">
                                 <ItemTemplate>

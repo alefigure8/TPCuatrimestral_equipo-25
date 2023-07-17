@@ -8,8 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Caching;
-
-
+using System.Runtime.Remoting.Messaging;
 
 namespace Negocio
 {
@@ -128,6 +127,35 @@ namespace Negocio
                 AccesoDB.closeConnection();
             }
         }
+
+        public DateTime BuscarhoraingresoCocina(int idPedido)
+        {
+            AccesoDB AccesoDB = new AccesoDB();
+            DateTime horaingreso = new DateTime();
+            try
+            {
+                AccesoDB.setQuery($"SELECT FechaActualizacion FROM ESTADO_X_PEDIDO WHERE IdPedido = {idPedido} and IdEstado = 2");
+                AccesoDB.executeReader();
+
+                while (AccesoDB.Reader.Read())
+                {
+                    horaingreso = (DateTime)AccesoDB.Reader[ColumnasDB.EstadosxPedido.FechaActualizacion];
+                }
+
+                return horaingreso;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                AccesoDB.closeConnection();
+            }
+           
+        }
+
+       
         
     }
 }

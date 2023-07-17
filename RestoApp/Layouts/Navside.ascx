@@ -1,25 +1,25 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Navside.ascx.cs" Inherits="RestoApp.Layouts.Navside" %>
 
-<nav class="col-sm col-lg-2 min-vh-100">
+<nav class="col-sm col-lg-2 nav-heigth d-flex justify-content-between bg-dark" id="nav">
     <div
-        class="d-flex flex-column p-3 text-white bg-dark h-100">
+        class="d-flex flex-column p-lg-3 p-0 text-white nav-heigth-div bg-dark w-100" id="navDiv">
         <a
-            href="/"
-            class="d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none w-100">
-            <img src="/Content/Image/logo.jpg" style="width: 150px; height: 150px;" class="rounded-circle mb-3" />
+            href="Main.aspx"
+            class="d-lg-flex justify-content-center align-items-center mb-3 mb-lg-0 ms-5 ms-lg-0 me-lg-auto text-white text-decoration-none ">
+            <img src="/Content/Image/logo.jpg" class="rounded-circle mb-lg-3 m-0 min-w-25 h-auto img-width" />
         </a>
-        <hr />
-        <ul class="list-unstyled ps-0">
-            <li class="align-items-center rounded collapsed text-light btn">
+        <hr class="d-none d-lg-block" />
+        <ul class="list-unstyled ps-0 d-flex flex-column d-none d-lg-block bg-dark" id="ul_opciones">
+            <li class="mb-1">
 
                 <% if (usuario?.Tipo != Opciones.ColumnasDB.TipoUsuario.Cocinero)
                 { %>
-                <a href="Main.aspx" class="nav-link active" aria-current="page">Inicio
+                <a href="Main.aspx" class="nav-link ms-3" aria-current="page">Inicio
                 </a>
                 <%}
                     else
                     {  %>
-                <a href="Cocina.aspx" class="nav-link active" aria-current="page">Cocina
+                <a href="Cocina.aspx" class="nav-link ms-3" aria-current="page">Cocina
                 </a>
                 <%} %>
             </li>
@@ -120,8 +120,8 @@
                 </div>
             </li>
         </ul>
-        <hr />
-        <div class="dropdown">
+        <hr class="d-none d-lg-block"/>
+        <div class="dropdown d-none d-lg-block w-100">
             <a
                 href="#"
                 class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
@@ -131,10 +131,10 @@
                 <img
                     src="https://surgassociates.com/wp-content/uploads/610-6104451_image-placeholder-png-user-profile-placeholder-image-png-286x300.jpg"
                     alt=""
-                    class="rounded-circle me-2"
-                    width="32"
-                    height="32" />
-                <strong class="d-flex align-items-center gap-2"><%= usuario?.Mail %>
+                    class="rounded-circle me-2 d-none d-lg-block"
+                    width="25"
+                    height="25" />
+                <strong class="d-xl-flex align-items-center gap-2 d-none"><%= usuario?.Mail %>
                     <asp:UpdatePanel ID="UpdatePanel1"
                         runat="server">
                         <ContentTemplate>
@@ -172,4 +172,117 @@
             </ul>
         </div>
     </div>
+    <!-- RESPONSIVE -->
+    <div class="d-flex justify-content-center align-items-center d-lg-none" id="hamburger">
+        <i class="fa-solid fa-bars text-gray-100 me-5 fs-3 cursor-pointer"></i>
+    </div>
+    <!-- FIN RESPONSIVE -->
 </nav>
+
+<style>
+    .img-width{
+        width: 150px;
+    }
+
+    @media (max-width: 991.98px) {
+        .img-width {
+            width: 60px;
+        }
+    }
+
+    @media (min-width: 991.98px) { 
+        .img-width{
+        width: 150px;
+        }
+    }
+
+    .nav-heigth{
+        min-height: 60px;
+        transition: all 0.3s ease;
+    }
+
+    @media (max-width: 991.98px) {
+    .nav-heigth{
+        max-height: 60px;
+        }
+    }
+
+    @media (min-width: 991.98px) { 
+        .nav-heigth{
+            min-height: 100vh;
+        }
+    }
+
+    .nav-heigth-div{
+    min-height: 60px;
+    transition: all 0.3s ease;
+    }
+
+    @media (max-width: 991.98px) {
+    .nav-heigth-div{
+        max-height: 40px;
+        }
+    }
+
+    @media (min-width: 991.98px) { 
+        .nav-heigth-div{
+            min-height: 100vh;
+        }
+    }
+
+    .wvh-50{
+        height: 40vh; /* Ajusta automáticamente la altura */
+        z-index:3;
+        transition: all 0.3s ease;
+    }
+
+    .autoHeigth{
+        min-height: 40vh; /* Ajusta automáticamente la altura */
+        transition: all 0.3s ease;
+         min-width: 50vw;
+    }
+
+    .ul_opciones_hamburger{
+        min-width: 100%;
+        min-height: auto;
+       
+    }
+
+</style>
+
+<script>
+    const hamburger = document.getElementById("hamburger");
+    const ul_opciones = document.getElementById("ul_opciones");
+    const nav = document.getElementById("nav");
+    const navDiv = document.getElementById("navDiv");
+    let isOpen = false;
+
+    hamburger.addEventListener('click', () => {
+        if (!isOpen) {
+            ul_opciones.classList.remove("d-none")
+            ul_opciones.classList.remove("ul_opciones_hamburger")
+            nav.classList.add("wvh-50")
+            navDiv.classList.add("autoHeigth")
+        } else {
+            ul_opciones.classList.add("d-none")
+            ul_opciones.classList.add("ul_opciones_hamburger")
+            nav.classList.remove("wvh-50")
+            navDiv.classList.remove("autoHeigth")
+        }
+
+        isOpen = !isOpen
+       
+    })
+
+    window.addEventListener('resize', function () {
+        var anchoPantalla = window.innerWidth;
+        if (anchoPantalla > 990) {
+            ul_opciones.classList.add("d-none")
+            ul_opciones.classList.add("ul_opciones_hamburger")
+            nav.classList.remove("wvh-50")
+            navDiv.classList.remove("autoHeigth")
+            isOpen = !isOpen
+        }
+    });
+
+</script>
