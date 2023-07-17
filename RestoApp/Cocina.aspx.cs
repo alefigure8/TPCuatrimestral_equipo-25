@@ -8,7 +8,13 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Web.UI.WebControls;
-
+using System.Web.Script.Serialization;
+using System.Reflection;
+using System.Xml.Linq;
+using System.Web.UI;
+using System.Media;
+using System.Net;
+using System.IO;
 
 
 namespace RestoApp
@@ -19,42 +25,70 @@ namespace RestoApp
         public Usuario usuario { get; set; }
         public CocinaNegocio cocinaNegocio { get; set; }
         public List<Pedido> Pedidosencocina { get; set; }
-        public List<Pedido> Pedidosencocinasession { get; set; }
-        public List<HelperCocina> Helpercocina { get; set; }
+        public List<Pedido> Pedidosnuevos { get; set; }
         public List<ProductoPorPedido> Productosenpreparacion { get; set; }
+        public int PedidosIngresados { get; set; }
+
+        public bool sinproductos { get; set; }
+
+        public bool PedidosnuevosOn { get; set; }
+
+        public bool PlatosMarchandoOn { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (AutentificacionUsuario.esUser((Usuario)Session[Configuracion.Session.Usuario]))
                 usuario = (Usuario)Session[Configuracion.Session.Usuario];
 
+            //if (AutentificacionUsuario.esCocinero(usuario))
+            //{
+                if (!IsPostBack)
+                {
+                    InstanciarObjetos();
+                    CrearDatatableCocina();
+                    CrearDataTableProductosEnPreparacion();
+                    CrearDataTableEstadoPedidos();
+                    CrearDataTablePedidosnuevos();
+              
+                    }
 
-            if (!IsPostBack)
-            {
 
-                InstanciarObjetos();
-                CrearDatatableCocina();
-                CrearDataTableProductosEnPreparacion();
-                CrearDataTableEstadoPedidos();
-               
-            }
+
+
+            ActualizarDGVPedidosnuevos();
             ActualizarCocina();
-            ActualizarDGVCocina();
-            ActualizarDGVEstadoPedidos();
-            ActualizarDGVProductosenPreparacion();
-            ActualizarDemorados();
-         
-
+             ActualizarDGVCocina();
+                ActualizarDGVEstadoPedidos();
+                ActualizarDGVProductosenPreparacion();
+                ActualizarDemorados();
+     
+           // }
         }
 
 
+       
+
+
+        public void ActualizarCocina()
+        {
+            cocinaNegocio = (CocinaNegocio)Session["CocinaNegocio"];
+            ActualizarSolicitados(cocinaNegocio);
+            Pedidosencocina = ListarPedidosenCocina(cocinaNegocio);
+
+        }
 
         public void InstanciarObjetos()
         {
+            
+            PedidosnuevosOn = new bool ();
+            PedidosnuevosOn = false;
+            Session.Add("PedidosnuevosOn", PedidosnuevosOn);
 
-            bool sinproductos = true;
-            Session.Add("sinproductos", sinproductos);
+            PlatosMarchandoOn = new bool();
+            PlatosMarchandoOn = false;
+            Session.Add("PlatosMarchandoOn", PlatosMarchandoOn);
 
+      
             Reloj = DateTime.Now;
             Session.Add("Reloj", Reloj);
 
@@ -64,14 +98,16 @@ namespace RestoApp
             Pedidosencocina = new List<Pedido>();
             Session.Add("Pedidosencocina", Pedidosencocina);
 
-            Pedidosencocinasession = new List<Pedido>();
-            Session.Add("Pedidosencocinasession", Pedidosencocinasession);
+            Pedidosnuevos = new List<Pedido>();
+            Session.Add("Pedidosnuevos", Pedidosnuevos);
 
-            Helpercocina = new List<HelperCocina>();
-            Session.Add("Helpercocina", Helpercocina);
+            PedidosIngresados = new int();
+            Session.Add("PedidosIngresados", PedidosIngresados);
+          
 
-            Productosenpreparacion = new List<ProductoPorPedido>();
-            Session.Add("Productosenpreparacion", Productosenpreparacion);
+          
+
+
         }
 
         public void ActualizarSolicitados(CocinaNegocio cocinaNegocio)
@@ -81,20 +117,49 @@ namespace RestoApp
 
         public List<Pedido> ListarPedidosenCocina(CocinaNegocio cocinaNegocio)
         {
-            Helpercocina = (List<HelperCocina>)Session["Helpercocina"];
-            Productosenpreparacion = (List<ProductoPorPedido>)Session["Productosenpreparacion"];
+         
+
+
+           
             Pedidosencocina = (List<Pedido>)Session["Pedidosencocina"];
-            List<ProductoPorPedido> Auxiliarproductosenpreparacion = new List<ProductoPorPedido>();
-           List<HelperCocina> AuxiliiarHelpercocina = new List<HelperCocina>();
+            List<Pedido> Auxiliarpedidos = new List<Pedido>();
+            List<Pedido> pedidosnuevos = new List<Pedido>();
 
-      
-        Pedidosencocina = cocinaNegocio.ListarPedidosenCocina();
-            Pedidosencocina = Pedidosencocina.OrderBy(Pedidosencocina => Pedidosencocina.Id).ToList();
+            Auxiliarpedidos = cocinaNegocio.ListarPedidosenCocina();
+            Auxiliarpedidos = Auxiliarpedidos.OrderBy(Pedidosencocina => Pedidosencocina.Id).ToList();
 
-            foreach (Pedido pedido in Pedidosencocina)
+            if(Auxiliarpedidos.Count()  == 0)
+            {
+             PedidosIngresados = 0;
+              TxtPedidosIngresados.Text = PedidosIngresados.ToString();            
+              Session.Add("PedidosIngresados",PedidosIngresados);  
+            }
+
+            TxtPedidosIngresados.BackColor = Color.White;
+            PedidosIngresados = (int)Session["PedidosIngresados"];
+
+         
+
+            if ((Auxiliarpedidos.ToList().Count() - Pedidosencocina.Count()) > 0)
+            {
+                if (PedidosIngresados < PedidosIngresados + (Auxiliarpedidos.ToList().Count() - Pedidosencocina.Count()))
+                {
+                   
+                    PedidosIngresados += Auxiliarpedidos.ToList().Count() - Pedidosencocina.Count();
+                    SonarCampana();
+                 
+
+                }
+            }
+            TxtPedidosIngresados.Text = PedidosIngresados.ToString();
+            Session.Add("PedidosIngresados", PedidosIngresados);                  
+
+            
+
+            foreach (Pedido pedido in Auxiliarpedidos)
             {
 
-                HelperCocina Item = new HelperCocina();
+          
                 
                 // POR CADA PEDIDO LISTAMOS SUS PRODUCTOS
                 pedido.Productossolicitados = cocinaNegocio.ListarProductosPorPedido(pedido.Id);
@@ -110,11 +175,7 @@ namespace RestoApp
                     }           
 
                 }
-               // if(pedido.Productossolicitados.Count() == 0)
-                //{
-                 //   Pedidosencocina.ToList().Remove(pedido);
-
-                //}
+           
                 
                 // SI EL ESTADO ESTA EN PREPARACION LA HORA INGRESO ES LA ULTIMA ACTUALIZACION
                 if (pedido.Estado == Estados.EnPreparacion)
@@ -123,9 +184,15 @@ namespace RestoApp
                 }
                 else
                 {
-                    // SI ESTA DEMORADO ES LA RESTA DE SU ULTIMA ACTUALIZACION Y EL TIEMPO MAXIMO DE COCCION 
-                    pedido.Horaingresococina = pedido.ultimaactualizacion - (TimeSpan)Tiempomax;
+
+                    pedido.Horaingresococina = cocinaNegocio.BuscarhoraingresoCocina(pedido.Id);
+
                 }
+               // else
+               // {
+                    // SI ESTA DEMORADO ES LA RESTA DE SU ULTIMA ACTUALIZACION Y EL TIEMPO MAXIMO DE COCCION 
+                 //   pedido.Horaingresococina = pedido.ultimaactualizacion - (TimeSpan)Tiempomax;
+                //}
 
                 // DETERMINAMOS LA CANTIDAD DE CASILLEROS QUE OCUPA EL PRODUCTO DE MAS COCCION
                 int casillerostiempomax = CantidadCasilleros(Tiempomax.Value);
@@ -134,161 +201,26 @@ namespace RestoApp
                 foreach (ProductoPorPedido producto in pedido.Productossolicitados)
                 
                 {
-                    // POR CADA PEDIDO AGREGAMOS UN PRODUCTO A LA LISTA
-               
-                    Auxiliarproductosenpreparacion.Add(producto);
-                   
-                    // CARGAMOS LA CANTIDAD DE CASILLEROS EN LA LISTA HELPER
-                    Item.TiempoCoccion = CantidadCasilleros(producto.Productodeldia.TiempoCoccion);
-                    
-                    // SI EL TIEMPO DE COCCION DEL PRODUCTO ES IGUAL AL DE MAYOR TIEMPO INDICE COLUMNA EXACTO
-                    if (casillerostiempomax == Item.TiempoCoccion)
-                    {
-                        Item.Columna = IndiceColumna(HoraToString(pedido.Horaingresococina));
-                    }
-                    else if(casillerostiempomax  > Item.TiempoCoccion)
-                    {
-                        int diferencia = casillerostiempomax - Item.TiempoCoccion;
-                        ajusteportiempomaximopedido(CantidadCasilleros(producto.Productodeldia.TiempoCoccion), casillerostiempomax);
-                        Item.Columna = IndiceColumna(HoraToString(pedido.Horaingresococina)) + diferencia + 2;                        
-                        
-
-                    }
-                     Item.idPedido = pedido.Id;
-
-                    AuxiliiarHelpercocina.Add(Item);
-
+                    producto.HoraListo = pedido.Horaingresococina.Add((TimeSpan)producto.Productodeldia.TiempoCoccion);
+                                                      
                 }
        
                 pedido.Horalisto = pedido.Horaingresococina.Add(Tiempomax.Value);
-
+              
             }
 
-
-
-            if (AuxiliiarHelpercocina.ToList() != Helpercocina.ToList())
-            {
-                Session.Add("Helpercocina", AuxiliiarHelpercocina);
-            }
-
-
+            /*
             if (Auxiliarproductosenpreparacion.ToList() != Productosenpreparacion.ToList())
             {
                 Session.Add("Productosenpreparacion", Auxiliarproductosenpreparacion);
             }
+            */
 
 
-
-            Session.Add("Pedidosencocina", Pedidosencocina);
+            Session.Add("Pedidosencocina", Auxiliarpedidos);
             return Pedidosencocina;
         }     
         
-
-
-
-        public void ActualizarCocina()
-        {
-            cocinaNegocio = (CocinaNegocio)Session["CocinaNegocio"];
-
-            ActualizarSolicitados(cocinaNegocio);
-            Pedidosencocina = ListarPedidosenCocina(cocinaNegocio);
-          
-
-        }
-
-
-
-        /*
-        string ultimaactualizacion = pedido.ultimaactualizacion.ToString("yyyy-MM-dd");
-        string hoy = DateTime.Now.ToString("yyyy-MM-dd");
-        */
-        /*
-        public void ActualizarSolicitadosenDB()
-        {
-            Pedidosenpreparacion = new List<Pedido>();
-            PedidoNegocio pedidoNegocio = new PedidoNegocio();
-            Pedidossolicitados = pedidoNegocio.ListarPedidos(Estados.Solicitado);
-            Pedidossolicitados = Pedidossolicitados.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList();
-
-
-
-            // VALIDAR QUE SEAN DE HOY Y ESTEN EN ESTADO SOLICITADO
-            foreach (Pedido pedido in Pedidossolicitados.ToList())
-            {
-
-                if (InvertirFecha(pedido.ultimaactualizacion) != DateTime.Now.ToString("d"))
-                {
-                    Pedidossolicitados.Remove(pedido);
-                }
-                // VALIDAR QUE SEAN DE COCINA
-                foreach (ProductoPorPedido productossolicitados in pedido.Productossolicitados)
-                {
-
-                    if (productossolicitados.Productodeldia.Categoria != 3)
-                    {
-                        Pedidossolicitados.Remove(pedido);
-                    }
-
-                }
-
-
-            }
-            // CAMBIAR ESTADO A EN PREPARACION
-            foreach (Pedido pedido in Pedidossolicitados.ToList())
-            {
-
-                pedidoNegocio.CambiarEstadoPedido(pedido.Id, Estados.EnPreparacion);
-
-            }
-
-        }
-        */
-        /*
-
-        public void Listarpedidosenpreparacion()
-        {
-            PedidoNegocio pedidoNegocio = new PedidoNegocio();
-            Pedidosenpreparacion = pedidoNegocio.ListarPedidos(Estados.EnPreparacion);
-
-            Pedidosenpreparacion.AddRange(pedidoNegocio.ListarPedidos(Estados.DemoradoEnCocina));
-            foreach (Pedido pedido in Pedidosenpreparacion)
-            {
-                pedido.ingresococina = pedidoNegocio.HorarioEnPrepPedido(pedido.Id);
-            }
-
-            // VALIDAR QUE SEAN DE HOY Y ESTEN EN ESTADO SOLICITADO
-            foreach (Pedido pedido in Pedidosenpreparacion.ToList())
-            {
-                string ultimaactualizacion = pedido.ultimaactualizacion.ToString("yyyy-MM-dd");
-                string hoy = DateTime.Now.ToString("yyyy-dd-MM");
-
-                if (ultimaactualizacion != hoy)
-                {
-                    Pedidosenpreparacion.Remove(pedido);
-                }
-
-            }
-            // VALIDAR QUE SEAN PEDIDOS DE COCINA
-
-            foreach (Pedido pedido in Pedidosenpreparacion.ToList())
-            {
-
-                foreach (ProductoPorPedido productossolicitados in pedido.Productossolicitados)
-                {
-
-                    if (productossolicitados.Productodeldia.Categoria != 3)
-                    {
-                        Pedidosenpreparacion.Remove(pedido);
-                    }
-                }
-
-            }
-            Pedidosenpreparacion = Pedidosenpreparacion.OrderBy(Pedidossolicitados => Pedidossolicitados.Id).ToList(); 
-            Session.Add("Pedidosenpreparacion", Pedidosenpreparacion);
-
-
-        }
-        */
 
         public DataTable CrearDatatableCocina()
         {
@@ -301,12 +233,12 @@ namespace RestoApp
             return DTCocina;
 
         }
-
         public DataTable CrearDataTableProductosEnPreparacion()
         {
             DataTable dataTable = new DataTable();
             dataTable.Columns.Add("Producto", typeof(string));
             dataTable.Columns.Add("Cantidad", typeof(int));
+            dataTable.Columns.Add("Proximo", typeof(string));
             Session.Add("DTProductosenpreparacion", dataTable);
             return dataTable;
 
@@ -322,6 +254,59 @@ namespace RestoApp
             return DTEstadopedidos;
         }
 
+        public DataTable CrearDataTablePedidosnuevos() 
+        {
+            DataTable DTPedidosnuevos = new DataTable();
+            DTPedidosnuevos.Columns.Add("#ID", typeof(int));
+            DTPedidosnuevos.Columns.Add("Nombre", typeof(string));
+                DTPedidosnuevos.Columns.Add("Cantidad", typeof(string));
+                DTPedidosnuevos.Columns.Add("Coccion", typeof(string));    
+
+            Session.Add("DTPedidosnuevos", DTPedidosnuevos);
+            return DTPedidosnuevos;
+
+        }
+
+        public void ActualizarDGVPedidosnuevos()
+        {
+     
+            DataTable DTPedidosnuevos = (DataTable)Session["DTPedidosnuevos"];
+            Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
+            PedidosIngresados = (int)Session["PedidosIngresados"];
+            PedidosnuevosOn = (bool)Session["PedidosnuevosOn"];
+
+
+
+            DTPedidosnuevos.Clear();            
+
+            if (PedidosIngresados > 0) { 
+
+            Pedidosencocina.ToList().OrderByDescending(Pedidosencocina => Pedidosencocina.Id).ToList().Take(PedidosIngresados);
+        
+
+            foreach (Pedido p in Pedidosencocina) {
+
+               
+            foreach (ProductoPorPedido pxp in p.Productossolicitados)
+            {
+                 DataRow row = DTPedidosnuevos.NewRow();
+
+                   row["#ID"] = p.Id;
+                row["Nombre"] = pxp.Productodeldia.Nombre;
+                row["Cantidad"] = pxp.Cantidad;
+                row["Coccion"] = pxp.Productodeldia.TiempoCoccion.Value.Minutes.ToString() + " Min.";
+
+                DTPedidosnuevos.Rows.Add(row);
+            }
+               
+            }
+                     
+            }
+            
+            DGVPedidosnuevos.DataSource = DTPedidosnuevos;
+            DGVPedidosnuevos.DataBind();
+        }
+              
         public void ActualizarDGVEstadoPedidos()
         {
             DataTable DTEstadopedidos = (DataTable)Session["DTEstadoPedidos"];
@@ -334,14 +319,10 @@ namespace RestoApp
                 DataRow row = DTEstadopedidos.NewRow();
                 row["Pedido"] = "#" + pedido.Id;
                 row["Estado"] = pedido.EstadoDescripcion;
-                if(pedido.Estado == Estados.EnPreparacion)
-                {
-                    row["Listo"] = pedido.Horalisto.TimeOfDay;
-                }
-                else
-                {
-                    row["Listo"] = "";
-                }            
+                row["Listo"] = pedido.Horalisto.TimeOfDay;             
+                
+                    
+                          
                 DTEstadopedidos.Rows.Add(row);
             }
             GVDEstadopedidos.DataSource = DTEstadopedidos;
@@ -349,6 +330,21 @@ namespace RestoApp
 
         }
 
+        public void SonarCampana()
+        {
+            string urlArchivoSonido = "http://djoolien.free.fr/conneries/sons/deskbell.wav";
+
+            using (WebClient webClient = new WebClient())
+            {
+                byte[] archivoSonidoBytes = webClient.DownloadData(urlArchivoSonido);
+
+                using (MemoryStream memoryStream = new MemoryStream(archivoSonidoBytes))
+                {
+                    SoundPlayer player = new SoundPlayer(memoryStream);
+                    player.Play();
+                }
+            }
+        }
 
         public void ActualizarDemorados()
         {
@@ -371,7 +367,7 @@ namespace RestoApp
 
             int casilleros = 0;
             casilleros = timeSpan.Minutes / 5;
-            if (timeSpan.Minutes % 5 > 3)
+            if (timeSpan.Minutes % 5 > 1)
             {
                 casilleros++;
             }
@@ -382,44 +378,93 @@ namespace RestoApp
         public void ActualizarDGVProductosenPreparacion()
         {
           
+
+
             // RECUPERA DATATABLE CREADA
             DataTable dataTable = (DataTable)Session["DTProductosenpreparacion"];
-            Productosenpreparacion = Session["Productosenpreparacion"] as List<ProductoPorPedido>;
-       
+            Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
+            PlatosMarchandoOn = (bool)Session["PlatosMarchandoOn"];
+          
             dataTable.Rows.Clear();
             
+            if(PlatosMarchandoOn == true) { 
             Dictionary<string, int> productosAgrupados = new Dictionary<string, int>();
 
-            // Recorrer la lista productosenpreparacion
-            foreach (ProductoPorPedido pxp in Productosenpreparacion)
+        
+            foreach (Pedido p in Pedidosencocina)
             {
-                string nombreProducto = pxp.Productodeldia.Nombre;
 
-                // Verificar si el producto ya existe en el diccionario
-                if (productosAgrupados.ContainsKey(nombreProducto))
-                {
+            // Recorrer la lista productosenpreparacion
+            foreach (ProductoPorPedido pxp in p.Productossolicitados)
+            {
+                 string nombreProducto = pxp.Productodeldia.Nombre;
+               
+
+                  
+                    // Verificar si el producto ya existe en el diccionario
+                    if (productosAgrupados.ContainsKey(nombreProducto))
+                    {
                     // Si existe, incrementar la cantidad
-                    productosAgrupados[nombreProducto] += pxp.Cantidad;
-                }
-                else
-                {
+                  
+                     productosAgrupados[nombreProducto] += pxp.Cantidad;
+
+                    }
+                    else
+                    {
+                        
                     // Si no existe, agregar el producto al diccionario con la cantidad inicial
                     productosAgrupados.Add(nombreProducto, pxp.Cantidad);
-                }
+                    }
+
+            
             }
 
+
+
+            }
             foreach (KeyValuePair<string, int> producto in productosAgrupados)
             {
                 string nombreProducto = producto.Key;
                 int cantidad = producto.Value;
 
+                DateTime minhorafin = new DateTime();
+                string Horafin;
+                bool bandera = false;
+                foreach (Pedido p in Pedidosencocina)
+                {
+                    foreach (ProductoPorPedido pxp in p.Productossolicitados)
+                    {
+                        if (pxp.Productodeldia.Nombre == nombreProducto)
+                        {
+                            if (!bandera)
+                            {
+                                minhorafin = pxp.HoraListo;
+                                bandera = true;
+                            }
+                            else {
+                                if (pxp.HoraListo < minhorafin)
+                            {
+                                    minhorafin = pxp.HoraListo;
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+
+               
+                Horafin=  minhorafin.TimeOfDay.ToString();
+
+
                 DataRow filaNueva = dataTable.NewRow();
                 filaNueva[0] = nombreProducto;
                 filaNueva[1] = cantidad;
+                filaNueva[2] = Horafin;
                 dataTable.Rows.Add(filaNueva);         
             }
+            }
 
-                  
             GVDProductosenprep.DataSource = dataTable;
             GVDProductosenprep.DataBind();
 
@@ -432,7 +477,10 @@ namespace RestoApp
 
             DataTable DTCocina = (DataTable)Session["DTCocina"];
             Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
-            Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
+
+            DTCocina.Rows.Clear();
+            GVDCocina.DataSource = DTCocina;
+            GVDCocina.DataBind();
 
             DTCocina.Rows.Clear();
 
@@ -469,38 +517,48 @@ namespace RestoApp
 
             if (e.CommandName == "ListoparaEntregar")
             {
-                Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
+            
                 Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
                 Reloj = (DateTime)Session["Reloj"];
                     
                 int rowIndex = Convert.ToInt32(e.CommandArgument);
 
                 Pedidosencocina[rowIndex].Estado = Estados.ListoParaEntregar;
+
+                if (rowIndex==0 && Pedidosencocina.ToList().Count()==1)
+                {
+                    GVDCocina.DataSource = null;
+                    GVDCocina.DataBind();      
+                }
+           
+            
                 Session.Add("Pedidosencocina", Pedidosencocina);
                 PedidoNegocio PedidoNegocio = new PedidoNegocio();
                 PedidoNegocio.CambiarEstadoPedido(Pedidosencocina[rowIndex].Id, Estados.ListoParaEntregar, Reloj);
 
              
-                Helpercocina.RemoveAll(x => x.idPedido == Pedidosencocina[rowIndex].Id);
-                Session.Add("Helpercocina", Helpercocina);   
-
-
             }
         }
         
     public void Timer1_Tick(object sender, EventArgs e)
     {
-        Reloj = (DateTime)Session["Reloj"];
+
+        Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
+        
+       if (Pedidosencocina.Count == 0)
+       
+            { 
+
+                Page_Load(sender, e);
+         }
+
+
+            Reloj = (DateTime)Session["Reloj"];
         Reloj = Reloj.AddSeconds(120);
         Txtreloj.Text = Reloj.ToString("HH:mm");
         Session.Add("Reloj", Reloj);
 
-            ActualizarCocina();
-            ActualizarDGVCocina();
-            ActualizarDGVEstadoPedidos();
-            ActualizarDGVProductosenPreparacion();
-            ActualizarDemorados();
-
+        
             /*
             int contador = 0;
             if (Session["Contador"] != null)
@@ -528,8 +586,7 @@ namespace RestoApp
         protected void GVDCocina_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             Reloj = (DateTime)Session["Reloj"];
-            Helpercocina = Session["Helpercocina"] as List<HelperCocina>;
-            int? Indicecolumnahora = IndiceColumna(HoraToString(Reloj));
+             int? Indicecolumnahora = IndiceColumna(HoraToString(Reloj));
 
 
             // AGREGO BORDE DERECHO A CADA CELDA PARA GENERA LINEAS VERTICALES
@@ -548,8 +605,7 @@ namespace RestoApp
             }
 
 
-
-
+          
 
             Pedidosencocina = (List<Pedido>)Session["Pedidosencocina"];
             int rowindex = 0;
@@ -622,11 +678,43 @@ namespace RestoApp
         {
             Reloj = (DateTime)Session["Reloj"];
 
-            if (Reloj.Hour >= 0 && Reloj.Hour < 4)
+            /*if (Reloj.Hour > 0 && Reloj.Hour < 01)
             {
-                return horarios0a4();
+                if (Reloj.Minute > 0)
+                {
+                    return horarios0a1A();
+                }
+                else if (Reloj.Minute > 20)
+                {
+
+                    return horarios0a1B();
+                }
+                else
+                {
+
+                    return horarios0a1C();
+                }
             }
-            else if (Reloj.Hour >= 4 && Reloj.Hour < 8)
+            */
+           
+                if (Reloj.Minute > 40)
+                {
+                    return horarios1a2C();
+                }
+               else
+                {
+
+                    return horarios1a2B();
+                }
+              
+                                
+              
+
+                  
+                
+
+          
+           /* else if (Reloj.Hour >= 4 && Reloj.Hour < 8)
             {
                 return horarios4a8();
             }
@@ -634,15 +722,194 @@ namespace RestoApp
             {
                 return horarios8a16();
             }
-            else
+            else if (Reloj.Hour >= 22 && Reloj.Hour < 23)
+            {
+
+
+                if (Reloj.Minute > 40)
+                {
+                    return horarios22a23C();
+                }
+                else if (Reloj.Minute > 20)
+                {
+                    return horarios22a23B();
+                }
+                else;
+                {
+                    return horarios0a4();
+                }
+
+            }
+            else if (Reloj.Hour >= 23 && Reloj.Hour < 24)
+            {
+                if (Reloj.Minute > 40)
+                {
+                    return horarios23a24C();
+                }
+                else if (Reloj.Minute > 20)
+                {
+                    return horarios23a24B();
+                }
+                else;
+                {
+                    return horarios23a24A();
+                }
+
+            }
+           else
             {
                 return horarios16a24();
             }
             
-
-
+            
+            */
 
         }
+
+
+
+
+
+        public List<string> horarios22a23B()
+        {
+            string[] horarios = {
+   
+    
+        "21:20", "21:25", "21:30", "21:35", "21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20",
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios22a23C()
+        {
+            string[] horarios = {
+
+         "21:20", "21:25", "21:30", "21:35","21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20" , "23:25", "23:30", "23:35", "23:40",  "23:45",
+                "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios23a24A()
+        {
+            string[] horarios = {
+
+
+       "21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20", "23:25", "23:30", "23:35", "23:40",  "23:45",
+                "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20","00:25", "00:30", "00:35",
+                "00:40"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios23a24B()
+        {
+            string[] horarios = {
+    "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20", "23:25", "23:30", "23:35", "23:40",  "23:45",
+                "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20","00:25", "00:30", "00:35",
+                "00:40","00:45", "00:50", "00:55", "01:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios23a24C()
+        {
+            string[] horarios = {
+  
+        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20", "23:25", "23:30", "23:35", "23:40",  "23:45",
+                "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20","00:25", "00:30", "00:35",
+                "00:40","00:45", "00:50", "00:55", "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios0a1A()
+        {
+            string[] horarios = {
+        "23:40", "23:45", "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20", "00:25", "00:30", "00:35",
+        "00:40", "00:45", "00:50", "00:55", "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35",
+        "01:40", "01:45", "01:50", "01:55", "02:00", "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios0a1B()
+        {
+            string[] horarios = {
+        "23:55", "00:00", "00:05", "00:10", "00:15", "00:20", "00:25", "00:30", "00:35", "00:40", "00:45", "00:50",
+        "00:55", "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50",
+        "01:55", "02:00", "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35", "02:40", "02:45", "02:50"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios0a1C()
+        {
+            string[] horarios = {
+        "00:10", "00:15", "00:20", "00:25", "00:30", "00:35", "00:40", "00:45", "00:50", "00:55", "01:00", "01:05",
+        "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50", "01:55", "02:00", "02:05",
+        "02:10", "02:15", "02:20", "02:25", "02:30", "02:35", "02:40", "02:45", "02:50", "02:55", "03:00", "03:05"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios1a2A()
+        {
+            string[] horarios = {
+        "00:40", "00:45", "00:50", "00:55", "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35",
+        "01:40", "01:45", "01:50", "01:55", "02:00", "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35",
+        "02:40", "02:45", "02:50", "02:55", "03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios1a2B()
+        {
+            string[] horarios = {
+        "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50", "01:55",
+        "02:00", "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35", "02:40", "02:45", "02:50", "02:55",
+        "03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios1a2C()
+        {
+            string[] horarios = {
+        "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50", "01:55", "02:00", "02:05", "02:10", "02:15",
+        "02:20", "02:25", "02:30", "02:35", "02:40", "02:45", "02:50", "02:55", "03:00", "03:05", "03:10", "03:15",
+        "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+
+
 
         public List<string> horarios0a4()
         {
@@ -653,7 +920,7 @@ namespace RestoApp
                 "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50", "01:55", "02:00",
                   "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35",
                     "02:40", "02:45", "02:50", "02:55", "03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35",
-                    "03:40", "03:45", "03:50", "03:55", "04:00"  };
+                    "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15", "04:20",   };
           
                 List<string> listaHorarios = new List<string>(horariosNoche);
             return listaHorarios;
@@ -803,9 +1070,9 @@ namespace RestoApp
                     else
                     {
 
-                        LinkButton btnInformarDemora = (LinkButton)e.Row.FindControl("InformarDemora");
-                        btnInformarDemora.Visible = true;
-                        btnInformarDemora.Enabled = true;
+                       // LinkButton btnInformarDemora = (LinkButton)e.Row.FindControl("InformarDemora");
+                        //btnInformarDemora.Visible = true;
+                        //btnInformarDemora.Enabled = true;
                         cell.BackColor = System.Drawing.Color.PaleVioletRed;
 
                     }
@@ -820,18 +1087,83 @@ namespace RestoApp
         }
         public void GVDProductosenprep_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            bool sinproductos = false;
-            Session.Add("sinproductos", sinproductos);
-
+         
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 foreach (TableCell cell in e.Row.Cells)
                 {
-                    cell.Style["font-size"] = "14px";
+                    cell.Style["font-size"] = "12px";
                     cell.Style["text-align"] = "center";
 
                 }
             }
+        }
+
+
+        protected void BtnDetalle_Click(object sender, EventArgs e)
+        {
+
+            if ((bool)Session["PedidosnuevosOn"])
+            {
+                PedidosnuevosOn = false;
+                Session.Add("PedidosnuevosOn", PedidosnuevosOn);
+                DGVPedidosnuevos.DataSource = null;
+                DGVPedidosnuevos.DataBind();
+            }
+            else
+            {
+                PedidosnuevosOn = true;
+                Session.Add("PedidosnuevosOn", PedidosnuevosOn);
+                ActualizarDGVPedidosnuevos();
+            }
+                                  
+
+            
+        }
+             
+
+        protected void BtnConfirmarIngresos_Click(object sender, EventArgs e)
+        {
+            PedidosIngresados = 0;
+            Session.Add("PedidosIngresados",PedidosIngresados);
+
+            
+             if ((bool)Session["PlatosMarchandoOn"]) {
+                PedidosnuevosOn = false;
+                Session.Add("PlatosMarchandoOn", PedidosnuevosOn);
+
+            }
+
+        }
+
+        protected void BtnDisplaygvdPenP_Click(object sender, EventArgs e)
+        {
+            if ((bool)Session["PlatosMarchandoOn"])
+            {
+                PedidosnuevosOn = false;
+                Session.Add("PlatosMarchandoOn", PedidosnuevosOn);
+
+            }
+            else
+            {
+                PedidosnuevosOn = true;
+                Session.Add("PlatosMarchandoOn", PedidosnuevosOn);
+
+            }
+        }
+
+        protected void DGVPedidosnuevos_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                foreach (TableCell cell in e.Row.Cells)
+                {
+                    cell.Style["font-size"] = "12px";
+                    cell.Style["text-align"] = "center";
+
+                }
+            }
+
         }
     }
 }

@@ -12,7 +12,7 @@
                 <div class="d-flex align-items-center gap-3 mb-3 col-5">
                     <h4 class="text-gray-100">Hola, <%= usuario?.Nombres %> <%= usuario?.Apellidos %> (<%= usuario?.Tipo %>)</h4>
                     <!-- Boton Mesero -->
-                    <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero)
+                    <%if (usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Mesero || usuario?.Tipo == Opciones.ColumnasDB.TipoUsuario.Cocinero)
                         { %>
                     <asp:Button CssClass="btn btn-sm" Text="Darse de Alta" runat="server" ID="btnMeseroAlta" OnClick="btnMeseroAlta_Click" />
                     <%} %>

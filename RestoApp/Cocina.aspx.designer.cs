@@ -42,6 +42,42 @@ namespace RestoApp
         protected global::System.Web.UI.Timer Timer1;
 
         /// <summary>
+        /// TxtPedidosIngresados control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TxtPedidosIngresados;
+
+        /// <summary>
+        /// BtnConfirmarIngresos control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton BtnConfirmarIngresos;
+
+        /// <summary>
+        /// BtnDetalle control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton BtnDetalle;
+
+        /// <summary>
+        /// DGVPedidosnuevos control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView DGVPedidosnuevos;
+
+        /// <summary>
         /// LblProdenPrep control.
         /// </summary>
         /// <remarks>
@@ -49,6 +85,15 @@ namespace RestoApp
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label LblProdenPrep;
+
+        /// <summary>
+        /// BtnDisplaygvdPenP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton BtnDisplaygvdPenP;
 
         /// <summary>
         /// GVDProductosenprep control.
