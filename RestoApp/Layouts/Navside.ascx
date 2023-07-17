@@ -2,10 +2,10 @@
 
 <nav class="col-sm col-lg-2 nav-heigth d-flex justify-content-between bg-dark" id="nav">
     <div
-        class="d-flex flex-column p-lg-3 p-0 text-white nav-heigth-div bg-dark" id="navDiv">
+        class="d-flex flex-column p-lg-3 p-0 text-white nav-heigth-div bg-dark w-100" id="navDiv">
         <a
-            href="/"
-            class="d-lg-flex justify-content-center align-items-center mb-3 mb-lg-0 ms-5 ms-lg-0 me-lg-auto text-white text-decoration-none w-100">
+            href="Main.aspx"
+            class="d-lg-flex justify-content-center align-items-center mb-3 mb-lg-0 ms-5 ms-lg-0 me-lg-auto text-white text-decoration-none ">
             <img src="/Content/Image/logo.jpg" class="rounded-circle mb-lg-3 m-0 min-w-25 h-auto img-width" />
         </a>
         <hr class="d-none d-lg-block" />
@@ -121,7 +121,7 @@
             </li>
         </ul>
         <hr class="d-none d-lg-block"/>
-        <div class="dropdown me-5 m-md-0 d-none d-lg-block">
+        <div class="dropdown d-none d-lg-block w-100">
             <a
                 href="#"
                 class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
@@ -132,9 +132,9 @@
                     src="https://surgassociates.com/wp-content/uploads/610-6104451_image-placeholder-png-user-profile-placeholder-image-png-286x300.jpg"
                     alt=""
                     class="rounded-circle me-2 d-none d-lg-block"
-                    width="32"
-                    height="32" />
-                <strong class="d-flex align-items-center gap-2 d-none d-xl-block"><%= usuario?.Mail %>
+                    width="25"
+                    height="25" />
+                <strong class="d-xl-flex align-items-center gap-2 d-none"><%= usuario?.Mail %>
                     <asp:UpdatePanel ID="UpdatePanel1"
                         runat="server">
                         <ContentTemplate>
