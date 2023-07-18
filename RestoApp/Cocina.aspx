@@ -17,7 +17,7 @@
                 <ContentTemplate>
                     <asp:GridView ID="GVDCocina" runat="server" OnRowDataBound="GVDCocina_RowDataBound" AutoPostBack="true" CssClass="gridview-style">
                         <HeaderStyle HorizontalAlign="right" VerticalAlign="Middle" CssClass="small" BackColor="#343a40" ForeColor="Ivory" Font-Bold="false" Font-Size="Smaller" />
-
+                            
                     </asp:GridView>
                 </ContentTemplate>
                 <Triggers>

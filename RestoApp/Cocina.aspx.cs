@@ -277,32 +277,37 @@ namespace RestoApp
 
 
 
-            DTPedidosnuevos.Clear();            
+            DTPedidosnuevos.Clear();
 
-            if (PedidosIngresados > 0) { 
-
-            Pedidosencocina.ToList().OrderByDescending(Pedidosencocina => Pedidosencocina.Id).ToList().Take(PedidosIngresados);
-        
-
-            foreach (Pedido p in Pedidosencocina) {
-
-               
-            foreach (ProductoPorPedido pxp in p.Productossolicitados)
+            if (PedidosnuevosOn)
             {
-                 DataRow row = DTPedidosnuevos.NewRow();
 
-                   row["#ID"] = p.Id;
-                row["Nombre"] = pxp.Productodeldia.Nombre;
-                row["Cantidad"] = pxp.Cantidad;
-                row["Coccion"] = pxp.Productodeldia.TiempoCoccion.Value.Minutes.ToString() + " Min.";
+                if (PedidosIngresados > 0)
+                {
 
-                DTPedidosnuevos.Rows.Add(row);
+                    Pedidosencocina.ToList().OrderByDescending(Pedidosencocina => Pedidosencocina.Id).ToList().Take(PedidosIngresados);
+
+
+                    foreach (Pedido p in Pedidosencocina)
+                    {
+
+
+                        foreach (ProductoPorPedido pxp in p.Productossolicitados)
+                        {
+                            DataRow row = DTPedidosnuevos.NewRow();
+
+                            row["#ID"] = p.Id;
+                            row["Nombre"] = pxp.Productodeldia.Nombre;
+                            row["Cantidad"] = pxp.Cantidad;
+                            row["Coccion"] = pxp.Productodeldia.TiempoCoccion.Value.Minutes.ToString() + " Min.";
+
+                            DTPedidosnuevos.Rows.Add(row);
+                        }
+
+                    }
+
+                }
             }
-               
-            }
-                     
-            }
-            
             DGVPedidosnuevos.DataSource = DTPedidosnuevos;
             DGVPedidosnuevos.DataBind();
         }
@@ -601,6 +606,7 @@ namespace RestoApp
                     cell.Style["text-align"] = "center";
                     cell.Style["border-right"] = "none";
                     cell.Style["border-right"] = "1px solid #565d63";
+         
                 }
             }
 
@@ -631,6 +637,12 @@ namespace RestoApp
                             int green = (int)(randomColor.G * factor);
                             int blue = (int)(randomColor.B * factor);
                             Color darkColor = Color.FromArgb(red, green, blue);
+
+                            for (int j = 0; j < (Ajuste + IndiceColumna(HoraToString(pedido.Horaingresococina))); j++)
+                            {
+                                e.Row.Cells[j].BackColor = Color.DarkGray;
+                            }
+
                             for (int i = 0; i < CantidadCasilleros(pxp.Productodeldia.TiempoCoccion); i++)
                             {
                                 if ((Ajuste + IndiceColumna(HoraToString(pedido.Horaingresococina)) + i) >= Indicecolumnahora)
@@ -639,7 +651,7 @@ namespace RestoApp
                                 }
                                 else
                                 {
-                                    e.Row.Cells[Ajuste + IndiceColumna(HoraToString(pedido.Horaingresococina)) + i].BackColor = Color.Gray;
+                                    e.Row.Cells[Ajuste + IndiceColumna(HoraToString(pedido.Horaingresococina)) + i].BackColor = Color.DimGray;
 
                                 }
                                 /*
@@ -649,7 +661,12 @@ namespace RestoApp
                                 }
                                 */
                             }
-                           
+                            for (int y = ((Ajuste + IndiceColumna(HoraToString(pedido.Horaingresococina)))+ CantidadCasilleros(pxp.Productodeldia.TiempoCoccion)); y < e.Row.Cells.Count; y++)
+                            {
+                                e.Row.Cells[y].BackColor = Color.DarkGray;
+                            }
+
+
                         }
                         rowindex++;
 
@@ -678,13 +695,13 @@ namespace RestoApp
         {
             Reloj = (DateTime)Session["Reloj"];
 
-            /*if (Reloj.Hour > 0 && Reloj.Hour < 01)
+            if (Reloj.Hour == 0)
             {
-                if (Reloj.Minute > 0)
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
                 {
                     return horarios0a1A();
                 }
-                else if (Reloj.Minute > 20)
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
                 {
 
                     return horarios0a1B();
@@ -695,78 +712,166 @@ namespace RestoApp
                     return horarios0a1C();
                 }
             }
-            */
-           
-                if (Reloj.Minute > 40)
-                {
-                    return horarios1a2C();
-                }
-               else
-                {
-
-                    return horarios1a2B();
-                }
-              
-                                
-              
-
-                  
-                
-
-          
-           /* else if (Reloj.Hour >= 4 && Reloj.Hour < 8)
+           /* else if (Reloj.Hour == 18)
             {
-                return horarios4a8();
+
+
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios18a19A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+
+                    return horarios18a19B();
+                }
+                else
+                {
+
+                    return horarios18a19C();
+                }
             }
-            else if (Reloj.Hour >= 8 && Reloj.Hour < 16)
-            {
-                return horarios8a16();
-            }
-            else if (Reloj.Hour >= 22 && Reloj.Hour < 23)
+            else if (Reloj.Hour == 19)
             {
 
 
-                if (Reloj.Minute > 40)
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
                 {
-                    return horarios22a23C();
+                  //  return horarios19a20A();
                 }
-                else if (Reloj.Minute > 20)
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
                 {
+
+                  //  return horarios19a20B();
+                }
+                else
+                {
+
+                    //return horarios19a20C();
+                }
+            }*/
+            else if (Reloj.Hour == 20)
+            {
+
+
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios20a21A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+
+                    return horarios20a21B();
+                }
+                else
+                {
+
+                    return horarios20a21C();
+                }
+            }
+            /*else if (Reloj.Hour == 21)
+            {
+
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                  //  return horarios21a22A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+
+                   // return horarios21a22B();
+                }
+                else
+                {
+
+                   // return horarios21a22C();
+                }
+            }
+            
+            else if (Reloj.Hour == 22)
+            {
+
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                  //  return horarios22a23A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+
                     return horarios22a23B();
                 }
-                else;
+                else
                 {
-                    return horarios0a4();
-                }
 
+                    return horarios22a23C();
+                }
             }
-            else if (Reloj.Hour >= 23 && Reloj.Hour < 24)
+            */
+            else if (Reloj.Hour == 23)
             {
-                if (Reloj.Minute > 40)
-                {
-                    return horarios23a24C();
-                }
-                else if (Reloj.Minute > 20)
-                {
-                    return horarios23a24B();
-                }
-                else;
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
                 {
                     return horarios23a24A();
                 }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+
+                    return horarios23a24B();
+                }
+                else
+                {
+
+                    return horarios23a24C();
+                }
 
             }
-           else
+            else
             {
-                return horarios16a24();
+                return horarios23a24C();
             }
             
-            
-            */
-
         }
 
 
+        public List<string> horarios20a21A()
+        {
+            string[] horarios = {
+                "19:20", "19:25", "19:30", "19:35",
+        "19:40", "19:45", "19:50", "19:55", "20:00", "20:05", "20:10", "20:15", "20:20", "20:25", "20:30", "20:35",
+        "20:40", "20:45", "20:50", "20:55", "21:00", "21:05", "21:10", "21:15", "21:20"
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios20a21B()
+        {
+            string[] horarios = {               
+        "19:40", "19:45", "19:50", "19:55", "20:00", "20:05", "20:10", "20:15", "20:20", "20:25", "20:30", "20:35",
+        "20:40", "20:45", "20:50", "20:55", "21:00", "21:05", "21:10", "21:15", "21:20","21:25", "21:30", "21:35", "21:40",
+
+      //  "21:20", "21:25", "21:30", "21:35", "21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+        //"22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20",
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+
+        public List<string> horarios20a21C()
+        {
+            string[] horarios = {
+       "20:00", "20:05", "20:10", "20:15", "20:20", "20:25", "20:30", "20:35",
+        "20:40", "20:45", "20:50", "20:55", "21:00", "21:05", "21:10", "21:15", "21:20","21:25", "21:30", "21:35", "21:40",
+
+        "21:20", "21:25", "21:30", "21:35", "21:40", "21:45", "21:50", "21:55", "22:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
 
 
 
