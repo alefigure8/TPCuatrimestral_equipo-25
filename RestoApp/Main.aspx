@@ -279,8 +279,9 @@
     </div>
 
     <!--TOAST-->
-    <div id="toastMesas">
-        <div id="toast-content" class="toast-content"></div>
+    <div id="toastMesas" class="toastMain">
+        <div id="toast-content" class="toast-content">
+        </div>
     </div>
 
 
@@ -369,46 +370,62 @@
             width: 25%;
         }
 
-        .toast-content{
-            background-color: #37b24d;
-            height: 100%;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 700;
-            padding: 20px;
-            border: 1px solid #888;
-            min-width: 300px;
-            border-radius: 20px;
-            border: #fff 3px solid;
-            margin-top: 5px;
+         .toast-content{
+        background-color: #fff;
+        min-width: auto;
+        min-height: auto;
+        border-radius: 5px;
+        border: #fff 3px solid;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        margin-top: 10px;
         }
 
-        #toastMesas {
+        .toastMain{
             display: none;
-            margin-top: 20px;
-            margin-right: 30px;
             justify-content: center;
             align-items: center;
             position: fixed;
             z-index: 1;
-            right: 0;
+            right: 50%;
+            transform: translateX(50%);
             top: 0;
             background: rgba(0, 0, 0, 0);
             transition: 0.3s all ease;
         }
 
+        .toastMessage{
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 5px 10px;
+            margin: 0;
+        }
+
+        .toastMessage i {
+            font-size: 16px;
+            margin-right: 8px;
+        }
+
+        .iconSuccess{
+            color: #66cd00;
+        }
+
+        .iconError{
+            color: #c92a2a;
+        }
+
         .opcaityToast {
-          animation: fadein 0.5s, fadeout 0.5s 4.5s;
+              animation: fadein 0.5s, fadeout 0.5s 3.5s;
         }
 
         @keyframes fadein {
-          from {opacity: 0;}
-          to {opacity: 1;}
+            from {opacity: 0; top: -20px;}
+            to {opacity: 1; top: 0px;}
         }
 
         @keyframes fadeout {
-          from {opacity: 1;}
-          to {opacity: 0;}
+            from {opacity: 1; top: 0px;}
+            to {opacity: 0; top: -20px;}
         }
 
         .close {
@@ -837,15 +854,16 @@
 
         }
 
-        function alertaToast(msg) {
+        function alertaToast(msg, mode) {
             toast.style.display = "flex";
             toast.classList.add("opcaityToast");
-            contenidoToast.innerHTML = `<p><i class="fa-solid fa-circle-check text-white fs-5 me-3"></i> ${msg} </p>`
+            contenidoToast.innerHTML = `<p class="toastMessage"><i class="fa-solid fa-circle-${mode != "error" ? "check iconSuccess" : "exclamation iconError"}"></i>${msg}</p>`
 
+            //Tiempo para ocultar toast
             setTimeout(() => {
                 toast.classList.remove("opcaityToast")
                 toast.style.display = "none"
-            }, 5000)
+            }, 4000)
         }
 
         //Evento botones Mesero
