@@ -342,5 +342,95 @@ namespace Negocio
 
 
         }
-    }
+
+		public bool AgregarToken(string mail, string token)
+		{
+            AccesoDB datos = new AccesoDB();
+
+			string query = $"UPDATE {ColumnasDB.Usuario.DB} " +
+				$"SET TOKEN = {token} " +
+				$"WHERE {ColumnasDB.Usuario.Mail} = {mail}";
+
+			try
+			{
+				datos.setQuery(query);
+				bool seModifico = datos.executeNonQuery();
+
+				if (seModifico)
+					return true;
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+		}
+
+		public bool EliminarToken(string mail)
+		{
+			AccesoDB datos = new AccesoDB();
+
+			string query = $"UPDATE {ColumnasDB.Usuario.DB} " +
+				$"SET TOKEN = NULL " +
+				$"WHERE {ColumnasDB.Usuario.Mail} = {mail}";
+
+			try
+			{
+				datos.setQuery(query);
+				bool seModifico = datos.executeNonQuery();
+
+				if (seModifico)
+					return true;
+				else
+					return false;
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+		}
+
+		public string RecuperarMailConToken(string token)
+		{
+			AccesoDB datos = new AccesoDB();
+			string mail = string.Empty;
+
+			string query = $"SELECT {ColumnasDB.Usuario.Mail} " +
+					$"FROM {ColumnasDB.Usuario.DB} " +
+					$"WHERE {ColumnasDB.Usuario.Token} = {token}";
+
+			try
+			{
+				datos.setQuery(query);
+				datos.executeReader();
+
+				while (datos.Reader.Read())
+				{
+					//MAIL
+					if (datos.Reader[ColumnasDB.Usuario.Mail] != null)
+						mail = (string)datos.Reader[ColumnasDB.Usuario.Mail];
+				}
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
+
+			return mail;
+		}
+	}
 }

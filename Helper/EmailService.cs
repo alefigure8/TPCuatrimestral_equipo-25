@@ -20,7 +20,7 @@ namespace Helper
 			server.EnableSsl = true;
 
 			//User y pass en web.config
-			server.Credentials = new System.Net.NetworkCredential("suburbiadev@gmail.com", "pago7611");
+			server.Credentials = new System.Net.NetworkCredential("suburbia.dev@gmail.com", "euitndnqfgdcynxz");
 
 		}
 
@@ -35,12 +35,13 @@ namespace Helper
 			email.Body = body;
 		}
 
-		public void EnviarCorreo()
+		public bool EnviarCorreo()
 		{
 			//Enviamos Correo
 			try
 			{
 				server.Send(email);
+				return true;
 			}
 			catch(Exception ex)
 			{

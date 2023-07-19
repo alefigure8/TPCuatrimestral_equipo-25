@@ -31,8 +31,9 @@ namespace Opciones
 			public const string Activo = "Activo";
 			public const string DB = "USUARIO";
 			public const string Fechaalta = "Fechaalta";
-       
-        }
+			public const string Token = "token";
+
+		}
 
 		public struct Mesa
 		{

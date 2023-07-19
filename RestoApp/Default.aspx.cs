@@ -29,8 +29,23 @@ namespace RestoApp
 
 			if(token != null)
 			{
-				//Buscamos token en el base de datos
-				//Si existe redirigimos a cambio de password
+				UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+
+				//Validamos token y buscamos usario
+				string mail = usuarioNegocio.RecuperarMailConToken(token);
+
+				if (!String.IsNullOrEmpty(mail))
+				{
+					//Guardamos email en session
+					Session["MailToken"] = mail;
+				}
+				else
+				{
+					//Mensaje negativo de que Token No existe 
+
+					//Redirigimos
+					Response.Redirect("Default.aspx");
+				}
 			}
 
 			if(esRecuperarPass)
@@ -72,10 +87,30 @@ namespace RestoApp
 					//Enviamos mail
 					try
 					{
-						string mensaje = "<h2> Recuperacion de Contraseña</h2> <br> <p>Link: </p><a href='http://localhost:5000/Default.aspx?recuperar=true&token=" + tokenLink + "'>Recuperar Contraseña</a>";
+						string mensaje = "<h2> Recuperacion de Contraseña</h2> <br> <p>Link: <a href='http://localhost:44342/Default.aspx?recuperar=true&token=" + tokenLink + "'>Recuperar Contraseña</a></p>";
 						EmailService emailService = new EmailService();
 						emailService.ArmarCorreo(mail, "Recuperacion Contraseña", mensaje);
-						emailService.EnviarCorreo();
+						bool seEnvioMail = emailService.EnviarCorreo();
+
+						//Guardamos Token
+						if(seEnvioMail)
+						{
+							UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+							bool seGuardoToken = usuariosNegocio.AgregarToken(mail, tokenLink);
+
+							if (seGuardoToken)
+							{
+
+								//Mensaje Positivo
+								
+								//Redirigimos
+								Response.Redirect("Default.aspx");
+							}
+							else
+							{
+								//Toast Negativo
+							}
+						}
 					}
 					catch (Exception ex)
 					{
@@ -83,9 +118,6 @@ namespace RestoApp
 						lbl_error.Text = "El email no pudo ser enviado. Pruebe nuevamente más tarde";
 						return;
 					}
-
-					//Redirigimos
-					Response.Redirect("Default.aspx");
 				}
 				else
 				{
@@ -95,14 +127,29 @@ namespace RestoApp
 			}
 			else if(esRecuperarPass && token != null)
 			{
-				//Validamos token y buscamos usario
-
+				UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
+				
 				//Guardamos email en session
+				if (Session["MailToken"] != null)
+				{
+					
+					if(!String.IsNullOrEmpty(pass))
+					{
 
-				//Metodo para modificar password con email
+						//Metodo para modificar password con email
+						bool seEliminoToekn = usuarioNegocio.EliminarToken(mail);
 
-				//Redirigimos
-				lbl_error.Text = "Token";
+						//Redirigimos
+						if (seEliminoToekn)
+							Response.Redirect("Default.aspx");
+						else
+						{
+							//Mostramos toast negativo
+						}
+					}
+
+				}
+				
 			}
 			else if(ValidarDatos(mail, pass) && !esRecuperarPass)
 			{
@@ -112,8 +159,6 @@ namespace RestoApp
 
 				if (AutentificacionUsuario.esUser(usuario))
 				{
-					//Borramos password
-					//usuario.Password = null;
 					//Guardamos usuario en session
 					Session[Configuracion.Session.Usuario] = usuario;
 
