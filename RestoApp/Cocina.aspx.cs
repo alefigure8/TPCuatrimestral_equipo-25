@@ -29,6 +29,8 @@ namespace RestoApp
         public List<ProductoPorPedido> Productosenpreparacion { get; set; }
         public int PedidosIngresados { get; set; }
 
+        public int IndiceGDVCocina { get; set; }
+
         public bool sinproductos { get; set; }
 
         public bool PedidosnuevosOn { get; set; }
@@ -45,7 +47,7 @@ namespace RestoApp
                 if (!IsPostBack)
                 {
                     InstanciarObjetos();
-                    CrearDatatableCocina();
+        
                     CrearDataTableProductosEnPreparacion();
                     CrearDataTableEstadoPedidos();
                     CrearDataTablePedidosnuevos();
@@ -54,8 +56,8 @@ namespace RestoApp
 
 
 
-
-            ActualizarDGVPedidosnuevos();
+            CrearDatatableCocina();
+            //  ActualizarDGVPedidosnuevos();
             ActualizarCocina();
              ActualizarDGVCocina();
                 ActualizarDGVEstadoPedidos();
@@ -88,7 +90,9 @@ namespace RestoApp
             PlatosMarchandoOn = false;
             Session.Add("PlatosMarchandoOn", PlatosMarchandoOn);
 
-      
+            IndiceGDVCocina = new int();
+            Session.Add("IndiceGVDCocina", IndiceGDVCocina);
+
             Reloj = DateTime.Now;
             Session.Add("Reloj", Reloj);
 
@@ -224,11 +228,17 @@ namespace RestoApp
 
         public DataTable CrearDatatableCocina()
         {
+            Reloj = (DateTime)Session["Reloj"];
             DataTable DTCocina = new DataTable();
             foreach (string horario in horarios())
             {
-                DTCocina.Columns.Add(horario, typeof(string));
+                dDTCocina.Columns.Add(horario, typeof(string));
+              
+
             }
+            IndiceGDVCocina = (int)Session["IndiceGVDCocina"];
+            IndiceGDVCocina = IndiceColumna(HoraToString(Reloj));
+            Session.Add("IndiceGVDCocina", IndiceGDVCocina);
             Session.Add("DTCocina", DTCocina);
             return DTCocina;
 
@@ -389,7 +399,8 @@ namespace RestoApp
             DataTable dataTable = (DataTable)Session["DTProductosenpreparacion"];
             Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
             PlatosMarchandoOn = (bool)Session["PlatosMarchandoOn"];
-          
+            Reloj = (DateTime)Session["Reloj"];
+
             dataTable.Rows.Clear();
             
             if(PlatosMarchandoOn == true) { 
@@ -465,8 +476,16 @@ namespace RestoApp
                 DataRow filaNueva = dataTable.NewRow();
                 filaNueva[0] = nombreProducto;
                 filaNueva[1] = cantidad;
+                    if (minhorafin > Reloj) { 
                 filaNueva[2] = Horafin;
-                dataTable.Rows.Add(filaNueva);         
+                    }
+                    else
+                    {
+                        filaNueva[2] = "";
+
+                    }
+
+                    dataTable.Rows.Add(filaNueva);         
             }
             }
 
@@ -548,7 +567,11 @@ namespace RestoApp
     public void Timer1_Tick(object sender, EventArgs e)
     {
 
-        Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
+
+            Reloj = (DateTime)Session["Reloj"];
+
+         //   IndiceGDVCocina = (int)Session["IndiceGVDCocina"];
+            Pedidosencocina = Session["Pedidosencocina"] as List<Pedido>;
         
        if (Pedidosencocina.Count == 0)
        
@@ -558,9 +581,13 @@ namespace RestoApp
          }
 
 
-            Reloj = (DateTime)Session["Reloj"];
+         
         Reloj = Reloj.AddSeconds(120);
-        Txtreloj.Text = Reloj.ToString("HH:mm");
+
+        //    IndiceGDVCocina = IndiceColumna(HoraToString(Reloj));
+         //   Session.Add("IndiceGVDCocina", IndiceGDVCocina);
+            Txtreloj.Text = Reloj.ToString("HH:mm");
+
         Session.Add("Reloj", Reloj);
 
         
@@ -591,7 +618,28 @@ namespace RestoApp
         protected void GVDCocina_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             Reloj = (DateTime)Session["Reloj"];
-             int? Indicecolumnahora = IndiceColumna(HoraToString(Reloj));
+            int? Indicecolumnahora = IndiceColumna(HoraToString(Reloj));
+                
+                //IndiceColumna(HoraToString(Reloj));
+
+
+
+            if (e.Row.RowType == DataControlRowType.Header) // Verificar si la fila es el encabezado
+            {
+                if (Indicecolumnahora.HasValue)
+                {
+                    TableCell cell = e.Row.Cells[(int)Indicecolumnahora-1]; // Cambiar el índice (0) según la celda que deseas modificar
+
+                    // Cambiar el color de fondo de la celda
+                    cell.BackColor = System.Drawing.Color.DarkRed; // Cambia el color según tus necesidades
+                }
+            }
+
+
+
+
+
+
 
 
             // AGREGO BORDE DERECHO A CADA CELDA PARA GENERA LINEAS VERTICALES
@@ -695,61 +743,201 @@ namespace RestoApp
         {
             Reloj = (DateTime)Session["Reloj"];
 
-            if (Reloj.Hour == 0)
+            if (Reloj.Hour == 7)
             {
                 if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
                 {
-                    return horarios0a1A();
+                    return horarios7a8A();
                 }
                 else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
                 {
-
-                    return horarios0a1B();
+                    return horarios7a8B();
                 }
                 else
                 {
-
-                    return horarios0a1C();
+                    return horarios7a8C();
                 }
             }
-           /* else if (Reloj.Hour == 18)
+            else if (Reloj.Hour == 8)
             {
-
-
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios8a9A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios8a9B();
+                }
+                else
+                {
+                    return horarios8a9C();
+                }
+            }
+            else if (Reloj.Hour == 9)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios9a10A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios9a10B();
+                }
+                else
+                {
+                    return horarios9a10C();
+                }
+            }
+            else if (Reloj.Hour == 10)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios10a11A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios10a11B();
+                }
+                else
+                {
+                    return horarios10a11C();
+                }
+            }
+            else if (Reloj.Hour == 11)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios11a12A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios11a12B();
+                }
+                else
+                {
+                    return horarios11a12C();
+                }
+            }
+            else if (Reloj.Hour == 12)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios12a13A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios12a13B();
+                }
+                else
+                {
+                    return horarios12a13C();
+                }
+            }
+            else if (Reloj.Hour == 13)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios13a14A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios13a14B();
+                }
+                else
+                {
+                    return horarios13a14C();
+                }
+            }
+            else if (Reloj.Hour == 14)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios14a15A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios14a15B();
+                }
+                else
+                {
+                    return horarios14a15C();
+                }
+            }
+            else if (Reloj.Hour == 15)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios15a16A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios15a16B();
+                }
+                else
+                {
+                    return horarios15a16C();
+                }
+            }
+            else if (Reloj.Hour == 16)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios16a17A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios16a17B();
+                }
+                else
+                {
+                    return horarios16a17C();
+                }
+            }
+            else if (Reloj.Hour == 17)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios17a18A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios17a18B();
+                }
+                else
+                {
+                    return horarios17a18C();
+                }
+            }
+            else if (Reloj.Hour == 18)
+            {
                 if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
                 {
                     return horarios18a19A();
                 }
                 else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
                 {
-
                     return horarios18a19B();
                 }
                 else
                 {
-
                     return horarios18a19C();
                 }
             }
             else if (Reloj.Hour == 19)
             {
-
-
                 if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
                 {
-                  //  return horarios19a20A();
+                    return horarios19a20A();
                 }
                 else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
                 {
-
-                  //  return horarios19a20B();
+                    return horarios19a20B();
                 }
                 else
                 {
-
-                    //return horarios19a20C();
+                    return horarios19a20C();
                 }
-            }*/
+            }
             else if (Reloj.Hour == 20)
             {
 
@@ -769,44 +957,36 @@ namespace RestoApp
                     return horarios20a21C();
                 }
             }
-            /*else if (Reloj.Hour == 21)
+            else if (Reloj.Hour == 21)
             {
-
                 if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
                 {
-                  //  return horarios21a22A();
+                    return horarios21a22A();
                 }
                 else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
                 {
-
-                   // return horarios21a22B();
+                    return horarios21a22B();
                 }
                 else
                 {
-
-                   // return horarios21a22C();
+                    return horarios21a22C();
                 }
             }
-            
             else if (Reloj.Hour == 22)
             {
-
                 if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
                 {
-                  //  return horarios22a23A();
+                    return horarios22a23A();
                 }
                 else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
                 {
-
                     return horarios22a23B();
                 }
                 else
                 {
-
                     return horarios22a23C();
                 }
             }
-            */
             else if (Reloj.Hour == 23)
             {
                 if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
@@ -825,104 +1005,699 @@ namespace RestoApp
                 }
 
             }
+            if (Reloj.Hour == 0)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios0a1A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+
+                    return horarios0a1B();
+                }
+                else
+                {
+
+                    return horarios0a1C();
+                }
+            }
+            else if (Reloj.Hour == 1)
+            {
+                if (Reloj.Minute >= 0 && Reloj.Minute <= 20)
+                {
+                    return horarios1a2A();
+                }
+                else if (Reloj.Minute >= 20 && Reloj.Minute <= 40)
+                {
+                    return horarios1a2B();
+                }
+                else
+                {
+                    return horarios1a2C();
+                }
+            }
             else
             {
-                return horarios23a24C();
+                return horarios2a7();
             }
-            
+
         }
 
 
+
+       public List<string> horarios2a7()
+        {
+            string[] horariosNoche = {
+              "01:50", "01:55", "02:00",
+                  "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35",
+                    "02:40", "02:45", "02:50", "02:55", "03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35",
+                    "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15", "04:20", "04:25", "04:30", "04:35",
+        "04:40", "04:45", "04:50", "04:55", "05:00", "05:05", "05:10", "05:15", "05:20", "05:25", "05:30", "05:35",
+        "05:40", "05:45", "05:50", "05:55", "06:00","06:05", "06:10", "06:15", "06:20", "06:25", "06:30", "06:35",
+        "06:40", "06:45", "06:50", "06:55", "07:00",  "07:05", "07:10", "07:15", "07:20", "07:25", };
+
+            List<string> listaHorarios = new List<string>(horariosNoche);
+            return listaHorarios;
+
+        }
+
+       public List<string> horarios7a8A()
+        {
+            string[] horarios = {
+       
+
+        "06:20", "06:25", "06:30", "06:35", "06:40", "06:45", "06:50", "06:55", "07:00", "07:05", "07:10", "07:15", "07:20", "07:25",
+        "07:30", "07:35", "07:40", "07:45", "07:50", "07:55", "08:00", "08:05", "08:10", "08:15", "08:20"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios7a8B()
+        {
+            string[] horarios = {
+        
+
+        "06:40", "06:45", "06:50", "06:55", "07:00", "07:05", "07:10", "07:15", "07:20", "07:25", "07:30", "07:35", "07:40", "07:45",
+        "07:50", "07:55", "08:00", "08:05", "08:10", "08:15", "08:20", "08:25", "08:30", "08:35", "08:40"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios7a8C()
+        {
+            string[] horarios = {
+        
+
+        "07:00", "07:05","07:10", "07:15", "07:20", "07:25", "07:30", "07:35",
+        "07:40", "07:45", "07:50", "07:55", "08:00", "08:05", "08:10", "08:15", "08:20", "08:25", "08:30", "08:35",
+        "08:40", "08:45", "08:50", "08:55", "09:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios8a9A()
+        {
+            string[] horarios = {
+        
+
+        "07:20", "07:25","07:30", "07:35", "07:40", "07:45", "07:50", "07:55", "08:00", "08:05", "08:10", "08:15", "08:20", "08:25",
+        "08:30", "08:35", "08:40", "08:45", "08:50", "08:55", "09:00", "09:05", "09:10", "09:15", "09:20"
+
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios8a9B()
+        {
+            string[] horarios = {
+         
+        "07:40", "07:45", "07:50", "07:55", "08:00", "08:05", "08:10", "08:15", "08:20", "08:25", "08:30", "08:35", "08:40", "08:45",
+        "08:50", "08:55", "09:00", "09:05", "09:10", "09:15", "09:20", "09:25", "09:30", "09:35", "09:40"
+
+            };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios8a9C()
+        {
+            string[] horarios = {
+       
+
+        "08:00", "08:05", "08:10", "08:15", "08:20", "08:25", "08:30", "08:35",
+        "08:40", "08:45", "08:50", "08:55", "09:00", "09:05", "09:10", "09:15", "09:20", "09:25", "09:30", "09:35",
+        "09:40", "09:45", "09:50", "09:55", "10:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios9a10A()
+        {
+            string[] horarios = {
+       
+
+
+            "08:20", "08:25", "08:30", "08:35", "08:40", "08:45", "08:50", "08:55", "09:00", "09:05", "09:10", "09:15", "09:20", "09:25",
+        "09:30", "09:35", "09:40", "09:45", "09:50", "09:55", "10:00", "10:05", "10:10", "10:15", "10:20"};
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios9a10B()
+        {
+            string[] horarios = {
+       
+
+        "08:40", "08:45", "08:50", "08:55", "09:00", "09:05", "09:10", "09:15", "09:20", "09:25", "09:30", "09:35", "09:40", "09:45",
+        "09:50", "09:55", "10:00", "10:05", "10:10", "10:15", "10:20", "10:25", "10:30", "10:35", "10:40"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios9a10C()
+        {
+            string[] horarios = {
+        
+
+        "09:00", "09:05", "09:10", "09:15", "09:20", "09:25", "09:30", "09:35",
+        "09:40", "09:45", "09:50", "09:55", "10:00", "10:05", "10:10", "10:15", "10:20", "10:25", "10:30", "10:35",
+        "10:40", "10:45", "10:50", "10:55", "11:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios10a11A()
+        {
+            string[] horarios = {
+        
+
+        "09:20", "09:25", "09:30", "09:35", "09:40", "09:45", "09:50", "09:55", "10:00", "10:05", "10:10", "10:15", "10:20", "10:25",
+        "10:30", "10:35", "10:40", "10:45", "10:50", "10:55", "11:00", "11:05", "11:10", "11:15", "11:20"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios10a11B()
+        {
+            string[] horarios = {
+        
+
+        "09:40", "09:45","09:50", "09:55", "10:00", "10:05", "10:10", "10:15", "10:20", "10:25", "10:30", "10:35", "10:40", "10:45",
+        "10:50", "10:55", "11:00", "11:05", "11:10", "11:15", "11:20", "11:25", "11:30", "11:35", "11:40"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios10a11C()
+        {
+            string[] horarios = {
+        
+
+
+        "10:00", "10:05","10:10", "10:15", "10:20", "10:25", "10:30", "10:35",
+        "10:40", "10:45", "10:50", "10:55", "11:00", "11:05", "11:10", "11:15", "11:20", "11:25", "11:30", "11:35",
+        "11:40", "11:45", "11:50", "11:55", "12:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios11a12A()
+        {
+            string[] horarios = {
+        
+
+        "10:20", "10:25", "10:30", "10:35", "10:40", "10:45", "10:50", "10:55", "11:00", "11:05", "11:10", "11:15", "11:20", "11:25",
+        "11:30", "11:35", "11:40", "11:45", "11:50", "11:55", "12:00", "12:05", "12:10", "12:15", "12:20",
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios11a12B()
+        {
+            string[] horarios = {
+        
+
+        "10:40", "10:45","10:50", "10:55", "11:00", "11:05", "11:10", "11:15", "11:20", "11:25", "11:30", "11:35", "11:40", "11:45",
+        "11:50", "11:55", "12:00", "12:05", "12:10", "12:15", "12:20", "12:25", "12:30", "12:35", "12:40"
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios11a12C()
+        {
+            string[] horarios = {
+        
+
+
+        "11:00", "11:05", "11:10", "11:15", "11:20", "11:25", "11:30", "11:35",
+        "11:40", "11:45", "11:50", "11:55", "12:00", "12:05", "12:10", "12:15", "12:20", "12:25", "12:30", "12:35",
+        "12:40", "12:45", "12:50", "12:55", "13:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios12a13A()
+        {
+            string[] horarios = {
+        
+
+
+        "11:20", "11:25", "11:30", "11:35", "11:40", "11:45", "11:50", "11:55", "12:00", "12:05", "12:10", "12:15", "12:20", "12:25",
+        "12:30", "12:35", "12:40", "12:45", "12:50", "12:55", "13:00", "13:05", "13:10", "13:15", "13:20",
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios12a13B()
+        {
+            string[] horarios = {
+        
+
+        "11:40", "11:45","11:50", "11:55", "12:00", "12:05", "12:10", "12:15", "12:20", "12:25", "12:30", "12:35", "12:40", "12:45",
+        "12:50", "12:55", "13:00", "13:05", "13:10", "13:15", "13:20", "13:25", "13:30", "13:35", "13:40"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios12a13C()
+        {
+            string[] horarios = {
+         
+
+        "12:00", "12:05","12:10", "12:15", "12:20", "12:25", "12:30", "12:35",
+        "12:40", "12:45", "12:50", "12:55", "13:00", "13:05", "13:10", "13:15", "13:20", "13:25", "13:30", "13:35",
+        "13:40", "13:45", "13:50", "13:55", "14:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios13a14A()
+        {
+            string[] horarios = {
+        
+
+        "12:20", "12:25","12:30", "12:35", "12:40", "12:45", "12:50", "12:55", "13:00", "13:05", "13:10", "13:15", "13:20", "13:25",
+        "13:30", "13:35", "13:40", "13:45", "13:50", "13:55", "14:00", "14:05", "14:10", "14:15", "14:20"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios13a14B()
+        {
+            string[] horarios = {
+         
+
+        "12:40", "12:45", "12:50", "12:55", "13:00", "13:05", "13:10", "13:15", "13:20", "13:25", "13:30", "13:35", "13:40", "13:45",
+        "13:50", "13:55", "14:00", "14:05", "14:10", "14:15", "14:20", "14:25", "14:30", "14:35", "14:40"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios13a14C()
+        {
+            string[] horarios = {
+       
+
+        "13:00", "13:05", "13:10", "13:15", "13:20", "13:25", "13:30", "13:35",
+        "13:40", "13:45", "13:50", "13:55", "14:00", "14:05", "14:10", "14:15", "14:20", "14:25", "14:30", "14:35",
+        "14:40", "14:45", "14:50", "14:55", "15:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios14a15A()
+        {
+            string[] horarios = {
+        
+
+
+        "13:20", "13:25","13:30", "13:35", "13:40", "13:45", "13:50", "13:55", "14:00", "14:05", "14:10", "14:15", "14:20", "14:25",
+        "14:30", "14:35", "14:40", "14:45", "14:50", "14:55", "15:00", "15:05", "15:10", "15:15", "15:20"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios14a15B()
+        {
+            string[] horarios = {
+         
+
+
+
+       "13:40", "13:45", "13:50", "13:55", "14:00", "14:05", "14:10", "14:15", "14:20", "14:25", "14:30", "14:35", "14:40", "14:45",
+        "14:50", "14:55", "15:00", "15:05", "15:10", "15:15", "15:20", "15:25", "15:30", "15:35", "15:40"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios14a15C()
+        {
+            string[] horarios = {
+
+        "14:00", "14:05","14:10", "14:15", "14:20", "14:25", "14:30", "14:35",
+        "14:40", "14:45", "14:50", "14:55", "15:00", "15:05", "15:10", "15:15", "15:20", "15:25", "15:30", "15:35",
+        "15:40", "15:45", "15:50", "15:55", "16:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios15a16A()
+        {
+            string[] horarios = {
+        
+
+        "14:20", "14:25","14:30", "14:35", "14:40", "14:45", "14:50", "14:55", "15:00", "15:05", "15:10", "15:15", "15:20", "15:25",
+        "15:30", "15:35", "15:40", "15:45", "15:50", "15:55", "16:00", "16:05", "16:10", "16:15", "16:20"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios15a16B()
+        {
+            string[] horarios = {
+         
+
+
+        "14:40", "14:45","14:50", "14:55", "15:00", "15:05", "15:10", "15:15", "15:20", "15:25", "15:30", "15:35", "15:40", "15:45",
+        "15:50", "15:55", "16:00", "16:05", "16:10", "16:15", "16:20", "16:25", "16:30", "16:35", "16:40",
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios15a16C()
+        {
+            string[] horarios = {
+        
+
+
+        "15:00", "15:05", "15:10", "15:15", "15:20", "15:25", "15:30", "15:35",
+        "15:40", "15:45", "15:50", "15:55", "16:00", "16:05", "16:10", "16:15", "16:20", "16:25", "16:30", "16:35",
+        "16:40", "16:45", "16:50", "16:55", "17:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios16a17A()
+        {
+            string[] horarios = {
+       
+
+        "15:20", "15:25","15:30", "15:35", "15:40", "15:45", "15:50", "15:55", "16:00", "16:05", "16:10", "16:15", "16:20", "16:25",
+        "16:30", "16:35", "16:40", "16:45", "16:50", "16:55", "17:00", "17:05", "17:10", "17:15", "17:20"
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios16a17B()
+        {
+            string[] horarios = {
+        
+
+        "15:40", "15:45","15:50", "15:55", "16:00", "16:05", "16:10", "16:15", "16:20", "16:25", "16:30", "16:35", "16:40", "16:45",
+        "16:50", "16:55", "17:00", "17:05", "17:10", "17:15", "17:20", "17:25", "17:30", "17:35", "17:40"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios16a17C()
+        {
+            string[] horarios = {
+        
+
+        "16:00", "16:05","16:10", "16:15", "16:20", "16:25", "16:30", "16:35",
+        "16:40", "16:45", "16:50", "16:55", "17:00", "17:05", "17:10", "17:15", "17:20", "17:25", "17:30", "17:35",
+        "17:40", "17:45", "17:50", "17:55", "18:00"
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios17a18A()
+        {
+            string[] horarios = {
+         
+
+
+        "16:20", "16:25","16:30", "16:35", "16:40", "16:45", "16:50", "16:55", "17:00", "17:05", "17:10", "17:15", "17:20", "17:25",
+        "17:30", "17:35", "17:40", "17:45", "17:50", "17:55", "18:00", "18:05", "18:10", "18:15", "18:20"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios17a18B()
+        {
+            string[] horarios = {
+         
+
+        "16:40", "16:45","16:50", "16:55", "17:00", "17:05", "17:10", "17:15", "17:20", "17:25", "17:30", "17:35", "17:40", "17:45",
+        "17:50", "17:55", "18:00", "18:05", "18:10", "18:15", "18:20", "18:25", "18:30", "18:35", "18:40"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios17a18C()
+        {
+            string[] horarios = {
+        
+
+         "17:00","17:05", "17:10", "17:10", "17:15", "17:20", "17:25", "17:30", "17:35",
+        "17:40", "17:45", "17:50", "17:55", "18:00", "18:05", "18:10", "18:15", "18:20", "18:25", "18:30", "18:35",
+        "18:40", "18:45", "18:50", "18:55", "19:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios18a19A()
+        {
+            string[] horarios = {
+       
+
+        "17:20", "17:25","17:30", "17:35", "17:40", "17:45", "17:50", "17:55", "18:00", "18:05", "18:10", "18:15", "18:20", "18:25", "18:30", "18:35",
+        "18:40", "18:45", "18:50", "18:55", "19:00", "19:05", "19:10", "19:15", "19:20"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios18a19B()
+        {
+            string[] horarios = {
+         
+
+        "17:40", "17:45",  "17:50", "17:55", "18:00", "18:05", "18:10", "18:15", "18:20", "18:25", "18:30", "18:35", "18:40", "18:45",
+        "18:50", "18:55", "19:00", "19:05", "19:10", "19:15", "19:20", "19:25", "19:30", "19:35", "19:40"
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios18a19C()
+        {
+            string[] horarios = {
+        
+
+        "18:00", "18:05",  "18:10", "18:15", "18:20", "18:25", "18:30", "18:35",
+        "18:40", "18:45", "18:50", "18:55", "19:00", "19:05",
+        "19:10", "19:15", "19:20", "19:25", "19:30", "19:35",
+        "19:40", "19:45", "19:50", "19:55", "20:00"
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios19a20A()
+        {
+            string[] horarios = {
+        
+
+           "18:20", "18:25", "18:30", "18:35", "18:40", "18:45", "18:50", "18:55",
+        "19:00", "19:05", "19:10", "19:15", "19:20", "19:25",
+        "19:30", "19:35", "19:40", "19:45", "19:50", "19:55",
+        "20:00", "20:05", "20:10", "20:15", "20:20"
+
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios19a20B()
+        {
+            string[] horarios = {
+    
+         "18:40", "18:45", "18:50", "18:55", "19:00", "19:05", "19:10", "19:15",
+        "19:20", "19:25", "19:30", "19:35", "19:40", "19:45",
+        "19:50", "19:55", "20:00", "20:05", "20:10", "20:15",
+        "20:20", "20:25", "20:30", "20:35", "20:40"
+
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios19a20C()
+        {
+            string[] horarios = {
+              "19:00", "19:05","19:10", "19:15", "19:20", "19:25", "19:30", "19:35",
+        "19:40", "19:45", "19:50", "19:55", "20:00", "20:05",
+        "20:10", "20:15", "20:20", "20:25", "20:30", "20:35",
+        "20:40", "20:45", "20:50", "20:55", "21:00"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
         public List<string> horarios20a21A()
         {
             string[] horarios = {
-                "19:20", "19:25", "19:30", "19:35",
-        "19:40", "19:45", "19:50", "19:55", "20:00", "20:05", "20:10", "20:15", "20:20", "20:25", "20:30", "20:35",
-        "20:40", "20:45", "20:50", "20:55", "21:00", "21:05", "21:10", "21:15", "21:20"
+                "19:20", "19:25", "19:30", "19:35", "19:40", "19:45", "19:50", "19:55", "20:00", "20:05", "20:10", "20:15", "20:20", "20:25", "20:30"
+                    , "20:35", "20:40", "20:45", "20:50", "20:55", "21:00", "21:05", "21:10", "21:15", "21:20"
 
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios20a21B()
         {
-            string[] horarios = {               
-        "19:40", "19:45", "19:50", "19:55", "20:00", "20:05", "20:10", "20:15", "20:20", "20:25", "20:30", "20:35",
-        "20:40", "20:45", "20:50", "20:55", "21:00", "21:05", "21:10", "21:15", "21:20","21:25", "21:30", "21:35", "21:40",
+            string[] horarios = {
 
-      //  "21:20", "21:25", "21:30", "21:35", "21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
-        //"22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20",
-    };
+        "19:40", "19:45", "19:50", "19:55", "20:00", "20:05", 
+        "20:10", "20:15", "20:20", "20:25", "20:30", "20:35", "20:40", "20:45",
+        "20:50", "20:55", "21:00", "21:05", "21:10", "21:15",
+        "21:20", "21:25", "21:30", "21:35", "21:40"
+            };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios20a21C()
         {
             string[] horarios = {
-       "20:00", "20:05", "20:10", "20:15", "20:20", "20:25", "20:30", "20:35",
-        "20:40", "20:45", "20:50", "20:55", "21:00", "21:05", "21:10", "21:15", "21:20","21:25", "21:30", "21:35", "21:40",
+                     "20:00", "20:05","20:10", "20:15", "20:20", "20:25",
+                "20:30", "20:35","20:40", "20:45", "20:50", "20:55", 
+                "21:00", "21:05", "21:10", "21:15", "21:20","21:25",
+                "21:30", "21:35", "21:40","21:45", "21:50", "21:55", "22:00"
 
-        "21:20", "21:25", "21:30", "21:35", "21:40", "21:45", "21:50", "21:55", "22:00"
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
+        public List<string> horarios21a22A()
+        {
+            string[] horarios = {
+   "20:20","20:25", "20:30", "20:35", "20:40",  "20:45", 
+                "20:50", "20:55","21:00", "21:05",  "21:10", "21:15",
+                "21:20","21:25", "21:30", "21:35", "21:40", "21:45",
+                "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20"
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios21a22B()
+        {
+            string[] horarios = {
+       "20:40", "20:45", "20:50", "20:55", "21:00", "21:05", 
+                "21:10", "21:15", "21:20","21:25", "21:30", "21:35",
+                "21:40","21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+        "22:40"
+
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios21a22C()
+        {
+            string[] horarios = {
+          "21:00", "21:05","21:10", "21:15","21:20", "21:25", "21:30", "21:35", "21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+        "22:40", "22:45", "22:50", "22:55", "23:00"
 
 
+    };
 
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
+        public List<string> horarios22a23A()
+        {
+            string[] horarios = {
+
+
+      
+
+        "21:20", "21:25", "21:30", "21:35", "21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20"
+    };
+
+            List<string> listaHorarios = new List<string>(horarios);
+            return listaHorarios;
+        }
         public List<string> horarios22a23B()
         {
             string[] horarios = {
-   
-    
-        "21:20", "21:25", "21:30", "21:35", "21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
-        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20",
+
+   "21:40", "21:45","21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20","23:25", "23:30", "23:35", "23:40"
+
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios22a23C()
         {
             string[] horarios = {
 
-         "21:20", "21:25", "21:30", "21:35","21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
-        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20" , "23:25", "23:30", "23:35", "23:40",  "23:45",
-                "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20"
+                    "22:00", "22:05",      "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20", "23:25", "23:30", "23:35", "23:40",  "23:45",
+                "23:50", "23:55", "00:00"
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios23a24A()
         {
             string[] horarios = {
-
-
-       "21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
+    "22:20", "22:25", "22:30", "22:35",
         "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20", "23:25", "23:30", "23:35", "23:40",  "23:45",
-                "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20","00:25", "00:30", "00:35",
-                "00:40"
+                "23:50", "23:55", "00:00","00:05", "00:10", "00:15", "00:20"
+
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios23a24B()
         {
             string[] horarios = {
-    "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
-        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20", "23:25", "23:30", "23:35", "23:40",  "23:45",
-                "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20","00:25", "00:30", "00:35",
-                "00:40","00:45", "00:50", "00:55", "01:00"
+         "22:40", "22:45", "22:50", "22:55", "23:00", "23:05",
+                "23:10", "23:15", "23:20", "23:25", "23:30", "23:35",
+           "23:40",  "23:45",  "23:50", "23:55", "00:00", "00:05",
+                "00:10", "00:15", "00:20","00:25", "00:30", "00:35",
+        "00:40"
     };
 
             List<string> listaHorarios = new List<string>(horarios);
@@ -931,161 +1706,73 @@ namespace RestoApp
         public List<string> horarios23a24C()
         {
             string[] horarios = {
-  
-        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20", "23:25", "23:30", "23:35", "23:40",  "23:45",
-                "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20","00:25", "00:30", "00:35",
-                "00:40","00:45", "00:50", "00:55", "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40"
+     "23:00", "23:05",  "23:10", "23:15", "23:20", "23:25", "23:30", "23:35", "23:40", "23:45", "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20", "00:25", "00:30", "00:35",
+        "00:40", "00:45", "00:50", "00:55", "01:00"
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios0a1A()
         {
-            string[] horarios = {
-        "23:40", "23:45", "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20", "00:25", "00:30", "00:35",
-        "00:40", "00:45", "00:50", "00:55", "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35",
-        "01:40", "01:45", "01:50", "01:55", "02:00", "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35"
-    };
+            string[] horarios = {    "23:20", "23:25",    "23:30", "23:35", "23:40", "23:45", "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20", "00:25", "00:30", "00:35",
+        "00:40", "00:45", "00:50", "00:55", "01:00", "01:05", "01:10", "01:15", "01:20"
 
+        };
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios0a1B()
         {
             string[] horarios = {
-        "23:55", "00:00", "00:05", "00:10", "00:15", "00:20", "00:25", "00:30", "00:35", "00:40", "00:45", "00:50",
-        "00:55", "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50",
-        "01:55", "02:00", "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35", "02:40", "02:45", "02:50"
+ "23:40", "23:45", "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20", "00:25", "00:30", "00:35",
+        "00:40", "00:45", "00:50", "00:55", "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40",
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios0a1C()
         {
             string[] horarios = {
-        "00:10", "00:15", "00:20", "00:25", "00:30", "00:35", "00:40", "00:45", "00:50", "00:55", "01:00", "01:05",
-        "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50", "01:55", "02:00", "02:05",
-        "02:10", "02:15", "02:20", "02:25", "02:30", "02:35", "02:40", "02:45", "02:50", "02:55", "03:00", "03:05"
+        "00:00", "00:05","00:10", "00:15", "00:20", "00:25", "00:30", "00:35", "00:40", "00:45", "00:50", "00:55", "01:00", "01:05",
+        "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50", "01:55", "02:00",
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios1a2A()
         {
             string[] horarios = {
-        "00:40", "00:45", "00:50", "00:55", "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35",
-        "01:40", "01:45", "01:50", "01:55", "02:00", "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35",
-        "02:40", "02:45", "02:50", "02:55", "03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35"
+          "00:20", "00:25", "00:30", "00:35", "00:40", "00:45", "00:50", "00:55", "01:00", "01:05",
+                "01:10", "01:15", "01:20", "01:25", "01:30", "01:35",   "01:40", "01:45", "01:50", "01:55", "02:00", "02:05", "02:10", 
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios1a2B()
         {
             string[] horarios = {
-        "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50", "01:55",
-        "02:00", "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35", "02:40", "02:45", "02:50", "02:55",
-        "03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55"
+   "01:00", "01:05", "01:10", "01:15", "01:20", "01:25", "01:30"
+         , "01:35", "01:40", "01:45", "01:50", "01:55","02:00"
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
-
         public List<string> horarios1a2C()
         {
             string[] horarios = {
-        "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50", "01:55", "02:00", "02:05", "02:10", "02:15",
-        "02:20", "02:25", "02:30", "02:35", "02:40", "02:45", "02:50", "02:55", "03:00", "03:05", "03:10", "03:15",
-        "03:20", "03:25", "03:30", "03:35", "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15"
+   "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50", "01:55", "02:00", "02:05", "02:10", "02:15",
+        "02:20" 
     };
 
             List<string> listaHorarios = new List<string>(horarios);
             return listaHorarios;
         }
 
-
-
-
-        public List<string> horarios0a4()
-        {
-            string[] horariosNoche = {
-                "23:00", "23:05", "23:10", "23:15", "23:20", "23:25", "23:30", "23:35", "23:40", "23:45",
-                "23:50", "23:55", "00:00", "00:05", "00:10", "00:15", "00:20", "00:25", "00:30", "00:35",
-                "00:40", "00:45", "00:50", "00:55", "01:00",
-                "01:05", "01:10", "01:15", "01:20", "01:25", "01:30", "01:35", "01:40", "01:45", "01:50", "01:55", "02:00",
-                  "02:05", "02:10", "02:15", "02:20", "02:25", "02:30", "02:35",
-                    "02:40", "02:45", "02:50", "02:55", "03:00", "03:05", "03:10", "03:15", "03:20", "03:25", "03:30", "03:35",
-                    "03:40", "03:45", "03:50", "03:55", "04:00", "04:05", "04:10", "04:15", "04:20",   };
-          
-                List<string> listaHorarios = new List<string>(horariosNoche);
-            return listaHorarios;
-
-        }
-
-
-
-
-        public List<string> horarios4a8()
-        {
-            string[] horarios = {
-        "04:00", "04:05", "04:10", "04:15", "04:20", "04:25", "04:30", "04:35",
-        "04:40", "04:45", "04:50", "04:55", "05:00", "05:05", "05:10", "05:15", "05:20", "05:25", "05:30", "05:35",
-        "05:40", "05:45", "05:50", "05:55", "06:00","06:05", "06:10", "06:15", "06:20", "06:25", "06:30", "06:35",
-        "06:40", "06:45", "06:50", "06:55", "07:00",  "07:05", "07:10", "07:15", "07:20", "07:25", "07:30", "07:35",
-        "07:40", "07:45", "07:50", "07:55", "08:00"
-         };
-
-            List<string> listaHorarios = new List<string>(horarios);
-            return listaHorarios;
-        }
-         
-        public List<string> horarios8a16()
-        {
-            string[] horarios = {
-         "08:00", "08:05", "08:10", "08:15", "08:20", "08:25", "08:30", "08:35",
-        "08:40", "08:45", "08:50", "08:55", "09:00","09:05", "09:10", "09:15", "09:20", "09:25", "09:30", "09:35",
-        "09:40", "09:45", "09:50", "09:55", "10:00","10:05", "10:10", "10:15", "10:20", "10:25", "10:30", "10:35",
-        "10:40", "10:45", "10:50", "10:55", "11:00", "11:05", "11:10", "11:15", "11:20", "11:25", "11:30", "11:35",
-        "11:40", "11:45", "11:50", "11:55", "12:00", "12:05", "12:10", "12:15", "12:20", "12:25", "12:30", "12:35",
-        "12:40", "12:45", "12:50", "12:55", "13:00", "13:05", "13:10", "13:15", "13:20", "13:25", "13:30", "13:35",
-        "13:40", "13:45", "13:50", "13:55", "14:00",  "14:05", "14:10", "14:15", "14:20", "14:25", "14:30", "14:35",
-        "14:40", "14:45", "14:50", "14:55", "15:00", "15:05", "15:10", "15:15", "15:20", "15:25", "15:30", "15:35",
-        "15:40", "15:45", "15:50", "15:55", "16:00"
-    };
-
-            List<string> listaHorarios = new List<string>(horarios);
-            return listaHorarios;
-        }
-
-        public List<string> horarios16a24()
-        {
-            string[] horarios = {
-        "14:00", "14:05", "14:10", "14:15", "14:20", "14:25", "14:30", "14:35", "14:40", "14:45",
-        "14:50", "14:55", "15:00", "15:05", "15:10", "15:15", "15:20", "15:25", "15:30", "15:35",
-        "15:40", "15:45", "15:50", "15:55", "16:00",  "16:05", "16:10", "16:15", "16:20", "16:25", "16:30", "16:35",
-        "16:40", "16:45", "16:50", "16:55", "17:00","17:05", "17:10", "17:15", "17:20", "17:25", "17:30", "17:35",
-        "17:40", "17:45", "17:50", "17:55", "18:00", "18:05", "18:10", "18:15", "18:20", "18:25", "18:30", "18:35",
-        "18:40", "18:45", "18:50", "18:55", "19:00", "19:05", "19:10", "19:15", "19:20", "19:25", "19:30", "19:35",
-        "19:40", "19:45", "19:50", "19:55", "20:00", "20:05", "20:10", "20:15", "20:20", "20:25", "20:30", "20:35",
-        "20:40", "20:45", "20:50", "20:55", "21:00", "21:05", "21:10", "21:15", "21:20", "21:25", "21:30", "21:35",
-        "21:40", "21:45", "21:50", "21:55", "22:00", "22:05", "22:10", "22:15", "22:20", "22:25", "22:30", "22:35",
-        "22:40", "22:45", "22:50", "22:55", "23:00", "23:05", "23:10", "23:15", "23:20", "23:25", "23:30", "23:35",
-        "23:40", "23:45", "23:50", "23:55", "00:00"
-    };
-
-            List<string> listaHorarios = new List<string>(horarios);
-            return listaHorarios;
-        }
 
        
 
@@ -1232,10 +1919,14 @@ namespace RestoApp
             PedidosIngresados = 0;
             Session.Add("PedidosIngresados",PedidosIngresados);
 
+            DGVPedidosnuevos.DataSource= null;
+            DGVPedidosnuevos.DataBind();
+
             
-             if ((bool)Session["PlatosMarchandoOn"]) {
+             if ((bool)Session["PedidosnuevosOn"]) {
                 PedidosnuevosOn = false;
-                Session.Add("PlatosMarchandoOn", PedidosnuevosOn);
+                Session.Add("PedidosnuevosOn", PedidosnuevosOn);
+
 
             }
 

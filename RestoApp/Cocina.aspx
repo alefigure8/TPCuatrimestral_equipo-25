@@ -15,14 +15,12 @@
         <div class="col-9 d-flex" style="overflow-x: auto;">
             <asp:UpdatePanel runat="server" UpdateMode="Always">
                 <ContentTemplate>
-                    <asp:GridView ID="GVDCocina" runat="server" OnRowDataBound="GVDCocina_RowDataBound" AutoPostBack="true" CssClass="gridview-style">
+                    <asp:GridView ID="GVDCocina" runat="server" OnRowDataBound="GVDCocina_RowDataBound" AutoPostBack="true" CssClass="gridview-style" ClientIDMode="AutoID">
                         <HeaderStyle HorizontalAlign="right" VerticalAlign="Middle" CssClass="small" BackColor="#343a40" ForeColor="Ivory" Font-Bold="false" Font-Size="Smaller" />
                             
                     </asp:GridView>
                 </ContentTemplate>
-                <Triggers>
-                    <asp:AsyncPostBackTrigger ControlID="Timer1" EventName="Tick" />
-                </Triggers>
+              
             </asp:UpdatePanel>
         </div>
 
@@ -32,8 +30,6 @@
 
         <div class="col-3 d-flex">
 
-                <asp:UpdatePanel runat="server">
-                        <ContentTemplate>
 
             <div style="background-color: gray; border-radius: 5px; height: 95vh; width: 100%; display: flex; justify-content: flex-start; flex-direction: column; padding: 10px;">
 
@@ -75,8 +71,8 @@
   
                 <asp:UpdatePanel runat ="server">
                             <ContentTemplate>
-                                <div style="margin-top: 10px; width: 260px; overflow-y: auto; min-height: min-content; max-height:150px; overflow-y: auto; background-color: white; border-radius: 5px; display: flex; align-items: flex-start; justify-content:center;">
-                         <asp:GridView ID="DGVPedidosnuevos" runat="server" BorderColor="Transparent" OnRowDataBound="DGVPedidosnuevos_RowDataBound"></asp:GridView>
+                                <div style="margin-top: 10px; width: 260px; overflow-y: auto; min-height: min-content; max-height:150px; background-color: white; border-radius: 5px; display: flex; align-items: flex-start; justify-content:center;">
+                         <asp:GridView ID="DGVPedidosnuevos" runat="server" BorderColor="Transparent" OnRowDataBound="DGVPedidosnuevos_RowDataBound" AutoPostBack="false"></asp:GridView>
                                                       <HeaderStyle HorizontalAlign="Center" />
                                                </div>
                         </ContentTemplate>
@@ -85,7 +81,7 @@
             
                     
                  <div style="display:flex; flex-direction:row; margin-top: 10px; align-items:center; justify-content:space-between; width:260px;padding-right:0px; ">
-                    <asp:Label ID="LblProdenPrep" runat="server" Text="Platos Marchando" Font-Bold="true" Font-Size="Large"></asp:Label>
+                    <asp:Label ID="LblProdenPrep" runat="server" Text="Platos Marchando:" Font-Bold="true" Font-Size="Large"></asp:Label>
                      <div style="margin-right: 5px;">
                         <asp:LinkButton ID="BtnDisplaygvdPenP" runat="server" class="btn btn-dark dropdown-toggle" data-bs-theme="dark" OnClick="BtnDisplaygvdPenP_Click"><i class="fa-solid fa-list"></i></asp:LinkButton>
                          </div>
@@ -104,7 +100,7 @@
                     </asp:UpdatePanel>
                   
                     <div style="margin-top: 10px">
-                        <asp:Label ID="LblEstadopedidos" runat="server" Text="Estado Pedidos" Font-Bold="true" Font-Size="Large"></asp:Label>
+                        <asp:Label ID="LblEstadopedidos" runat="server" Text="Estado Pedidos:" Font-Bold="true" Font-Size="Large"></asp:Label>
                     </div>
                              <div style="margin-top: 10px; width: 260px; height:100%; overflow-y: auto; background-color: white; border-radius: 5px; display: flex; align-items: stretch; justify-content:stretch; ">    
                         <asp:UpdatePanel runat="server">
@@ -125,8 +121,6 @@
                         </asp:UpdatePanel>
                         </div>
                     </div>
-     </ContentTemplate>
-                        </asp:UpdatePanel>
 
 
                 </div>
