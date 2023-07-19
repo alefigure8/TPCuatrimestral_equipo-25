@@ -1779,9 +1779,10 @@ namespace RestoApp
 
         public string HoraToString(DateTime fechaactualizacion)
         {
+            string hora;
             int Redondeo;
-            TimeSpan TimeSpan = new TimeSpan(fechaactualizacion.Hour, fechaactualizacion.Minute, fechaactualizacion.Second);
-            if (TimeSpan.Minutes % 5 >= 3)
+            TimeSpan Timespan = new TimeSpan(fechaactualizacion.Hour, fechaactualizacion.Minute, fechaactualizacion.Second);
+            if (Timespan.Minutes % 5 >= 3)
             {
                 Redondeo = fechaactualizacion.Minute - fechaactualizacion.Minute % 5 + 5;
             }
@@ -1790,8 +1791,19 @@ namespace RestoApp
                 Redondeo = fechaactualizacion.Minute - fechaactualizacion.Minute % 5;
 
             }
+            if(Redondeo == 60)
+            {
+                Redondeo = 0;
 
-            string hora = fechaactualizacion.Hour.ToString("00") + ":" + Redondeo.ToString("00");
+                TimeSpan tiempoSumado = Timespan.Add(new TimeSpan(1, 0, 0));
+                
+              hora = tiempoSumado.Hours.ToString("00") + ":" + Redondeo.ToString("00");
+            }
+            else
+            {
+               hora = fechaactualizacion.Hour.ToString("00") + ":" + Redondeo.ToString("00");
+            }
+            
             return hora;
         }
 
