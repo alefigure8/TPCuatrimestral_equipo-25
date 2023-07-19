@@ -108,7 +108,8 @@ namespace RestoApp
                 if (Helper.Session.GetMensajeModal() != null)
                 {
                     dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
-					UIMostrarAlerta(msgModal.msg, msgModal.tipo);
+                    //UIMostrarAlerta(msgModal.msg, msgModal.tipo);
+                    UIMostrarToast(msgModal.msg);
 				}
 
 				try
@@ -950,6 +951,15 @@ namespace RestoApp
 		private void UIMostrarAlerta(string mensaje, string tipoMensaje = "error")
 		{
 			string scriptModal = $"alertaModal(\"{mensaje}\", \"{tipoMensaje}\");";
+			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
+
+			//Borramos mensaje del modal
+			Helper.Session.SetMensajeModal(null);
+		}
+
+        private void UIMostrarToast(string mensaje)
+        {
+			string scriptModal = $"alertaToast(\"{mensaje}\");";
 			ScriptManager.RegisterStartupScript(this, GetType(), "scriptMain", scriptModal, true);
 
 			//Borramos mensaje del modal
