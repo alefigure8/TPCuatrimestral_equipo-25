@@ -278,6 +278,12 @@
         </div>
     </div>
 
+    <!--TOAST-->
+    <div id="toastMesas">
+        <div id="toast-content" class="toast-content"></div>
+    </div>
+
+
     <!-- Modal DetallePedido -->
     <div id="ModalDetallePedido" class="modal modalDP" role="dialog">
         <div class="modal-dialog">
@@ -361,6 +367,48 @@
             padding: 20px;
             border: 1px solid #888;
             width: 25%;
+        }
+
+        .toast-content{
+            background-color: #37b24d;
+            height: 100%;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 20px;
+            border: 1px solid #888;
+            min-width: 300px;
+            border-radius: 20px;
+            border: #fff 3px solid;
+            margin-top: 5px;
+        }
+
+        #toastMesas {
+            display: none;
+            margin-top: 20px;
+            margin-right: 30px;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            z-index: 1;
+            right: 0;
+            top: 0;
+            background: rgba(0, 0, 0, 0);
+            transition: 0.3s all ease;
+        }
+
+        .opcaityToast {
+          animation: fadein 0.5s, fadeout 0.5s 4.5s;
+        }
+
+        @keyframes fadein {
+          from {opacity: 0;}
+          to {opacity: 1;}
+        }
+
+        @keyframes fadeout {
+          from {opacity: 1;}
+          to {opacity: 0;}
         }
 
         .close {
@@ -467,6 +515,8 @@
         const closeModalBtn = document.getElementsByClassName("close")[0];
         const modalTitulo = document.getElementById("modal-titulo");
         let contenidoModal = document.getElementById("modal-content");
+        const toast = document.getElementById("toastMesas");
+        let contenidoToast = document.getElementById("toast-content");
 
         //Traemos datos de mesas desde codebehind del Gerente
         function obtenerDatosMesasGerente() {
@@ -764,7 +814,6 @@
         }
 
         function alertaModal(msg, mode) {
-            console.log(msg, mode)
             modalTitulo.textContent = "";
             modal.style.display = "block";
             contenidoModal.innerHTML = "";
@@ -786,6 +835,17 @@
                     <p class="text-center">${msg}</p>`
             }
 
+        }
+
+        function alertaToast(msg) {
+            toast.style.display = "flex";
+            toast.classList.add("opcaityToast");
+            contenidoToast.innerHTML = `<p><i class="fa-solid fa-circle-check text-white fs-5 me-3"></i> ${msg} </p>`
+
+            setTimeout(() => {
+                toast.classList.remove("opcaityToast")
+                toast.style.display = "none"
+            }, 5000)
         }
 
         //Evento botones Mesero
@@ -973,26 +1033,3 @@
     </script>
     <%--Fin Script Modal Detalle Pedido--%>
 </asp:Content>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
