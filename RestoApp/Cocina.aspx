@@ -9,9 +9,9 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    
-    <div class="row" style="height: 95vh">
 
+    <div class="row" style="height: 95vh">
+            <!-- GRIDVIEW COCINA -->
         <div class="col-9 d-flex" style="overflow-x: auto;">
             <asp:UpdatePanel runat="server" UpdateMode="Always">
                 <ContentTemplate>
@@ -24,15 +24,11 @@
             </asp:UpdatePanel>
         </div>
 
-
-
-
-
         <div class="col-3 d-flex">
 
 
-            <div style="background-color: gray; border-radius: 5px; height: 95vh; width: 100%; display: flex; justify-content: flex-start; flex-direction: column; padding: 10px;">
-
+            <div style="background-color: #343a40; border-radius: 5px; height: 95vh; width: 100%; display: flex; justify-content: flex-start; flex-direction: column; padding: 10px;">
+                    <!-- TIMER -->
                 <div style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center;">
                     <asp:UpdatePanel runat="server">
                         <ContentTemplate>
@@ -45,21 +41,22 @@
 
        
                 <div style="display: flex; flex-direction: row; justify-content: flex-start;align-items : center; margin-top: 10px; width:260px;padding-right:0px;">
+                        <!-- FILA INGRESOS -->
 
-                    <div >
-                        <asp:Label Text="Pedidos Nuevos:" runat="server" Font-Bold="true" />
+                        <div style="margin-right: 5px;">
+                        <asp:Label Text="Ingresos:" runat="server" Font-Size="Large" ForeColor="WhiteSmoke" />
                     </div>
                     
                     <div style="margin-right: 5px;">
                         <asp:UpdatePanel runat="server">
                             <ContentTemplate>
-                        <asp:TextBox ID="TxtPedidosIngresados" AutoPostBack="true" runat="server" Width="40px" BackColor="LightYellow" CssClass="form-control" Enabled="false" Font-Size="Large" Font-Bold="true"></asp:TextBox>
+                        <asp:TextBox ID="TxtPedidosIngresados" AutoPostBack="true" runat="server" Width="40px" BackColor="LightYellow" CssClass="form-control dark" Enabled="false" Font-Size="Large" Font-Bold="true"></asp:TextBox>
                                 </ContentTemplate>
                         </asp:UpdatePanel>
                     </div>
                                      
              
-                    <div style="margin-right: 45px;">
+                    <div style="margin-right: 40px;">
                         <asp:LinkButton ID="BtnConfirmarIngresos" class="btn btn-dark" runat="server" OnClick="BtnConfirmarIngresos_Click"><i class="fa-solid fa-check"></i>  </asp:LinkButton>
 
                     </div>
@@ -68,7 +65,7 @@
                          </div>
                                         </div>
                         
-  
+      <!-- GVD PEDIDOS NUEVOS -->
                 <asp:UpdatePanel runat ="server">
                             <ContentTemplate>
                                 <div style="margin-top: 10px; width: 260px; overflow-y: auto; min-height: min-content; max-height:150px; background-color: white; border-radius: 5px; display: flex; align-items: flex-start; justify-content:center;">
@@ -79,15 +76,19 @@
                         </asp:UpdatePanel>
            
             
-                    
+                        <!-- FILA PLATOS MARCHANDO -->
                  <div style="display:flex; flex-direction:row; margin-top: 10px; align-items:center; justify-content:space-between; width:260px;padding-right:0px; ">
-                    <asp:Label ID="LblProdenPrep" runat="server" Text="Platos Marchando:" Font-Bold="true" Font-Size="Large"></asp:Label>
-                     <div style="margin-right: 5px;">
+                    
+                     <asp:Label ID="LblProdenPrep" runat="server" Text="Platos Marchando:"  Font-Size="Larger" ForeColor="WhiteSmoke"></asp:Label>                  
+
+
+                                   
                         <asp:LinkButton ID="BtnDisplaygvdPenP" runat="server" class="btn btn-dark dropdown-toggle" data-bs-theme="dark" OnClick="BtnDisplaygvdPenP_Click"><i class="fa-solid fa-list"></i></asp:LinkButton>
-                         </div>
+                                      
+                    
                 </div>
                              
-
+                    <!-- GVD PLATOS MARCHANDO -->
                         <asp:UpdatePanel runat="server">
                         <ContentTemplate>
                             <div style="margin-top: 10px; width: 260px;  max-height:170px; overflow-y: auto; background-color: white; border-radius: 5px; display: flex; align-items: flex-start; justify-content:center;">
@@ -98,11 +99,13 @@
                               </div>
                         </ContentTemplate>
                     </asp:UpdatePanel>
-                  
+                      <!-- LABEL ESTADO PEDIDOS -->
                     <div style="margin-top: 10px">
-                        <asp:Label ID="LblEstadopedidos" runat="server" Text="Estado Pedidos:" Font-Bold="true" Font-Size="Large"></asp:Label>
+                        <asp:Label ID="LblEstadopedidos" runat="server" Text="Estado Pedidos:" Font-Size="Larger" ForeColor="WhiteSmoke"></asp:Label>
                     </div>
-                             <div style="margin-top: 10px; width: 260px; height:100%; overflow-y: auto; background-color: white; border-radius: 5px; display: flex; align-items: stretch; justify-content:stretch; ">    
+                          
+                    <!-- GVD ESTADOPEDIDOS -->
+                <div style="margin-top: 10px; width: 260px; height:100%; overflow-y: auto; background-color: white; border-radius: 5px; display: flex; align-items: stretch; justify-content:stretch; ">    
                         <asp:UpdatePanel runat="server">
                             <ContentTemplate>
                    

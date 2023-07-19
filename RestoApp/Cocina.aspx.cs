@@ -232,7 +232,7 @@ namespace RestoApp
             DataTable DTCocina = new DataTable();
             foreach (string horario in horarios())
             {
-                dDTCocina.Columns.Add(horario, typeof(string));
+                DTCocina.Columns.Add(horario, typeof(string));
               
 
             }

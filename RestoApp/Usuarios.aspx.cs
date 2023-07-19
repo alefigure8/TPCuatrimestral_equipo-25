@@ -37,7 +37,9 @@ namespace RestoApp
         
                 Lblbusquedafallida.Visible = false;
                 Rbnmodo.SelectedIndex = 0;
-                bool modificar = false;
+                
+                bool modificar = new bool();
+                modificar = false;
                 Session.Add("modificar", modificar);
                 CargarDgv();
                 Cargarestadossorting();
