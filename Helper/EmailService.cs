@@ -48,5 +48,24 @@ namespace Helper
 				throw new Exception("Error al enviar el correo: " + ex.Message);
 			}
 		}
+
+		public string GenerarToken()
+		{
+			int length = 10;
+			const string Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			Random random = new Random();
+
+			StringBuilder tokenBuilder = new StringBuilder(length);
+			int charactersLength = Characters.Length;
+
+			for (int i = 0; i < length; i++)
+			{
+				int randomIndex = random.Next(charactersLength);
+				char randomCharacter = Characters[randomIndex];
+				tokenBuilder.Append(randomCharacter);
+			}
+
+			return tokenBuilder.ToString();
+		}
 	}
 }

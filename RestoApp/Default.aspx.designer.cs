@@ -33,6 +33,15 @@ namespace RestoApp
 		protected global::System.Web.UI.WebControls.TextBox txb_Password;
 
 		/// <summary>
+		/// txb_PasswordConfirm control.
+		/// </summary>
+		/// <remarks>
+		/// Auto-generated field.
+		/// To modify move field declaration from designer file to code-behind file.
+		/// </remarks>
+		protected global::System.Web.UI.WebControls.TextBox txb_PasswordConfirm;
+
+		/// <summary>
 		/// btnForm control.
 		/// </summary>
 		/// <remarks>

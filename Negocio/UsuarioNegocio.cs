@@ -339,8 +339,6 @@ namespace Negocio
             {
                 datos.closeConnection();
             }
-
-
         }
 
 		public bool AgregarToken(string mail, string token)
@@ -348,8 +346,8 @@ namespace Negocio
             AccesoDB datos = new AccesoDB();
 
 			string query = $"UPDATE {ColumnasDB.Usuario.DB} " +
-				$"SET TOKEN = {token} " +
-				$"WHERE {ColumnasDB.Usuario.Mail} = {mail}";
+				$"SET TOKEN = '{token}' " +
+				$"WHERE {ColumnasDB.Usuario.Mail} = '{mail}'";
 
 			try
 			{
@@ -378,7 +376,7 @@ namespace Negocio
 
 			string query = $"UPDATE {ColumnasDB.Usuario.DB} " +
 				$"SET TOKEN = NULL " +
-				$"WHERE {ColumnasDB.Usuario.Mail} = {mail}";
+				$"WHERE {ColumnasDB.Usuario.Mail} = '{mail}'";
 
 			try
 			{
@@ -407,7 +405,7 @@ namespace Negocio
 
 			string query = $"SELECT {ColumnasDB.Usuario.Mail} " +
 					$"FROM {ColumnasDB.Usuario.DB} " +
-					$"WHERE {ColumnasDB.Usuario.Token} = {token}";
+					$"WHERE {ColumnasDB.Usuario.Token} = '{token}'";
 
 			try
 			{
@@ -431,6 +429,33 @@ namespace Negocio
 			}
 
 			return mail;
+		}
+
+		public bool ModificarPass(string mail, string pass)
+		{
+			AccesoDB datos = new AccesoDB();
+
+			string query = $"UPDATE {ColumnasDB.Usuario.DB} " +
+					$" SET {ColumnasDB.Usuario.Pass} = '{pass}' " +
+					$" WHERE {ColumnasDB.Usuario.Mail} = '{mail}'";
+			
+			try
+			{
+				datos.setQuery(query);
+
+				if (datos.executeNonQuery())
+					return true;
+				else
+					return false;
+			}
+			catch (Exception Ex)
+			{
+				throw Ex;
+			}
+			finally
+			{
+				datos.closeConnection();
+			}
 		}
 	}
 }

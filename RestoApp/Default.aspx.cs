@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Mail;
 using System.Text;
+using System.Web.UI;
 using Dominio;
 using Helper;
 using Negocio;
@@ -10,10 +11,11 @@ namespace RestoApp
 {
 	public partial class Default : System.Web.UI.Page
 	{
-		private string mail;
+		public string mail;
 		private string pass;
+		private string passConfirm;
 		public bool esRecuperarPass;
-		string token;
+		public string token;
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -21,10 +23,11 @@ namespace RestoApp
 			esRecuperarPass =  Convert.ToBoolean(Request.QueryString["recuperar"]);
 			token =  Request.QueryString["Token"];
 
-			if (Session[Configuracion.Session.Error] != null)
+			//Mostrar Toast si hay mensajes guardados en sessíon
+			if(Helper.Session.GetMensajeModal() != null)
 			{
-				//Mostramos el error
-				lbl_error.Text = (string)Session[Configuracion.Session.Error];
+				dynamic msgModal = (dynamic)Helper.Session.GetMensajeModal();
+				UIMostrarToast(msgModal.msg, msgModal.tipo);
 			}
 
 			if(token != null)
@@ -32,7 +35,7 @@ namespace RestoApp
 				UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
 
 				//Validamos token y buscamos usario
-				string mail = usuarioNegocio.RecuperarMailConToken(token);
+				mail = usuarioNegocio.RecuperarMailConToken(token);
 
 				if (!String.IsNullOrEmpty(mail))
 				{
@@ -42,6 +45,8 @@ namespace RestoApp
 				else
 				{
 					//Mensaje negativo de que Token No existe 
+					object mensajeToast = new { msg = "El token ingresado es incorrecto", tipo = "error" };
+					Helper.Session.SetMensajeModal(mensajeToast);
 
 					//Redirigimos
 					Response.Redirect("Default.aspx");
@@ -55,17 +60,30 @@ namespace RestoApp
 			}
 		}
 
+		//Toast
+		private void UIMostrarToast(string mensaje, string tipoMensaje = "error")
+		{
+			string scriptModal = $"alertaToast(\"{mensaje}\", \"{tipoMensaje}\");";
+			ScriptManager.RegisterStartupScript(this, GetType(), "scriptDefault", scriptModal, true);
+
+			//Borramos mensaje del modal
+			Helper.Session.SetMensajeModal(null);
+		}
+
+		//Botón principal
 		protected void EnviarDatos_Click(object sender, EventArgs e)
 		{
 			Usuario usuario;
 			mail = txb_Usuario.Text;
 			pass = txb_Password.Text;
-			
+			passConfirm = txb_PasswordConfirm.Text;
+
 			//Validamos datos
 			if (esRecuperarPass && token == null)
 			{
 				//DB
 				UsuarioNegocio usuariosNegocio = new UsuarioNegocio();
+				EmailService emailService = new EmailService();
 
 				//CorroborarMail
 				if (!ValidarMail(mail))
@@ -79,16 +97,12 @@ namespace RestoApp
 				if (usuariosNegocio.BuscarUsuarioPorMail(mail) == 1)
 				{
 					//Generamos Token
-					string tokenLink = GenerarToken();
-					
-					//Guardamos Token en el usuario
-
-					
+					string tokenLink = emailService.GenerarToken();
+									
 					//Enviamos mail
 					try
 					{
-						string mensaje = "<h2> Recuperacion de Contraseña</h2> <br> <p>Link: <a href='http://localhost:44342/Default.aspx?recuperar=true&token=" + tokenLink + "'>Recuperar Contraseña</a></p>";
-						EmailService emailService = new EmailService();
+						string mensaje = "<h2> Recuperacion de Contraseña</h2> <br> <p>Link: <a href='https://localhost:44342/Default.aspx?recuperar=True&token=" + tokenLink + "'>Recuperar Contraseña</a></p>";
 						emailService.ArmarCorreo(mail, "Recuperacion Contraseña", mensaje);
 						bool seEnvioMail = emailService.EnviarCorreo();
 
@@ -102,6 +116,8 @@ namespace RestoApp
 							{
 
 								//Mensaje Positivo
+								object mensajeToast = new { msg = "Revise su correo para recuperar la contraseña", tipo = "success" };
+								Helper.Session.SetMensajeModal(mensajeToast);
 								
 								//Redirigimos
 								Response.Redirect("Default.aspx");
@@ -109,20 +125,30 @@ namespace RestoApp
 							else
 							{
 								//Toast Negativo
+								object mensajeToast = new { msg = "Error al generar Token. Intente de nuevo más tarde", tipo = "error" };
+								Helper.Session.SetMensajeModal(mensajeToast);
+								Response.Redirect("Default.aspx?recuperar=True");
 							}
 						}
 					}
 					catch (Exception ex)
 					{
 						//Mostramos error
-						lbl_error.Text = "El email no pudo ser enviado. Pruebe nuevamente más tarde";
-						return;
+						object mensajeToast = new { msg = "El email no pudo ser enviado. Pruebe nuevamente más tarde", tipo = "error" };
+						Helper.Session.SetMensajeModal(mensajeToast);
+
+						//Redirigimos
+						Response.Redirect("Default.aspx?recuperar=True");
 					}
 				}
 				else
 				{
-					//Mensaje de error
-					lbl_error.Text = "El Email no pertenece a un usuario activo o es incorrecto";
+					//Mostramos error
+					object mensajeToast = new { msg = "El Email no pertenece a un usuario activo o es incorrecto", tipo = "error" };
+					Helper.Session.SetMensajeModal(mensajeToast);
+
+					//Redirigimos
+					Response.Redirect("Default.aspx?recuperar=True");
 				}
 			}
 			else if(esRecuperarPass && token != null)
@@ -132,19 +158,49 @@ namespace RestoApp
 				//Guardamos email en session
 				if (Session["MailToken"] != null)
 				{
-					
-					if(!String.IsNullOrEmpty(pass))
+					mail = (string)Session["MailToken"];
+
+					if (!String.IsNullOrEmpty(pass) && !string.IsNullOrEmpty(passConfirm))
 					{
-
-						//Metodo para modificar password con email
-						bool seEliminoToekn = usuarioNegocio.EliminarToken(mail);
-
-						//Redirigimos
-						if (seEliminoToekn)
-							Response.Redirect("Default.aspx");
-						else
+						if ((bool)Session["sonIgualesLosPass"])
 						{
-							//Mostramos toast negativo
+							//Guardar contraseña nueva
+							bool seModificaPass = usuarioNegocio.ModificarPass(mail, pass);
+
+							if(seModificaPass)
+							{
+								//Metodo para modificar password con email
+								bool seEliminoToekn = usuarioNegocio.EliminarToken(mail);
+
+								//Redirigimos
+								if (seEliminoToekn)
+								{
+									//Mostramos error
+									object mensajeToast = new { msg = "La contraseña se guardó correctamente", tipo = "success" };
+									Helper.Session.SetMensajeModal(mensajeToast);
+
+									//Redirigimos
+									Response.Redirect("Default.aspx");
+								}
+								else
+								{
+									//Mostramos error
+									object mensajeToast = new { msg = "Error al elimninar token. Intente nuevamente más tarde", tipo = "error" };
+									Helper.Session.SetMensajeModal(mensajeToast);
+
+									//Redirigimos
+									Response.Redirect("Default.aspx");
+								}
+							}
+							else
+							{
+								//Mostramos error
+								object mensajeToast = new { msg = "Error al cambiar contraseña. Intente nuevamente más tarde", tipo = "error" };
+								Helper.Session.SetMensajeModal(mensajeToast);
+
+								//Redirigimos
+								Response.Redirect("Default.aspx");
+							}
 						}
 					}
 
@@ -169,13 +225,22 @@ namespace RestoApp
 				}
 				else
 				{
-					lbl_error.Text = Mensajes.Login.DatosIncorrectos;
+					//Error con la información
+					object mensajeToast = new { msg = Mensajes.Login.DatosIncorrectos, tipo = "error" };
+					Helper.Session.SetMensajeModal(mensajeToast);
+
+					//Redirigimos
+					Response.Redirect("Default.aspx");
 				}
 			}
 			else
 			{
-				//Si los datos no son validos
-				lbl_error.Text = Mensajes.Login.FormatosIncorrectos;
+				//Error con formatos de datos
+				object mensajeToast = new { msg = Mensajes.Login.FormatosIncorrectos, tipo = "error" };
+				Helper.Session.SetMensajeModal(mensajeToast);
+
+				//Redirigimos
+				Response.Redirect("Default.aspx");
 			}
 
 		}
@@ -200,6 +265,7 @@ namespace RestoApp
 			return false;
 		}
 
+		//Validamos mail
 		private bool ValidarMail(string mail)
 		{
 			if(!String.IsNullOrEmpty(mail))
@@ -219,29 +285,28 @@ namespace RestoApp
 			return false;
 		}
 
+		//Evento para ir a recuperar pass
 		protected void RecuperarPass_Click(object sender, EventArgs e)
 		{
 			esRecuperarPass = !esRecuperarPass;
 			Response.Redirect($"Default.aspx?recuperar={esRecuperarPass}", false);
 		}
 
-		private string GenerarToken()
+		//Evento de cambio en textBox de confirmar pass
+		protected void txb_PasswordConfirm_TextChanged(object sender, EventArgs e)
 		{
-			int length = 10;
-			const string Characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-			Random random = new Random();
+			pass = txb_Password.Text;
+			passConfirm = txb_PasswordConfirm.Text;
 
-			StringBuilder tokenBuilder = new StringBuilder(length);
-			int charactersLength = Characters.Length;
-
-			for (int i = 0; i < length; i++)
+			if (pass == passConfirm)
 			{
-				int randomIndex = random.Next(charactersLength);
-				char randomCharacter = Characters[randomIndex];
-				tokenBuilder.Append(randomCharacter);
+				Session["sonIgualesLosPass"] = true;
+			} 
+			else
+			{
+				Session["sonIgualesLosPass"] = false;
+				lbl_error.Text = "Las contraseñas no coinciden";
 			}
-
-			return tokenBuilder.ToString();
 		}
 	}
 }
